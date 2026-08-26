@@ -34,6 +34,11 @@
     button, input, textarea, select { font: inherit; }
     button, a { -webkit-tap-highlight-color: transparent; }
     .wrap { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 70px; }
+    .workspace-header {
+      position: sticky; top: 0; z-index: 50; margin: -32px 0 18px; padding-top: 18px;
+      background: rgba(247, 246, 242, .94); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
     .back {
       display: inline-flex; align-items: center; gap: 8px; color: var(--muted);
       text-decoration: none; font-size: .9rem; font-weight: 600;
@@ -76,7 +81,7 @@
     .notice.is-error { border-color: #edc4d2; background: #fff5f8; color: var(--danger); }
     .notice[hidden] { display: none; }
     .tabs {
-      display: flex; gap: 3px; overflow-x: auto; margin: 22px 0 18px; padding: 4px;
+      display: flex; gap: 3px; overflow-x: auto; margin: 18px 0 0; padding: 4px 0 5px;
       border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.62);
     }
     .tab {
@@ -168,6 +173,7 @@
     }
     @media (max-width: 580px) {
       .wrap { width: calc(100% - 28px); padding-top: 24px; }
+      .workspace-header { margin-top: -24px; }
       .form-grid { grid-template-columns: 1fr; }
       .field.is-wide { grid-column: auto; }
       .row { align-items: flex-start; flex-direction: column; }
@@ -179,21 +185,33 @@
 </head>
 <body>
   <main class="wrap">
-    <a class="back" id="backLink" href="index.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> All prototypes</a>
-    <p class="eyebrow">Prototype workspace</p>
-    <section class="hero">
-      <div>
-        <h1 id="title">Loading prototype…</h1>
-        <p class="subtitle" id="subtitle">Loading details, history, and developer resources.</p>
-        <div class="meta" id="meta"></div>
-      </div>
-      <div class="hero-actions">
-        <a class="btn" id="openMock" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i> Open mock</a>
-        <button type="button" class="btn" id="shareBtn"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Share</button>
-        <button type="button" class="btn" id="downloadBtn"><i class="fa-solid fa-download" aria-hidden="true"></i> Download</button>
-        <button type="button" class="btn btn-primary" id="manageBtn"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Manage</button>
-      </div>
-    </section>
+    <header class="workspace-header">
+      <a class="back" id="backLink" href="index.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> All prototypes</a>
+      <p class="eyebrow">Prototype workspace</p>
+      <section class="hero">
+        <div>
+          <h1 id="title">Loading prototype…</h1>
+          <p class="subtitle" id="subtitle">Loading details, history, and developer resources.</p>
+          <div class="meta" id="meta"></div>
+        </div>
+        <div class="hero-actions">
+          <a class="btn" id="openMock" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i> Open mock</a>
+          <button type="button" class="btn" id="shareBtn"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Share</button>
+          <button type="button" class="btn" id="downloadBtn"><i class="fa-solid fa-download" aria-hidden="true"></i> Download</button>
+          <button type="button" class="btn btn-primary" id="manageBtn"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Manage</button>
+        </div>
+      </section>
+      <nav class="tabs" id="tabs" role="tablist" aria-label="Prototype details">
+        <button type="button" class="tab is-active" role="tab" data-tab="overview" aria-selected="true">Overview</button>
+        <button type="button" class="tab" role="tab" data-tab="insights" aria-selected="false"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Insights</button>
+        <button type="button" class="tab" role="tab" data-tab="versions" aria-selected="false">Version history</button>
+        <button type="button" class="tab" role="tab" data-tab="changelog" aria-selected="false">Change log</button>
+        <button type="button" class="tab" role="tab" data-tab="components" aria-selected="false">Components</button>
+        <button type="button" class="tab" role="tab" data-tab="code" aria-selected="false">Code</button>
+        <button type="button" class="tab" role="tab" data-tab="storybook" aria-selected="false">Storybook</button>
+        <button type="button" class="tab" role="tab" data-tab="instructions" aria-selected="false">Instructions</button>
+      </nav>
+    </header>
 
     <div class="notice" id="authNotice" hidden></div>
     <div class="notice is-error" id="errorNotice" hidden></div>
@@ -211,17 +229,6 @@
         <p class="status" id="editStatusMessage" aria-live="polite"></p>
       </form>
     </section>
-
-    <nav class="tabs" id="tabs" role="tablist" aria-label="Prototype details">
-      <button type="button" class="tab is-active" role="tab" data-tab="overview" aria-selected="true">Overview</button>
-      <button type="button" class="tab" role="tab" data-tab="insights" aria-selected="false"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Insights</button>
-      <button type="button" class="tab" role="tab" data-tab="versions" aria-selected="false">Version history</button>
-      <button type="button" class="tab" role="tab" data-tab="changelog" aria-selected="false">Change log</button>
-      <button type="button" class="tab" role="tab" data-tab="components" aria-selected="false">Components</button>
-      <button type="button" class="tab" role="tab" data-tab="code" aria-selected="false">Code</button>
-      <button type="button" class="tab" role="tab" data-tab="storybook" aria-selected="false">Storybook</button>
-      <button type="button" class="tab" role="tab" data-tab="instructions" aria-selected="false">Instructions</button>
-    </nav>
 
     <section class="tab-panel" id="panel-overview" data-panel="overview">
       <div class="grid">
