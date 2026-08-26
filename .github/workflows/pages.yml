@@ -26,15 +26,17 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    env:
+      VERSION_SYNC_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Record pushed mock versions
-        if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY != '' }}
+        if: ${{ env.VERSION_SYNC_SERVICE_KEY != '' }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.VERSION_SYNC_SERVICE_KEY }}
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_BEFORE: ${{ github.event.before }}
           VERSION_SYNC_ALL: ${{ github.event_name == 'workflow_dispatch' && inputs.sync_all_versions || false }}
