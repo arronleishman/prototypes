@@ -19,6 +19,7 @@ create table if not exists prototype_versions (
   prototype_id text not null references prototype_library(id) on delete cascade,
   label text not null,
   summary text not null default '',
+  commit_sha text,
   created_at timestamptz not null default now(),
   created_by uuid references auth.users(id) on delete set null
 );
@@ -46,6 +47,7 @@ create index if not exists prototype_artifacts_lookup_idx
 alter table prototype_library enable row level security;
 alter table prototype_versions enable row level security;
 alter table prototype_artifacts enable row level security;
+alter table prototype_versions add column if not exists commit_sha text;
 
 drop policy if exists "Authenticated users can read prototype library" on prototype_library;
 drop policy if exists "Authenticated users can manage prototype library" on prototype_library;
@@ -68,6 +70,10 @@ create policy "Authenticated users can read prototype artifacts"
   on prototype_artifacts for select to authenticated using (true);
 create policy "Authenticated users can manage prototype artifacts"
   on prototype_artifacts for all to authenticated using (true) with check (true);
+
+create unique index if not exists prototype_versions_commit_idx
+  on prototype_versions (prototype_id, commit_sha)
+  where commit_sha is not null;
 
 insert into storage.buckets (id, name, public)
 values ('prototype-artifacts', 'prototype-artifacts', false)

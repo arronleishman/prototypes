@@ -250,7 +250,7 @@
     <section class="tab-panel" id="panel-versions" data-panel="versions" hidden>
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-          <div><h2>Version history</h2><p>Curated milestones for this prototype and its developer hand-off.</p></div>
+          <div><h2>Version history</h2><p>Pushes that changed this mock appear automatically, alongside curated milestones.</p></div>
           <button type="button" class="btn btn-primary" id="addVersionBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add version</button>
         </div>
         <form id="versionForm" hidden>
@@ -437,7 +437,7 @@
         document.getElementById('statVersions').textContent = String(versions.length);
         var list = document.getElementById('versionList');
         if (!versions.length) {
-          list.innerHTML = '<div class="empty"><p>No versions recorded yet.</p><button type="button" class="btn btn-primary" data-start-version="1">Add the first version</button></div>';
+          list.innerHTML = '<div class="empty"><p>No pushed versions recorded yet.</p><p>Push a change to this mock, or add a curated milestone manually.</p><button type="button" class="btn btn-primary" data-start-version="1">Add the first version</button></div>';
           return;
         }
         list.innerHTML = versions.map(function (version) {
