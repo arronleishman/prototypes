@@ -22,6 +22,7 @@
   --surface-primary: #4f3fa0;
   --surface-primary-emphasis: #403577;
   --surface-primary-accent: #dedaf4;
+  --surface-strong: #3d425c;
   --surface-accent: #e2e3e9;
   --surface-default: #fff;
   --surface-subtle-light: #f7f7fa;
@@ -147,9 +148,10 @@ a { color: var(--text-link-color); text-decoration: none; }
 /* ---- App shell ---- */
 .App { display: flex; min-height: 100vh; }
 .NavBar {
-  width: 252px; flex: 0 0 252px; background: var(--deep-black);
+  width: 48px; flex: 0 0 48px; background: var(--deep-black);
   display: flex; position: sticky; top: 0; height: 100vh; overflow: hidden;
 }
+.NavBar.is-subnav-open { width: 252px; flex-basis: 252px; }
 .NavBar-rail {
   width: 48px; flex: 0 0 48px; background: var(--deep-black);
   display: flex; flex-direction: column; min-height: 100%;
@@ -173,6 +175,7 @@ a { color: var(--text-link-color); text-decoration: none; }
   display: flex; align-items: center; justify-content: center;
   border-radius: 5px 0 0 5px; border: 0; cursor: pointer; color: var(--deep-black);
 }
+.NavBar.is-subnav-open .NavBar-expandButton i { transform: rotate(180deg); }
 .NavBar-li[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute; left: 52px; top: 50%; transform: translateY(-50%);
@@ -183,10 +186,11 @@ a { color: var(--text-link-color); text-decoration: none; }
 }
 .NavBar-li:hover[data-tooltip]::after { opacity: 1; visibility: visible; }
 .NavBar-subnav {
-  width: 204px; flex: 0 0 204px; min-height: 100%;
+  display: none; width: 204px; flex: 0 0 204px; min-height: 100%;
   padding: 0 8px; background: var(--deep-black);
   border-left: 1px solid rgba(255,255,255,.22); color: var(--text-inverse);
 }
+.NavBar.is-subnav-open .NavBar-subnav { display: block; }
 .NavBar-subnavHeader {
   display: flex; align-items: center; gap: 8px; height: 48px;
   padding: 0 4px; font-size: var(--font-size-medium); font-weight: var(--font-weight-regular);
@@ -389,20 +393,20 @@ a { color: var(--text-link-color); text-decoration: none; }
 .ValidIcon { color: var(--text-success); margin-left: var(--padding-xxs); }
 .BtnGroup {
   display: inline-flex; align-items: stretch; width: auto;
-  border: 1px solid var(--surface-primary-emphasis);
+  border: 1px solid var(--border-default);
   border-radius: var(--border-radius-default); overflow: hidden; background: var(--surface-default);
 }
 .BtnGroup > button {
-  appearance: none; flex: 0 0 auto; border: 0; margin: 0; min-height: 35px; padding: 0 14px;
+  appearance: none; flex: 0 0 auto; border: 0; margin: 0; min-height: 35px; padding: 0 12px;
   background: transparent; color: var(--text-accent); font: inherit;
-  font-size: var(--font-size-small); font-weight: var(--font-weight-semibold); cursor: pointer;
+  font-size: 14px; font-weight: var(--font-weight-regular); cursor: pointer;
 }
-.BtnGroup > button + button { border-left: 1px solid var(--surface-primary-emphasis); }
+.BtnGroup > button + button { border-left: 1px solid var(--border-default); }
 .BtnGroup > button:hover { background: var(--surface-subtle-dark); }
 .BtnGroup > button.is-active {
-  background: var(--surface-primary-emphasis); color: var(--text-inverse);
+  background: var(--surface-strong); color: var(--text-inverse);
 }
-.BtnGroup > button.is-active:hover { background: var(--surface-primary-emphasis); }
+.BtnGroup > button.is-active:hover { background: var(--surface-strong); }
 .DurationControl { display: flex; align-items: stretch; gap: var(--padding-xs); max-width: 450px; }
 .DurationControl > .Input { width: 120px; flex: 0 0 120px; }
 .DurationControl .BtnGroup > button { min-width: 64px; }
@@ -691,6 +695,7 @@ a { color: var(--text-link-color); text-decoration: none; }
   display: flex; align-items: center; justify-content: center; overflow: hidden;
   color: var(--text-inverse); font-size: var(--font-size-small); font-weight: var(--font-weight-semibold);
   border-right: 1px solid var(--surface-inverse-divider); min-width: 0;
+  padding: 0 8px; white-space: nowrap; text-overflow: ellipsis;
   cursor: pointer;
 }
 /* Uncoloured segments sit on a light background, so the inverse divider would vanish */
@@ -1126,13 +1131,13 @@ a { color: var(--text-link-color); text-decoration: none; }
 .EffortControl > .Input { width: 249px; flex: 1 1 auto; }
 .EffortControl-group { flex: 0 0 300px; min-height: 35px; border-color: var(--border-default); }
 .EffortControl-group > button { flex: 1 1 0; min-height: 35px; padding: 0 12px; font-size: 14px; }
-.EffortControl-group > button.is-active { background: var(--surface-emphasis); color: var(--text-inverse); }
+.EffortControl-group > button.is-active { background: var(--surface-strong); color: var(--text-inverse); }
 .EffortControl-group > button + button { border-left-color: var(--border-default); }
 .Modal .DurationControl { width: 560px; max-width: 100%; gap: 8px; }
 .Modal .DurationControl > .Input { width: 180px; flex: 0 0 180px; }
 .Modal .DurationControl .BtnGroup { flex: 1 1 auto; min-height: 35px; border-color: var(--border-default); }
 .Modal .DurationControl .BtnGroup > button { flex: 1 1 0; min-width: 0; min-height: 35px; padding: 0 12px; font-size: 14px; }
-.Modal .DurationControl .BtnGroup > button.is-active { background: var(--surface-emphasis); color: var(--text-inverse); }
+.Modal .DurationControl .BtnGroup > button.is-active { background: var(--surface-strong); color: var(--text-inverse); }
 .Modal .DurationControl .BtnGroup > button + button { border-left-color: var(--border-default); }
 .ModalFieldRow#resourceStartRow .ModalNumField > .Input { width: 180px; flex: 0 0 180px; }
 .ModalFieldRow#resourceStartRow .ModalNumField-unit { display: none; }
@@ -1140,7 +1145,7 @@ a { color: var(--text-link-color); text-decoration: none; }
 #resourceModalOverlay .Modal-footer .Btn:not(.Btn--primary) {
   border-color: var(--border-primary); color: var(--text-primary); background: var(--surface-default);
 }
-.Modal .DurationControl .BtnGroup > button { min-width: 56px; padding: 0 10px; }
+.Modal .DurationControl .BtnGroup > button { min-width: 56px; padding: 0 12px; }
 .Modal .DurationEquivalent { min-height: 0; }
 
 .hidden { display: none !important; }
@@ -1203,7 +1208,7 @@ a { color: var(--text-link-color); text-decoration: none; }
 </head>
 <body>
 <div class="App">
-  <nav class="NavBar" aria-label="Main">
+  <nav class="NavBar" id="navBar" aria-label="Main">
     <div class="NavBar-rail">
     <div class="NavBar-logoWrapper">
       <img class="NavBar-dayshapeIcon" src="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzEuOTUgMTcxLjQ4Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmNTkzYjt9PC9zdHlsZT48L2RlZnM+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTExLjczLDUzLjYzYTczLjA3LDczLjA3LDAsMCwxLDAsNjUuMzRDMTIxLjE1LDExMS4yMSwxMjgsOTkuNDYsMTI4LDg2LjNTMTIxLjE1LDYxLjM5LDExMS43Myw1My42M1oiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik03OS40OCw0NC44OWE3NCw3NCwwLDAsMSwwLDgzLjM4LDQyLjMxLDQyLjMxLDAsMCwwLDAtODMuMzhaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNTIuMDUsNDRoLS4xNnY4NC4zNWguMTZDNzEuMzQsMTI4LjM0LDg3LDEwOS40Niw4Nyw4Ni4xNlM3MS4zNCw0NCw1Mi4wNSw0NFoiLz48L3N2Zz4=" alt="Dayshape" />
@@ -1219,7 +1224,7 @@ a { color: var(--text-link-color); text-decoration: none; }
       <li class="NavBar-li" data-tooltip="Reports"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-regular fa-file-lines"></i></a></li>
       <li class="NavBar-li" data-tooltip="Referential data"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-solid fa-folder-tree"></i></a></li>
       <li class="NavBar-li is-active" data-tooltip="Demand templates">
-        <a class="NavBar-menuLink" href="#" onclick="requestWizardExit(); return false;" title="Demand templates">
+        <a class="NavBar-menuLink" href="#" onclick="toggleNavSubnav(); return false;" title="Demand templates">
           <i class="NavBar-menuIcon fa-solid fa-wrench"></i>
         </a>
       </li>
@@ -1229,12 +1234,12 @@ a { color: var(--text-link-color); text-decoration: none; }
       <li class="NavBar-li" data-tooltip="Log out"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-solid fa-right-from-bracket"></i></a></li>
     </ul>
     <div class="NavBar-menuBottom">
-      <button class="NavBar-expandButton" type="button" aria-label="Expand navigation"><i class="fa-solid fa-chevron-right"></i></button>
+        <button class="NavBar-expandButton" type="button" aria-label="Expand navigation" onclick="toggleNavSubnav()"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
     </div>
     <aside class="NavBar-subnav" aria-label="Demand templates">
       <div class="NavBar-subnavHeader">
-        <button class="NavBar-subnavBack" type="button" aria-label="Collapse menu">
+        <button class="NavBar-subnavBack" type="button" aria-label="Collapse menu" onclick="closeNavSubnav()">
           <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
         </button>
         <span>Configuration</span>
@@ -1257,6 +1262,10 @@ a { color: var(--text-link-color); text-decoration: none; }
       </button>
       <h1 class="TopBar-title" id="topTitle">Demand profile templates</h1>
       <div class="TopBar-spacer"></div>
+      <button class="Btn Btn--primary TopBar-action" id="topCreate" type="button"
+        onclick="openWizard(true)">
+        <i class="fa-solid fa-plus" aria-hidden="true"></i> Create
+      </button>
     </header>
 
     <!-- Catalogue -->
@@ -1266,10 +1275,6 @@ a { color: var(--text-link-color); text-decoration: none; }
           <i class="fa-solid fa-magnifying-glass"></i>
           <input id="catalogueSearch" type="search" placeholder="Search demand profiles…" oninput="renderCatalogue()" />
         </div>
-        <div class="Toolbar-spacer"></div>
-        <button class="Btn Btn--primary" type="button" onclick="openWizard(true)">
-          <i class="fa-solid fa-plus"></i> Create demand template
-        </button>
       </div>
       <table class="u-table table-hover">
         <thead>
@@ -1480,8 +1485,10 @@ a { color: var(--text-link-color); text-decoration: none; }
             <input class="Input" id="resourceWeightInput" type="number" min="0" max="100" step="1" value="100"
               oninput="resourceModalState.weightTouched = true; syncResourceModalConfirm()">
             <div class="BtnGroup EffortControl-group" role="group" aria-label="Effort unit">
-              <button type="button" class="is-active" aria-pressed="true">Percentage</button>
-              <button type="button" aria-pressed="false">Hours</button>
+              <button type="button" data-effort-unit="percentage" class="is-active" aria-pressed="true"
+                onclick="setResourceEffortUnit('percentage')">Percentage</button>
+              <button type="button" data-effort-unit="hours" aria-pressed="false"
+                onclick="setResourceEffortUnit('hours')">Hours</button>
             </div>
           </div>
           <span class="Field-hint" id="resourceWeightHint">Requirements in this phase must total 100%.</span>
@@ -1710,7 +1717,21 @@ function showScreen(name) {
   document.getElementById('topTitle').textContent =
     name === 'wizard' ? 'Create Demand Template' : 'Demand profile templates';
   document.getElementById('topBarBack')?.classList.toggle('hidden', name !== 'wizard');
+  document.getElementById('topCreate')?.classList.toggle('hidden', name !== 'catalogue');
   if (name === 'catalogue') renderCatalogue();
+}
+
+function toggleNavSubnav() {
+  const nav = document.getElementById('navBar');
+  if (!nav) return;
+  nav.classList.toggle('is-subnav-open');
+  const expanded = nav.classList.contains('is-subnav-open');
+  document.querySelector('.NavBar-expandButton')?.setAttribute('aria-label', expanded ? 'Collapse navigation' : 'Expand navigation');
+}
+
+function closeNavSubnav() {
+  document.getElementById('navBar')?.classList.remove('is-subnav-open');
+  document.querySelector('.NavBar-expandButton')?.setAttribute('aria-label', 'Expand navigation');
 }
 
 function toast(msg) {
@@ -1848,6 +1869,13 @@ function requestTypeKey(request, d = state.draft) {
   return isPhaseWorld(d) ? request?.phase : request?.bookingType;
 }
 
+function requestEffortLabel(request) {
+  if (request?.effortUnit === 'hours' && Number.isFinite(Number(request.effortValue))) {
+    return `${Number(request.effortValue)}h`;
+  }
+  return `${Math.round(Number(request?.weightPercent) || 0)}%`;
+}
+
 function requestsForType(type, d = state.draft) {
   return requestItems(d).filter(request => requestTypeKey(request, d) === type);
 }
@@ -1945,6 +1973,10 @@ function normaliseResourceRequests(d) {
       bookingType: request.bookingType || '',
       weightPercent: Number.isFinite(Number(request.weightPercent ?? request.effortPercent))
         ? Math.min(100, Math.max(0, Math.round(Number(request.weightPercent ?? request.effortPercent))))
+        : null,
+      effortUnit: request.effortUnit === 'hours' ? 'hours' : 'percentage',
+      effortValue: Number.isFinite(Number(request.effortValue))
+        ? Math.max(0, Number(request.effortValue))
         : null,
       segments: Array.isArray(request.segments)
         ? request.segments.map(segment => ({
@@ -2879,7 +2911,7 @@ function shapeSegPopoverHtml(data) {
     const rows = (data.types || []).map(type =>
       `<div class="ShapeSegPopover-row">
         <span><span class="SegRow-dot" style="background:${type.color};margin-right:6px;" aria-hidden="true"></span>${esc(type.name)}</span>
-        <strong>${type.count} req${type.count === 1 ? '' : 's'}</strong>
+        <strong>${esc(type.effort || '—')} · ${type.count} req${type.count === 1 ? '' : 's'}</strong>
       </div>`).join('');
     return `<div class="ShapeSegPopover-title"><span>${esc(data.name)}</span></div>
       <div class="ShapeSegPopover-rows">
@@ -2973,8 +3005,14 @@ function demandShapeMarkup(d = state.draft) {
       const end = Math.min(total, start + Math.max(0, Math.round(Number(segment.durationWeeks) || 0)));
       for (let week = start; week < end; week += 1) {
         const entry = weeks[week].get(name);
-        if (entry) entry.count += 1;
-        else weeks[week].set(name, { name, color, count: 1 });
+        if (entry) {
+          entry.count += 1;
+          entry.efforts.add(requestEffortLabel(request));
+        } else {
+          weeks[week].set(name, {
+            name, color, count: 1, efforts: new Set([requestEffortLabel(request)])
+          });
+        }
       }
     });
   });
@@ -2982,7 +3020,9 @@ function demandShapeMarkup(d = state.draft) {
   // Collapse neighbouring weeks that carry an identical mix so the bar reads as blocks, not 40 slivers.
   const runs = [];
   weeks.forEach((map, index) => {
-    const types = [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+    const types = [...map.values()]
+      .map(({ efforts, ...type }) => ({ ...type, effort: [...efforts].join(' / ') }))
+      .sort((a, b) => a.name.localeCompare(b.name));
     const key = types.map(type => `${type.name}:${type.count}`).join('|');
     const last = runs[runs.length - 1];
     if (last && last.key === key) {
@@ -3018,7 +3058,7 @@ function demandShapeMarkup(d = state.draft) {
       onmouseenter="showShapeSegPopover(event)"
       onmouseleave="hideShapeSegPopover()"
       onfocus="showShapeSegPopover(event)"
-      onblur="hideShapeSegPopover()">${width >= 8 ? esc(width >= 16 ? full : `${run.weeks}w`) : ''}</div>`;
+      onblur="hideShapeSegPopover()">${width >= 8 ? esc(width >= 30 ? full : `${run.weeks}w`) : ''}</div>`;
   }).join('');
 
   const legendTypes = [];
@@ -4221,7 +4261,8 @@ function validateSharesUI() {
 
 /* ---------- Resource request modal + mini-Gantt ---------- */
 const resourceModalState = {
-  editingId: null, durationUnit: 'weeks', startWeek: null, segmentId: null, weightTouched: false
+  editingId: null, durationUnit: 'weeks', effortUnit: 'percentage',
+  startWeek: null, segmentId: null, weightTouched: false
 };
 // The Gantt is week-granular, so other units are conveniences that round to whole weeks.
 const DAYS_PER_WEEK = 7;
@@ -4260,6 +4301,24 @@ function setResourceDurationUnit(unit) {
   syncResourceDurationUnits();
   syncResourceModalConfirm();
 }
+
+function syncResourceEffortUnit() {
+  document.querySelectorAll('#resourceModalOverlay [data-effort-unit]').forEach(button => {
+    const active = button.dataset.effortUnit === resourceModalState.effortUnit;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  const input = document.getElementById('resourceWeightInput');
+  if (input) input.max = resourceModalState.effortUnit === 'hours' ? '9999' : '100';
+}
+
+function setResourceEffortUnit(unit) {
+  if (!['percentage', 'hours'].includes(unit)) return;
+  resourceModalState.effortUnit = unit;
+  syncResourceEffortUnit();
+  syncResourceModalConfirm();
+}
+
 let ganttDragState = null;
 
 function requestTypeName(request, d = state.draft) {
@@ -4349,7 +4408,7 @@ function openResourceModal(editingId = null, startWeek = null, segmentId = null)
     ? requestsForType(document.getElementById('resourceTypeSelect').value).length
     : 0;
   weightInput.value = editing
-    ? Math.round(Number(editing.weightPercent) || 0)
+    ? Math.round(Number(editing.effortUnit === 'hours' ? editing.effortValue : editing.weightPercent) || 0)
     : initialWeightPeers ? Math.floor(100 / (initialWeightPeers + 1)) : 100;
   weightInput.disabled = !!segmentId;
   weightHint.textContent = segmentId
@@ -4367,7 +4426,9 @@ function openResourceModal(editingId = null, startWeek = null, segmentId = null)
   const multiSegment = segments.length > 1 && !segmentId;
 
   resourceModalState.durationUnit = 'weeks';
+  resourceModalState.effortUnit = editing?.effortUnit || 'percentage';
   syncResourceDurationUnits();
+  syncResourceEffortUnit();
   weeksInput.value = selectedSegment?.durationWeeks || (editing && !segmentId ? (placedWeeks || 4) : 4);
   weeksInput.disabled = multiSegment;
   weeksHint.textContent = multiSegment
@@ -4442,6 +4503,7 @@ function confirmResourceModal() {
   const weeks = resourceDurationWeeks();
   const startWeek = Math.max(0, Math.round(Number(document.getElementById('resourceStartInput').value) || 1) - 1);
   const weightPercent = Math.min(100, Math.max(0, Math.round(Number(document.getElementById('resourceWeightInput').value) || 0)));
+  const effortValue = Math.max(0, Number(document.getElementById('resourceWeightInput').value) || 0);
   if ((isPhaseWorld() && !type) || !grade) return;
   ensureTypeSequence(type);
   const existing = resourceModalState.editingId ? findRequest(resourceModalState.editingId) : null;
@@ -4467,6 +4529,8 @@ function confirmResourceModal() {
     const previousType = requestTypeKey(existing);
     existing.grade = grade;
     existing.role = role;
+    existing.effortUnit = resourceModalState.effortUnit;
+    existing.effortValue = effortValue;
     existing.weightPercent = weightPercent;
     if (isPhaseWorld()) {
       existing.phase = type;
@@ -4490,6 +4554,8 @@ function confirmResourceModal() {
       phase: isPhaseWorld() ? type : '',
       bookingType: isPhaseWorld() ? '' : type,
       weightPercent,
+      effortUnit: resourceModalState.effortUnit,
+      effortValue,
       segments: [{ id: id('seg'), startWeek, durationWeeks: weeks }]
     };
     state.draft.resourceRequests.push(request);
@@ -4870,7 +4936,7 @@ function reviewDemandTablesMarkup(d = state.draft) {
               sum + (Number(segment.durationWeeks) || 0), 0);
             return `<tr>
               <td class="ReviewDemandResource">${esc(request.grade || 'Any grade')}${request.role ? ` / ${esc(request.role)}` : ''}</td>
-              <td>${Math.round(Number(request.weightPercent) || 0)}%</td>
+              <td>${esc(requestEffortLabel(request))}</td>
               <td>${weeks}</td>
               <td>${weeks * 7}</td>
               <td>—</td>
