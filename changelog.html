@@ -426,6 +426,14 @@
       .stats { grid-template-columns: 1fr; }
       .btn-danger-ghost { margin-left: 0; }
     }
+    body.is-embedded { background: transparent; }
+    body.is-embedded .wrap { width: 100%; padding: 0 0 28px; }
+    body.is-embedded .back,
+    body.is-embedded .eyebrow,
+    body.is-embedded h1,
+    body.is-embedded #subtitle,
+    body.is-embedded #actions .btn-ghost { display: none; }
+    body.is-embedded .toolbar { margin-top: 0; }
   </style>
 </head>
 <body>
@@ -440,6 +448,7 @@
         <i class="fa-solid fa-plus" aria-hidden="true"></i> Add change
       </button>
       <a class="btn-ghost" id="openMock" href="#"><i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i> Open prototype</a>
+      <a class="btn-ghost" id="workspaceLink" href="#">Workspace</a>
       <a class="btn-ghost" id="insightsLink" href="#">Insights</a>
       <a class="btn-ghost" href="index.html">Back to hub</a>
     </div>
@@ -517,6 +526,8 @@
   <script>
     (function () {
       if (!window.PrototypesAccess.requireInternalAccess()) return;
+      var embedded = new URLSearchParams(location.search).get('embedded') === '1';
+      if (embedded) document.body.classList.add('is-embedded');
 
       var params = new URLSearchParams(location.search);
       var id = (params.get('id') || '').trim();
@@ -995,6 +1006,7 @@
           var insights = document.getElementById('insightsLink');
           if (mockPath) openMock.href = mockPath;
           else openMock.hidden = true;
+          document.getElementById('workspaceLink').href = access.detailsUrlWithKey(id, 'changelog');
           insights.href = 'feedback.html?id=' + encodeURIComponent(id) + keyQ;
           load();
         })

@@ -142,3 +142,11 @@ Publish directory: `.` · No build command.
 - **Your team:** use **Copy hub link** on the hub (includes a secret `?key=`). That unlocks the hub + feedback inboxes.
 - Change `internalAccessKey` in `config.js` anytime to revoke old hub links.
 
+## Prototype workspaces and developer files
+
+- Click a mock card to open its internal **Prototype workspace**. The workspace keeps the mock preview, Insights, Change log, curated Version history, and developer resources together.
+- `Share`, `Open mock`, and `Download` are in the workspace header. The existing direct mock, `feedback.html`, and `changelog.html` URLs continue to work.
+- To add a prototype manually, use **Add prototype** in the hub. Upload the HTML mock, then add Components, Code, Storybook, or Instructions from the workspace tabs.
+- Run `supabase-prototype-library.sql` once in the Supabase SQL editor. In Supabase Auth, enable email/magic-link sign-in, add the approved team members, and disable open sign-ups. The prototype library uses authenticated users and a private `prototype-artifacts` Storage bucket.
+- The old `internalAccessKey` is still useful as a navigation gate, but it is not a security boundary. Supabase Auth/RLS protects managed metadata and uploaded developer files.
+

@@ -52,6 +52,7 @@
       .replace(/\/mocks\/[^/]+$/i, '/')
       .replace(/\/feedback\.html$/i, '/')
       .replace(/\/changelog\.html$/i, '/')
+      .replace(/\/details\.html$/i, '/')
       .replace(/\/index\.html$/i, '/');
     if (!/\/$/.test(path)) path += '/';
     return location.origin + path;
@@ -67,6 +68,15 @@
   function feedbackUrlWithKey(prototypeId) {
     var url = new URL('feedback.html', siteRootUrl());
     if (prototypeId) url.searchParams.set('id', prototypeId);
+    var key = configuredKey();
+    if (key) url.searchParams.set('key', key);
+    return url.href;
+  }
+
+  function detailsUrlWithKey(prototypeId, tab) {
+    var url = new URL('details.html', siteRootUrl());
+    if (prototypeId) url.searchParams.set('id', prototypeId);
+    if (tab) url.searchParams.set('tab', tab);
     var key = configuredKey();
     if (key) url.searchParams.set('key', key);
     return url.href;
@@ -131,6 +141,7 @@
     requireInternalAccess: requireInternalAccess,
     hubUrlWithKey: hubUrlWithKey,
     feedbackUrlWithKey: feedbackUrlWithKey,
+    detailsUrlWithKey: detailsUrlWithKey,
     configuredKey: configuredKey,
   };
 })(window);

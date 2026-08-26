@@ -9,6 +9,7 @@ Keep shareable HTML mocks in one place. Reviewers open a mock URL, leave feedbac
 ## Layout
 
 - `index.html` — internal landing page (gated by `internalAccessKey`)
+- `details.html?id=<prototype-id>` — internal prototype workspace (preview, Insights, versions, changelog, developer files)
 - `manifest.json` — list of mocks (required for hub cards)
 - `mocks/*.html` — individual prototypes (**public** share links)
 - `feedback.html?id=<prototype-id>` — internal per-prototype inbox (gated)
@@ -17,6 +18,7 @@ Keep shareable HTML mocks in one place. Reviewers open a mock URL, leave feedbac
 - `shared/access.js` — hub/thread access gate
 - `shared/feedback-store.js`, `shared/feedback.js`, `shared/feedback.css` — feedback widget
 - `shared/changelog-store.js` — changelog / done-toggle store
+- `shared/supabase-auth.js`, `shared/prototype-library.js` — authenticated library metadata and private developer-file storage
 - `supabase-changelog.sql` — run once in Supabase for shared changelog sync
 - `scripts/add-changelog.mjs` — agent/CLI helper to add a changelog item
 - `.cursor/rules/in-dev-changelog.mdc` — auto-log changes when status is `in-development`
@@ -40,6 +42,8 @@ Keep shareable HTML mocks in one place. Reviewers open a mock URL, leave feedbac
 <script src="../shared/telemetry.js" defer></script>
 <script src="../shared/feedback.js" defer></script>
 ```
+
+The internal hub can also create managed prototypes and upload private HTML, instruction, component, code, and Storybook files after `supabase-prototype-library.sql` has been run and Supabase email/magic-link access is configured.
 
 4. Register/update `manifest.json` (`id` must match `data-prototype-id`):
 
