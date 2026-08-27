@@ -11,9 +11,9 @@
 
   function hasAccess() {
     var key = configuredKey();
-    if (!key) return true; // no key configured = open (dev fallback)
+    if (!key) return false; // missing config must fail closed
     try {
-      return sessionStorage.getItem(STORAGE_KEY) === key || localStorage.getItem(STORAGE_KEY) === key;
+      return sessionStorage.getItem(STORAGE_KEY) === key;
     } catch (e) {
       return false;
     }
@@ -24,7 +24,6 @@
     if (!expected || key !== expected) return false;
     try {
       sessionStorage.setItem(STORAGE_KEY, expected);
-      localStorage.setItem(STORAGE_KEY, expected);
     } catch (e) {}
     return true;
   }
@@ -128,8 +127,7 @@
 
   /** Call on hub + feedback pages. Returns false if page should stop booting. */
   function requireInternalAccess(options) {
-    if (!configuredKey()) return true;
-    if (absorbKeyFromUrl() || hasAccess()) return true;
+    if (configuredKey() && (absorbKeyFromUrl() || hasAccess())) return true;
     renderGate(options);
     return false;
   }
