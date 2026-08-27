@@ -130,6 +130,7 @@
     --pf-team-col-dim-w: 100px;
     --pf-team-col-hours-w: 56px;
     --pf-team-sub-row-h: 24px;
+    --pf-team-full-row-h: 27px;
     --pf-team-group-h: 27px;
     --pf-team-slim-h: 5px;
     --pf-team-bar-h: 23px;
@@ -140,9 +141,9 @@
     --surface-booking-trait-3: #67b95b;
     --border-xs: 1px;
     --border-emphasis: #babfd1;
-    --surface-row-alt: #f8f8fa;
-    --surface-header: #f8f8f8;
-    --surface-unavailability: #d4d4dc;
+    --surface-row-alt: #f8f9fb;
+    --surface-header: #fafafa;
+    --surface-unavailability: #e8e1f8;
     --surface-list-item-selected-light: #f0effb;
     --surface-icon-hover: #e2e3e9;
     --text-label: #4c5172;
@@ -781,6 +782,7 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     background: var(--surface-default);
     display: flex;
     flex-direction: column;
+    position: relative;
     overflow: hidden;
     min-height: 0;
     flex: 1 1 auto;
@@ -799,7 +801,7 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-headCorner {
     position: sticky; left: 0; z-index: 4;
     width: var(--pf-team-left-w); flex: 0 0 var(--pf-team-left-w);
-    background: var(--surface-default);
+    background: var(--surface-header);
     border-right: var(--border-xs) solid var(--border-subtle);
     display: flex; flex-direction: column; justify-content: flex-start;
     box-sizing: border-box;
@@ -863,7 +865,7 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     border-top: 1px solid var(--border-subtle);
     min-height: 27px;
     box-sizing: border-box;
-    background: var(--surface-default);
+    background: var(--surface-header);
 }
 .PfTeam-headCol {
     font-size: 11px; font-weight: var(--font-weight-regular);
@@ -888,11 +890,38 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     position: relative;
     background: var(--surface-default);
 }
+.PfTeam-bottomControls {
+    position: absolute; right: 16px; bottom: 16px; z-index: 45;
+    display: flex; align-items: center; gap: 5px;
+}
+.PfTeam-zoomGroup {
+    display: flex; align-items: stretch; width: 108px; height: 28px;
+}
+.PfTeam-bottomControls .Btn--iconSoft {
+    width: 35px; height: 28px; padding: 0; justify-content: center;
+    background: var(--surface-default); border: var(--border-xs) solid var(--border-default);
+    border-radius: 0; color: var(--text-accent);
+}
+.PfTeam-zoomGroup .Btn--iconSoft:first-child { border-radius: var(--border-radius-default) 0 0 var(--border-radius-default); }
+.PfTeam-zoomGroup .Btn--iconSoft:last-child { border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0; }
+.PfTeam-zoomGroup .Btn--iconSoft + .Btn--iconSoft { border-left: 0; }
+.PfTeam-bottomControls > .Btn--iconSoft { border-radius: var(--border-radius-default); }
+.PfTeam-bottomControls .Btn--iconSoft:hover { background: var(--surface-list-item-hover); }
+.PfTeam-zoomOptions {
+    position: absolute; right: 0; bottom: 33px; min-width: 120px; padding: 6px 0;
+    background: var(--surface-default); border: var(--border-xs) solid var(--border-subtle);
+    border-radius: var(--border-radius-default); box-shadow: 0 2px 8px rgb(39 35 61 / 16%);
+}
+.PfTeam-zoomOption {
+    display: block; width: 100%; padding: 7px 12px; border: 0; background: transparent;
+    color: var(--text-default); font: inherit; text-align: left; cursor: pointer;
+}
+.PfTeam-zoomOption:hover { background: var(--surface-list-item-hover); }
 .PfTeam-inner { position: relative; width: max-content; min-width: 100%; }
 .PfTeam-months, .PfTeam-weeks, .PfTeam-days { display: flex; }
 .PfTeam-month {
-    flex: 0 0 auto; height: 27px;
-    border-right: var(--border-xs) solid var(--border-emphasis);
+    flex: 0 0 auto; height: 24px;
+    border-right: 4px solid var(--border-subtle);
     border-bottom: var(--border-xs) solid var(--border-subtle);
     font-size: 11px; color: var(--text-default); font-weight: var(--font-weight-regular);
     display: flex; align-items: center; justify-content: center;
@@ -900,17 +929,17 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 }
 .PfTeam-week {
     width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); height: 23px;
-    border-right: var(--border-xs) solid var(--border-emphasis);
+    border-right: 4px solid var(--border-subtle);
     border-bottom: var(--border-xs) solid var(--border-subtle);
     font-size: 11px; color: var(--text-default); font-weight: var(--font-weight-regular);
     display: flex; align-items: center; justify-content: center;
     background: var(--surface-default);
 }
-.PfTeam-dayset { width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); display: flex; border-right: var(--border-xs) solid var(--border-emphasis); }
+.PfTeam-dayset { width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); display: flex; border-right: 4px solid var(--border-subtle); }
 .PfTeam-day {
     flex: 1; height: 24px;
     border-right: var(--border-xs) solid var(--border-subtle);
-    border-bottom: var(--border-xs) solid var(--border-emphasis);
+    border-bottom: var(--border-xs) solid var(--border-subtle);
     font-size: 11px; color: var(--text-default); font-weight: var(--font-weight-regular);
     display: flex; align-items: center; justify-content: center;
     background: var(--surface-default);
@@ -1066,6 +1095,14 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-cellw.is-clickable { cursor: pointer; }
 .PfTeam-cellw.is-clickable:hover { background: var(--surface-list-item-hover); }
 .PfTeam-cellw.is-selected { background: var(--surface-default); }
+.PfTeam-fullCell {
+    width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w);
+    height: var(--pf-team-full-row-h); box-sizing: border-box;
+    display: flex; align-items: center; justify-content: center;
+    border-right: var(--border-xs) solid var(--surface-default);
+    border-bottom: var(--border-xs) solid var(--surface-default);
+    color: var(--text-default); font-size: var(--font-size-small);
+}
 
 .PfTeam-grid { position: absolute; inset: 0; display: flex; pointer-events: none; z-index: 1; }
 .PfTeam-grid > i { width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); display: flex; border-right: var(--border-xs) solid var(--border-emphasis); }
@@ -1077,9 +1114,9 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-bar {
     position: absolute; height: var(--pf-team-bar-h); min-width: 2px;
     border: var(--border-xs) solid var(--pf-team-bar-border);
-    border-radius: 2px; background-color: var(--surface-booking-trait-1); color: var(--text-white);
+    border-radius: 3px; background-color: var(--surface-booking-trait-1); color: var(--text-white);
     display: flex; justify-content: space-between;
-    transition: box-shadow .1s, opacity .1s; cursor: grab;
+    transition: box-shadow .1s, opacity .1s; cursor: pointer;
     user-select: none; -webkit-user-select: none;
 }
 .PfTeam-bar:hover { box-shadow: 1px 1px 6px 2px rgba(64, 64, 64, .3); }
@@ -1087,8 +1124,8 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-bar.is-dragging,
 .PfTeam-bar.is-resizing { cursor: grabbing; z-index: 14; transition: none; }
 .PfTeam-barContent {
-    flex: 1 1 auto; min-width: 0; display: flex; height: 21px; line-height: 21px;
-    font-size: 13px; font-weight: var(--font-weight-regular); padding-left: 2px; margin-right: 4px;
+    flex: 1 1 auto; min-width: 0; display: flex; height: 21px; line-height: 22px;
+    font-size: var(--font-size-label); font-weight: 300; padding-left: 2px; margin-right: 7px;
     border-radius: 2px; overflow: hidden; white-space: nowrap; pointer-events: none;
 }
 .PfTeam-bar.is-selected .PfTeam-barContent { font-weight: var(--font-weight-regular); }
@@ -1124,8 +1161,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 
 /* Gantt aggregation selection panel — shared Portfolio detail pattern */
 .PfSelectionPanel {
-    position: fixed; top: 0; right: 0; bottom: 0;
-    width: 390px; max-width: calc(100vw - 48px);
+    position: fixed; top: calc(var(--topbar-h, 58px) + var(--tabbar-h, 41px)); right: 0; bottom: 0;
+    width: 394px; max-width: calc(100vw - 48px);
     display: flex; flex-direction: column;
     background: var(--surface-default);
     border-left: var(--border-xs) solid var(--border-subtle);
@@ -1134,11 +1171,18 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 }
 .PfSelectionPanel-head {
     display: flex; flex-direction: column; gap: 8px;
-    padding: var(--padding-sm);
+    padding: var(--padding-sm); padding-right: 48px;
     border-bottom: var(--border-xs) solid var(--border-section);
     flex: 0 0 auto;
 }
-.PfSelectionPanel-headTop { display: flex; align-items: flex-start; gap: 12px; }
+.PfSelectionPanel-headTop { position: relative; display: flex; align-items: flex-start; gap: 12px; }
+.PfSelectionPanel-close {
+    position: absolute; top: 0; right: -36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; flex: 0 0 24px; padding: 0;
+    border: var(--border-xs) solid var(--border-subtle); border-radius: var(--border-radius-default);
+    background: var(--surface-subtle-dark); color: var(--text-accent); cursor: pointer;
+}
 .PfSelectionPanel-title {
     flex: 1 1 auto; min-width: 0; margin: 0;
     color: var(--text-emphasis); font-size: 16px; font-weight: var(--font-weight-bold);
@@ -1151,9 +1195,23 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     border: var(--border-xs) solid var(--border-subtle); border-radius: var(--border-radius-default);
     color: var(--text-subtle); font-size: var(--font-size-small); font-weight: var(--font-weight-bold);
 }
-.PfSelectionPanel-actions { display: flex; align-items: center; gap: 5px; }
+.PfSelectionPanel-actions { display: flex; align-items: center; gap: 4px; }
+.PfSelectionPanel-actions .Btn--iconSoft {
+    width: 28px; height: 28px; padding: 0; border: var(--border-xs) solid var(--border-default);
+    background: var(--surface-default); color: var(--text-accent);
+}
 .PfSelectionPanel-body { flex: 1 1 auto; overflow-y: auto; }
-.PfSelectionPanel-section { border-bottom: var(--border-xs) solid var(--border-subtle); }
+.PfSelectionPanel-section { border-bottom: var(--border-xs) solid var(--border-default); }
+.PfSelectionPanel-section--collapsed { cursor: pointer; }
+.PfSelectionPanel-section--collapsed .PfSelectionPanel-sectionTitle {
+    display: flex; align-items: center; gap: 6px; min-height: 46px; box-sizing: border-box;
+}
+.PfSelectionPanel-section--collapsed .PfSelectionPanel-sectionTitle::before {
+    content: "\f054"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 12px;
+}
+.PfSelectionPanel-section--collapsed.is-open .PfSelectionPanel-sectionTitle::before { content: "\f078"; }
+.PfSelectionPanel-section--collapsed .PfSelectionPanel-fields { display: none; }
+.PfSelectionPanel-section--collapsed.is-open .PfSelectionPanel-fields { display: flex; }
 .PfSelectionPanel-sectionTitle {
     margin: 0; padding: 12px; color: var(--text-default);
     font-size: var(--font-size-medium); font-weight: var(--font-weight-bold);
@@ -1167,6 +1225,21 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     color: var(--text-emphasis); font-size: var(--font-size-medium); text-align: right;
 }
 .PfSelectionPanel-empty { padding: 16px 12px; color: var(--text-subtle); font-size: var(--font-size-small); }
+.PfSelectionPanel-schedule { padding: 0 12px 12px; }
+.PfSelectionPanel-scheduleTitle { margin: 0 0 8px; color: var(--text-default); font-size: var(--font-size-medium); font-weight: var(--font-weight-bold); }
+.PfSelectionPanel-scheduleGrid { display: grid; grid-template-columns: 1fr 28px 1fr; gap: 6px 4px; align-items: center; }
+.PfSelectionPanel-input {
+    min-width: 0; height: 24px; box-sizing: border-box; padding: 2px 8px;
+    border: var(--border-xs) solid var(--border-subtle); border-radius: 3px;
+    color: var(--text-primary); background: var(--surface-default); font: inherit; font-size: var(--font-size-small);
+    text-align: center;
+}
+.PfSelectionPanel-scheduleIcon { color: var(--text-default); text-align: center; }
+.PfSelectionPanel-scheduleMeta { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+.PfSelectionPanel-scheduleMeta i { width: 14px; color: var(--icon-default); text-align: center; }
+.PfSelectionPanel-scheduleMetaValue { color: var(--text-primary); font-size: var(--font-size-small); }
+.PfSelectionPanel-scheduleActions { display: flex; gap: 4px; margin-top: 8px; }
+.PfSelectionPanel-scheduleActions .Btn--iconSoft { width: 31px; height: 31px; padding: 0; }
 
 .PfTeam-slim { display: flex; height: var(--pf-team-slim-h); position: relative; z-index: 2; }
 .PfTeam-slimCell { width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); height: var(--pf-team-slim-h); }
@@ -1188,21 +1261,51 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     box-shadow: 0 2px 8px 2px rgb(178 178 178 / 30%);
 }
 .PfTeam-menuGroup { display: flex; flex-direction: column; }
+.PfTeam-menuGroup + .PfTeam-menuGroup {
+    border-top: var(--border-xs) solid var(--border-subtle);
+    padding-top: 15px;
+}
 .PfTeam-menuSection {
     padding: 15px var(--pf-team-menu-inset) 0;
     border-top: var(--border-xs) solid var(--border-subtle);
 }
 .PfTeam-menuGroup:first-child > .PfTeam-menuSection { border-top: 0; padding-top: 0; }
 .PfTeam-menuTitle {
+    padding: 0 var(--pf-team-menu-inset);
     font-size: var(--font-size-medium); color: var(--text-subtle);
     text-transform: uppercase; line-height: normal;
 }
+.PfTeam-menuSection .PfTeam-menuTitle { padding-left: 0; padding-right: 0; }
+.PfTeam-menuSection.has-select { display: flex; flex-direction: column; gap: 19px; padding-bottom: 8px; }
+.PfTeam-menuSelect {
+    width: 100%; height: 35px; box-sizing: border-box; padding: 0 12px;
+    border: var(--border-xs) solid var(--border-default); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--text-emphasis); font: inherit;
+}
+.PfTeam-menuSegment { display: flex; height: 35px; margin: 0 var(--pf-team-menu-inset); }
+.PfTeam-menuSegment button {
+    flex: 1; min-width: 0; padding: 0 8px; border: var(--border-xs) solid var(--border-default);
+    border-left: 0; background: var(--surface-default); color: var(--text-accent);
+    font: inherit; cursor: pointer;
+}
+.PfTeam-menuSegment button:first-child { border-left: var(--border-xs) solid var(--border-default); border-radius: var(--border-radius-default) 0 0 var(--border-radius-default); }
+.PfTeam-menuSegment button:last-child { border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0; }
+.PfTeam-menuSegment button.is-active { background: var(--surface-emphasis); color: var(--text-inverse); border-color: var(--surface-emphasis); }
+.PfTeam-menuSegment button:disabled { color: var(--text-disabled); cursor: not-allowed; background: var(--surface-default); }
+.PfTeam-menuCheck {
+    display: flex; align-items: center; gap: 8px; margin: 0 var(--pf-team-menu-inset);
+    font-size: var(--font-size-medium); color: var(--text-default); cursor: pointer;
+}
+.PfTeam-menuCheck input { width: 16px; height: 16px; accent-color: var(--primary); }
+.PfTeam-flyout .PfTeam-menuSegment,
+.PfTeam-flyout .PfTeam-menuCheck { margin-left: 0; margin-right: 0; }
 .PfTeam-menuItem {
     padding: 8px 33px 8px 24px; font-size: var(--font-size-medium); color: var(--text-default);
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
     cursor: pointer; line-height: normal;
 }
 .PfTeam-menuItem:hover, .PfTeam-menuItem.is-open { background: var(--surface-list-item-hover); }
+.PfTeam-menuItem.is-checked { font-weight: var(--font-weight-semibold); }
 .PfTeam-menuItem.is-static { cursor: default; }
 .PfTeam-menuItem i.fa-chevron-left { font-size: 10px; color: var(--text-default); opacity: 0; }
 .PfTeam-menuItem:hover i.fa-chevron-left, .PfTeam-menuItem.is-open i.fa-chevron-left { opacity: 1; }
@@ -1229,6 +1332,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     border-radius: 50%; border: var(--border-xs) solid var(--border-default); background: #fff;
 }
 .PfTeam-radio.is-checked .PfTeam-radioDot { border: 5px solid var(--primary); }
+.PfTeam-radio.is-disabled { color: var(--text-subtle); cursor: not-allowed; }
+.PfTeam-radio.is-disabled .PfTeam-radioDot { border-color: var(--border-emphasis); background: var(--surface-disabled); }
 .PfTeam-radioTag {
     margin-left: auto; font-size: var(--font-size-xsmall); color: var(--text-subtle);
     background: var(--surface-subtle-dark); border-radius: 9px; padding: 1px 7px;
@@ -2166,6 +2271,14 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
             <div id="tab-team" class="tabpane PfTeam">
                 <div class="PfTeam-scroller" id="pfTeamScroller">
                     <div class="PfTeam-inner" id="pfTeamInner"></div>
+                </div>
+                <div class="PfTeam-bottomControls" aria-label="Gantt navigation">
+                    <div class="PfTeam-zoomGroup" role="group" aria-label="Zoom actions">
+                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomOut" title="Zoom out" aria-label="Zoom out" onclick="pfSetZoom(pfTeamState.zoom - 0.25)"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
+                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomReset" title="Reset zoom" aria-label="Reset zoom" onclick="pfSetZoom(1); document.getElementById('pfTeamScroller').scrollLeft = 0"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
+                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomIn" title="Zoom in" aria-label="Zoom in" onclick="pfSetZoom(pfTeamState.zoom + 0.25)"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+                    </div>
+                    <button type="button" class="Btn--iconSoft" id="pfTeamZoomOptionsButton" title="Zoom options" aria-label="Zoom options" onclick="pfToggleZoomOptions(event)"><i class="fa-solid fa-caret-down" aria-hidden="true"></i></button>
                 </div>
             </div>
         </section>
@@ -5187,13 +5300,15 @@ const pfTeamState = {
     pivot: "resource",
     breakdown: "none",
     showAvailability: false,
-    availabilityMode: "slim",
+    availabilityMode: "full",
+    tasksInGrey: false,
     zoom: 1,
     expandedRows: {},
     collapsedEngagements: {},
     selectedCell: null,
     selectedItemId: null,
     selectedItemIds: [],
+    lastBarSelection: null,
     menu: null,
     flyout: null
 };
@@ -5348,6 +5463,32 @@ function pfScrollHorizon(delta) {
     if (host) host.scrollBy({ left: delta * PF_WEEK_W * 4, behavior: "smooth" });
 }
 
+function pfToggleZoomOptions(event) {
+    event.stopPropagation();
+    const existing = document.getElementById("pfTeamZoomOptions");
+    if (existing) {
+        existing.remove();
+        return;
+    }
+    const wrap = document.querySelector(".PfTeam-bottomControls");
+    if (!wrap) return;
+    const options = document.createElement("div");
+    options.id = "pfTeamZoomOptions";
+    options.className = "PfTeam-zoomOptions";
+    [[0.75, "75%"], [1, "100%"], [1.25, "125%"], [1.5, "150%"]].forEach(function (entry) {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "PfTeam-zoomOption";
+        option.textContent = entry[1];
+        option.addEventListener("click", function () {
+            pfSetZoom(entry[0]);
+            options.remove();
+        });
+        options.appendChild(option);
+    });
+    wrap.appendChild(options);
+}
+
 function pfBuildHeadCorner() {
     const corner = pfEl("div", "PfTeam-headCorner");
     const tools = pfEl("div", "PfTeam-headTools");
@@ -5378,38 +5519,6 @@ function pfBuildHeadCorner() {
     filterBtn.innerHTML = '<i class="fa-solid fa-filter" aria-hidden="true"></i>';
     tools.appendChild(filterBtn);
 
-    const prevBtn = pfEl("button", "Btn Btn--iconSoft");
-    prevBtn.type = "button";
-    prevBtn.title = "Previous planning horizon";
-    prevBtn.setAttribute("aria-label", "Previous planning horizon");
-    prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left" aria-hidden="true"></i>';
-    prevBtn.addEventListener("click", function (e) { e.stopPropagation(); pfScrollHorizon(-1); });
-    tools.appendChild(prevBtn);
-
-    const nextBtn = pfEl("button", "Btn Btn--iconSoft");
-    nextBtn.type = "button";
-    nextBtn.title = "Next planning horizon";
-    nextBtn.setAttribute("aria-label", "Next planning horizon");
-    nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>';
-    nextBtn.addEventListener("click", function (e) { e.stopPropagation(); pfScrollHorizon(1); });
-    tools.appendChild(nextBtn);
-
-    const zoomOutBtn = pfEl("button", "Btn Btn--iconSoft");
-    zoomOutBtn.type = "button";
-    zoomOutBtn.title = "Zoom out";
-    zoomOutBtn.setAttribute("aria-label", "Zoom out");
-    zoomOutBtn.innerHTML = '<i class="fa-solid fa-minus" aria-hidden="true"></i>';
-    zoomOutBtn.addEventListener("click", function (e) { e.stopPropagation(); pfSetZoom(pfTeamState.zoom - 0.25); });
-    tools.appendChild(zoomOutBtn);
-
-    const zoomInBtn = pfEl("button", "Btn Btn--iconSoft");
-    zoomInBtn.type = "button";
-    zoomInBtn.title = "Zoom in";
-    zoomInBtn.setAttribute("aria-label", "Zoom in");
-    zoomInBtn.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i>';
-    zoomInBtn.addEventListener("click", function (e) { e.stopPropagation(); pfSetZoom(pfTeamState.zoom + 0.25); });
-    tools.appendChild(zoomInBtn);
-
     const settingsBtn = pfEl("button", "Btn Btn--iconSoft");
     settingsBtn.type = "button";
     settingsBtn.id = "pfTeamSettingsBtn";
@@ -5422,11 +5531,6 @@ function pfBuildHeadCorner() {
 
     corner.appendChild(tools);
 
-    const cols = pfEl("div", "PfTeam-headCols");
-    cols.appendChild(pfEl("div", "PfTeam-headCol PfTeam-headCol--name", "Name"));
-    cols.appendChild(pfEl("div", "PfTeam-headCol PfTeam-headCol--grade", "Grade"));
-    cols.appendChild(pfEl("div", "PfTeam-headCol PfTeam-headCol--hours", "Hours"));
-    corner.appendChild(cols);
     return corner;
 }
 
@@ -5516,6 +5620,14 @@ function pfWorkerTotalHours(worker) {
     return Math.round(total);
 }
 
+function pfBuildFullCell(worker, wi) {
+    const hours = pfWeekConsumed(worker, wi);
+    const cell = pfEl("div", "PfTeam-fullCell", pfFmtHours(hours));
+    cell.style.background = pfSlimColour(hours, worker.cap);
+    cell.title = Math.round(hours * 10) / 10 + " h of " + worker.cap + " h — " + pfWcLabel(PF_WEEKS[wi]);
+    return cell;
+}
+
 function pfBuildWorkerRow(worker, index) {
     const isUa = pfIsUnassigned(worker);
     const rows = pfBuildBreakdownRows(worker, pfTeamState.breakdown);
@@ -5591,7 +5703,7 @@ function pfBuildWorkerRow(worker, index) {
     weeksCol.style.width = "100%";
     track.appendChild(weeksCol);
 
-    if (pfTeamState.showAvailability) {
+    if (pfTeamState.showAvailability && pfTeamState.availabilityMode === "slim") {
         dims.appendChild(pfEl("div", "PfTeam-slimGutter"));
         const slim = pfEl("div", "PfTeam-slim");
         PF_WEEKS.forEach(function (d, wi) {
@@ -5605,7 +5717,15 @@ function pfBuildWorkerRow(worker, index) {
         weeksCol.appendChild(slim);
     }
 
-    if (!rows) {
+    if (pfTeamState.showAvailability && pfTeamState.availabilityMode === "full") {
+        const full = pfEl("div", "PfTeam-subrow PfTeam-fullAvailability");
+        full.style.height = "var(--pf-team-full-row-h)";
+        PF_WEEKS.forEach(function (d, wi) { full.appendChild(pfBuildFullCell(worker, wi)); });
+        weeksCol.appendChild(full);
+        const fullLabel = pfEl("div", "PfTeam-dimLabel is-spacer", "");
+        fullLabel.style.height = "var(--pf-team-full-row-h)";
+        dims.appendChild(fullLabel);
+    } else if (!rows) {
         const flatH = pfBarsHeight(pfLaneCount(worker.items), PF_BAR_PAD);
         const flat = pfEl("div", "PfTeam-subrow");
         flat.style.height = flatH + "px";
@@ -5664,11 +5784,6 @@ function pfBuildCell(worker, row, wi) {
     const hours = pfCellHours(row, wi);
     const items = pfCellItems(row, wi);
     const c = pfEl("div", "PfTeam-cellw" + (hours ? "" : " is-zero"));
-    if (pfTeamState.showAvailability && pfTeamState.availabilityMode === "full") {
-        const ratio = worker.cap ? hours / (worker.cap / 5) : 0;
-        c.style.background = pfSlimColour(ratio * worker.cap / 5, worker.cap / 5);
-        c.classList.add("is-availability");
-    }
     c.appendChild(pfEl("span", "PfTeam-cellwHours", pfFmtHours(hours)));
     const key = worker.id + "|" + row.key + "|" + wi;
     const rowKey = worker.id + "|" + row.key;
@@ -5743,6 +5858,17 @@ function pfPanelField(icon, label, value) {
     </div>`;
 }
 
+function pfPanelSection(title, suffix, hasAction, isOpen) {
+    const cls = "PfSelectionPanel-section PfSelectionPanel-section--collapsed" + (isOpen ? " is-open" : "");
+    const action = hasAction
+        ? `<button type="button" class="Btn--iconSoft" title="${htmlEsc(title)} actions" aria-label="${htmlEsc(title)} actions"><i class="fa-solid fa-filter"></i></button>`
+        : "";
+    return `<section class="${cls}">
+        <h3 class="PfSelectionPanel-sectionTitle"><span>${htmlEsc(title)}${suffix ? ` <span style="font-weight:400">${htmlEsc("(" + suffix + ")")}</span>` : ""}</span>${action}</h3>
+        <div class="PfSelectionPanel-fields">${pfPanelField("fa-solid fa-circle-info", "Details", "—")}</div>
+    </section>`;
+}
+
 function renderPfSelectionPanel() {
     const old = document.getElementById("pfSelectionPanel");
     if (old) old.remove();
@@ -5765,39 +5891,99 @@ function renderPfSelectionPanel() {
         <div class="PfSelectionPanel-head">
             <div class="PfSelectionPanel-headTop">
                 <div>
-                    <h2 class="PfSelectionPanel-title">${multi ? contexts.length + " bookings selected" : htmlEsc(item.job || "Booking")}</h2>
+                    <h2 class="PfSelectionPanel-title">${multi ? contexts.length + " Selected Bookings" : htmlEsc(item.job || "Booking")}</h2>
                     ${!multi && item.code ? `<div class="PfSelectionPanel-code">${htmlEsc(item.code)}</div>` : ""}
                 </div>
-                <button type="button" class="Btn--iconSoft" aria-label="Close booking details" title="Close" onclick="clearPfSelection()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                <button type="button" class="PfSelectionPanel-close" aria-label="Close booking details" title="Close" onclick="clearPfSelection()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             </div>
-            <div class="PfSelectionPanel-toolbar">
-                <span class="PfSelectionPanel-badge">${multi ? "Multiple items" : htmlEsc(item.phase || "Unassigned")}</span>
-                <div class="PfSelectionPanel-actions">
-                    ${!multi ? `<button type="button" class="Btn--iconSoft" title="Edit booking" aria-label="Edit booking" onclick="openBookingModal({ worker: pfSelectedItemContext().worker, weekIndex: pfSelectedItemContext().item.startWeek })"><i class="fa-solid fa-pencil" aria-hidden="true"></i></button>` : ""}
-                    <button type="button" class="Btn--iconSoft" title="Delete booking" aria-label="Delete booking"><i class="fa-regular fa-trash-can" aria-hidden="true"></i></button>
-                </div>
+            <div class="PfSelectionPanel-actions">
+                <button type="button" class="Btn--iconSoft" title="Clone" aria-label="Clone"><i class="fa-regular fa-clone"></i></button>
+                <button type="button" class="Btn--iconSoft" title="Delete" aria-label="Delete"><i class="fa-regular fa-trash-can"></i></button>
+                <button type="button" class="Btn--iconSoft" title="Jump to" aria-label="Jump to"><i class="fa-solid fa-crosshairs"></i></button>
+                <button type="button" class="Btn--iconSoft" title="Swap or reassign" aria-label="Swap or reassign"><i class="fa-solid fa-retweet"></i></button>
+                <button type="button" class="Btn--iconSoft" title="Audit history" aria-label="Audit history"><i class="fa-solid fa-clock-rotate-left"></i></button>
             </div>
         </div>
         <div class="PfSelectionPanel-body">
             <section class="PfSelectionPanel-section">
-                <h3 class="PfSelectionPanel-sectionTitle">Schedule</h3>
-                <div class="PfSelectionPanel-fields">
-                    ${pfPanelField("fa-solid fa-user", "Resource", multi ? "—" : (pfIsUnassigned(worker) ? pfUnassignedLabel(worker) : worker.name))}
-                    ${pfPanelField("fa-solid fa-calendar", "Start", multi ? "—" : startLabel)}
-                    ${pfPanelField("fa-solid fa-calendar-check", "End", multi ? "—" : endLabel)}
-                    ${pfPanelField("fa-solid fa-clock", "Effort", multi ? "—" : hours + " h/week")}
+                <div class="PfSelectionPanel-schedule">
+                    <h3 class="PfSelectionPanel-scheduleTitle">Schedule</h3>
+                    <div class="PfSelectionPanel-scheduleGrid">
+                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "08:30AM " + startLabel.replace("w.c. ", "")}" readonly aria-label="Start date">
+                        <span class="PfSelectionPanel-scheduleIcon"><i class="fa-solid fa-lock"></i></span>
+                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "04:30PM " + endLabel.replace("w.c. ", "")}" readonly aria-label="End date">
+                        <span class="PfSelectionPanel-scheduleIcon"><i class="fa-solid fa-arrows-left-right"></i></span><span>–</span><span></span>
+                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "08:30AM " + startLabel.replace("w.c. ", "")}" readonly aria-label="Start date and time">
+                        <span>–</span>
+                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "04:30PM " + endLabel.replace("w.c. ", "")}" readonly aria-label="End date and time">
+                    </div>
+                    <div class="PfSelectionPanel-scheduleMeta"><i class="fa-solid fa-hourglass-half"></i><span class="PfSelectionPanel-input" style="width:52px">${multi ? "--" : hours}</span><span>h</span><span class="PfSelectionPanel-input" style="width:52px">0</span><span>m</span></div>
+                    <div class="PfSelectionPanel-scheduleMeta"><i class="fa-solid fa-user"></i><span class="PfSelectionPanel-scheduleMetaValue">${multi ? "—" : (pfIsUnassigned(worker) ? "Unassigned" : worker.name)}</span></div>
+                    <div class="PfSelectionPanel-scheduleActions">
+                        <button type="button" class="Btn--iconSoft" title="Expand schedule" aria-label="Expand schedule"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
+                        <button type="button" class="Btn--iconSoft" title="Schedule options" aria-label="Schedule options"><i class="fa-solid fa-arrows-up-down"></i></button>
+                        <button type="button" class="Btn--iconSoft" title="Calendar options" aria-label="Calendar options"><i class="fa-regular fa-calendar-xmark"></i></button>
+                    </div>
                 </div>
             </section>
-            <section class="PfSelectionPanel-section">
-                <h3 class="PfSelectionPanel-sectionTitle">Booking details</h3>
-                <div class="PfSelectionPanel-fields">
-                    ${pfPanelField("fa-solid fa-layer-group", "Phase", multi ? "—" : item.phase)}
-                    ${pfPanelField("fa-solid fa-briefcase", "Booking type", multi ? "—" : item.bookingType)}
-                    ${pfPanelField("fa-solid fa-list-check", "Resource requirement", multi ? "—" : item.req)}
-                </div>
-            </section>
+            ${pfPanelSection("Suggestions", "0", false, false)}
+            ${pfPanelSection("Resource Requirements", multi ? contexts.length : "", true, false)}
+            ${pfPanelSection("Traits", multi ? "8" : "Detail", false, false)}
+            ${!multi ? pfPanelSection("Booking State", "Definite", false, false) : ""}
+            ${pfPanelSection("Engagement", multi ? contexts.length : (item.job || "—"), true, false)}
+            ${pfPanelSection("Economics", "Recovery Rate 74%, Margin 56%", false, false)}
+            ${pfPanelSection("Percentage Scheduled", "72.9%", false, false)}
+            ${pfPanelSection("Location", "", false, false)}
+            ${pfPanelSection("Notes", multi ? "Note goes here" : "", false, false)}
         </div>`;
+    panel.querySelectorAll(".PfSelectionPanel-section--collapsed").forEach(function (section) {
+        section.addEventListener("click", function () { section.classList.toggle("is-open"); });
+    });
     document.body.appendChild(panel);
+}
+
+function pfSelectBarItem(it, event) {
+    const now = Date.now();
+    if (pfTeamState.lastBarSelection
+        && pfTeamState.lastBarSelection.id === it.id
+        && now - pfTeamState.lastBarSelection.time < 300) return;
+    pfTeamState.lastBarSelection = { id: it.id, time: now };
+    const additive = event.ctrlKey || event.metaKey;
+    const selectedIds = pfTeamState.selectedItemIds.length
+        ? pfTeamState.selectedItemIds.slice()
+        : (pfTeamState.selectedItemId ? [pfTeamState.selectedItemId] : []);
+    const index = selectedIds.indexOf(it.id);
+    if (additive) {
+        if (index === -1) selectedIds.push(it.id);
+        else selectedIds.splice(index, 1);
+    } else if (index !== -1 && selectedIds.length === 1) {
+        selectedIds.length = 0;
+    } else {
+        selectedIds.splice(0, selectedIds.length, it.id);
+    }
+    pfTeamState.selectedItemIds = selectedIds;
+    pfTeamState.selectedItemId = selectedIds.length === 1 ? selectedIds[0] : null;
+    renderGantt();
+}
+
+function pfPrimeBarSelection(it, event, bar) {
+    const additive = event.ctrlKey || event.metaKey;
+    const selectedIds = pfTeamState.selectedItemIds.length
+        ? pfTeamState.selectedItemIds.slice()
+        : (pfTeamState.selectedItemId ? [pfTeamState.selectedItemId] : []);
+    const index = selectedIds.indexOf(it.id);
+    if (index !== -1 && !additive) return false;
+    if (additive) {
+        if (index === -1) selectedIds.push(it.id);
+    } else {
+        selectedIds.splice(0, selectedIds.length, it.id);
+    }
+    pfTeamState.selectedItemIds = selectedIds;
+    pfTeamState.selectedItemId = selectedIds.length === 1 ? selectedIds[0] : null;
+    bar.dataset.selectionPrimed = "1";
+    bar.classList.add("is-selected");
+    renderPfSelectionPanel();
+    return true;
 }
 
 function pfBuildBars(worker, row, topPad) {
@@ -5821,7 +6007,9 @@ function pfBuildBars(worker, row, topPad) {
         bar.style.width = (it.span * PF_WEEK_W - 5) + "px";
         bar.style.top = (pad + lane * PF_BAR_PITCH) + "px";
         if (it.kind !== "unavailability") {
-            if (isUa) {
+            if (pfTeamState.tasksInGrey) {
+                bar.style.backgroundColor = "#9298b4";
+            } else if (isUa) {
                 bar.style.backgroundColor = "var(--surface-booking-trait-3)";
             } else {
                 bar.style.backgroundColor = PF_PHASE_COLOUR[it.phase] || "var(--surface-booking-trait-1)";
@@ -5854,28 +6042,18 @@ function pfBuildBars(worker, row, topPad) {
         bar.addEventListener("mousedown", function (e) {
             if (e.button !== 0) return;
             if (e.target.closest(".PfTeam-barHandle")) return;
+            pfPrimeBarSelection(it, e, bar);
             e.preventDefault();
             e.stopPropagation();
             pfStartBarInteract(e, it, worker, bar, "move");
         });
         bar.addEventListener("click", function (e) {
             e.stopPropagation();
-            const additive = e.ctrlKey || e.metaKey;
-            const selectedIds = pfTeamState.selectedItemIds.length
-                ? pfTeamState.selectedItemIds.slice()
-                : (pfTeamState.selectedItemId ? [pfTeamState.selectedItemId] : []);
-            const index = selectedIds.indexOf(it.id);
-            if (additive) {
-                if (index === -1) selectedIds.push(it.id);
-                else selectedIds.splice(index, 1);
-            } else if (index !== -1 && selectedIds.length === 1) {
-                selectedIds.length = 0;
-            } else {
-                selectedIds.splice(0, selectedIds.length, it.id);
+            if (bar.dataset.selectionPrimed) {
+                delete bar.dataset.selectionPrimed;
+                return;
             }
-            pfTeamState.selectedItemIds = selectedIds;
-            pfTeamState.selectedItemId = selectedIds.length === 1 ? selectedIds[0] : null;
-            renderGantt();
+            pfSelectBarItem(it, e);
         });
         box.appendChild(bar);
     });
@@ -6133,22 +6311,25 @@ function pfRenderMenu() {
 
     const anchor = settingsBtn.getBoundingClientRect();
     const menu = pfEl("div", "PfTeam-menu");
-    menu.style.left = Math.max(8, anchor.right - PF_MENU_W) + "px";
+    menu.style.left = Math.max(8, anchor.left) + "px";
     menu.style.top = (anchor.bottom + 4) + "px";
     menu.addEventListener("click", function (e) { e.stopPropagation(); });
 
     const rowLayout = pfEl("div", "PfTeam-menuGroup");
-    const section = pfEl("div", "PfTeam-menuSection");
+    const section = pfEl("div", "PfTeam-menuSection has-select");
     section.appendChild(pfEl("div", "PfTeam-menuTitle", "Row Layout"));
-    rowLayout.appendChild(section);
-
-    const bd = pfEl("div", "PfTeam-menuItem" + (pfTeamState.flyout === "breakdown" ? " is-open" : ""));
-    bd.innerHTML = "<span>Resource Breakdown</span><i class=\"fa-solid fa-chevron-left\"></i>";
-    bd.addEventListener("mouseenter", function () {
-        pfTeamState.flyout = "breakdown";
-        pfRenderMenu();
+    const rowSelect = document.createElement("select");
+    rowSelect.className = "PfTeam-menuSelect";
+    rowSelect.setAttribute("aria-label", "Row layout");
+    ["Business Unit", "Location", "Job Profile"].forEach(function (label) {
+        const option = document.createElement("option");
+        option.textContent = label;
+        rowSelect.appendChild(option);
     });
-    rowLayout.appendChild(bd);
+    section.appendChild(rowSelect);
+    rowLayout.appendChild(section);
+    rowLayout.appendChild(pfEl("div", "PfTeam-menuItem", "Resource Data"));
+    rowLayout.appendChild(pfEl("div", "PfTeam-menuItem", "Resource Sorting"));
     menu.appendChild(rowLayout);
 
     const time = pfEl("div", "PfTeam-menuGroup");
@@ -6159,7 +6340,7 @@ function pfRenderMenu() {
 
     const avail = pfEl("div", "PfTeam-menuGroup");
     avail.appendChild(pfEl("div", "PfTeam-menuTitle", "Availability Settings"));
-    const sa = pfEl("div", "PfTeam-menuItem");
+    const sa = pfEl("div", "PfTeam-menuItem" + (pfTeamState.showAvailability ? " is-checked" : ""));
     sa.innerHTML = "<span>Show Availability</span>" + (pfTeamState.showAvailability ? '<i class="fa-solid fa-check"></i>' : "");
     sa.addEventListener("click", function () {
         pfTeamState.showAvailability = !pfTeamState.showAvailability;
@@ -6167,8 +6348,8 @@ function pfRenderMenu() {
         renderGantt();
     });
     avail.appendChild(sa);
-    const display = pfEl("div", "PfTeam-menuItem");
-    display.innerHTML = "<span>Availability display: " + (pfTeamState.availabilityMode === "slim" ? "Slim" : "Full") + "</span><i class=\"fa-solid fa-chevron-left\"></i>";
+    const display = pfEl("div", "PfTeam-menuItem" + (pfTeamState.flyout === "availability" ? " is-open" : ""));
+    display.innerHTML = "<span>Availability Settings</span><i class=\"fa-solid fa-chevron-left\"></i>";
     display.addEventListener("mouseenter", function () {
         pfTeamState.flyout = "availability";
         pfRenderMenu();
@@ -6180,7 +6361,23 @@ function pfRenderMenu() {
     other.appendChild(pfEl("div", "PfTeam-menuTitle", "Other Settings"));
     other.appendChild(pfEl("div", "PfTeam-menuItem", "Show Draft Bookings"));
     other.appendChild(pfEl("div", "PfTeam-menuItem", "Show Draft Unavailability"));
+    other.appendChild(pfEl("div", "PfTeam-menuItem", "Show Debug Labels"));
     menu.appendChild(other);
+
+    const colour = pfEl("div", "PfTeam-menuGroup");
+    const colourSection = pfEl("div", "PfTeam-menuSection has-select");
+    colourSection.appendChild(pfEl("div", "PfTeam-menuTitle", "Colour Scheme"));
+    const colourSelect = document.createElement("select");
+    colourSelect.className = "PfTeam-menuSelect";
+    colourSelect.setAttribute("aria-label", "Colour scheme");
+    ["Trait Color", "Phase Color", "Engagement Color"].forEach(function (label) {
+        const option = document.createElement("option");
+        option.textContent = label;
+        colourSelect.appendChild(option);
+    });
+    colourSection.appendChild(colourSelect);
+    colour.appendChild(colourSection);
+    menu.appendChild(colour);
 
     const requirements = pfEl("div", "PfTeam-menuGroup");
     requirements.appendChild(pfEl("div", "PfTeam-menuTitle", "Resource Requirements"));
@@ -6192,10 +6389,15 @@ function pfRenderMenu() {
         const flyout = pfEl("div", "PfTeam-flyout");
         flyout.appendChild(pfEl("div", "PfTeam-flyoutTitle", "Availability Display"));
         ["slim", "full"].forEach(function (mode) {
-            const option = pfEl("div", "PfTeam-radio" + (pfTeamState.availabilityMode === mode ? " is-checked" : ""));
+            const locked = pfBreakdownOn() && mode === "full";
+            const option = pfEl("div", "PfTeam-radio"
+                + (pfTeamState.availabilityMode === mode ? " is-checked" : "")
+                + (locked ? " is-disabled" : ""));
             option.appendChild(pfEl("div", "PfTeam-radioDot"));
             option.appendChild(pfEl("span", null, mode === "slim" ? "Display Slim View" : "Display Full View"));
-            option.addEventListener("click", function () {
+            if (locked) {
+                option.title = "Not available while a resource breakdown is active — breakdown rows share the resource capacity.";
+            } else option.addEventListener("click", function () {
                 pfTeamState.availabilityMode = mode;
                 pfTeamState.showAvailability = true;
                 pfTeamState.flyout = null;
@@ -6205,6 +6407,37 @@ function pfRenderMenu() {
             });
             flyout.appendChild(option);
         });
+        const grouping = document.createElement("div");
+        grouping.className = "PfTeam-menuSegment";
+        ["By Day", "By Week", "By Month"].forEach(function (label, index) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = label;
+            button.className = index === 0 ? "is-active" : "";
+            grouping.appendChild(button);
+        });
+        flyout.appendChild(grouping);
+        const hours = document.createElement("div");
+        hours.className = "PfTeam-menuSegment";
+        ["Consumed hours", "Available hours"].forEach(function (label) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = label;
+            button.disabled = true;
+            hours.appendChild(button);
+        });
+        flyout.appendChild(hours);
+        const colourTitle = pfEl("div", "PfTeam-flyoutTitle", "Availability Colour Settings");
+        flyout.appendChild(colourTitle);
+        const grey = document.createElement("label");
+        grey.className = "PfTeam-menuCheck";
+        grey.innerHTML = '<input type="checkbox"' + (pfTeamState.tasksInGrey ? " checked" : "") + '> <span>Display tasks in grey</span>';
+        grey.querySelector("input").addEventListener("change", function (e) {
+            pfTeamState.tasksInGrey = e.target.checked;
+            renderGantt();
+        });
+        flyout.appendChild(grey);
+        flyout.appendChild(pfEl("div", "PfTeam-flyoutTitle", "Availability Colour Settings"));
         layer.appendChild(flyout);
         document.body.appendChild(layer);
         const a = display.getBoundingClientRect();
@@ -6222,6 +6455,7 @@ function pfRenderMenu() {
             if (def.deferred) r.appendChild(pfEl("span", "PfTeam-radioTag", "Deferred"));
             r.addEventListener("click", function () {
                 pfTeamState.breakdown = key;
+                if (key !== "none") pfTeamState.availabilityMode = "slim";
                 pfTeamState.expandedRows = {};
                 pfTeamState.selectedCell = null;
                 pfTeamState.menu = null;

@@ -43,7 +43,7 @@
   {
     "id": "portfolios-v3",
     "title": "Portfolio Views",
-    "description": "Create/edit portfolios, dynamic filters, Performance tab with mixed economics n/a suppression.",
+    "description": "Portfolio Views — dynamic filters, Performance economics, and a Daylight-aligned Team Gantt with availability views, booking side panel, sticky controls, and unassigned requirements.",
     "path": "mocks/portfolios-v3.html",
     "status": "in-development",
     "updated": "2026-08-27"
