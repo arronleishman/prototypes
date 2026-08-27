@@ -4869,8 +4869,8 @@ function renderMetricsTable() {
    Visual/interaction basis: gantt-resource-breakdown.html
    ============================================================ */
 const PF_WEEK_COUNT = 52;
-const PF_WEEK_W = 112.6;
-const PF_DAY_W = PF_WEEK_W / 5;
+let PF_WEEK_W = 112.6;
+let PF_DAY_W = PF_WEEK_W / 5;
 const PF_BAR_H = 23;
 const PF_BAR_PITCH = PF_BAR_H + 2;
 const PF_BAR_PAD = 2;
@@ -5187,6 +5187,8 @@ const pfTeamState = {
     pivot: "resource",
     breakdown: "none",
     showAvailability: false,
+    availabilityMode: "slim",
+    zoom: 1,
     expandedRows: {},
     collapsedEngagements: {},
     selectedCell: null,
@@ -5334,6 +5336,18 @@ function pivotTeamView(e) {
     setTeamPivot(pfTeamState.pivot === "engagement" ? "resource" : "engagement");
 }
 
+function pfSetZoom(next) {
+    pfTeamState.zoom = Math.max(0.75, Math.min(1.5, next));
+    PF_WEEK_W = 112.6 * pfTeamState.zoom;
+    PF_DAY_W = PF_WEEK_W / 5;
+    renderGantt();
+}
+
+function pfScrollHorizon(delta) {
+    const host = document.getElementById("pfTeamScroller");
+    if (host) host.scrollBy({ left: delta * PF_WEEK_W * 4, behavior: "smooth" });
+}
+
 function pfBuildHeadCorner() {
     const corner = pfEl("div", "PfTeam-headCorner");
     const tools = pfEl("div", "PfTeam-headTools");
@@ -5363,6 +5377,38 @@ function pfBuildHeadCorner() {
     filterBtn.setAttribute("aria-label", "Filter");
     filterBtn.innerHTML = '<i class="fa-solid fa-filter" aria-hidden="true"></i>';
     tools.appendChild(filterBtn);
+
+    const prevBtn = pfEl("button", "Btn Btn--iconSoft");
+    prevBtn.type = "button";
+    prevBtn.title = "Previous planning horizon";
+    prevBtn.setAttribute("aria-label", "Previous planning horizon");
+    prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left" aria-hidden="true"></i>';
+    prevBtn.addEventListener("click", function (e) { e.stopPropagation(); pfScrollHorizon(-1); });
+    tools.appendChild(prevBtn);
+
+    const nextBtn = pfEl("button", "Btn Btn--iconSoft");
+    nextBtn.type = "button";
+    nextBtn.title = "Next planning horizon";
+    nextBtn.setAttribute("aria-label", "Next planning horizon");
+    nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>';
+    nextBtn.addEventListener("click", function (e) { e.stopPropagation(); pfScrollHorizon(1); });
+    tools.appendChild(nextBtn);
+
+    const zoomOutBtn = pfEl("button", "Btn Btn--iconSoft");
+    zoomOutBtn.type = "button";
+    zoomOutBtn.title = "Zoom out";
+    zoomOutBtn.setAttribute("aria-label", "Zoom out");
+    zoomOutBtn.innerHTML = '<i class="fa-solid fa-minus" aria-hidden="true"></i>';
+    zoomOutBtn.addEventListener("click", function (e) { e.stopPropagation(); pfSetZoom(pfTeamState.zoom - 0.25); });
+    tools.appendChild(zoomOutBtn);
+
+    const zoomInBtn = pfEl("button", "Btn Btn--iconSoft");
+    zoomInBtn.type = "button";
+    zoomInBtn.title = "Zoom in";
+    zoomInBtn.setAttribute("aria-label", "Zoom in");
+    zoomInBtn.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i>';
+    zoomInBtn.addEventListener("click", function (e) { e.stopPropagation(); pfSetZoom(pfTeamState.zoom + 0.25); });
+    tools.appendChild(zoomInBtn);
 
     const settingsBtn = pfEl("button", "Btn Btn--iconSoft");
     settingsBtn.type = "button";
@@ -5618,6 +5664,11 @@ function pfBuildCell(worker, row, wi) {
     const hours = pfCellHours(row, wi);
     const items = pfCellItems(row, wi);
     const c = pfEl("div", "PfTeam-cellw" + (hours ? "" : " is-zero"));
+    if (pfTeamState.showAvailability && pfTeamState.availabilityMode === "full") {
+        const ratio = worker.cap ? hours / (worker.cap / 5) : 0;
+        c.style.background = pfSlimColour(ratio * worker.cap / 5, worker.cap / 5);
+        c.classList.add("is-availability");
+    }
     c.appendChild(pfEl("span", "PfTeam-cellwHours", pfFmtHours(hours)));
     const key = worker.id + "|" + row.key + "|" + wi;
     const rowKey = worker.id + "|" + row.key;
@@ -6116,7 +6167,13 @@ function pfRenderMenu() {
         renderGantt();
     });
     avail.appendChild(sa);
-    avail.appendChild(pfEl("div", "PfTeam-menuItem", "Availability Display"));
+    const display = pfEl("div", "PfTeam-menuItem");
+    display.innerHTML = "<span>Availability display: " + (pfTeamState.availabilityMode === "slim" ? "Slim" : "Full") + "</span><i class=\"fa-solid fa-chevron-left\"></i>";
+    display.addEventListener("mouseenter", function () {
+        pfTeamState.flyout = "availability";
+        pfRenderMenu();
+    });
+    avail.appendChild(display);
     menu.appendChild(avail);
 
     const other = pfEl("div", "PfTeam-menuGroup");
@@ -6124,9 +6181,36 @@ function pfRenderMenu() {
     other.appendChild(pfEl("div", "PfTeam-menuItem", "Show Draft Bookings"));
     other.appendChild(pfEl("div", "PfTeam-menuItem", "Show Draft Unavailability"));
     menu.appendChild(other);
+
+    const requirements = pfEl("div", "PfTeam-menuGroup");
+    requirements.appendChild(pfEl("div", "PfTeam-menuTitle", "Resource Requirements"));
+    requirements.appendChild(pfEl("div", "PfTeam-menuItem", "Suitability Scoring"));
+    menu.appendChild(requirements);
     layer.appendChild(menu);
 
-    if (pfTeamState.flyout === "breakdown") {
+    if (pfTeamState.flyout === "availability") {
+        const flyout = pfEl("div", "PfTeam-flyout");
+        flyout.appendChild(pfEl("div", "PfTeam-flyoutTitle", "Availability Display"));
+        ["slim", "full"].forEach(function (mode) {
+            const option = pfEl("div", "PfTeam-radio" + (pfTeamState.availabilityMode === mode ? " is-checked" : ""));
+            option.appendChild(pfEl("div", "PfTeam-radioDot"));
+            option.appendChild(pfEl("span", null, mode === "slim" ? "Display Slim View" : "Display Full View"));
+            option.addEventListener("click", function () {
+                pfTeamState.availabilityMode = mode;
+                pfTeamState.showAvailability = true;
+                pfTeamState.flyout = null;
+                pfTeamState.menu = null;
+                pfRenderMenu();
+                renderGantt();
+            });
+            flyout.appendChild(option);
+        });
+        layer.appendChild(flyout);
+        document.body.appendChild(layer);
+        const a = display.getBoundingClientRect();
+        flyout.style.left = (parseFloat(menu.style.left) + PF_MENU_W - 1) + "px";
+        flyout.style.top = Math.max(8, Math.min(a.top, window.innerHeight - flyout.offsetHeight - 8)) + "px";
+    } else if (pfTeamState.flyout === "breakdown") {
         const flyout = pfEl("div", "PfTeam-flyout");
         flyout.addEventListener("click", function (e) { e.stopPropagation(); });
         flyout.appendChild(pfEl("div", "PfTeam-flyoutTitle", "Resource Breakdown"));
