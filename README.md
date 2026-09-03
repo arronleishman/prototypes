@@ -120,15 +120,16 @@ Run `supabase-changelog.sql` once in the Supabase SQL Editor so the list syncs a
 
 ### Cloudflare Pages
 
-### GitHub Pages (primary)
+### Current repository and hosting
 
-Repo: `Arron-Leishman-Dayshape/prototypes`  
-Live: `https://arron-leishman-dayshape.github.io/prototypes/`  
-Deploy: push to `main` (Pages from branch `main` / root).
+Repository: `https://github.com/dayshape/Prototypes-Design-App` (private)
+Supabase remains the temporary backend for Auth, feedback, changelogs, telemetry, and private developer files.
+
+GitHub Pages is not available for this private repository on the current plan. Supabase does not provide private static-site hosting for these HTML files, so use an organisation-approved static host until the Azure migration is complete. Do not publish the internal hub through a public Supabase Storage bucket.
 
 ### Cloudflare Pages (optional)
 
-1. Push this repo to GitHub (`Arron-Leishman-Dayshape/prototypes`).
+1. Push this repo to the private Dayshape repository (`dayshape/Prototypes-Design-App`).
 2. [Cloudflare Pages](https://pages.cloudflare.com) → Connect repo.
 3. Framework: **None** · Build command: empty · Output directory: `/` or blank.
 

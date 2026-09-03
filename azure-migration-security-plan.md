@@ -13,6 +13,26 @@ Move the internal prototype-sharing and telemetry app from its current GitHub Pa
 
 This plan is a reservation for the migration work. It does not authorise go-live. The app must not process real Dayshape or external-user personal data on Azure until the DPIA, supplier review, change approval, incident assessment, and the Gate 2 data decision are complete.
 
+## Interim Supabase operating mode
+
+Until Azure is approved and provisioned:
+
+- [ ] Use the existing Supabase project only for approved synthetic prototype data and testing.
+- [ ] Keep Supabase Auth, feedback, changelog, telemetry, and the private `prototype-artifacts` bucket under review.
+- [ ] Do not put a Supabase service-role key, database credential, or storage management token in browser code or Git.
+- [ ] Do not use a public Supabase Storage bucket as a replacement for private app hosting; it would expose the hub files and the client-side access key.
+- [ ] Because the source repository is private, use only an organisation-approved static host for the HTML files. GitHub Pages is unavailable for this repository on the current plan.
+- [ ] Keep telemetry disabled or synthetic-only until Security/AIMS/DPO confirm the lawful basis, notice, retention, and evidence-preservation requirements.
+- [ ] Record the temporary host, Supabase project owner, region, enabled policies, and GitHub Actions secrets in the change record.
+- [ ] Treat the existing shared `?key=` gate as navigation control only, not authentication or authorisation.
+
+Before Azure cut-over:
+
+1. Export Supabase schema and any approved historical data under Security/DPO direction.
+2. Record the export location, operator, timestamp, retention period, and access controls.
+3. Inventory every browser call to Supabase and map it to an Azure API endpoint.
+4. Rotate temporary credentials and remove the old Supabase deployment secrets after cut-over approval.
+
 ## Current state and risks
 
 The current implementation is a static HTML/JavaScript app:
