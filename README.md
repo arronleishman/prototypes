@@ -152,3 +152,7 @@ Publish directory: `.` · No build command.
 - Use the workflow’s `sync_all_versions` input for a one-time baseline snapshot of every repository-backed mock after the SQL migration. The **Add version** button remains available for curated milestones that are not tied to a push.
 - The old `internalAccessKey` is still useful as a navigation gate, but it is not a security boundary. Supabase Auth/RLS protects managed metadata and uploaded developer files.
 
+## Security migration
+
+The Azure migration, containment, data-protection gates, and go-live acceptance criteria are documented in [azure-migration-security-plan.md](azure-migration-security-plan.md). This is a draft runbook and does not authorise production use or real-user data.
+

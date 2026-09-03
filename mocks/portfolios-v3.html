@@ -1369,7 +1369,19 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 }
 .Modal-portfolioName-input:focus { outline: none; box-shadow: 0 0 0 3px var(--primary-accent); }
 .Modal-portfolioName-input[hidden] { display: none !important; }
-.Modal-portfolioName-edit { flex-shrink: 0; }
+.Modal-portfolioName-edit,
+.Modal-portfolioName-edit-actions .PfIconBtn {
+    width: 32px; min-width: 32px; height: 32px; min-height: 32px;
+    flex-shrink: 0; padding: 0; font-size: 12px; box-sizing: border-box;
+}
+.Modal-portfolioNameBar .PfIconBtn.Btn--tertiary {
+    background: var(--surface-subtle-dark); color: var(--text-primary); border-color: var(--border-subtle);
+}
+.Modal-portfolioNameBar .PfIconBtn.Btn--tertiary:hover {
+    background: var(--surface-accent); color: var(--text-primary);
+}
+.Modal-portfolioName-edit-actions { display: inline-flex; align-items: center; gap: 12px; }
+.Modal-portfolioName-edit-actions[hidden] { display: none !important; }
 .Modal-title { font-size: var(--font-size-h2); font-weight: var(--font-weight-regular); margin: 0; color: var(--text-default); line-height: 27px; flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .Modal-title[hidden] { display: none !important; }
 .Modal-close { flex: 0 0 28px; width: 28px; height: 28px; margin-left: auto; border: none; background: none; font-size: 14px; color: var(--icon-default); cursor: pointer; padding: 0; border-radius: var(--border-radius-default); display: inline-flex; align-items: center; justify-content: center; }
@@ -2293,7 +2305,11 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <div class="Modal-portfolioNameBar" id="modalPortfolioNameBar" hidden>
                     <span class="Modal-portfolioName-text" id="portfolioNameDisplay"></span>
                     <input id="portfolioName" class="Modal-portfolioName-input" type="text" maxlength="120" hidden oninput="onPortfolioNameInput()" onblur="onPortfolioNameBlur()" onkeydown="onPortfolioNameKeydown(event)" />
-                    <button type="button" class="PfIconBtn Modal-portfolioName-edit" id="portfolioNameEditBtn" aria-label="Edit portfolio name" onclick="togglePortfolioNameEdit()"><i class="fa-solid fa-pencil" aria-hidden="true"></i></button>
+                    <button type="button" class="Btn Btn--tertiary PfIconBtn Modal-portfolioName-edit" id="portfolioNameEditBtn" aria-label="Edit portfolio name" onclick="togglePortfolioNameEdit()"><i class="fa-solid fa-pencil" aria-hidden="true"></i></button>
+                    <span class="Modal-portfolioName-edit-actions" id="portfolioNameEditActions" hidden>
+                        <button type="button" class="Btn Btn--tertiary PfIconBtn" aria-label="Save portfolio name" title="Save" onmousedown="event.preventDefault()" onclick="onPortfolioNameBlur()"><i class="fa-solid fa-check" aria-hidden="true"></i></button>
+                        <button type="button" class="Btn Btn--tertiary PfIconBtn" aria-label="Cancel editing portfolio name" title="Cancel" onmousedown="event.preventDefault()" onclick="cancelPortfolioNameEdit()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                    </span>
                 </div>
                 <h2 class="Modal-title" id="modalTitle">Create portfolio</h2>
             </div>
@@ -4045,6 +4061,7 @@ function updatePortfolioNameUI() {
     const display = document.getElementById("portfolioNameDisplay");
     const input = document.getElementById("portfolioName");
     const editBtn = document.getElementById("portfolioNameEditBtn");
+    const editActions = document.getElementById("portfolioNameEditActions");
     const show = showPortfolioNameInHeader();
     if (bar) bar.hidden = !show;
     if (!show) {
@@ -4062,6 +4079,7 @@ function updatePortfolioNameUI() {
         if (!editing && input.value.trim() !== name) input.value = name;
     }
     if (editBtn) editBtn.hidden = editing;
+    if (editActions) editActions.hidden = !editing;
 }
 function onPortfolioNameInput() {
     updatePortfolioNameUI();
@@ -4074,17 +4092,21 @@ function onPortfolioNameBlur() {
     updatePortfolioNameUI();
     updateModalPrimary();
 }
+function cancelPortfolioNameEdit() {
+    const input = document.getElementById("portfolioName");
+    const display = document.getElementById("portfolioNameDisplay");
+    if (input && display) input.value = display.textContent.trim();
+    modalState.nameEditing = false;
+    updatePortfolioNameUI();
+    updateModalPrimary();
+}
 function onPortfolioNameKeydown(e) {
     if (e.key === "Enter") {
         e.preventDefault();
         onPortfolioNameBlur();
     } else if (e.key === "Escape") {
         e.preventDefault();
-        const input = document.getElementById("portfolioName");
-        const display = document.getElementById("portfolioNameDisplay");
-        if (input && display) input.value = display.textContent.trim();
-        modalState.nameEditing = false;
-        updatePortfolioNameUI();
+        cancelPortfolioNameEdit();
     }
 }
 

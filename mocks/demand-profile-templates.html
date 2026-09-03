@@ -52,6 +52,7 @@
   /* Phase trait colours copied from the current templating mock */
   --phase-depreciation: #ff8d6c;
   --phase-gather-organize: #0295b2;
+  --phase-gather: #0295b2;
   --phase-roll-binder: #7c3aed;
   --phase-ext-prepare: #16a34a;
   --phase-ext-review: #ea580c;
@@ -247,6 +248,13 @@ a { color: var(--text-link-color); text-decoration: none; }
 .Btn:hover { background: var(--surface-subtle-dark); }
 .Btn--primary { background: var(--surface-primary); color: var(--text-inverse); border-color: var(--surface-primary); }
 .Btn--primary:hover { background: var(--primary-emphasis); }
+.Btn--tertiary {
+  background: var(--surface-subtle-dark); color: var(--text-primary); border-color: var(--border-subtle);
+  font-weight: var(--font-weight-regular);
+}
+.Btn--tertiary:hover:not(:disabled) {
+  background: var(--surface-accent); color: var(--text-primary); border-color: var(--border-subtle);
+}
 .Btn--primary:disabled, .Btn:disabled { opacity: .45; cursor: not-allowed; }
 .Btn--sm { padding: 4px 10px; font-size: var(--font-size-small); min-height: 28px; }
 .Btn-iconOnly {
@@ -255,6 +263,12 @@ a { color: var(--text-link-color); text-decoration: none; }
   color: var(--icon-subtle); cursor: pointer;
 }
 .Btn-iconOnly:hover { background: var(--surface-list-item-hover); color: var(--text-accent); }
+.Btn-iconOnly.Btn--tertiary {
+  background: var(--surface-subtle-dark); color: var(--text-primary); border-color: var(--border-subtle);
+}
+.Btn-iconOnly.Btn--tertiary:hover:not(:disabled) {
+  background: var(--surface-accent); color: var(--text-primary); border-color: var(--border-subtle);
+}
 .Btn-iconOnly:disabled { opacity: .45; cursor: not-allowed; }
 .Btn-iconOnly.is-locked {
   color: var(--text-primary); background: var(--surface-list-item-selected-light);
@@ -425,6 +439,80 @@ a { color: var(--text-link-color); text-decoration: none; }
   margin-bottom: var(--padding-sm);
 }
 .StructureTimeline-head .StructureTimeline-title { margin: 0; }
+.TimelineActions {
+  display: inline-flex; align-items: center; gap: var(--padding-xs); flex-wrap: wrap;
+}
+.TimelineActions .Btn:disabled {
+  opacity: .55; cursor: not-allowed;
+}
+.PhaseTimelineEditor {
+  display: flex; flex-direction: column; gap: var(--padding-xs);
+  margin: 0 0 var(--padding-sm); padding: var(--padding-sm);
+  background: var(--surface-subtle-light); border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+}
+.PhaseTimelineEditor-empty {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--padding-sm); color: var(--text-subtle); font-size: var(--font-size-small);
+}
+.PhaseTimelineEditor-help {
+  color: var(--text-subtle); font-size: var(--font-size-extra-small);
+}
+.PhaseTimelineEditor-help strong { color: var(--text-emphasis); }
+.PhaseTimelineEditor-row {
+  display: grid; grid-template-columns: minmax(280px, 1fr) 112px 132px 35px;
+  align-items: center; column-gap: var(--padding-md); row-gap: var(--padding-xs);
+}
+.PhaseTimelineEditor-row + .PhaseTimelineEditor-row {
+  padding-top: var(--padding-sm); border-top: 1px solid var(--border-subtle);
+}
+.PhaseTimelineEditor-name {
+  display: flex; align-items: center; gap: var(--padding-sm); min-width: 0;
+}
+.PhaseTimelineEditor-name .Select { flex: 1 1 auto; min-width: 0; }
+.PhaseTimelineEditor-dot {
+  width: 10px; height: 10px; flex: 0 0 10px; border-radius: 50%;
+  background: var(--surface-emphasis);
+}
+.PhaseWeightControl {
+  display: flex; align-items: stretch; gap: var(--padding-xs); min-width: 0;
+}
+.PhaseWeightControl .input-group { width: 92px; flex: 0 0 92px; }
+.PhaseWeightControl .Input { min-width: 0; }
+.PhaseWeightLock { flex: 0 0 30px; width: 30px; height: 35px; min-height: 35px; }
+.PhaseWeightLock.is-locked { color: var(--text-primary); background: var(--surface-accent); }
+.ReviewPhaseWeights {
+  display: flex; flex-wrap: wrap; gap: var(--padding-xs) var(--padding-md);
+  margin-top: var(--padding-sm); color: var(--text-subtle); font-size: var(--font-size-small);
+}
+.ReviewPhaseWeight { display: inline-flex; align-items: center; gap: 6px; }
+.ReviewPhaseWeight-dot {
+  width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%;
+}
+.PhaseTimelineVisual { margin: 0 0 var(--padding-sm); }
+.PhaseTimelineVisual:empty { display: none; }
+.PhaseTimelineVisual-label {
+  margin: 0 0 var(--padding-xxs); color: var(--text-subtle);
+  font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold);
+}
+.PhaseTimelineVisual-track {
+  display: flex; width: 100%; height: 32px; overflow: hidden;
+  border: 1px solid var(--border-subtle); border-radius: var(--border-radius-default);
+  background: var(--surface-subtle-dark);
+}
+.PhaseTimelineVisual-segment {
+  display: flex; align-items: center; justify-content: center; min-width: 0;
+  padding: 0 8px; color: var(--text-default); font-size: var(--font-size-extra-small);
+  font-weight: var(--font-weight-semibold); white-space: nowrap; overflow: hidden;
+  cursor: help;
+  text-overflow: ellipsis; border-right: 1px solid rgba(255,255,255,.35);
+}
+.PhaseTimelineVisual-segment:last-child { border-right: 0; }
+.PhaseTimelineVisual-segment:focus-visible { outline: 2px solid var(--border-primary); outline-offset: -2px; }
+@media (max-width: 700px) {
+  .TimelineActions { width: 100%; }
+  .PhaseTimelineEditor-row { grid-template-columns: minmax(0, 1fr) 96px 118px 35px; column-gap: var(--padding-sm); }
+}
 .SequenceToggle {
   display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
   color: var(--text-default); font-size: var(--font-size-small); cursor: pointer;
@@ -693,7 +781,7 @@ a { color: var(--text-link-color); text-decoration: none; }
 }
 .ShapeSeg {
   display: flex; align-items: center; justify-content: center; overflow: hidden;
-  color: var(--text-inverse); font-size: var(--font-size-small); font-weight: var(--font-weight-semibold);
+  color: var(--text-default); font-size: var(--font-size-small); font-weight: var(--font-weight-semibold);
   border-right: 1px solid var(--surface-inverse-divider); min-width: 0;
   padding: 0 8px; white-space: nowrap; text-overflow: ellipsis;
   cursor: pointer;
@@ -1043,7 +1131,7 @@ a { color: var(--text-link-color); text-decoration: none; }
 .MiniGantt-bar {
   position: absolute; top: 10px; height: 24px; min-width: 8px;
   display: flex; align-items: center; justify-content: center;
-  border-radius: var(--border-radius-default); color: var(--text-inverse);
+  border-radius: var(--border-radius-default); color: var(--text-default);
   font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold);
   cursor: grab; overflow: hidden; user-select: none;
 }
@@ -1325,14 +1413,6 @@ a { color: var(--text-link-color); text-decoration: none; }
               </div>
             </div>
             <div class="Field-row Field-row--single">
-              <div class="Field">
-                <label class="Field-label">Template structure <span class="RequiredMark">*</span></label>
-                <div class="BtnGroup" id="templateStructureGroup" role="group" aria-label="Template structure">
-                  <button type="button" id="modePhases" class="is-active" onclick="setPhaseWorld(true)">With phases</button>
-                  <button type="button" id="modeFlat" onclick="setPhaseWorld(false)">Without phases</button>
-                </div>
-                <span class="Field-hint">Choose whether work is organised by phases or as a flat timeline.</span>
-              </div>
               <div class="Field DetailsBusinessUnit">
                 <label class="Field-label" for="wp-business-unit">Business unit <span class="RequiredMark">*</span></label>
                 <div class="TreeInput BusinessUnitTree" id="businessUnitPicker">
@@ -1370,6 +1450,11 @@ a { color: var(--text-link-color); text-decoration: none; }
                 <div class="StructureTimeline-head">
                   <strong class="StructureTimeline-title">Demand shape</strong>
                   <div class="StructureTimeline-headEnd">
+                    <div class="TimelineActions" aria-label="Timeline actions">
+                      <button class="Btn Btn--sm" id="addPhaseButton" type="button" onclick="addPhaseFromTimeline()">
+                        <i class="fa-solid fa-plus" aria-hidden="true"></i> Add phase
+                      </button>
+                    </div>
                     <p class="InlineError SequenceWarning hidden" id="sequenceWarning" role="alert">
                       <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
                       <span id="sequenceWarningText"></span>
@@ -1400,6 +1485,7 @@ a { color: var(--text-link-color); text-decoration: none; }
                     </span>
                   </div>
                 </div>
+                <div id="phaseTimelineEditor" class="PhaseTimelineEditor"></div>
                 <div class="ShapeTimeline" id="timelineShapeVisual"></div>
               </div>
               <div id="slotEditor" class="Stack"></div>
@@ -1462,7 +1548,7 @@ a { color: var(--text-link-color); text-decoration: none; }
         <label class="Field-label" for="resourceTypeSelect"><span id="resourceTypeLabel">Phase</span></label>
         <div class="TypeSelectWrap">
           <span class="TypeSelectSwatch" id="resourceTypeSwatch" aria-hidden="true"></span>
-          <select class="Select" id="resourceTypeSelect" onchange="syncResourceModalConfirm()"></select>
+          <select class="Select" id="resourceTypeSelect" onchange="onResourceTypeChange()"></select>
         </div>
         <span class="Field-hint" id="resourceTypeHint">The phase colour is inherited by the timeline segment.</span>
       </div>
@@ -1513,7 +1599,8 @@ a { color: var(--text-link-color); text-decoration: none; }
         <label class="Field-label" for="resourceStartInput">Start week</label>
         <div class="ModalStack">
           <div class="ModalNumField">
-            <input class="Input" id="resourceStartInput" type="number" min="1" step="1" value="1" oninput="syncResourceModalConfirm()">
+            <input class="Input" id="resourceStartInput" type="number" min="1" step="1" value="1"
+              oninput="resourceModalState.startTouched = true; syncResourceModalConfirm()">
             <span class="ModalNumField-unit">of the template</span>
           </div>
           <span class="Field-hint" id="resourceStartHint">Week 1 is the start of the template.</span>
@@ -1582,8 +1669,19 @@ const BOOKING_TYPE_LIBRARY = {
 const UNNAMED_PHASE_COLOR = '';
 const BUFFER_COLOR = 'var(--surface-accent)';
 const DEFAULT_PHASE_WEEKS = 1;
+// In this prototype, Tax is the configured phase-enabled business unit.
+// Other business units demonstrate the booking-type fallback.
+const PHASE_ENABLED_BUSINESS_UNITS = new Set(['Tax']);
+
+function phasesConfigured(d = state.draft) {
+  if (!d) return false;
+  if (typeof d.phasesConfigured === 'boolean') return d.phasesConfigured;
+  if (d.businessUnit) return PHASE_ENABLED_BUSINESS_UNITS.has(d.businessUnit);
+  return Array.isArray(d.phases) && d.phases.some(isPhaseItem);
+}
+
 function isPhaseWorld(d = state.draft) {
-  return !d || d.phaseWorld !== false;
+  return phasesConfigured(d);
 }
 
 function wizardSteps() {
@@ -1610,6 +1708,52 @@ function phaseColor(name) {
 
 function bookingTypeColor(name) {
   return BOOKING_TYPE_LIBRARY[name] || 'var(--surface-emphasis)';
+}
+
+function parseCssColor(color) {
+  let value = String(color || '').trim();
+  const variable = value.match(/^var\((--[^,)]+)/);
+  if (variable && document?.documentElement) {
+    value = getComputedStyle(document.documentElement).getPropertyValue(variable[1]).trim();
+  }
+  const hex = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hex) {
+    const digits = hex[1].length === 3
+      ? hex[1].split('').map(digit => digit + digit).join('')
+      : hex[1];
+    return [0, 2, 4].map(index => parseInt(digits.slice(index, index + 2), 16));
+  }
+  const rgb = value.match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i);
+  return rgb ? [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])] : null;
+}
+
+// Pick the text colour with the strongest contrast against every fill. This
+// also handles demand-shape gradients, where one colour must work across all stops.
+function accessibleTextColor(backgrounds) {
+  const fills = (Array.isArray(backgrounds) ? backgrounds : [backgrounds])
+    .map(parseCssColor).filter(Boolean);
+  if (!fills.length) return 'var(--text-default)';
+  const candidates = [
+    { value: 'var(--text-default)', rgb: [34, 36, 48] },
+    { value: 'var(--text-inverse)', rgb: [255, 255, 255] }
+  ];
+  const contrast = (foreground, background) => {
+    const luminance = rgb => rgb.reduce((total, channel, index) => {
+      const linear = channel / 255 <= 0.03928
+        ? channel / 255 / 12.92
+        : ((channel / 255 + 0.055) / 1.055) ** 2.4;
+      return total + linear * [0.2126, 0.7152, 0.0722][index];
+    }, 0);
+    const light = Math.max(luminance(foreground), luminance(background));
+    const dark = Math.min(luminance(foreground), luminance(background));
+    return (light + 0.05) / (dark + 0.05);
+  };
+  return candidates
+    .map(candidate => ({
+      ...candidate,
+      score: Math.min(...fills.map(fill => contrast(candidate.rgb, fill)))
+    }))
+    .sort((a, b) => b.score - a.score)[0].value;
 }
 
 let uid = 1;
@@ -1766,7 +1910,7 @@ function draftHasProgress(d = state.draft) {
     d.name ||
     d.returnType ||
     d.businessUnit ||
-    d.phaseWorld === false ||
+    effortPhases(d).length ||
     requestItems(d).length ||
     d.sequencing?.allowOverlap === false
   );
@@ -1857,6 +2001,91 @@ function effortPhases(d = state.draft) {
   return (d.phases || []).filter(isPhaseItem);
 }
 
+function syncPhaseWeights(d = state.draft) {
+  const phases = effortPhases(d);
+  if (!phases.length) return;
+  const values = phases.map(phase => Number(phase.weight));
+  const sum = values.reduce((total, value) => total + (Number.isFinite(value) ? value : 0), 0);
+  const valid = values.every(value => Number.isFinite(value) && value >= 0 && value <= 100);
+  if (valid && sum === 100) return;
+  const each = Math.floor(100 / phases.length);
+  const remainder = 100 - each * phases.length;
+  phases.forEach((phase, index) => { phase.weight = each + (index < remainder ? 1 : 0); });
+}
+
+function distributePhaseWeights(phases, total) {
+  const unlocked = phases.filter(phase => !phase.locked);
+  if (!unlocked.length) return;
+  const each = Math.floor(total / unlocked.length);
+  const remainder = total - each * unlocked.length;
+  unlocked.forEach((phase, index) => {
+    phase.weight = each + (index < remainder ? 1 : 0);
+  });
+}
+
+function rebalancePhaseWeight(phaseId, value) {
+  const phases = effortPhases();
+  const target = phases.find(phase => phase.id === phaseId);
+  if (!target || target.locked) return;
+  const lockedTotal = phases.filter(phase => phase.id !== phaseId && phase.locked)
+    .reduce((sum, phase) => sum + Math.max(0, Number(phase.weight) || 0), 0);
+  const next = Math.min(100 - lockedTotal, Math.max(0, Math.round(Number(value) || 0)));
+  target.weight = next;
+  const peers = phases.filter(phase => phase.id !== phaseId && !phase.locked);
+  const remainder = Math.max(0, 100 - lockedTotal - next);
+  const peerTotal = peers.reduce((sum, phase) => sum + Math.max(0, Number(phase.weight) || 0), 0);
+  if (!peers.length) {
+    target.weight = 100 - lockedTotal;
+    return;
+  }
+  if (!peerTotal) {
+    distributePhaseWeights(peers, remainder);
+    return;
+  }
+  let allocated = 0;
+  peers.forEach((phase, index) => {
+    if (index === peers.length - 1) phase.weight = Math.max(0, remainder - allocated);
+    else {
+      phase.weight = Math.max(0, Math.round(remainder * ((Number(phase.weight) || 0) / peerTotal)));
+      allocated += phase.weight;
+    }
+  });
+}
+
+function previewPhaseWeight(phaseId, value) {
+  if (value === '' || value == null) return;
+  rebalancePhaseWeight(phaseId, value);
+  effortPhases().forEach(phase => {
+    const input = document.querySelector(`.PhaseWeightInput[data-phase-id="${phase.id}"]`);
+    if (input && document.activeElement !== input) input.value = phase.weight;
+  });
+  renderStepper();
+}
+
+function commitPhaseWeight(phaseId, value) {
+  const input = document.querySelector(`.PhaseWeightInput[data-phase-id="${phaseId}"]`);
+  if (value === '' || value == null) {
+    const phase = effortPhases().find(item => item.id === phaseId);
+    if (input && phase) input.value = phase.weight;
+    return;
+  }
+  previewPhaseWeight(phaseId, value);
+}
+
+function togglePhaseWeightLock(phaseId) {
+  const phases = effortPhases();
+  const phase = phases.find(item => item.id === phaseId);
+  if (!phase) return;
+  if (!phase.locked && phases.filter(item => !item.locked).length === 1) {
+    toast('Keep at least one phase unlocked');
+    return;
+  }
+  phase.locked = !phase.locked;
+  syncPhaseWeights();
+  renderPhaseTimelineEditor();
+  renderStepper();
+}
+
 function isWorkPeriod(item) {
   return item?.kind === 'period';
 }
@@ -1866,7 +2095,7 @@ function workPeriods(d = state.draft) {
 }
 
 function requestTypeKey(request, d = state.draft) {
-  return isPhaseWorld(d) ? request?.phase : request?.bookingType;
+  return request?.phase || request?.bookingType || '';
 }
 
 function requestEffortLabel(request) {
@@ -1961,7 +2190,15 @@ function normaliseResourceRequests(d) {
     : (d.items || []).reduce((sum, item) => sum + (Number(item.durationWeeks) || 0), 0);
   d.durationDays = Math.max(1, Math.round(Number(d.durationDays) || legacyWeeks * 7 || 90));
   d.durationUnit = ['days', 'weeks', 'months'].includes(d.durationUnit) ? d.durationUnit : 'days';
-  if (d._editing && !d.businessUnit) d.businessUnit = 'Tax';
+  if (d._editing && !d.businessUnit) {
+    d.businessUnit = d.phaseWorld === false ? 'IT Consulting' : 'Tax';
+  }
+  if (typeof d.phasesConfigured !== 'boolean') {
+    d.phasesConfigured = d.businessUnit
+      ? PHASE_ENABLED_BUSINESS_UNITS.has(d.businessUnit)
+      : d.phaseWorld !== false && (d.phases || []).some(isPhaseItem);
+  }
+  d.phaseWorld = d.phasesConfigured;
 
   if (Array.isArray(d.resourceRequests)) {
     d.resourceRequests = d.resourceRequests.map(request => ({
@@ -2319,7 +2556,8 @@ function blankDraft() {
     status: 'draft',
     returnType: '',
     businessUnit: '',
-    phaseWorld: true,
+    phaseWorld: false,
+    phasesConfigured: false,
     durationDays: 90,
     durationUnit: 'days',
     sequencing: { allowOverlap: true, typeOrder: [] },
@@ -2332,38 +2570,16 @@ function blankDraft() {
 
 function openWizard(fresh = true) {
   if (fresh || !state.draft) state.draft = blankDraft();
-  if (state.draft.phaseWorld == null) state.draft.phaseWorld = true;
+  if (state.draft.phasesConfigured == null) {
+    state.draft.phasesConfigured = phasesConfigured(state.draft);
+  }
+  state.draft.phaseWorld = state.draft.phasesConfigured;
   if (!Array.isArray(state.draft.phases)) state.draft.phases = [];
   if (!Array.isArray(state.draft.items)) state.draft.items = [];
   normaliseResourceRequests(state.draft);
   state.wizardStep = 1;
   showScreen('wizard');
   syncWizardForm();
-  syncModeToggle();
-  renderWizard();
-}
-
-function syncModeToggle() {
-  const phase = isPhaseWorld();
-  document.getElementById('modePhases')?.classList.toggle('is-active', phase);
-  document.getElementById('modeFlat')?.classList.toggle('is-active', !phase);
-}
-
-function setPhaseWorld(on) {
-  if (!state.draft) return;
-  const next = !!on;
-  if (state.draft.phaseWorld === next) return;
-  readWizardForm();
-  state.draft.phaseWorld = next;
-  // Requirements are typed by phase or booking type, so switching modes clears them.
-  state.draft.phases = [];
-  state.draft.items = [];
-  state.draft.resourceRequests = [];
-  normaliseSequencing();
-  state.draft.sequencing.typeOrder = [];
-  state.wizardStep = 1;
-  syncModeToggle();
-  toast(next ? 'Switched to with phases' : 'Switched to without phases');
   renderWizard();
 }
 
@@ -2492,12 +2708,27 @@ function toggleBusinessUnitNode(event, name) {
 
 function selectBusinessUnit(value) {
   if (value === 'Root') return;
+  const phasesEnabled = PHASE_ENABLED_BUSINESS_UNITS.has(value);
   const input = document.getElementById('wp-business-unit');
   if (input) {
     input.value = value;
     input.setAttribute('aria-invalid', 'false');
   }
   state.draft.businessUnit = value;
+  state.draft.phasesConfigured = phasesEnabled;
+  state.draft.phaseWorld = phasesEnabled;
+  if (!phasesEnabled) {
+    state.draft.phases = [];
+    state.draft.resourceRequests.forEach(request => {
+      request.phase = '';
+      request.bookingType = request.bookingType || 'Client work';
+      request.segments = (request.segments || []).map(segment => ({
+        ...segment,
+        phase: '',
+        bookingType: segment.bookingType || request.bookingType
+      }));
+    });
+  }
   document.getElementById('businessUnitError')?.classList.add('hidden');
   closeBusinessUnitPicker();
   renderStepper();
@@ -2561,26 +2792,28 @@ function addPhase() {
 
   if (phases.length === 0) {
     d.phases.push(newPhase(100));
+    syncPhaseWeights(d);
     refreshTimelineEditors();
     updateFooterSummary();
     focusLastPhaseSelect();
     return;
   }
 
-  const unlocked = getSegments().filter(s => !s.locked);
-  if (unlocked.length === 0) {
-    toast('Unlock a phase before adding another');
-    return;
-  }
-  const unlockedSum = unlocked.reduce((a, s) => a + s.weight, 0);
-  const starter = Math.min(20, Math.max(5, Math.floor(unlockedSum / (unlocked.length + 1))));
-
   const phase = newPhase(0);
   d.phases.push(phase);
-  applySegments(redistribute(getSegments(), phase.id, starter));
+  rebalancePhaseWeight(phase.id, Math.floor(100 / d.phases.length));
   refreshTimelineEditors();
   updateFooterSummary();
   focusLastPhaseSelect();
+}
+
+function addPhaseFromTimeline() {
+  if (!state.draft) return;
+  if (!phasesConfigured()) {
+    toast('Phases are not configured for this business unit');
+    return;
+  }
+  addPhase();
 }
 
 function focusLastPhaseSelect() {
@@ -2596,6 +2829,9 @@ function setPhaseName(phaseId, name) {
   phase.color = name ? phaseColor(name) : UNNAMED_PHASE_COLOR;
   requestItems().forEach(request => {
     if (request.phase === previousName) request.phase = name;
+    request.segments = (request.segments || []).map(segment =>
+      segment.phase === previousName ? { ...segment, phase: name } : segment
+    );
   });
   refreshTimelineEditors();
 }
@@ -2703,7 +2939,6 @@ function normaliseTo100() {
 }
 
 function renderWizard() {
-  syncModeToggle();
   const steps = wizardSteps();
   if (state.wizardStep > steps.length) state.wizardStep = steps.length;
   if (state.wizardStep < 1) state.wizardStep = 1;
@@ -2871,7 +3106,7 @@ function shapeTimelineMarkup(d) {
     const hasColor = s.kind !== 'buffer' && Boolean(s.color);
     const cls = `${s.kind === 'buffer' ? ' ShapeSeg--buffer' : ''}${hasColor ? '' : ' ShapeSeg--plain'}`;
     const bg = hasColor ? `background:${s.color};` : '';
-    const textColor = hasColor ? 'var(--text-inverse)' : 'var(--text-default)';
+    const textColor = hasColor ? accessibleTextColor(s.color) : 'var(--text-default)';
     const payload = encodeURIComponent(JSON.stringify({
       kind: s.kind,
       name: s.name,
@@ -2930,6 +3165,15 @@ function shapeSegPopoverHtml(data) {
       <div class="ShapeSegPopover-rows">
         <div class="ShapeSegPopover-row"><span>Duration</span><strong>${data.weeks}w</strong></div>
         <div class="ShapeSegPopover-row"><span>Resource requests</span><strong>${data.requestCount || 0}</strong></div>
+      </div>`;
+  }
+  if (data.kind === 'phase') {
+    return `<div class="ShapeSegPopover-title"><span class="SegRow-dot" style="background:${phaseColorByName(data.name)}" aria-hidden="true"></span><span>${esc(data.name)}</span></div>
+      <div class="ShapeSegPopover-rows">
+        <div class="ShapeSegPopover-row"><span>Duration</span><strong>${data.weeks}w</strong></div>
+        <div class="ShapeSegPopover-row"><span>Timeline share</span><strong>${data.weight}%</strong></div>
+        <div class="ShapeSegPopover-row"><span>Resource requirements</span><strong>${data.requestCount || 0}</strong></div>
+        <div class="ShapeSegPopover-row"><span>Utilised</span><strong>${data.utilisedWeeks} of ${data.weeks} weeks · ${data.utilisation}%</strong></div>
       </div>`;
   }
   const shareLabel = 'Demand share';
@@ -3052,7 +3296,8 @@ function demandShapeMarkup(d = state.draft) {
       weeks: run.weeks,
       types: run.types
     }));
-    return `<div class="ShapeSeg${count ? '' : ' ShapeSeg--plain'}" style="width:${width}%;${background}color:${count ? 'var(--text-inverse)' : 'var(--text-default)'};"
+    const textColor = count ? accessibleTextColor(run.types.map(type => type.color)) : 'var(--text-default)';
+    return `<div class="ShapeSeg${count ? '' : ' ShapeSeg--plain'}" style="width:${width}%;${background}color:${textColor};"
       tabindex="0" role="button" aria-label="${esc(full)}"
       data-shape-popover="${payload}"
       onmouseenter="showShapeSegPopover(event)"
@@ -3195,6 +3440,7 @@ function setItemDuration(itemId, value) {
   const item = findTimelineItem(itemId);
   if (!item) return;
   item.durationWeeks = Math.max(1, Math.min(52, Math.round(Number(value) || 1)));
+  if (isPhaseItem(item)) syncPhaseWeights();
   if (currentWizardPanel() === 'timeline') {
     renderShapeTimeline('wizardTimelineShape');
     updateFooterSummary();
@@ -3616,13 +3862,102 @@ function linkSourceLabel(slot) {
 
 function renderTimeline() {
   const intro = document.getElementById('timelineIntro');
-  if (intro) {
-    intro.textContent = isPhaseWorld()
-      ? 'Add resource requirements against their phase, then shape when each one is needed. The timeline length follows the work you place.'
-      : 'Add resource requirements against their booking type, then shape when each one is needed. The timeline length follows the work you place.';
+  const phaseEnabled = phasesConfigured();
+  const phaseButton = document.getElementById('addPhaseButton');
+  if (phaseButton) {
+    phaseButton.disabled = !phaseEnabled;
+    phaseButton.title = phaseEnabled
+      ? 'Add an optional phase'
+      : 'Phases are unavailable because this business unit has no phases configured';
+    phaseButton.setAttribute('aria-disabled', String(!phaseEnabled));
   }
+  if (intro) {
+    intro.textContent = 'Add resource requirements, optionally organise them into phases, then shape when each one is needed. The timeline length follows the work you place.';
+  }
+  renderPhaseTimelineEditor();
   renderResourceGantt('slotEditor');
   renderStepper();
+}
+
+function phaseUtilisation(phase, phaseIndex, d = state.draft) {
+  const phases = effortPhases(d);
+  const weeks = Math.max(1, Number(phase.durationWeeks) || 1);
+  const phaseStart = phases.slice(0, phaseIndex).reduce((sum, item) =>
+    sum + Math.max(1, Number(item.durationWeeks) || 1), 0);
+  const phaseEnd = phaseStart + weeks;
+  const covered = [];
+  requestItems(d).forEach(request => (request.segments || []).forEach(segment => {
+    if (segmentTypeName(request, segment, d) !== phase.name) return;
+    const rawStart = Number(segment.startWeek) || 0;
+    const start = Math.max(phaseStart, rawStart);
+    const end = Math.min(phaseEnd, rawStart + Math.max(0, Number(segment.durationWeeks) || 0));
+    if (end > start) covered.push([start, end]);
+  }));
+  covered.sort((a, b) => a[0] - b[0]);
+  const merged = covered.reduce((ranges, range) => {
+    const last = ranges[ranges.length - 1];
+    if (last && range[0] <= last[1]) last[1] = Math.max(last[1], range[1]);
+    else ranges.push(range);
+    return ranges;
+  }, []);
+  const utilisedWeeks = merged.reduce((sum, range) => sum + range[1] - range[0], 0);
+  return {
+    weeks,
+    utilisedWeeks,
+    requestCount: requestsForType(phase.name, d).length,
+    percent: Math.round((utilisedWeeks / weeks) * 100)
+  };
+}
+
+function renderPhaseTimelineEditor() {
+  const target = document.getElementById('phaseTimelineEditor');
+  if (!target) return;
+  const d = state.draft;
+  const phases = effortPhases(d);
+  syncPhaseWeights(d);
+  if (isPhaseWorld(d) && phases.length) {
+    target.innerHTML = `<div class="PhaseTimelineEditor-help"><strong>Phase weighting</strong> splits demand across phases. Edit a percentage to rebalance unlocked phases, or lock a phase to keep its share fixed.</div>` +
+      phases.map((phase, index) => {
+      const usage = phaseUtilisation(phase, index, d);
+      const usageLabel = `${usage.requestCount} resource requirement${usage.requestCount === 1 ? '' : 's'} · ${usage.utilisedWeeks} of ${usage.weeks} weeks utilised`;
+      return `
+        <div class="PhaseTimelineEditor-row">
+          <div class="PhaseTimelineEditor-name">
+            <span class="PhaseTimelineEditor-dot" style="background:${phase.color || 'var(--surface-emphasis)'}" aria-hidden="true"></span>
+            <select class="Select" aria-label="Phase ${index + 1} name" title="${esc(usageLabel)}"
+              onchange="setPhaseName('${phase.id}', this.value)">${phaseOptionsMarkup(phase.name)}</select>
+          </div>
+          ${durationCell(phase.id, Math.max(1, Number(phase.durationWeeks) || 1), phase.name || `Phase ${index + 1}`)}
+          <div class="PhaseWeightControl" title="Weighting is used to split demand between phases">
+            <div class="input-group">
+              <input class="Input PhaseWeightInput" type="number" min="0" max="100" step="1"
+                data-phase-id="${phase.id}" value="${phase.weight}" aria-label="${esc(phase.name || `Phase ${index + 1}`)} weighting"
+                ${phase.locked ? 'disabled' : ''}
+                oninput="previewPhaseWeight('${phase.id}', this.value)"
+                onchange="commitPhaseWeight('${phase.id}', this.value)">
+              <span class="input-group-text">%</span>
+            </div>
+            <button class="Btn-iconOnly Btn--tertiary PhaseWeightLock${phase.locked ? ' is-locked' : ''}" type="button"
+              title="${phase.locked ? 'Unlock phase weighting' : 'Lock phase weighting'}"
+              aria-label="${phase.locked ? 'Unlock phase weighting' : 'Lock phase weighting'}"
+              aria-pressed="${phase.locked}" onclick="togglePhaseWeightLock('${phase.id}')">
+              <i class="fa-solid fa-${phase.locked ? 'lock' : 'lock-open'}" aria-hidden="true"></i>
+            </button>
+          </div>
+          <button class="Btn-iconOnly Btn--tertiary" type="button" title="Remove phase" aria-label="Remove phase"
+            onclick="removePhase('${phase.id}')"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+        </div>`;
+      }).join('');
+  } else if (isPhaseWorld(d)) {
+    target.innerHTML = `<div class="PhaseTimelineEditor-empty">
+      <span>Add a phase to organise demand by handoff. You can also continue with unphased work.</span>
+      <button class="Btn Btn--sm" type="button" onclick="addPhaseFromTimeline()">Add phase</button>
+    </div>`;
+  } else {
+    target.innerHTML = `<div class="PhaseTimelineEditor-empty">
+      <span>There are no phases configured for this business unit, so resource requirements use booking types.</span>
+    </div>`;
+  }
 }
 
 function newRequest(weight = 0) {
@@ -4262,7 +4597,7 @@ function validateSharesUI() {
 /* ---------- Resource request modal + mini-Gantt ---------- */
 const resourceModalState = {
   editingId: null, durationUnit: 'weeks', effortUnit: 'percentage',
-  startWeek: null, segmentId: null, weightTouched: false
+  startWeek: null, segmentId: null, weightTouched: false, startTouched: false
 };
 // The Gantt is week-granular, so other units are conveniences that round to whole weeks.
 const DAYS_PER_WEEK = 7;
@@ -4322,18 +4657,19 @@ function setResourceEffortUnit(unit) {
 let ganttDragState = null;
 
 function requestTypeName(request, d = state.draft) {
-  return isPhaseWorld(d) ? (request.phase || 'No phase') : (request.bookingType || 'No booking type');
+  return request.phase || request.bookingType ||
+    (isPhaseWorld(d) ? 'No phase' : 'No booking type');
 }
 
 function segmentTypeName(request, segment, d = state.draft) {
-  return isPhaseWorld(d)
-    ? (segment?.phase || requestTypeName(request, d))
-    : (segment?.bookingType || requestTypeName(request, d));
+  return segment?.phase || segment?.bookingType || request?.phase || request?.bookingType ||
+    (isPhaseWorld(d) ? 'No phase' : 'No booking type');
 }
 
 function segmentColor(request, segment, d = state.draft) {
   const type = segmentTypeName(request, segment, d);
-  return isPhaseWorld(d) ? phaseColorByName(type) : bookingTypeColor(type);
+  if (segment?.bookingType || (!segment?.phase && request?.bookingType)) return bookingTypeColor(type);
+  return phaseColorByName(type);
 }
 
 function requestTypeSummary(request, d = state.draft) {
@@ -4362,37 +4698,54 @@ function requestDotStyle(request, d = state.draft) {
   return `background:linear-gradient(135deg, ${stops})`;
 }
 
-// Both modes now pick from a fixed library; nothing is defined at template level.
-function resourceTypeOptions() {
-  const library = isPhaseWorld() ? PHASE_LIBRARY : BOOKING_TYPE_LIBRARY;
+// Booking types use the fixed library; phased requirements use only phases
+// already added to this template's Timeline.
+function resourceTypeOptions(selected = '') {
+  const library = isPhaseWorld()
+    ? Object.fromEntries(effortPhases().filter(phase => phase.name).map(phase => [
+      phase.name, phaseColorByName(phase.name)
+    ]))
+    : BOOKING_TYPE_LIBRARY;
+  if (selected && !library[selected]) {
+    library[selected] = isPhaseWorld() ? phaseColorByName(selected) : bookingTypeColor(selected);
+  }
   return Object.entries(library).map(([name, color]) => ({ name, color }));
 }
 
 function openResourceModal(editingId = null, startWeek = null, segmentId = null) {
-  const typeOptions = resourceTypeOptions();
   resourceModalState.editingId = editingId;
   resourceModalState.startWeek = Number.isFinite(Number(startWeek)) ? Math.max(1, Number(startWeek)) : null;
   resourceModalState.segmentId = segmentId;
   resourceModalState.weightTouched = false;
+  resourceModalState.startTouched = Boolean(startWeek || segmentId || editingId);
   const editing = editingId ? findRequest(editingId) : null;
   const selectedSegment = editing && segmentId && segmentId !== 'new'
     ? editing.segments?.find(segment => segment.id === segmentId)
     : null;
+  const selectedType = selectedSegment
+    ? segmentTypeName(editing, selectedSegment)
+    : editing ? requestTypeName(editing) : '';
+  const typeOptions = resourceTypeOptions(selectedType);
   document.getElementById('resourceModalTitle').textContent =
     editing ? 'Edit Resource Requirement' : 'Add Resource Requirement';
   const typeLabel = isPhaseWorld() ? 'Phase' : 'Booking type';
   document.getElementById('resourceTypeRequired')?.classList.toggle('hidden', !isPhaseWorld());
   document.getElementById('resourceTypeLabel').textContent = typeLabel;
   document.getElementById('resourceTypeHint').textContent = isPhaseWorld()
-    ? 'The phase colour is inherited by the timeline segment.'
+    ? typeOptions.length
+      ? 'Only phases added to the Timeline are available here.'
+      : 'Add a phase above before adding a phased resource requirement.'
     : 'The booking type colour is inherited by the timeline segment.';
   document.getElementById('resourceTypeSelect').innerHTML =
-    `<option value="">${isPhaseWorld() ? `Choose ${typeLabel.toLowerCase()}` : 'No booking type (optional)'}</option>` +
+    `<option value="">${isPhaseWorld()
+      ? (typeOptions.length ? `Choose ${typeLabel.toLowerCase()}` : 'No phases added yet')
+      : 'No booking type (optional)'}</option>` +
     typeOptions.map(option => `<option value="${esc(option.name)}">${esc(option.name)}</option>`).join('');
   document.getElementById('resourceTypeSelect').value =
     selectedSegment
       ? segmentTypeName(editing, selectedSegment)
       : editing ? (isPhaseWorld() ? editing.phase : editing.bookingType) : '';
+  document.getElementById('resourceTypeSelect').disabled = isPhaseWorld() && !typeOptions.length;
   document.getElementById('resourceGradeSelect').innerHTML =
     '<option value="">Choose grade</option>' +
     GRADES.map(grade => `<option value="${esc(grade)}">${esc(grade)}</option>`).join('');
@@ -4455,12 +4808,30 @@ function openResourceModal(editingId = null, startWeek = null, segmentId = null)
   setTimeout(() => document.getElementById('resourceTypeSelect')?.focus(), 0);
 }
 
+function onResourceTypeChange() {
+  const type = document.getElementById('resourceTypeSelect')?.value || '';
+  if (!resourceModalState.startTouched && type && isPhaseWorld()) {
+    const phases = effortPhases();
+    const phaseIndex = phases.findIndex(phase => phase.name === type);
+    if (phaseIndex >= 0) {
+      const startWeek = phases.slice(0, phaseIndex).reduce((sum, phase) =>
+        sum + Math.max(1, Number(phase.durationWeeks) || 1), 0) + 1;
+      const startInput = document.getElementById('resourceStartInput');
+      if (startInput) startInput.value = startWeek;
+      const startHint = document.getElementById('resourceStartHint');
+      if (startHint) startHint.textContent = `Starts inside ${type}, after the preceding phase time.`;
+    }
+  }
+  syncResourceModalConfirm();
+}
+
 function closeResourceModal() {
   document.getElementById('resourceModalOverlay')?.classList.remove('is-open');
   resourceModalState.editingId = null;
   resourceModalState.startWeek = null;
   resourceModalState.segmentId = null;
   resourceModalState.weightTouched = false;
+  resourceModalState.startTouched = false;
 }
 
 function syncResourceModalConfirm() {
@@ -4605,7 +4976,7 @@ function miniGanttMarkup(d = state.draft, readOnly = false) {
     if (request.role) metaBits.unshift(request.role);
     if (requestWeeks) metaBits.push(`${requestWeeks}w`);
     const bars = (request.segments || []).map(segment => `
-      <div class="MiniGantt-bar" style="left:calc(${segment.startWeek} * var(--week-w));width:calc(${segment.durationWeeks} * var(--week-w));background:${segmentColor(request, segment, d)};"
+      <div class="MiniGantt-bar" style="left:calc(${segment.startWeek} * var(--week-w));width:calc(${segment.durationWeeks} * var(--week-w));background:${segmentColor(request, segment, d)};color:${accessibleTextColor(segmentColor(request, segment, d))};"
         title="${segment.durationWeeks} week${segment.durationWeeks === 1 ? '' : 's'}"
         ${readOnly ? '' : `onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','move')" ondblclick="event.stopPropagation(); openResourceModal('${request.id}', null, '${segment.id}')"`}>
         ${readOnly ? '' : `<span class="MiniGantt-resize MiniGantt-resize--left" style="color:${segmentColor(request, segment, d)};" onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','resize-left')">⋮</span>`}
@@ -4948,6 +5319,21 @@ function reviewDemandTablesMarkup(d = state.draft) {
   `).join('');
 }
 
+function reviewPhaseWeightsMarkup(d = state.draft) {
+  const phases = effortPhases(d);
+  if (!phases.length || !isPhaseWorld(d)) return '';
+  syncPhaseWeights(d);
+  return `<div class="ReviewPhaseWeights" aria-label="Phase weighting">
+    ${phases.map((phase, index) => {
+      const usage = phaseUtilisation(phase, index, d);
+      return `<span class="ReviewPhaseWeight">
+        <span class="ReviewPhaseWeight-dot" style="background:${phase.color || 'var(--surface-emphasis)'}" aria-hidden="true"></span>
+        <span>${esc(phase.name || 'Unnamed phase')} · ${phase.weight}% · ${usage.weeks}w${phase.locked ? ' · locked' : ''}</span>
+      </span>`;
+    }).join('')}
+  </div>`;
+}
+
 function renderReview() {
   readWizardForm();
   const d = state.draft;
@@ -4958,14 +5344,16 @@ function renderReview() {
   const requests = requestItems(d);
   const segmentCount = requests.reduce((sum, request) => sum + request.segments.length, 0);
   const totalWeeks = contentWeeks(d);
-  const sequencingLabel = d.sequencing?.allowOverlap !== false ? 'Overlap allowed' : 'Sequential work';
+  const sequencingLabel = d.sequencing?.allowOverlap !== false
+    ? 'Overlap allowed · start-to-start'
+    : 'No overlap · finish-to-start · gaps consumed when shunting';
 
   document.getElementById('reviewSummary').innerHTML = `
     <div class="ReviewSummaryCard">
       <div class="ReviewSummary-copy">
         <h3 class="ReviewSummary-title">${esc(d.name || '(unnamed)')}</h3>
         <div class="ReviewSummary-detail">
-          ${totalWeeks} weeks · ${d.sequencing?.allowOverlap !== false ? 'Work segments may overlap' : 'Work runs sequentially'}
+          ${totalWeeks} weeks · ${esc(sequencingLabel)}
         </div>
       </div>
       <div class="ReviewSummary-metrics">
@@ -4990,6 +5378,7 @@ function renderReview() {
         <button class="Btn Btn--sm" type="button" onclick="onStepperClick(${timelineStep})">Edit timeline</button>
       </div>
       <div class="ShapeTimeline" id="reviewShapeVisual"></div>
+      ${reviewPhaseWeightsMarkup(d)}
     </section>
 
     <section class="ReviewSection" aria-labelledby="reviewDemandTitle">
@@ -5045,8 +5434,20 @@ function timelineIssue() {
   if (requests.some(request => !(request.grade && String(request.grade).trim()))) {
     return 'Choose a grade for every resource requirement';
   }
-  if (isPhaseWorld() && requests.some(request => !PHASE_LIBRARY[request.phase])) {
-    return 'Choose a valid phase for every resource requirement';
+  if (isPhaseWorld() && effortPhases().some(phase => !PHASE_LIBRARY[phase.name])) {
+    return 'Choose a phase name for every phase block';
+  }
+  if (isPhaseWorld() && effortPhases().length) {
+    const phaseWeights = effortPhases().map(phase => Number(phase.weight));
+    const phaseWeightTotal = phaseWeights.reduce((sum, value) =>
+      sum + (Number.isFinite(value) ? value : 0), 0);
+    if (!phaseWeights.every(value => Number.isFinite(value) && value >= 0 && value <= 100) ||
+      phaseWeightTotal !== 100) {
+      return 'Phase weightings must total 100%';
+    }
+  }
+  if (isPhaseWorld() && requests.some(request => request.phase && !PHASE_LIBRARY[request.phase])) {
+    return 'Choose a valid phase for every phased resource requirement';
   }
   if (!isPhaseWorld() && requests.some(request => request.bookingType && !BOOKING_TYPE_LIBRARY[request.bookingType])) {
     return 'Choose a booking type for every resource requirement';
@@ -5104,7 +5505,8 @@ function publishDraft() {
       existing.name = d.name;
       existing.returnType = d.returnType;
       existing.businessUnit = d.businessUnit;
-      existing.phaseWorld = d.phaseWorld !== false;
+      existing.phaseWorld = isPhaseWorld(d);
+      existing.phasesConfigured = phasesConfigured(d);
       existing.durationDays = d.durationDays;
       existing.durationUnit = d.durationUnit;
       existing.phases = JSON.parse(JSON.stringify(d.phases || []));
@@ -5120,6 +5522,8 @@ function publishDraft() {
     delete t._initialSnapshot;
     t.status = 'published';
     t.version = 1;
+    t.phaseWorld = isPhaseWorld(d);
+    t.phasesConfigured = phasesConfigured(d);
     state.catalogue.unshift(t);
     toast('Published demand template v1');
   }
