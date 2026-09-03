@@ -42,6 +42,8 @@ jobs:
           VERSION_SYNC_ALL: ${{ github.event_name == 'workflow_dispatch' && inputs.sync_all_versions || false }}
         run: node scripts/sync-pushed-versions.mjs
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
