@@ -81,6 +81,15 @@
     }
     .notice.is-error { border-color: #edc4d2; background: #fff5f8; color: var(--danger); }
     .notice[hidden] { display: none; }
+    .resource-auth {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin: 16px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+      background: #fbfcfb; color: var(--muted); font-size: .82rem; line-height: 1.4;
+    }
+    .resource-auth > span { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .resource-auth i { color: var(--accent); }
+    .resource-auth .btn { min-height: 34px; padding: 0 10px; flex: 0 0 auto; }
+    .resource-auth[hidden] { display: none; }
     .tabs {
       display: flex; gap: 3px; overflow-x: auto; margin: 18px 0 0; padding: 4px 0 5px;
       border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.62);
@@ -180,7 +189,7 @@
       .row { align-items: flex-start; flex-direction: column; }
       .row-actions { width: 100%; }
       .row-actions .btn { flex: 1; }
-      .notice { align-items: flex-start; flex-direction: column; }
+      .notice, .resource-auth { align-items: flex-start; flex-direction: column; }
     }
   </style>
 </head>
@@ -214,7 +223,6 @@
       </nav>
     </header>
 
-    <div class="notice" id="authNotice" hidden></div>
     <div class="notice is-error" id="errorNotice" hidden></div>
 
     <section class="manage-panel card" id="managePanel" hidden>
@@ -281,6 +289,7 @@
     <section class="tab-panel" id="panel-resources" data-panel="resources" hidden>
       <div class="card">
         <div><h2 id="resourceHeading">Developer resources</h2><p>Add the files developers need to build or understand this prototype.</p></div>
+        <div class="resource-auth" id="resourceAuth" hidden></div>
         <div class="resource-tabs" style="margin-top:16px">
           <button type="button" class="resource-filter" data-kind="components">Components</button>
           <button type="button" class="resource-filter" data-kind="code">Code</button>
@@ -350,7 +359,7 @@
       var subtitleEl = document.getElementById('subtitle');
       var metaEl = document.getElementById('meta');
       var errorEl = document.getElementById('errorNotice');
-      var authNotice = document.getElementById('authNotice');
+      var resourceAuth = document.getElementById('resourceAuth');
       var backLink = document.getElementById('backLink');
       var openMock = document.getElementById('openMock');
       var downloadBtn = document.getElementById('downloadBtn');
@@ -553,18 +562,15 @@
 
       function loadAuthState() {
         return auth.refreshUser().then(function (user) {
+          resourceAuth.hidden = false;
           if (user) {
-            authNotice.hidden = false;
-            authNotice.className = 'notice';
-            authNotice.innerHTML = '<span><i class="fa-solid fa-lock" aria-hidden="true"></i> Signed in as <strong>' + esc(user.email || 'team member') + '</strong>. Private developer files are available.</span><button type="button" class="btn" id="signOutBtn">Sign out</button>';
+            resourceAuth.innerHTML = '<span><i class="fa-solid fa-lock" aria-hidden="true"></i> Signed in as <strong>' + esc(user.email || 'team member') + '</strong>.</span><button type="button" class="btn" id="signOutBtn">Sign out</button>';
             document.getElementById('signOutBtn').addEventListener('click', function () {
               auth.signOut().then(function () { location.reload(); });
             });
           } else {
-            authNotice.hidden = false;
-            authNotice.className = 'notice';
-            authNotice.innerHTML = '<span><i class="fa-solid fa-lock" aria-hidden="true"></i> You can browse this workspace, but sign in to add or download private developer files.</span><button type="button" class="btn" id="signInBtn">Sign in</button>';
-            document.getElementById('signInBtn').addEventListener('click', openAuth);
+            resourceAuth.innerHTML = '<span><i class="fa-solid fa-lock" aria-hidden="true"></i> Sign in to manage private developer files.</span><button type="button" class="btn" id="resourceSignInBtn">Sign in</button>';
+            document.getElementById('resourceSignInBtn').addEventListener('click', openAuth);
           }
           updateResourceUi();
         });
