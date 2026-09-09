@@ -26,6 +26,7 @@
   --surface-accent: #e2e3e9;
   --surface-default: #fff;
   --surface-subtle-light: #f7f7fa;
+  --surface-page: #f8f8f8;
   --surface-subtle-dark: #f1f1f4;
   --surface-list-item-hover: #f1f1f4;
   --surface-list-item-selected-light: #f0effb;
@@ -157,29 +158,29 @@ a { color: var(--text-link-color); text-decoration: none; }
   width: 48px; flex: 0 0 48px; background: var(--deep-black);
   display: flex; flex-direction: column; min-height: 100%;
 }
-.NavBar-logoWrapper { height: 42px; margin: 5px 5px 24px; display: flex; align-items: center; justify-content: center; }
-.NavBar-dayshapeIcon { background: var(--surface-default); border-radius: 2px; height: 38px; width: 38px; object-fit: cover; }
+.NavBar-logoWrapper { height: 60px; padding: 4px 4px 16px; display: flex; align-items: flex-start; justify-content: center; }
+.NavBar-dayshapeIcon { background: var(--surface-default); border-radius: 4px; height: 40px; width: 40px; object-fit: cover; }
 .NavBar-mainMenuContent { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1 1 auto; }
-.NavBar-li { min-height: 42px; border-left: solid 3px transparent; position: relative; }
-.NavBar-li:hover, .NavBar-li.is-active { border-left-color: var(--text-inverse); }
+.NavBar-li { min-height: 44px; position: relative; }
+.NavBar-li.is-active::before { content: ""; position: absolute; left: 0; top: 0; width: 4px; height: 44px; background: var(--text-inverse); z-index: 1; }
 .NavBar-menuLink {
-  height: 40px; padding: 12px 10px; color: var(--text-inverse);
-  display: flex; align-items: center; cursor: pointer; text-decoration: none;
+  width: 48px; height: 44px; padding: 12px; color: var(--text-inverse);
+  display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none;
 }
 .NavBar-menuLink:hover { color: var(--text-inverse); text-decoration: none; }
-.NavBar-menuIcon { width: 1.25rem; text-align: center; font-size: 1.1rem; }
+.NavBar-menuIcon { width: 20px; text-align: center; font-size: 20px; }
 .NavBar-li:hover .NavBar-menuIcon, .NavBar-li.is-active .NavBar-menuIcon { font-weight: 900; }
-.NavBar-hr { border: 0; border-top: solid 1px var(--neutral-grey-d3); margin: 12px 8px; opacity: .6; }
-.NavBar-menuBottom { display: flex; flex-direction: column; align-items: flex-end; padding-bottom: 12px; }
+.NavBar-hr { border: 0; border-top: solid 1px var(--neutral-grey-d3); margin: 16px 4px; opacity: .8; }
+.NavBar-menuBottom { display: flex; flex-direction: column; align-items: flex-end; padding-bottom: 20px; }
 .NavBar-expandButton {
-  background: var(--neutral-deep-grey-14); height: 31px; width: 40px;
+  background: var(--neutral-deep-grey-14); height: 34px; width: 40px;
   display: flex; align-items: center; justify-content: center;
   border-radius: 5px 0 0 5px; border: 0; cursor: pointer; color: var(--deep-black);
 }
 .NavBar.is-subnav-open .NavBar-expandButton i { transform: rotate(180deg); }
 .NavBar-li[data-tooltip]::after {
   content: attr(data-tooltip);
-  position: absolute; left: 52px; top: 50%; transform: translateY(-50%);
+  position: absolute; left: 40px; top: 50%; transform: translateY(-50%);
   background: var(--deep-black); color: var(--text-inverse); font-size: var(--font-size-small);
   font-weight: var(--font-weight-semibold); padding: 6px 10px;
   border-radius: var(--border-radius-default); white-space: nowrap;
@@ -214,12 +215,16 @@ a { color: var(--text-link-color); text-decoration: none; }
 .Main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
 .TopBar {
   background: var(--surface-default); border-bottom: 1px solid var(--border-subtle);
-  padding: 16px var(--padding-lg); display: flex; align-items: center; gap: 8px;
-  position: sticky; top: 0; z-index: 30;
+  padding: 24px; display: flex; align-items: flex-start; gap: 12px;
+  min-height: 83px; height: 83px; position: sticky; top: 0; z-index: 30;
 }
 .TopBar-title {
-  font-size: 24px; line-height: 32px; font-weight: var(--font-weight-regular);
+  font-size: 24px; line-height: 33px; font-weight: var(--font-weight-regular);
   color: var(--text-default); margin: 0;
+}
+.TopBar-action {
+  width: 90px; height: 35px; min-height: 35px; padding: 0 12px; gap: 8px;
+  font-size: 14px; font-weight: var(--font-weight-regular);
 }
 .TopBar-spacer { flex: 1 1 auto; }
 .Btn-iconOnly.TopBar-back {
@@ -277,8 +282,48 @@ a { color: var(--text-link-color); text-decoration: none; }
 
 .Page { padding: var(--padding-lg); flex: 1 1 auto; }
 .Page--narrow { width: 100%; max-width: none; }
-#screen-catalogue { width: 100%; }
+#screen-catalogue { width: 100%; padding: 24px; background: var(--surface-page); }
 #screen-wizard { padding-bottom: calc(60px + var(--padding-lg)); }
+
+.CatalogueTable {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  box-shadow: none;
+  overflow: hidden;
+  font-size: var(--font-size-medium);
+  table-layout: fixed;
+}
+.CatalogueTable thead th {
+  height: 40px; min-height: 40px; padding: 12px; font-size: 14px; line-height: 21px;
+  background: var(--surface-subtle-dark); border-top: 0;
+  box-shadow: inset 0 -2px 0 var(--border-default);
+  vertical-align: middle;
+}
+.CatalogueTable tbody td {
+  height: 48px; min-height: 40px; padding: 12px; font-size: 14px; line-height: 21px;
+  background: var(--surface-default); vertical-align: middle;
+}
+.CatalogueTable th:nth-child(1), .CatalogueTable td:nth-child(1) { width: 46.7%; }
+.CatalogueTable th:nth-child(2), .CatalogueTable td:nth-child(2) { width: 50.3%; }
+.CatalogueSort { display: inline-flex; align-items: center; gap: 4px; }
+.CatalogueSort i { color: var(--text-emphasis); font-size: 9px; }
+.CataloguePagination {
+  display: flex; align-items: center; justify-content: flex-end; gap: var(--padding-xs);
+  min-height: 59px; height: 59px; padding: 12px 8px; border: 1px solid var(--border-subtle);
+  border-top: 0; border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+  background: var(--surface-default); color: var(--text-accent); font-size: 14px; line-height: 21px;
+}
+.CataloguePagination:empty { display: none; }
+.CataloguePageButton {
+  width: 33px; height: 35px; min-height: 35px; padding: 0 12px;
+  border: 1px solid var(--border-default); color: var(--text-accent);
+  background: var(--surface-default); font-size: 14px;
+}
+.CataloguePageButton:hover:not(:disabled) { background: var(--surface-subtle-dark); }
+.CataloguePageButton.is-current {
+  color: var(--text-inverse); background: var(--surface-primary);
+  border-color: var(--surface-primary);
+}
 
 .Pill {
   display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px;
@@ -426,61 +471,86 @@ a { color: var(--text-link-color); text-decoration: none; }
 .DurationControl .BtnGroup > button { min-width: 64px; }
 .DurationEquivalent { min-height: 18px; margin-top: 2px; }
 .StructureTimeline {
-  margin-bottom: var(--padding-md); padding: var(--padding-md);
+  display: flex; flex-direction: column; gap: var(--padding-sm);
+  margin-bottom: var(--padding-md); padding: var(--padding-sm);
   border: 1px solid var(--border-subtle); border-radius: var(--border-radius-default);
   background: var(--surface-subtle-light);
 }
 .StructureTimeline-title {
-  margin: 0 0 var(--padding-sm); font-size: var(--font-size-medium);
+  margin: 0; font-size: var(--font-size-medium);
   font-weight: var(--font-weight-semibold);
 }
 .StructureTimeline-head {
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--padding-sm);
-  margin-bottom: var(--padding-sm);
+  min-height: 28px;
 }
 .StructureTimeline-head .StructureTimeline-title { margin: 0; }
 .TimelineActions {
-  display: inline-flex; align-items: center; gap: var(--padding-xs); flex-wrap: wrap;
+  display: inline-flex; align-items: center; gap: var(--padding-xs); flex-wrap: nowrap;
 }
 .TimelineActions .Btn:disabled {
   opacity: .55; cursor: not-allowed;
 }
 .PhaseTimelineEditor {
-  display: flex; flex-direction: column; gap: var(--padding-xs);
-  margin: 0 0 var(--padding-sm); padding: var(--padding-sm);
-  background: var(--surface-subtle-light); border: 1px solid var(--border-subtle);
+  display: flex; flex-direction: column; gap: var(--padding-md);
+  margin: 0; padding: var(--padding-md);
+  background: var(--surface-default); border: 1px solid var(--border-subtle);
   border-radius: var(--border-radius-default);
 }
+.StructureTimeline-scale { margin: 0; }
 .PhaseTimelineEditor-empty {
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--padding-sm); color: var(--text-subtle); font-size: var(--font-size-small);
 }
 .PhaseTimelineEditor-help {
-  color: var(--text-subtle); font-size: var(--font-size-extra-small);
+  display: flex; align-items: center; gap: var(--padding-sm);
+  color: var(--text-default); font-size: var(--font-size-extra-small);
 }
-.PhaseTimelineEditor-help strong { color: var(--text-emphasis); }
+.PhaseTimelineEditor-help strong,
+.PhaseTimelineEditor-help span { color: var(--text-default); }
 .PhaseTimelineEditor-row {
-  display: grid; grid-template-columns: minmax(280px, 1fr) 112px 132px 35px;
-  align-items: center; column-gap: var(--padding-md); row-gap: var(--padding-xs);
+  display: grid; grid-template-columns: minmax(0, 1fr) 101px 156px 35px;
+  align-items: center; column-gap: 20px; row-gap: var(--padding-xs);
+  padding: var(--padding-sm) var(--padding-xs);
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 2px;
+  background: var(--surface-default);
 }
 .PhaseTimelineEditor-row + .PhaseTimelineEditor-row {
-  padding-top: var(--padding-sm); border-top: 1px solid var(--border-subtle);
+  margin-top: 0;
 }
+.PhaseTimelineEditor-rows { display: flex; flex-direction: column; gap: 0; }
+.PhaseTimelineEditor-row.is-dragging { opacity: .5; }
+.PhaseTimelineEditor-row.is-dropTarget { box-shadow: inset 0 2px 0 0 var(--border-primary); }
 .PhaseTimelineEditor-name {
   display: flex; align-items: center; gap: var(--padding-sm); min-width: 0;
 }
+.PhaseTimelineEditor-handle {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: 0 0 16px; width: 16px; height: 16px; padding: 0;
+  border: 0; background: transparent; color: var(--icon-default);
+  cursor: grab; border-radius: var(--border-radius-default);
+}
+.PhaseTimelineEditor-handle:hover,
+.PhaseTimelineEditor-handle:focus-visible {
+  background: var(--surface-list-item-hover); color: var(--text-accent);
+}
+.PhaseTimelineEditor-handle:active { cursor: grabbing; }
 .PhaseTimelineEditor-name .Select { flex: 1 1 auto; min-width: 0; }
 .PhaseTimelineEditor-dot {
   width: 10px; height: 10px; flex: 0 0 10px; border-radius: 50%;
   background: var(--surface-emphasis);
 }
 .PhaseWeightControl {
-  display: flex; align-items: stretch; gap: var(--padding-xs); min-width: 0;
+  display: flex; align-items: stretch; gap: 20px; min-width: 0;
 }
-.PhaseWeightControl .input-group { width: 92px; flex: 0 0 92px; }
+.PhaseWeightControl .input-group { width: 101px; flex: 0 0 101px; }
+.PhaseWeightControl .input-group .Input { width: 66px; max-width: 66px; flex-basis: 66px; }
 .PhaseWeightControl .Input { min-width: 0; }
 .PhaseWeightLock { flex: 0 0 30px; width: 30px; height: 35px; min-height: 35px; }
 .PhaseWeightLock.is-locked { color: var(--text-primary); background: var(--surface-accent); }
+.PhaseTimelineEditor .PhaseWeightLock,
+.PhaseTimelineEditor .Btn-iconOnly { width: 35px; min-width: 35px; }
 .ReviewPhaseWeights {
   display: flex; flex-wrap: wrap; gap: var(--padding-xs) var(--padding-md);
   margin-top: var(--padding-sm); color: var(--text-subtle); font-size: var(--font-size-small);
@@ -511,16 +581,29 @@ a { color: var(--text-link-color); text-decoration: none; }
 .PhaseTimelineVisual-segment:focus-visible { outline: 2px solid var(--border-primary); outline-offset: -2px; }
 @media (max-width: 700px) {
   .TimelineActions { width: 100%; }
+  .StructureTimeline { gap: var(--padding-sm); }
+  .StructureTimeline-head { align-items: flex-start; }
+  .StructureTimeline-headEnd { width: 100%; margin-left: 0; justify-content: flex-start; }
   .PhaseTimelineEditor-row { grid-template-columns: minmax(0, 1fr) 96px 118px 35px; column-gap: var(--padding-sm); }
+  .PhaseTimelineEditor { padding: var(--padding-sm); }
+  .PhaseTimelineEditor-row > .input-group { width: 96px; }
+  .PhaseTimelineEditor-row > .input-group .Input {
+    width: 61px; max-width: 61px; flex-basis: 61px;
+  }
+  .PhaseWeightControl { gap: var(--padding-xs); }
+  .PhaseWeightControl .input-group { width: 80px; flex-basis: 80px; }
+  .PhaseWeightControl .input-group .Input {
+    width: 45px; max-width: 45px; flex-basis: 45px;
+  }
 }
 .SequenceToggle {
-  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
-  color: var(--text-default); font-size: var(--font-size-small); cursor: pointer;
+  display: inline-flex; align-items: center; gap: var(--padding-md); white-space: nowrap;
+  color: var(--text-default); font-size: var(--font-size-medium); cursor: pointer;
 }
 .SequenceToggle input { width: 16px; height: 16px; margin: 0; accent-color: var(--primary); }
 .StructureTimeline-headEnd {
   display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap;
-  gap: var(--padding-xs) var(--padding-sm); min-width: 0; margin-left: auto;
+  gap: var(--padding-md); min-width: 0; margin-left: auto;
 }
 .SequenceWarning { display: flex; align-items: center; gap: 6px; margin: 0; min-width: 0; text-align: left; }
 
@@ -768,16 +851,16 @@ a { color: var(--text-link-color); text-decoration: none; }
 .ShapeTimeline { display: flex; flex-direction: column; gap: var(--padding-sm); margin: 0; }
 .ShapeLabels {
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: var(--padding-xs);
-  min-width: 0; font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold);
+  min-width: 0; height: 16px; font-size: 10px; font-weight: var(--font-weight-regular);
   color: var(--text-subtle);
 }
 .ShapeLabels span { min-width: 0; white-space: normal; line-height: 1.25; }
-.ShapeLabels span:nth-child(2) { color: var(--text-primary); text-align: center; }
+.ShapeLabels span:nth-child(2) { color: var(--text-primary); text-align: center; font-weight: var(--font-weight-semibold); }
 .ShapeLabels span:last-child { color: var(--text-default); text-align: right; }
 .ShapeBarWrap { position: relative; min-width: 0; }
 .ShapeBar {
   display: flex; width: 100%; height: 40px; border-radius: var(--border-radius-default); overflow: hidden;
-  background: var(--surface-subtle-dark); border: 1px solid var(--border-subtle);
+  background: var(--surface-subtle-dark);
 }
 .ShapeSeg {
   display: flex; align-items: center; justify-content: center; overflow: hidden;
@@ -817,11 +900,23 @@ a { color: var(--text-link-color); text-decoration: none; }
   border-bottom: 1px solid var(--border-default);
   transform: translateX(-50%) rotate(45deg);
 }
-.ShapeLegend { display: flex; flex-wrap: wrap; gap: 10px 14px; }
-.ShapeLegend-item {
-  display: inline-flex; align-items: center; gap: 6px; font-size: var(--font-size-small); color: var(--text-subtle);
+.GanttConstraintTooltip {
+  position: fixed; z-index: 2100; max-width: 280px; padding: 8px 10px;
+  background: var(--deep-black); color: var(--text-inverse);
+  border-radius: var(--border-radius-default); box-shadow: var(--shadow-footer);
+  font-size: var(--font-size-small); line-height: 1.4; pointer-events: none;
+  opacity: 0; visibility: hidden; transform: translate(-50%, calc(-100% - 10px));
+  transition: opacity .15s ease, visibility .15s ease;
 }
-.ShapeLegend-swatch { width: 10px; height: 10px; border-radius: 2px; flex: 0 0 auto; }
+.GanttConstraintTooltip.is-open { opacity: 1; visibility: visible; }
+@media (prefers-reduced-motion: reduce) {
+  .GanttConstraintTooltip { transition: none; }
+}
+.ShapeLegend { display: flex; flex-wrap: wrap; gap: 10px 16px; min-height: 18px; }
+.ShapeLegend-item {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-subtle);
+}
+.ShapeLegend-swatch { width: 9px; height: 9px; border-radius: 2px; flex: 0 0 auto; }
 .ReviewMeta {
   display: flex; align-items: center; gap: var(--padding-md);
   padding: var(--padding-md);
@@ -1082,25 +1177,31 @@ a { color: var(--text-link-color); text-decoration: none; }
 }
 .MiniGantt-toolbar {
   display: flex; align-items: center; gap: var(--padding-sm);
-  min-height: 42px; padding: 0 var(--padding-sm); border-bottom: 1px solid var(--border-subtle);
+  height: 52px; min-height: 52px; padding: 0 var(--padding-sm); border-bottom: 1px solid var(--border-subtle);
   background: var(--surface-subtle-light);
 }
-.MiniGantt-title { flex: 1 1 auto; min-width: 0; color: var(--text-emphasis); font-size: 12px; font-weight: var(--font-weight-semibold); }
-.MiniGantt-help { padding: 16px var(--padding-sm); color: var(--text-subtle); font-size: 11px; border-bottom: 1px solid var(--border-subtle); }
+.MiniGantt-title { flex: 1 1 auto; min-width: 0; color: var(--text-emphasis); font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold); }
+.MiniGantt-help {
+  display: flex; align-items: center; min-height: 47px; padding: 0 var(--padding-sm);
+  color: var(--text-subtle); font-size: 11px; border-bottom: 1px solid var(--border-subtle);
+}
 .MiniGantt-scroll { overflow-x: auto; overflow-y: visible; }
 .MiniGantt-canvas { min-width: 100%; width: max-content; --label-w: 192px; --week-w: 40px; }
 .MiniGantt-months, .MiniGantt-weeks, .MiniGantt-row { display: flex; min-width: 100%; }
 .MiniGantt-corner, .MiniGantt-label {
   position: sticky; left: 0; z-index: 4; flex: 0 0 var(--label-w); width: var(--label-w);
-  border-right: 1px solid var(--border-default); background: var(--surface-default);
+  border-right: 1px solid var(--border-subtle); background: var(--surface-default);
 }
 .MiniGantt-corner {
-  display: flex; align-items: center; padding: 0 16px;
+  display: flex; align-items: center; padding: 0 var(--padding-sm);
   color: var(--text-emphasis); font-size: 12px; font-weight: var(--font-weight-semibold);
+}
+.MiniGantt-weeks .MiniGantt-corner {
+  position: sticky; left: 0; z-index: 5; transform: translateY(-12px);
 }
 .MiniGantt-month {
   height: 24px; display: flex; align-items: center; justify-content: center;
-  border-right: 1px solid var(--border-default); border-bottom: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
   background: var(--surface-subtle-light); color: var(--text-accent);
   font-size: 10px; font-weight: var(--font-weight-semibold);
 }
@@ -1119,7 +1220,14 @@ a { color: var(--text-link-color); text-decoration: none; }
 .MiniGantt-labelTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-emphasis); font-weight: var(--font-weight-semibold); font-size: 11px; }
 .MiniGantt-labelMeta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-subtle); font-size: 10px; }
 .MiniGantt-actions { display: inline-flex; gap: 4px; }
-.MiniGantt-actions .Btn-iconOnly { width: 24px; height: 24px; min-height: 24px; font-size: 11px; }
+.MiniGantt-actions .Btn-iconOnly {
+  width: 24px; height: 24px; min-height: 24px; font-size: 11px;
+  background: var(--surface-container-default); border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+.MiniGantt-actions .Btn-iconOnly:hover {
+  background: var(--surface-container-hover); color: var(--text-primary);
+}
 .MiniGantt-track {
   position: relative; flex: 0 0 calc(var(--weeks) * var(--week-w)); width: calc(var(--weeks) * var(--week-w)); height: 44px;
   background-color: var(--surface-default);
@@ -1244,7 +1352,6 @@ a { color: var(--text-link-color); text-decoration: none; }
 .Muted { color: var(--text-subtle); }
 .Strong { font-weight: var(--font-weight-semibold); }
 .Stack { display: flex; flex-direction: column; gap: 12px; }
-.RowActions { text-align: center; }
 .Toast {
   position: fixed; bottom: var(--padding-lg); left: 50%; z-index: 2000;
   transform: translateX(-50%); max-width: 90%; padding: 10px var(--padding-md);
@@ -1257,6 +1364,66 @@ a { color: var(--text-link-color); text-decoration: none; }
   margin: 18px 0 8px; font-size: var(--font-size-extra-small); font-weight: var(--font-weight-bold);
   letter-spacing: .04em; text-transform: uppercase; color: var(--text-subtle);
 }
+
+/* Demand Templates catalogue — match the supplied Figma frame */
+#screen-catalogue {
+  padding: 24px;
+  background: var(--surface-page);
+}
+#screen-catalogue .CatalogueTable {
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  box-shadow: none;
+  overflow: hidden;
+  table-layout: fixed;
+  font-size: 14px;
+}
+#screen-catalogue .CatalogueTable thead th {
+  height: 40px;
+  min-height: 40px;
+  padding: 12px;
+  background: var(--surface-subtle-dark);
+  border-top: 0;
+  box-shadow: inset 0 -2px 0 var(--border-default);
+  font-size: 14px;
+  line-height: 21px;
+  vertical-align: middle;
+}
+#screen-catalogue .CatalogueTable tbody td {
+  height: 48px;
+  min-height: 40px;
+  padding: 12px;
+  background: var(--surface-default);
+  font-size: 14px;
+  line-height: 21px;
+  vertical-align: middle;
+}
+#screen-catalogue .CatalogueTable th:nth-child(1),
+#screen-catalogue .CatalogueTable td:nth-child(1) { width: 46.7%; }
+#screen-catalogue .CatalogueTable th:nth-child(2),
+#screen-catalogue .CatalogueTable td:nth-child(2) { width: 53.3%; }
+#screen-catalogue .CataloguePagination {
+  height: 59px;
+  min-height: 59px;
+  padding: 12px 8px;
+  gap: 16px;
+  border: 1px solid var(--border-subtle);
+  border-top: 0;
+  border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+  background: var(--surface-default);
+  color: var(--text-accent);
+  font-size: 14px;
+  line-height: 21px;
+}
+#screen-catalogue .CataloguePageButton {
+  width: 33px;
+  height: 35px;
+  min-height: 35px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
 @media (max-width: 860px) {
   .Wizard-layout { grid-template-columns: 1fr; max-width: 760px; }
   .Wizard-sidebar { position: static; }
@@ -1268,8 +1435,19 @@ a { color: var(--text-link-color); text-decoration: none; }
   .Stepper-description { display: none; }
   .Stepper--horizontal .Stepper-step { gap: var(--padding-xs); }
   .ReviewSummaryCard { align-items: flex-start; flex-direction: column; }
-  .ReviewSummary-metrics { width: 100%; }
+  .ReviewSummary-copy { width: 100%; }
+  .ReviewSummary-title,
+  .ReviewSummary-detail,
+  .ReviewSummary-metricValue { overflow-wrap: anywhere; }
+  .ReviewSummary-metrics {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%;
+  }
   .ReviewSummary-metric { flex: 1 1 0; min-width: 0; padding-inline: 8px; }
+  .ReviewSummary-metric:nth-child(3) {
+    grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--border-subtle);
+    margin-top: var(--padding-sm); padding-top: var(--padding-sm);
+    text-align: left; align-items: flex-start;
+  }
   .SegRow {
     grid-template-columns: minmax(110px, 1fr) 107px 107px 35px 35px;
     gap: var(--padding-xs); padding: 8px;
@@ -1291,6 +1469,14 @@ a { color: var(--text-link-color); text-decoration: none; }
   .ModalFieldRow { grid-template-columns: 1fr; gap: 4px; padding: 6px 0; }
   .SlotTable { min-width: 620px; }
   .PhaseCard-body { overflow-x: auto; }
+}
+@media (max-width: 420px) {
+  .ReviewSummary-metrics { grid-template-columns: 1fr; }
+  .ReviewSummary-metric + .ReviewSummary-metric {
+    border-left: 0; border-top: 1px solid var(--border-subtle);
+    margin-top: var(--padding-sm); padding-top: var(--padding-sm);
+  }
+  .ReviewSummary-metric:nth-child(3) { margin-top: var(--padding-sm); }
 }
 </style>
 </head>
@@ -1348,7 +1534,7 @@ a { color: var(--text-link-color); text-decoration: none; }
         data-tooltip="Back" onclick="wizardHeaderBack()" aria-label="Back">
         <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
       </button>
-      <h1 class="TopBar-title" id="topTitle">Demand profile templates</h1>
+      <h1 class="TopBar-title" id="topTitle">Demand Templates</h1>
       <div class="TopBar-spacer"></div>
       <button class="Btn Btn--primary TopBar-action" id="topCreate" type="button"
         onclick="openWizard(true)">
@@ -1358,24 +1544,16 @@ a { color: var(--text-link-color); text-decoration: none; }
 
     <!-- Catalogue -->
     <div class="Page screen is-active" id="screen-catalogue">
-      <div class="Toolbar">
-        <div class="Search">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input id="catalogueSearch" type="search" placeholder="Search demand profiles…" oninput="renderCatalogue()" />
-        </div>
-      </div>
-      <table class="u-table table-hover">
+      <table class="u-table table-hover CatalogueTable">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Version</th>
-            <th>Return type</th>
-            <th>Shape</th>
-            <th style="width:90px"></th>
+            <th><span class="CatalogueSort"><i class="fa-solid fa-sort" aria-hidden="true"></i>Name</span></th>
+            <th><span class="CatalogueSort"><i class="fa-solid fa-sort" aria-hidden="true"></i>Resource Requirements</span></th>
           </tr>
         </thead>
         <tbody id="catalogueBody"></tbody>
       </table>
+      <div id="cataloguePagination" class="CataloguePagination"></div>
     </div>
 
     <!-- Wizard -->
@@ -1450,15 +1628,6 @@ a { color: var(--text-link-color); text-decoration: none; }
                 <div class="StructureTimeline-head">
                   <strong class="StructureTimeline-title">Demand shape</strong>
                   <div class="StructureTimeline-headEnd">
-                    <div class="TimelineActions" aria-label="Timeline actions">
-                      <button class="Btn Btn--sm" id="addPhaseButton" type="button" onclick="addPhaseFromTimeline()">
-                        <i class="fa-solid fa-plus" aria-hidden="true"></i> Add phase
-                      </button>
-                    </div>
-                    <p class="InlineError SequenceWarning hidden" id="sequenceWarning" role="alert">
-                      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-                      <span id="sequenceWarningText"></span>
-                    </p>
                     <label class="SequenceToggle">
                       <input type="checkbox" id="allowOverlap" checked onchange="setAllowOverlap(this.checked)">
                       <span>Allow work to overlap</span>
@@ -1483,10 +1652,20 @@ a { color: var(--text-link-color); text-decoration: none; }
                         <span class="SequenceHelp-note" id="sequenceHelpNote"></span>
                       </span>
                     </span>
+                    <p class="InlineError SequenceWarning hidden" id="sequenceWarning" role="alert">
+                      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                      <span id="sequenceWarningText"></span>
+                    </p>
+                    <div class="TimelineActions" aria-label="Timeline actions">
+                      <button class="Btn Btn--primary Btn--sm" id="addPhaseButton" type="button" onclick="addPhaseFromTimeline()">
+                        <i class="fa-solid fa-plus" aria-hidden="true"></i> Add Phase
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div id="phaseTimelineEditor" class="PhaseTimelineEditor"></div>
+                <div id="timelineScale" class="ShapeTimeline StructureTimeline-scale"></div>
                 <div class="ShapeTimeline" id="timelineShapeVisual"></div>
+                <div id="phaseTimelineEditor" class="PhaseTimelineEditor"></div>
               </div>
               <div id="slotEditor" class="Stack"></div>
             </div>
@@ -1516,6 +1695,7 @@ a { color: var(--text-link-color); text-decoration: none; }
 </div>
 
 <div id="shapeSegPopover" class="ShapeSegPopover" role="tooltip" aria-hidden="true"><div class="ShapeSegPopover-arrow"></div><div class="ShapeSegPopover-content"></div></div>
+<div id="ganttConstraintTooltip" class="GanttConstraintTooltip" role="status" aria-live="polite" aria-hidden="true"></div>
 <div class="ModalOverlay" id="exitConfirmOverlay" role="presentation" onclick="if(event.target===this)closeExitConfirm()">
   <div class="Modal Modal--small" role="dialog" aria-modal="true" aria-labelledby="exitConfirmTitle">
     <div class="Modal-header">
@@ -1859,7 +2039,7 @@ function showScreen(name) {
   state.screen = name;
   document.querySelectorAll('.screen').forEach(el => el.classList.toggle('is-active', el.id === `screen-${name}`));
   document.getElementById('topTitle').textContent =
-    name === 'wizard' ? 'Create Demand Template' : 'Demand profile templates';
+    name === 'wizard' ? 'Create Demand Template' : 'Demand Templates';
   document.getElementById('topBarBack')?.classList.toggle('hidden', name !== 'wizard');
   document.getElementById('topCreate')?.classList.toggle('hidden', name !== 'catalogue');
   if (name === 'catalogue') renderCatalogue();
@@ -1943,7 +2123,7 @@ function confirmWizardExit() {
 
 /* ---------- Catalogue ---------- */
 function renderCatalogue() {
-  const q = (document.getElementById('catalogueSearch').value || '').toLowerCase();
+  const q = (document.getElementById('catalogueSearch')?.value || '').toLowerCase();
   const body = document.getElementById('catalogueBody');
   const rows = state.catalogue.filter(t =>
     !q || t.name.toLowerCase().includes(q) || (t.returnType || '').toLowerCase().includes(q)
@@ -1951,14 +2131,22 @@ function renderCatalogue() {
   body.innerHTML = rows.map(t => `
     <tr onclick="editProfile('${t.id}')">
       <td class="cell-name">${esc(t.name)}</td>
-      <td>v${t.version}</td>
-      <td>${esc(t.returnType || '—')}</td>
       <td>${catalogueShapeLabel(t)}</td>
-      <td class="RowActions" onclick="event.stopPropagation()">
-        <button class="Btn Btn--sm" type="button" onclick="editProfile('${t.id}')">Edit</button>
-      </td>
     </tr>
-  `).join('') || `<tr><td colspan="5" class="cell-muted">No demand profiles match.</td></tr>`;
+  `).join('') || `<tr><td colspan="2" class="cell-muted">No demand templates match.</td></tr>`;
+  const pagination = document.getElementById('cataloguePagination');
+  if (pagination) {
+    const total = rows.length;
+    pagination.innerHTML = `
+      <span>Showing ${total ? 1 : 0}-${total} of ${total}</span>
+      <button class="Btn-iconOnly CataloguePageButton" type="button" aria-label="Previous page" disabled>
+        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+      </button>
+      <button class="Btn-iconOnly CataloguePageButton is-current" type="button" aria-current="page">1</button>
+      <button class="Btn-iconOnly CataloguePageButton" type="button" aria-label="Next page" disabled>
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      </button>`;
+  }
 }
 
 function catalogueShapeLabel(t) {
@@ -1970,7 +2158,7 @@ function catalogueShapeLabel(t) {
   if (!n && t.phaseWorld !== false) {
     n = (t.phases || []).reduce((sum, phase) => sum + (phase.slots?.length || 0), 0);
   }
-  return `${n} resource request${n === 1 ? '' : 's'}`;
+  return `${n}`;
 }
 
 function statusPill(s) {
@@ -2001,6 +2189,19 @@ function effortPhases(d = state.draft) {
   return (d.phases || []).filter(isPhaseItem);
 }
 
+function lockedPhaseWeightTotal(phases, excludedId = '') {
+  return phases
+    .filter(phase => phase.id !== excludedId && phase.locked)
+    .reduce((sum, phase) => sum + Math.max(0, Number(phase.weight) || 0), 0);
+}
+
+function phaseWeightMax(phaseId, d = state.draft) {
+  const phases = effortPhases(d);
+  const phase = phases.find(item => item.id === phaseId);
+  if (!phase || phase.locked) return 100;
+  return Math.max(0, Math.min(100, 100 - lockedPhaseWeightTotal(phases, phaseId)));
+}
+
 function syncPhaseWeights(d = state.draft) {
   const phases = effortPhases(d);
   if (!phases.length) return;
@@ -2008,6 +2209,12 @@ function syncPhaseWeights(d = state.draft) {
   const sum = values.reduce((total, value) => total + (Number.isFinite(value) ? value : 0), 0);
   const valid = values.every(value => Number.isFinite(value) && value >= 0 && value <= 100);
   if (valid && sum === 100) return;
+  const lockedTotal = lockedPhaseWeightTotal(phases);
+  const unlocked = phases.filter(phase => !phase.locked);
+  if (lockedTotal <= 100 && unlocked.length) {
+    distributePhaseWeights(unlocked, 100 - lockedTotal);
+    return;
+  }
   const each = Math.floor(100 / phases.length);
   const remainder = 100 - each * phases.length;
   phases.forEach((phase, index) => { phase.weight = each + (index < remainder ? 1 : 0); });
@@ -2027,9 +2234,8 @@ function rebalancePhaseWeight(phaseId, value) {
   const phases = effortPhases();
   const target = phases.find(phase => phase.id === phaseId);
   if (!target || target.locked) return;
-  const lockedTotal = phases.filter(phase => phase.id !== phaseId && phase.locked)
-    .reduce((sum, phase) => sum + Math.max(0, Number(phase.weight) || 0), 0);
-  const next = Math.min(100 - lockedTotal, Math.max(0, Math.round(Number(value) || 0)));
+  const lockedTotal = lockedPhaseWeightTotal(phases, phaseId);
+  const next = Math.min(phaseWeightMax(phaseId), Math.max(0, Math.round(Number(value) || 0)));
   target.weight = next;
   const peers = phases.filter(phase => phase.id !== phaseId && !phase.locked);
   const remainder = Math.max(0, 100 - lockedTotal - next);
@@ -2057,7 +2263,7 @@ function previewPhaseWeight(phaseId, value) {
   rebalancePhaseWeight(phaseId, value);
   effortPhases().forEach(phase => {
     const input = document.querySelector(`.PhaseWeightInput[data-phase-id="${phase.id}"]`);
-    if (input && document.activeElement !== input) input.value = phase.weight;
+    if (input) input.value = phase.weight;
   });
   renderStepper();
 }
@@ -2833,6 +3039,7 @@ function setPhaseName(phaseId, name) {
       segment.phase === previousName ? { ...segment, phase: name } : segment
     );
   });
+  normalisePhaseSegmentPlacement();
   refreshTimelineEditors();
 }
 
@@ -2851,6 +3058,9 @@ function removePhase(phaseId) {
   if (isPhaseItem(removed)) {
     requestItems(d).forEach(request => {
       if (request.phase === removed.name) request.phase = '';
+      request.segments = (request.segments || []).map(segment =>
+        segment.phase === removed.name ? { ...segment, phase: '' } : segment
+      );
     });
     const segs = getSegments();
     const unlocked = segs.filter(s => !s.locked);
@@ -2879,11 +3089,11 @@ function removePhase(phaseId) {
 const dragState = { phaseId: null };
 
 function phaseDragArm(event) {
-  event.target.closest('.SegRow, .PhaseCard')?.setAttribute('draggable', 'true');
+  event.target.closest('.SegRow, .PhaseCard, .PhaseTimelineEditor-row')?.setAttribute('draggable', 'true');
 }
 
 function phaseDragDisarm(event) {
-  event.target.closest('.SegRow, .PhaseCard')?.setAttribute('draggable', 'false');
+  event.target.closest('.SegRow, .PhaseCard, .PhaseTimelineEditor-row')?.setAttribute('draggable', 'false');
 }
 
 function onPhaseDragStart(event, phaseId) {
@@ -2891,6 +3101,23 @@ function onPhaseDragStart(event, phaseId) {
   event.dataTransfer.effectAllowed = 'move';
   event.dataTransfer.setData('text/plain', phaseId);
   event.currentTarget.classList.add('is-dragging');
+}
+
+function onPhaseHandleKeydown(event, phaseId) {
+  if (!['ArrowUp', 'ArrowDown'].includes(event.key)) return;
+  event.preventDefault();
+  const phases = state.draft.phases;
+  const from = phases.findIndex(phase => phase.id === phaseId);
+  const to = from + (event.key === 'ArrowUp' ? -1 : 1);
+  if (from < 0 || to < 0 || to >= phases.length) return;
+  [phases[from], phases[to]] = [phases[to], phases[from]];
+  normalisePhaseSegmentPlacement();
+  refreshTimelineEditors();
+  updateFooterSummary();
+  requestAnimationFrame(() => {
+    [...document.querySelectorAll('.PhaseTimelineEditor-handle')]
+      .find(handle => handle.dataset.phaseId === phaseId)?.focus();
+  });
 }
 
 function onPhaseDragOver(event, phaseId) {
@@ -2913,6 +3140,7 @@ function onPhaseDrop(event, targetId) {
   dragState.phaseId = null;
   if (from === -1 || to === -1 || from === to) return;
   phases.splice(to, 0, phases.splice(from, 1)[0]);
+  normalisePhaseSegmentPlacement();
   refreshTimelineEditors();
   updateFooterSummary();
 }
@@ -2921,7 +3149,8 @@ function onPhaseDragEnd(event) {
   dragState.phaseId = null;
   event.currentTarget.classList.remove('is-dragging');
   event.currentTarget.setAttribute('draggable', 'false');
-  document.querySelectorAll('.SegRow.is-dropTarget, .PhaseCard.is-dropTarget').forEach(el => el.classList.remove('is-dropTarget'));
+  document.querySelectorAll('.SegRow.is-dropTarget, .PhaseCard.is-dropTarget, .PhaseTimelineEditor-row.is-dropTarget')
+    .forEach(el => el.classList.remove('is-dropTarget'));
 }
 
 function normaliseTo100() {
@@ -3069,6 +3298,15 @@ function renderDetails() {
   syncDurationControl();
 }
 
+function shapeScaleMarkup(d, centerLabel = '') {
+  const total = contentWeeks(d);
+  return `<div class="ShapeLabels">
+    <span>Start</span>
+    <span>${centerLabel || `${total} week${total === 1 ? '' : 's'}`}</span>
+    <span>Deadline</span>
+  </div>`;
+}
+
 function shapeTimelineMarkup(d) {
   const items = [];
   const list = timelineList(d);
@@ -3124,12 +3362,7 @@ function shapeTimelineMarkup(d) {
       onblur="hideShapeSegPopover()">${width >= 8 ? esc(width >= 14 ? label : `${s.weeks}w`) : ''}</div>`;
   }).join('') || `<div class="ShapeSeg" style="width:100%; background:var(--surface-subtle-dark); color:var(--text-subtle);">${esc(emptyLabel)}</div>`;
 
-  return `
-    <div class="ShapeLabels">
-      <span>Start</span>
-      <span>${total} week${total === 1 ? '' : 's'}</span>
-      <span>Deadline</span>
-    </div>
+  return `${shapeScaleMarkup(d)}
     <div class="ShapeBarWrap">
       <div class="ShapeBar">${bar}</div>
     </div>
@@ -3227,12 +3460,14 @@ function renderShapeTimeline(targetId = 'shapeTimeline') {
 }
 
 // Read-only overview derived from the placed requirements: which types are live in each week.
-function demandShapeMarkup(d = state.draft) {
+function demandShapeMarkup(d = state.draft, includeScale = true) {
   const requests = requestItems(d);
   const total = contentWeeks(d);
-  if (!requests.some(request => (request.segments || []).length)) {
+  const hasWork = requests.some(request => (request.segments || []).length);
+  const scale = includeScale ? shapeScaleMarkup(d, hasWork ? '' : 'Nothing placed yet') : '';
+  if (!hasWork) {
     return `
-      <div class="ShapeLabels"><span>Start</span><span>Nothing placed yet</span><span>Deadline</span></div>
+      ${scale}
       <div class="ShapeBarWrap">
         <div class="ShapeBar">
           <div class="ShapeSeg ShapeSeg--plain" style="width:100%;color:var(--text-subtle);">Add resource requirements to build the shape</div>
@@ -3320,21 +3555,22 @@ function demandShapeMarkup(d = state.draft) {
     `<span class="ShapeLegend-item"><span class="ShapeLegend-swatch" style="background:${entry.color}"></span>${esc(entry.name)}</span>`
   ).join('');
 
-  return `
-    <div class="ShapeLabels">
-      <span>Start</span>
-      <span>${total} week${total === 1 ? '' : 's'}</span>
-      <span>Deadline</span>
-    </div>
+  return `${scale}
     <div class="ShapeBarWrap">
       <div class="ShapeBar">${bar}</div>
     </div>
     <div class="ShapeLegend">${legend}</div>`;
 }
 
-function renderDemandShape(targetId, d = state.draft) {
+function renderDemandShape(targetId, d = state.draft, includeScale = true) {
   const el = document.getElementById(targetId);
-  if (el) el.innerHTML = demandShapeMarkup(d);
+  if (el) el.innerHTML = demandShapeMarkup(d, includeScale);
+}
+
+function renderTimelineScale(d = state.draft) {
+  const el = document.getElementById('timelineScale');
+  const hasWork = requestItems(d).some(request => (request.segments || []).length);
+  if (el) el.innerHTML = shapeScaleMarkup(d, hasWork ? '' : 'Nothing placed yet');
 }
 
 function refreshTimelineEditors() {
@@ -3440,9 +3676,11 @@ function setItemDuration(itemId, value) {
   const item = findTimelineItem(itemId);
   if (!item) return;
   item.durationWeeks = Math.max(1, Math.min(52, Math.round(Number(value) || 1)));
+  normalisePhaseSegmentPlacement();
   if (isPhaseItem(item)) syncPhaseWeights();
   if (currentWizardPanel() === 'timeline') {
-    renderShapeTimeline('wizardTimelineShape');
+    renderTimelineScale();
+    renderDemandShape('timelineShapeVisual', state.draft, false);
     updateFooterSummary();
     return;
   }
@@ -3916,13 +4154,24 @@ function renderPhaseTimelineEditor() {
   const phases = effortPhases(d);
   syncPhaseWeights(d);
   if (isPhaseWorld(d) && phases.length) {
-    target.innerHTML = `<div class="PhaseTimelineEditor-help"><strong>Phase weighting</strong> splits demand across phases. Edit a percentage to rebalance unlocked phases, or lock a phase to keep its share fixed.</div>` +
-      phases.map((phase, index) => {
+    target.innerHTML = `<div class="PhaseTimelineEditor-help"><strong>Phases</strong></div>` +
+      `<div class="PhaseTimelineEditor-rows">${phases.map((phase, index) => {
       const usage = phaseUtilisation(phase, index, d);
       const usageLabel = `${usage.requestCount} resource requirement${usage.requestCount === 1 ? '' : 's'} · ${usage.utilisedWeeks} of ${usage.weeks} weeks utilised`;
       return `
-        <div class="PhaseTimelineEditor-row">
+        <div class="PhaseTimelineEditor-row" data-phase-id="${phase.id}" draggable="false"
+          ondragstart="onPhaseDragStart(event, '${phase.id}')"
+          ondragover="onPhaseDragOver(event, '${phase.id}')"
+          ondragleave="onPhaseDragLeave(event)"
+          ondrop="onPhaseDrop(event, '${phase.id}')"
+          ondragend="onPhaseDragEnd(event)">
           <div class="PhaseTimelineEditor-name">
+            <button class="PhaseTimelineEditor-handle" type="button" data-phase-id="${phase.id}"
+              title="Drag to reorder. Use Up or Down to move." aria-label="Drag ${esc(phase.name || `phase ${index + 1}`)} to reorder"
+              aria-keyshortcuts="ArrowUp ArrowDown" onkeydown="onPhaseHandleKeydown(event, '${phase.id}')"
+              onmousedown="phaseDragArm(event)" onmouseup="phaseDragDisarm(event)">
+              <i class="fa-solid fa-grip-vertical" aria-hidden="true"></i>
+            </button>
             <span class="PhaseTimelineEditor-dot" style="background:${phase.color || 'var(--surface-emphasis)'}" aria-hidden="true"></span>
             <select class="Select" aria-label="Phase ${index + 1} name" title="${esc(usageLabel)}"
               onchange="setPhaseName('${phase.id}', this.value)">${phaseOptionsMarkup(phase.name)}</select>
@@ -3930,7 +4179,7 @@ function renderPhaseTimelineEditor() {
           ${durationCell(phase.id, Math.max(1, Number(phase.durationWeeks) || 1), phase.name || `Phase ${index + 1}`)}
           <div class="PhaseWeightControl" title="Weighting is used to split demand between phases">
             <div class="input-group">
-              <input class="Input PhaseWeightInput" type="number" min="0" max="100" step="1"
+              <input class="Input PhaseWeightInput" type="number" min="0" max="${phaseWeightMax(phase.id, d)}" step="1"
                 data-phase-id="${phase.id}" value="${phase.weight}" aria-label="${esc(phase.name || `Phase ${index + 1}`)} weighting"
                 ${phase.locked ? 'disabled' : ''}
                 oninput="previewPhaseWeight('${phase.id}', this.value)"
@@ -3947,11 +4196,11 @@ function renderPhaseTimelineEditor() {
           <button class="Btn-iconOnly Btn--tertiary" type="button" title="Remove phase" aria-label="Remove phase"
             onclick="removePhase('${phase.id}')"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
         </div>`;
-      }).join('');
+      }).join('')}</div>`;
   } else if (isPhaseWorld(d)) {
     target.innerHTML = `<div class="PhaseTimelineEditor-empty">
       <span>Add a phase to organise demand by handoff. You can also continue with unphased work.</span>
-      <button class="Btn Btn--sm" type="button" onclick="addPhaseFromTimeline()">Add phase</button>
+      <button class="Btn Btn--primary Btn--sm" type="button" onclick="addPhaseFromTimeline()">Add Phase</button>
     </div>`;
   } else {
     target.innerHTML = `<div class="PhaseTimelineEditor-empty">
@@ -4637,6 +4886,52 @@ function setResourceDurationUnit(unit) {
   syncResourceModalConfirm();
 }
 
+function syncResourcePlacementBounds() {
+  const type = document.getElementById('resourceTypeSelect')?.value.trim();
+  const weeksInput = document.getElementById('resourceWeeksInput');
+  const startInput = document.getElementById('resourceStartInput');
+  if (!weeksInput || !startInput) return;
+
+  const window = dependencyWindowForType(type);
+  if (!window) {
+    weeksInput.removeAttribute('max');
+    startInput.min = '1';
+    startInput.removeAttribute('max');
+    weeksInput.removeAttribute('title');
+    startInput.removeAttribute('title');
+    return;
+  }
+
+  const placementMessage = dependencyWindowMessage(window);
+  weeksInput.title = placementMessage;
+  startInput.title = placementMessage;
+  if (window.end != null) {
+    const availableWeeks = window.end - window.start;
+    if (!weeksInput.disabled) {
+      weeksInput.max = String(resourceDurationDisplay(availableWeeks, resourceModalState.durationUnit));
+      if (resourceDurationWeeks() > availableWeeks) {
+        weeksInput.value = resourceDurationDisplay(availableWeeks, resourceModalState.durationUnit);
+      }
+    }
+    const duration = weeksInput.disabled ? 1 : resourceDurationWeeks();
+    const maxStart = window.end - duration + 1;
+    startInput.min = String(window.start + 1);
+    startInput.max = String(Math.max(window.start + 1, maxStart));
+    if (!startInput.disabled) {
+      const current = Number(startInput.value) || window.start + 1;
+      startInput.value = Math.max(window.start + 1, Math.min(maxStart, current));
+    }
+    return;
+  }
+
+  weeksInput.removeAttribute('max');
+  startInput.min = String(window.start + 1);
+  startInput.removeAttribute('max');
+  if (!startInput.disabled) {
+    startInput.value = Math.max(window.start + 1, Number(startInput.value) || window.start + 1);
+  }
+}
+
 function syncResourceEffortUnit() {
   document.querySelectorAll('#resourceModalOverlay [data-effort-unit]').forEach(button => {
     const active = button.dataset.effortUnit === resourceModalState.effortUnit;
@@ -4835,6 +5130,7 @@ function closeResourceModal() {
 }
 
 function syncResourceModalConfirm() {
+  syncResourcePlacementBounds();
   const type = document.getElementById('resourceTypeSelect')?.value.trim();
   const grade = document.getElementById('resourceGradeSelect')?.value.trim();
   const weightEl = document.getElementById('resourceWeightInput');
@@ -4878,6 +5174,25 @@ function confirmResourceModal() {
   if ((isPhaseWorld() && !type) || !grade) return;
   ensureTypeSequence(type);
   const existing = resourceModalState.editingId ? findRequest(resourceModalState.editingId) : null;
+  const candidate = {
+    id: resourceModalState.segmentId && resourceModalState.segmentId !== 'new'
+      ? resourceModalState.segmentId
+      : existing?.segments?.[0]?.id || id('seg'),
+    startWeek,
+    durationWeeks: weeks,
+    phase: isPhaseWorld() ? type : '',
+    bookingType: isPhaseWorld() ? '' : type
+  };
+  const dependencyRequest = existing || {
+    phase: isPhaseWorld() ? type : '',
+    bookingType: isPhaseWorld() ? '' : type,
+    segments: []
+  };
+  const dependencyIssue = segmentDependencyIssue(dependencyRequest, candidate, state.draft);
+  if (dependencyIssue) {
+    showGanttConstraintTooltip(dependencyIssue, document.getElementById('resourceStartInput'));
+    return;
+  }
   if (existing) {
     if (resourceModalState.segmentId) {
       const segment = resourceModalState.segmentId === 'new'
@@ -4958,12 +5273,12 @@ function miniGanttMarkup(d = state.draft, readOnly = false) {
   const toolbar = readOnly ? '' : `
     <div class="MiniGantt-toolbar">
       <span class="MiniGantt-title">Resource requirements</span>
-      <button class="Btn Btn--sm" type="button" onclick="openResourceModal()">
+      <button class="Btn Btn--primary Btn--sm" type="button" onclick="openResourceModal()">
         <i class="fa-solid fa-plus"></i> Add Resource
       </button>
     </div>`;
   const help = requests.length ? `
-    <div class="MiniGantt-help">Double-click an empty week to add work. Drag bars to move them, drag either edge to resize, or use the row actions to edit and remove a requirement.</div>` : '';
+    <div class="MiniGantt-help">Double-click an empty week to add work. Drag bars to move them, drag either edge to resize, and right-click to remove a segment.</div>` : '';
   const months = monthChunks.map((weeks, index) =>
     `<div class="MiniGantt-month" style="flex:0 0 calc(${weeks} * var(--week-w));width:calc(${weeks} * var(--week-w));">Month ${index + 1}</div>`
   ).join('');
@@ -4978,7 +5293,7 @@ function miniGanttMarkup(d = state.draft, readOnly = false) {
     const bars = (request.segments || []).map(segment => `
       <div class="MiniGantt-bar" style="left:calc(${segment.startWeek} * var(--week-w));width:calc(${segment.durationWeeks} * var(--week-w));background:${segmentColor(request, segment, d)};color:${accessibleTextColor(segmentColor(request, segment, d))};"
         title="${segment.durationWeeks} week${segment.durationWeeks === 1 ? '' : 's'}"
-        ${readOnly ? '' : `onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','move')" ondblclick="event.stopPropagation(); openResourceModal('${request.id}', null, '${segment.id}')"`}>
+        ${readOnly ? '' : `onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','move')" ondblclick="event.stopPropagation(); openResourceModal('${request.id}', null, '${segment.id}')" oncontextmenu="deleteGanttSegment(event,'${request.id}','${segment.id}')"`}>
         ${readOnly ? '' : `<span class="MiniGantt-resize MiniGantt-resize--left" style="color:${segmentColor(request, segment, d)};" onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','resize-left')">⋮</span>`}
         <span>${segment.durationWeeks}w</span>
         ${readOnly ? '' : `<span class="MiniGantt-resize MiniGantt-resize--right" style="color:${segmentColor(request, segment, d)};" onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','resize-right')">⋮</span>`}
@@ -5000,15 +5315,7 @@ function miniGanttMarkup(d = state.draft, readOnly = false) {
           ${readOnly ? '' : `ondblclick="addGanttSegment(event,'${request.id}')"`}>${bars}</div>
       </div>`;
   }).join('');
-  const addRow = readOnly || !requests.length ? '' : `
-    <div class="MiniGantt-addRow">
-      <div class="MiniGantt-label--add"><i class="fa-solid fa-plus" aria-hidden="true"></i><span>Add Resource</span></div>
-      <div class="MiniGantt-addTrack" style="--weeks:${totalWeeks};">
-        ${Array.from({ length: totalWeeks }, (_, index) =>
-          `<button class="MiniGantt-addWeek" type="button" aria-label="Add resource in week ${index + 1}" title="Add resource in week ${index + 1}" onclick="openResourceModal(null, ${index + 1})"></button>`
-        ).join('')}
-      </div>
-    </div>`;
+  const addRow = '';
   const empty = requests.length ? '' : `
     <div class="MiniGantt-empty">
       <div class="MiniGantt-emptyIcon" aria-hidden="true"><i class="fa-solid fa-calendar-check"></i></div>
@@ -5022,10 +5329,10 @@ function miniGanttMarkup(d = state.draft, readOnly = false) {
       <div class="MiniGantt-scroll">
         <div class="MiniGantt-canvas" data-weeks="${totalWeeks}" style="--weeks:${totalWeeks};">
           <div class="MiniGantt-months">
-            <div class="MiniGantt-corner">Resource</div>${months}
+            <div class="MiniGantt-corner" aria-hidden="true"></div>${months}
           </div>
           <div class="MiniGantt-weeks">
-            <div class="MiniGantt-corner" aria-label="Weeks"></div>${weekHeaders}
+            <div class="MiniGantt-corner" aria-label="Resource">Resource</div>${weekHeaders}
           </div>
           ${rows}
           ${addRow}
@@ -5069,7 +5376,12 @@ function renderResourceGantt(targetId = 'slotEditor', readOnly = false, d = stat
   target.innerHTML = miniGanttMarkup(d, readOnly);
   sizeMiniGantt(target);
   miniGanttObserver?.observe(target);
-  renderDemandShape(targetId === 'reviewGantt' ? 'reviewShapeVisual' : 'timelineShapeVisual', d);
+  if (targetId === 'reviewGantt') {
+    renderDemandShape('reviewShapeVisual', d);
+  } else {
+    renderTimelineScale(d);
+    renderDemandShape('timelineShapeVisual', d, false);
+  }
   if (targetId === 'slotEditor') renderSequencingFeedback();
 }
 
@@ -5083,6 +5395,134 @@ function segmentOverlaps(segments, candidate, ignoreId) {
     candidate.startWeek + candidate.durationWeeks > segment.startWeek);
 }
 
+function dependencyWindowForType(type, d = state.draft) {
+  if (!type || !d) return null;
+  if (isPhaseWorld(d)) {
+    const items = timelineList(d);
+    const index = items.findIndex(item => isPhaseItem(item) && item.name === type);
+    if (index === -1) return null;
+    const start = items.slice(0, index).reduce((sum, item) =>
+      sum + Math.max(1, Number(item.durationWeeks) || 1), 0);
+    return {
+      type,
+      start,
+      end: start + Math.max(1, Number(items[index].durationWeeks) || 1),
+      phase: true
+    };
+  }
+
+  normaliseSequencing(d);
+  const activeTypes = new Set(requestItems(d).flatMap(request =>
+    (request.segments || []).map(segment => segmentTypeName(request, segment, d))
+  ).filter(Boolean));
+  const order = d.sequencing.typeOrder.filter(item => activeTypes.has(item) || item === type);
+  const index = order.indexOf(type);
+  if (index <= 0) return { type, start: 0, end: null, phase: false };
+  const previousType = order[index - 1];
+  const previous = requestTypeBounds(previousType, d);
+  if (!previous) return { type, start: 0, end: null, phase: false };
+  return {
+    type,
+    start: d.sequencing.allowOverlap ? previous.start : previous.end,
+    end: null,
+    phase: false,
+    previousType
+  };
+}
+
+function dependencyWindowMessage(window) {
+  if (!window) return '';
+  if (window.end != null) {
+    return `${window.type} can only use weeks ${window.start + 1}-${window.end}.`;
+  }
+  if (window.previousType) {
+    return window.start
+      ? `${window.type} must start in week ${window.start + 1} or later, after ${window.previousType}.`
+      : `${window.type} cannot start before ${window.previousType}.`;
+  }
+  return '';
+}
+
+function segmentDependencyIssue(request, candidate, d = state.draft) {
+  const type = segmentTypeName(request, candidate, d);
+  const window = dependencyWindowForType(type, d);
+  const start = Math.max(0, Number(candidate.startWeek) || 0);
+  const duration = Math.max(1, Number(candidate.durationWeeks) || 1);
+  const end = start + duration;
+  if (window && start < window.start) return dependencyWindowMessage(window);
+  if (window && window.end != null && end > window.end) {
+    return window.end - window.start < duration
+      ? `${window.type} has ${window.end - window.start} week${window.end - window.start === 1 ? '' : 's'} available, so this requirement is too long.`
+      : dependencyWindowMessage(window);
+  }
+  if (segmentOverlaps(request.segments || [], { startWeek: start, durationWeeks: duration }, candidate.id)) {
+    return 'This resource requirement already has work in that week.';
+  }
+  return null;
+}
+
+function normalisePhaseSegmentPlacement(d = state.draft) {
+  if (!d || !isPhaseWorld(d)) return;
+  requestItems(d).forEach(request => {
+    (request.segments || []).forEach(segment => {
+      const window = dependencyWindowForType(segmentTypeName(request, segment, d), d);
+      if (!window || window.end == null) return;
+      const availableWeeks = Math.max(1, window.end - window.start);
+      const duration = Math.min(availableWeeks, Math.max(1, Number(segment.durationWeeks) || 1));
+      const start = Math.max(window.start, Math.min(
+        window.end - duration,
+        Math.max(0, Number(segment.startWeek) || 0)
+      ));
+      segment.startWeek = start;
+      segment.durationWeeks = duration;
+    });
+  });
+}
+
+function snapSegmentPlacement(request, startWeek, durationWeeks, d = state.draft) {
+  const window = dependencyWindowForType(segmentTypeName(request, null, d), d);
+  let duration = Math.max(1, Number(durationWeeks) || 1);
+  let start = Math.max(0, Number(startWeek) || 0);
+  if (!window) return { startWeek: start, durationWeeks: duration, window: null };
+  if (window.end != null) {
+    duration = Math.min(duration, window.end - window.start);
+    start = Math.max(window.start, Math.min(start, window.end - duration));
+  } else {
+    start = Math.max(window.start, start);
+  }
+  return { startWeek: start, durationWeeks: duration, window };
+}
+
+let ganttConstraintTooltipTimer = null;
+
+function showGanttConstraintTooltip(message, source) {
+  const tooltip = document.getElementById('ganttConstraintTooltip');
+  if (!tooltip || !message) return;
+  tooltip.textContent = message;
+  tooltip.classList.add('is-open');
+  tooltip.setAttribute('aria-hidden', 'false');
+  const rect = source?.getBoundingClientRect?.();
+  const sourceX = Number.isFinite(source?.clientX)
+    ? source.clientX
+    : rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+  const sourceY = Number.isFinite(source?.clientY)
+    ? source.clientY
+    : rect ? rect.top : window.innerHeight / 2;
+  const left = Math.max(12, Math.min(window.innerWidth - 12, sourceX));
+  const top = Math.max(tooltip.offsetHeight + 12, sourceY);
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${top}px`;
+  clearTimeout(ganttConstraintTooltipTimer);
+  ganttConstraintTooltipTimer = setTimeout(hideGanttConstraintTooltip, 2800);
+}
+
+function hideGanttConstraintTooltip() {
+  const tooltip = document.getElementById('ganttConstraintTooltip');
+  if (!tooltip) return;
+  tooltip.classList.remove('is-open');
+  tooltip.setAttribute('aria-hidden', 'true');
+}
+
 function addGanttSegment(event, requestId) {
   const request = findRequest(requestId);
   if (!request) return;
@@ -5091,9 +5531,20 @@ function addGanttSegment(event, requestId) {
   const rect = track.getBoundingClientRect();
   const clickedWeek = Math.max(0, Math.min(totalWeeks - 1,
     Math.floor((event.clientX - rect.left) / (rect.width / totalWeeks))));
+  const snapped = snapSegmentPlacement(request, clickedWeek, 1);
+  if (snapped.startWeek !== clickedWeek) {
+    showGanttConstraintTooltip(
+      `${dependencyWindowMessage(snapped.window)} Snapped to week ${snapped.startWeek + 1}.`,
+      event
+    );
+  }
+  const placementWeek = snapped.startWeek;
   if ((request.segments || []).some(segment =>
-    clickedWeek >= segment.startWeek && clickedWeek < segment.startWeek + segment.durationWeeks)) return;
-  openResourceModal(requestId, clickedWeek + 1, 'new');
+    placementWeek >= segment.startWeek && placementWeek < segment.startWeek + segment.durationWeeks)) {
+    showGanttConstraintTooltip('This resource requirement already has work in that week.', event);
+    return;
+  }
+  openResourceModal(requestId, placementWeek + 1, 'new');
 }
 
 function deleteGanttSegment(event, requestId, segmentId) {
@@ -5122,13 +5573,15 @@ function startGanttDrag(event, requestId, segmentId, type) {
     durationWeeks: segment.durationWeeks,
     weekWidth: track.getBoundingClientRect().width / timelineWeeks(),
     lastStart: segment.startWeek,
-    lastDuration: segment.durationWeeks
+    lastDuration: segment.durationWeeks,
+    cancelled: false
   };
 }
 
 function moveGanttDrag(event) {
   if (!ganttDragState) return;
   const drag = ganttDragState;
+  if (drag.cancelled) return;
   const request = findRequest(drag.requestId);
   const segment = request?.segments.find(item => item.id === drag.segmentId);
   if (!request || !segment) return;
@@ -5144,7 +5597,15 @@ function moveGanttDrag(event) {
   } else {
     next.durationWeeks = Math.max(1, Math.min(totalWeeks - drag.startWeek, drag.durationWeeks + delta));
   }
-  if (segmentOverlaps(request.segments, next, segment.id)) return;
+  const issue = segmentDependencyIssue(request, next, state.draft);
+  if (issue) {
+    segment.startWeek = drag.startWeek;
+    segment.durationWeeks = drag.durationWeeks;
+    drag.cancelled = true;
+    renderResourceGantt('slotEditor');
+    showGanttConstraintTooltip(issue, event);
+    return;
+  }
   if (next.startWeek === drag.lastStart && next.durationWeeks === drag.lastDuration) return;
   segment.startWeek = next.startWeek;
   segment.durationWeeks = next.durationWeeks;

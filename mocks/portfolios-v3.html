@@ -121,14 +121,13 @@
     --gantt-label-width: 300px;
 
     /* Portfolio Team Gantt (resource-breakdown parity) */
-    --pf-team-left-w: 460px;
+    --pf-team-left-w: 404px;
     --pf-team-week-w: 112.6px;
     --pf-team-col-select-w: 48px;
     --pf-team-col-name-w: 195px;
     --pf-team-col-grade-w: 69px;
     --pf-team-col-expand-w: 25px;
     --pf-team-col-dim-w: 100px;
-    --pf-team-col-hours-w: 56px;
     --pf-team-sub-row-h: 24px;
     --pf-team-full-row-h: 27px;
     --pf-team-group-h: 27px;
@@ -1049,25 +1048,6 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-dimLabel.is-expanded { background: var(--surface-list-item-selected-light); font-weight: 600; }
 .PfTeam-dimLabel.is-spacer {
     border-left-color: transparent;
-}
-
-/* Job Editor .gantt-labels-row-data.narrow — total hours on left labels */
-.PfTeam-cellHours {
-    width: var(--pf-team-col-hours-w); flex: 0 0 var(--pf-team-col-hours-w);
-    align-self: stretch;
-    display: flex; align-items: flex-start;
-    padding: 6px 3px;
-    border-left: var(--border-xs) solid var(--border-subtle);
-    box-sizing: border-box;
-    overflow: hidden;
-}
-.PfTeam-cellHours-value {
-    width: 100%;
-    min-height: var(--pf-team-sub-row-h);
-    display: flex; align-items: center;
-    font-size: var(--font-size-label);
-    color: var(--text-label);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 .PfTeam-slimGutter { height: var(--pf-team-slim-h); }
@@ -5632,16 +5612,6 @@ function pfBuildGroupRow(label, collapseKey, opts) {
     return row;
 }
 
-function pfWorkerTotalHours(worker) {
-    let total = 0;
-    (worker.items || []).forEach(function (it) {
-        if (it.kind === "unavailability") return;
-        const cells = it.cells || {};
-        Object.keys(cells).forEach(function (k) { total += Number(cells[k]) || 0; });
-    });
-    return Math.round(total);
-}
-
 function pfBuildFullCell(worker, wi) {
     const hours = pfWeekConsumed(worker, wi);
     const cell = pfEl("div", "PfTeam-fullCell", pfFmtHours(hours));
@@ -5694,13 +5664,6 @@ function pfBuildWorkerRow(worker, index) {
 
     const dims = pfEl("div", "PfTeam-dims");
     left.appendChild(dims);
-
-    const totalHours = pfWorkerTotalHours(worker);
-    const hoursCell = pfEl("div", "PfTeam-cellHours");
-    const hoursVal = pfEl("div", "PfTeam-cellHours-value", String(totalHours));
-    hoursVal.title = totalHours + " hours";
-    hoursCell.appendChild(hoursVal);
-    left.appendChild(hoursCell);
 
     const track = pfEl("div", "PfTeam-rowTrack");
     track.style.width = (PF_WEEKS.length * PF_WEEK_W) + "px";
@@ -6352,6 +6315,13 @@ function pfRenderMenu() {
     rowLayout.appendChild(section);
     rowLayout.appendChild(pfEl("div", "PfTeam-menuItem", "Resource Data"));
     rowLayout.appendChild(pfEl("div", "PfTeam-menuItem", "Resource Sorting"));
+    const bd = pfEl("div", "PfTeam-menuItem" + (pfTeamState.flyout === "breakdown" ? " is-open" : ""));
+    bd.innerHTML = "<span>Resource Breakdown</span><i class=\"fa-solid fa-chevron-left\"></i>";
+    bd.addEventListener("mouseenter", function () {
+        pfTeamState.flyout = "breakdown";
+        pfRenderMenu();
+    });
+    rowLayout.appendChild(bd);
     menu.appendChild(rowLayout);
 
     const time = pfEl("div", "PfTeam-menuGroup");
