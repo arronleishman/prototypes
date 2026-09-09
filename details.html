@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prototype details</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --ink: #1a1d26;
+      --muted: #5c6378;
+      --line: #e4e6ee;
+      --paper: #f7f6f2;
+      --panel: #ffffff;
+      --accent: #2f5d50;
+      --accent-soft: #e8f0ed;
+      --danger: #a3003c;
+      --shadow: 0 12px 30px rgba(26, 29, 38, .08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 50% at 10% -10%, #dde8e4 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 100% 0%, #f3e6dc 0%, transparent 50%),
+        linear-gradient(180deg, var(--paper) 0%, #efece6 100%);
+    }
+    button, input, textarea, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    .wrap { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 70px; }
+    .workspace-header {
+      position: sticky; top: 0; z-index: 50; width: 100vw; margin: -32px 0 18px calc(50% - 50vw);
+      padding: 18px max(20px, calc((100vw - 1180px) / 2)) 0;
+      background: rgba(247, 246, 242, .94); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .back {
+      display: inline-flex; align-items: center; gap: 8px; color: var(--muted);
+      text-decoration: none; font-size: .9rem; font-weight: 600;
+    }
+    .back:hover { color: var(--accent); }
+    .eyebrow {
+      margin: 28px 0 8px; color: var(--accent); text-transform: uppercase;
+      letter-spacing: .08em; font-size: .74rem; font-weight: 700;
+    }
+    .hero {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
+      padding-bottom: 24px; border-bottom: 1px solid var(--line);
+    }
+    h1 { margin: 0; font: 700 clamp(2rem, 4vw, 3rem)/1.06 Fraunces, Georgia, serif; letter-spacing: -.02em; }
+    .subtitle { max-width: 720px; margin: 12px 0 0; color: var(--muted); line-height: 1.55; }
+    .hero-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; min-width: 250px; }
+    .btn {
+      min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 0 13px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+      color: var(--ink); cursor: pointer; text-decoration: none; font-size: .87rem; font-weight: 600;
+    }
+    .btn:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); color: var(--accent); }
+    .btn-primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .btn-primary:hover { color: #fff; filter: brightness(1.05); }
+    .btn-danger { color: var(--danger); border-color: #edc4d2; }
+    .btn:disabled { opacity: .55; cursor: wait; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
+      background: var(--accent-soft); color: var(--accent); font-size: .78rem; font-weight: 700;
+    }
+    .pill.is-draft { background: #f3efe8; color: #8a5a2b; }
+    .pill.is-dev { background: #ece8f8; color: #4f3fa0; }
+    .pill.is-muted { background: #f0f1f4; color: var(--muted); }
+    .notice {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      margin: 18px 0; padding: 13px 15px; border: 1px solid #cfe0da; border-radius: 10px;
+      background: #f1f7f4; color: #345b50; font-size: .9rem; line-height: 1.45;
+    }
+    .notice.is-error { border-color: #edc4d2; background: #fff5f8; color: var(--danger); }
+    .notice[hidden] { display: none; }
+    .tabs {
+      display: flex; gap: 3px; overflow-x: auto; margin: 18px 0 0; padding: 4px 0 5px;
+      border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.62);
+    }
+    .tab {
+      flex: 0 0 auto; min-height: 38px; padding: 0 12px; border: 0; border-radius: 7px;
+      background: transparent; color: var(--muted); cursor: pointer; font-size: .84rem; font-weight: 600;
+      white-space: nowrap;
+    }
+    .tab:hover { background: #fff; color: var(--ink); }
+    .tab.is-active { background: var(--accent); color: #fff; box-shadow: 0 3px 8px rgba(47,93,80,.18); }
+    .tab-panel[hidden] { display: none; }
+    .grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(250px, .75fr); gap: 18px; }
+    .card {
+      min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 12px;
+      background: rgba(255,255,255,.86); box-shadow: 0 4px 14px rgba(26,29,38,.03);
+    }
+    .card h2 { margin: 0 0 8px; font-size: 1.06rem; }
+    .card h3 { margin: 0 0 8px; font-size: .9rem; }
+    .card p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.55; }
+    .preview-card { padding: 0; overflow: hidden; }
+    .preview-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+    .preview-head h2 { margin: 0; }
+    .preview-frame { display: block; width: 100%; height: min(680px, 68vh); border: 0; background: #fff; }
+    .preview-empty { display: grid; place-items: center; min-height: 360px; padding: 30px; text-align: center; }
+    .preview-empty[hidden] { display: none; }
+    .preview-empty p { max-width: 360px; }
+    .stat-list { display: grid; gap: 13px; margin: 0; }
+    .stat { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+    .stat:last-child { padding-bottom: 0; border-bottom: 0; }
+    .stat dt { color: var(--muted); font-size: .83rem; }
+    .stat dd { margin: 0; font-size: .95rem; font-weight: 700; text-align: right; }
+    .list { display: grid; gap: 10px; }
+    .row {
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      padding: 14px; border: 1px solid var(--line); border-radius: 9px; background: #fff;
+    }
+    .row-main { min-width: 0; }
+    .row-title { margin: 0 0 4px; font-size: .94rem; font-weight: 700; overflow-wrap: anywhere; }
+    .row-meta { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.45; }
+    .row-actions { display: flex; flex: 0 0 auto; gap: 6px; }
+    .row-actions .btn { min-height: 34px; padding: 0 10px; font-size: .78rem; }
+    .empty { padding: 34px 20px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); text-align: center; }
+    .empty p { margin: 0 auto 12px; max-width: 440px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .field { display: grid; gap: 6px; }
+    .field.is-wide { grid-column: 1 / -1; }
+    .field label, .field > span { color: var(--muted); font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+    .field input, .field textarea, .field select {
+      width: 100%; min-height: 40px; padding: 9px 11px; border: 1px solid #cfd3df; border-radius: 8px;
+      color: var(--ink); background: #fff; outline: none;
+    }
+    .field textarea { min-height: 100px; resize: vertical; line-height: 1.45; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47,93,80,.14); }
+    .form-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .resource-tabs { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 16px; }
+    .resource-filter {
+      min-height: 34px; padding: 0 11px; border: 1px solid var(--line); border-radius: 999px;
+      background: #fff; color: var(--muted); cursor: pointer; font-size: .8rem; font-weight: 600;
+    }
+    .resource-filter.is-active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+    .upload-box { margin-bottom: 18px; padding: 16px; border: 1px dashed #b7c9c1; border-radius: 10px; background: #f5faf7; }
+    .upload-box h3 { margin-bottom: 4px; }
+    .upload-box p { margin-bottom: 14px; }
+    .auth-box { display: grid; gap: 12px; }
+    .auth-box .form-actions { margin-top: 0; }
+    .user-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .user-line strong { overflow-wrap: anywhere; }
+    .manage-panel { margin: 0 0 18px; }
+    .manage-panel[hidden] { display: none; }
+    .modal {
+      position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 20px;
+      background: rgba(26,29,38,.44);
+    }
+    .modal[hidden] { display: none; }
+    .modal-card { width: min(500px, 100%); padding: 20px; border: 1px solid var(--line); border-radius: 13px; background: #fff; box-shadow: var(--shadow); }
+    .modal-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+    .modal-head h2 { margin: 0; font-size: 1.1rem; }
+    .icon-btn { width: 34px; height: 34px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; }
+    .icon-btn:hover { background: #f1f2f5; color: var(--ink); }
+    .share-url { display: flex; gap: 8px; }
+    .share-url input { min-width: 0; flex: 1; height: 40px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: #fafafb; font-size: .82rem; }
+    .status { min-height: 1.3em; margin: 10px 0 0; color: var(--muted); font-size: .82rem; }
+    .status.is-error { color: var(--danger); }
+    .status.is-ok { color: var(--accent); }
+    .embedded-frame { width: 100%; height: min(900px, 76vh); border: 0; border-radius: 10px; background: transparent; }
+    @media (max-width: 800px) {
+      .hero { display: block; }
+      .hero-actions { justify-content: flex-start; margin-top: 18px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 580px) {
+      .wrap { width: calc(100% - 28px); padding-top: 24px; }
+      .workspace-header { margin-top: -24px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.is-wide { grid-column: auto; }
+      .row { align-items: flex-start; flex-direction: column; }
+      .row-actions { width: 100%; }
+      .row-actions .btn { flex: 1; }
+      .notice { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="workspace-header">
+      <a class="back" id="backLink" href="index.html"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> All prototypes</a>
+      <p class="eyebrow">Prototype workspace</p>
+      <section class="hero">
+        <div>
+          <h1 id="title">Loading prototype…</h1>
+          <p class="subtitle" id="subtitle">Loading details, history, and developer resources.</p>
+          <div class="meta" id="meta"></div>
+        </div>
+        <div class="hero-actions">
+          <a class="btn" id="openMock" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i> Open mock</a>
+          <button type="button" class="btn" id="shareBtn"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Share</button>
+          <button type="button" class="btn" id="downloadBtn"><i class="fa-solid fa-download" aria-hidden="true"></i> Download</button>
+          <button type="button" class="btn btn-primary" id="manageBtn"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Manage</button>
+        </div>
+      </section>
+      <nav class="tabs" id="tabs" role="tablist" aria-label="Prototype details">
+        <button type="button" class="tab is-active" role="tab" data-tab="overview" aria-selected="true">Overview</button>
+        <button type="button" class="tab" role="tab" data-tab="insights" aria-selected="false"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Insights</button>
+        <button type="button" class="tab" role="tab" data-tab="versions" aria-selected="false">Version history</button>
+        <button type="button" class="tab" role="tab" data-tab="changelog" aria-selected="false">Change log</button>
+        <button type="button" class="tab" role="tab" data-tab="components" aria-selected="false">Components</button>
+        <button type="button" class="tab" role="tab" data-tab="code" aria-selected="false">Code</button>
+        <button type="button" class="tab" role="tab" data-tab="storybook" aria-selected="false">Storybook</button>
+        <button type="button" class="tab" role="tab" data-tab="instructions" aria-selected="false">Instructions</button>
+      </nav>
+    </header>
+
+    <div class="notice" id="authNotice" hidden></div>
+    <div class="notice is-error" id="errorNotice" hidden></div>
+
+    <section class="manage-panel card" id="managePanel" hidden>
+      <h2>Manage prototype</h2>
+      <p>Update the library record or add files from the resource tabs. Changes are shared with your authenticated team.</p>
+      <form id="editForm">
+        <div class="form-grid" style="margin-top:14px">
+          <div class="field"><label for="editTitle">Title</label><input id="editTitle" maxlength="120" required /></div>
+          <div class="field"><label for="editStatus">Status</label><select id="editStatus"><option value="draft">Draft</option><option value="in-development">In development</option><option value="active">Active</option></select></div>
+          <div class="field is-wide"><label for="editDescription">Description</label><textarea id="editDescription" maxlength="1000"></textarea></div>
+        </div>
+        <div class="form-actions"><button class="btn btn-primary" type="submit">Save changes</button><button class="btn" type="button" id="cancelManageBtn">Cancel</button></div>
+        <p class="status" id="editStatusMessage" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="tab-panel" id="panel-overview" data-panel="overview">
+      <div class="grid">
+        <div class="card preview-card">
+          <div class="preview-head"><h2>Preview</h2><span class="pill is-muted" id="previewLabel">Mock</span></div>
+          <iframe class="preview-frame" id="previewFrame" title="Prototype preview" sandbox="allow-same-origin allow-scripts"></iframe>
+          <div class="preview-empty" id="previewEmpty" hidden><div><p id="previewEmptyText">No mock has been attached yet.</p><button type="button" class="btn btn-primary" id="overviewResourcesBtn">Add a mock</button></div></div>
+        </div>
+        <aside class="card">
+          <h2>At a glance</h2>
+          <dl class="stat-list">
+            <div class="stat"><dt>Status</dt><dd id="statStatus">—</dd></div>
+            <div class="stat"><dt>Last updated</dt><dd id="statUpdated">—</dd></div>
+            <div class="stat"><dt>Versions</dt><dd id="statVersions">0</dd></div>
+            <div class="stat"><dt>Developer files</dt><dd id="statArtifacts">0</dd></div>
+            <div class="stat"><dt>Feedback</dt><dd id="statFeedback">Loading…</dd></div>
+          </dl>
+          <div style="margin-top:22px"><h3>About this prototype</h3><p id="aboutText">—</p></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-insights" data-panel="insights" hidden>
+      <iframe class="embedded-frame" id="insightsFrame" title="Prototype insights"></iframe>
+    </section>
+
+    <section class="tab-panel" id="panel-versions" data-panel="versions" hidden>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div><h2>Version history</h2><p>Pushes that changed this mock appear automatically, alongside curated milestones.</p></div>
+          <button type="button" class="btn btn-primary" id="addVersionBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add version</button>
+        </div>
+        <form id="versionForm" hidden>
+          <div class="form-grid" style="margin-top:16px">
+            <div class="field"><label for="versionLabel">Version</label><input id="versionLabel" maxlength="80" placeholder="e.g. v3 · Gantt selection" required /></div>
+            <div class="field is-wide"><label for="versionSummary">What changed</label><textarea id="versionSummary" maxlength="1600" placeholder="Summarise the change for a developer."></textarea></div>
+          </div>
+          <div class="form-actions"><button class="btn btn-primary" type="submit">Save version</button><button class="btn" type="button" id="cancelVersionBtn">Cancel</button></div>
+          <p class="status" id="versionStatus" aria-live="polite"></p>
+        </form>
+        <div class="list" id="versionList" style="margin-top:18px"><div class="empty">Loading versions…</div></div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-changelog" data-panel="changelog" hidden>
+      <iframe class="embedded-frame" id="changelogFrame" title="Prototype change log"></iframe>
+    </section>
+
+    <section class="tab-panel" id="panel-resources" data-panel="resources" hidden>
+      <div class="card">
+        <div><h2 id="resourceHeading">Developer resources</h2><p>Add the files developers need to build or understand this prototype.</p></div>
+        <div class="resource-tabs" style="margin-top:16px">
+          <button type="button" class="resource-filter" data-kind="components">Components</button>
+          <button type="button" class="resource-filter" data-kind="code">Code</button>
+          <button type="button" class="resource-filter" data-kind="storybook">Storybook</button>
+          <button type="button" class="resource-filter" data-kind="instructions">Instructions</button>
+        </div>
+        <div class="upload-box" id="uploadBox">
+          <h3 id="uploadHeading">Add a component file</h3>
+          <p id="uploadHint">Upload a file or add a text-based implementation note for the team.</p>
+          <form id="uploadForm">
+            <div class="form-grid">
+              <div class="field"><label for="artifactFile">File</label><input id="artifactFile" type="file" required /></div>
+              <div class="field"><label for="artifactVersion">Version (optional)</label><select id="artifactVersion"><option value="">Unversioned</option></select></div>
+              <div class="field is-wide"><label for="artifactDescription">Description (optional)</label><textarea id="artifactDescription" maxlength="500" placeholder="What is this file for?"></textarea></div>
+            </div>
+            <div class="form-actions"><button class="btn btn-primary" type="submit"><i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i> Upload file</button></div>
+            <p class="status" id="uploadStatus" aria-live="polite"></p>
+          </form>
+        </div>
+        <div class="list" id="artifactList"><div class="empty">Loading files…</div></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="shareModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+      <div class="modal-head"><h2 id="shareTitle">Share prototype</h2><button type="button" class="icon-btn" id="closeShareBtn" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+      <p style="margin:0 0 14px;color:var(--muted);font-size:.88rem;line-height:1.5" id="shareNote">Share the internal details page with your team.</p>
+      <div class="share-url"><input id="shareUrl" type="text" readonly /><button type="button" class="btn btn-primary" id="copyShareBtn">Copy</button></div>
+      <p class="status" id="shareStatus" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <div class="modal" id="authModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <div class="modal-head"><h2 id="authTitle">Sign in to manage files</h2><button type="button" class="icon-btn" id="closeAuthBtn" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+      <p style="margin:0 0 14px;color:var(--muted);font-size:.88rem;line-height:1.5">Use your approved team email. We’ll send a one-time sign-in link.</p>
+      <form id="authForm" class="auth-box"><div class="field"><label for="authEmail">Team email</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@company.com" /></div><div class="form-actions"><button class="btn btn-primary" type="submit">Send sign-in link</button></div><p class="status" id="authStatus" aria-live="polite"></p></form>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="shared/access.js"></script>
+  <script src="shared/supabase-auth.js"></script>
+  <script src="shared/prototype-library.js"></script>
+  <script src="shared/feedback-store.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      if (!window.PrototypesAccess.requireInternalAccess()) return;
+
+      var access = window.PrototypesAccess;
+      var auth = window.PrototypesAuth;
+      var library = window.PrototypesLibrary;
+      var feedback = window.PrototypesFeedbackStore;
+      var params = new URLSearchParams(location.search);
+      var id = (params.get('id') || '').trim();
+      var initialTab = (params.get('tab') || 'overview').toLowerCase();
+      var item = null;
+      var versions = [];
+      var artifacts = [];
+      var resourceKind = 'components';
+      var mockUrl = '';
+      var keyParam = access.configuredKey() ? '&key=' + encodeURIComponent(access.configuredKey()) : '';
+
+      var titleEl = document.getElementById('title');
+      var subtitleEl = document.getElementById('subtitle');
+      var metaEl = document.getElementById('meta');
+      var errorEl = document.getElementById('errorNotice');
+      var authNotice = document.getElementById('authNotice');
+      var backLink = document.getElementById('backLink');
+      var openMock = document.getElementById('openMock');
+      var downloadBtn = document.getElementById('downloadBtn');
+      var shareModal = document.getElementById('shareModal');
+      var authModal = document.getElementById('authModal');
+
+      backLink.href = access.hubUrlWithKey();
+      if (!id) {
+        titleEl.textContent = 'Pick a prototype';
+        subtitleEl.textContent = 'Open a prototype from the hub to see its details.';
+        errorEl.hidden = false;
+        errorEl.textContent = 'No prototype id was provided.';
+        return;
+      }
+
+      function esc(value) {
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      function formatDate(value) {
+        if (!value) return '—';
+        try { return new Date(value).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }); }
+        catch (e) { return String(value); }
+      }
+
+      function statusLabel(status) {
+        return String(status || 'draft').replace(/-/g, ' ');
+      }
+
+      function setStatus(el, message, kind) {
+        if (!el) return;
+        el.textContent = message || '';
+        el.className = 'status' + (kind ? ' is-' + kind : '');
+      }
+
+      function setError(message) {
+        errorEl.hidden = !message;
+        errorEl.textContent = message || '';
+      }
+
+      function detailsUrl() {
+        var url = new URL('details.html', location.href);
+        url.searchParams.set('id', id);
+        url.searchParams.set('tab', currentTab());
+        if (access.configuredKey()) url.searchParams.set('key', access.configuredKey());
+        return url.href;
+      }
+
+      function currentTab() {
+        var active = document.querySelector('.tab.is-active');
+        return active ? active.getAttribute('data-tab') : 'overview';
+      }
+
+      function setTab(name) {
+        var allowed = { overview: 1, insights: 1, versions: 1, changelog: 1, components: 1, code: 1, storybook: 1, instructions: 1 };
+        if (!allowed[name]) name = 'overview';
+        document.querySelectorAll('.tab').forEach(function (tab) {
+          var active = tab.getAttribute('data-tab') === name;
+          tab.classList.toggle('is-active', active);
+          tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        var resource = ['components', 'code', 'storybook', 'instructions'].indexOf(name) !== -1;
+        document.querySelectorAll('.tab-panel').forEach(function (panel) {
+          var target = panel.getAttribute('data-panel');
+          panel.hidden = resource ? (target !== 'resources') : (target !== name);
+        });
+        if (resource) {
+          resourceKind = name;
+          updateResourceUi();
+          renderArtifacts();
+        }
+        if (name === 'insights') loadInsightsFrame();
+        if (name === 'changelog') loadChangelogFrame();
+        var url = new URL(location.href);
+        url.searchParams.set('tab', name);
+        history.replaceState(null, '', url.href);
+      }
+
+      function renderMeta() {
+        var status = String(item.status || 'draft').toLowerCase();
+        var cls = status === 'draft' ? ' is-draft' : (status.indexOf('development') !== -1 ? ' is-dev' : '');
+        metaEl.innerHTML = '<span class="pill' + cls + '">' + esc(statusLabel(status)) + '</span>' +
+          (item.source === 'managed' ? '<span class="pill is-muted">Managed in library</span>' : '') +
+          (item.path ? '<span class="pill is-muted">Repository mock</span>' : '<span class="pill is-muted">Uploaded mock</span>');
+        document.getElementById('statStatus').textContent = statusLabel(status);
+        document.getElementById('statUpdated').textContent = formatDate(item.updated || item.updatedAt);
+        document.getElementById('aboutText').textContent = item.description || 'No description has been added yet.';
+      }
+
+      function renderVersions() {
+        document.getElementById('statVersions').textContent = String(versions.length);
+        var list = document.getElementById('versionList');
+        if (!versions.length) {
+          list.innerHTML = '<div class="empty"><p>No pushed versions recorded yet.</p><p>Push a change to this mock, or add a curated milestone manually.</p><button type="button" class="btn btn-primary" data-start-version="1">Add the first version</button></div>';
+          return;
+        }
+        list.innerHTML = versions.map(function (version) {
+          return '<article class="row"><div class="row-main"><h3 class="row-title">' + esc(version.label) + '</h3><p class="row-meta">' + esc(formatDate(version.createdAt)) + (version.createdBy ? ' · ' + esc(version.createdBy) : '') + '</p><p class="row-meta" style="margin-top:5px">' + esc(version.summary || 'No summary added.') + '</p></div></article>';
+        }).join('');
+      }
+
+      function kindLabel(kind) {
+        return { components: 'Components', code: 'Code', storybook: 'Storybook', instructions: 'Instructions', mock: 'HTML mock', other: 'Other' }[kind] || kind;
+      }
+
+      function updateResourceUi() {
+        var labels = { components: 'component', code: 'code', storybook: 'Storybook', instructions: 'instruction' };
+        var label = labels[resourceKind] || 'developer';
+        document.getElementById('resourceHeading').textContent = kindLabel(resourceKind);
+        document.getElementById('uploadHeading').textContent = 'Add a ' + label + ' file';
+        document.getElementById('uploadHint').textContent = auth.hasSession()
+          ? 'Files are stored privately for authenticated team members.'
+          : 'Sign in to upload a file to the shared private library.';
+        document.querySelectorAll('.resource-filter').forEach(function (button) {
+          button.classList.toggle('is-active', button.getAttribute('data-kind') === resourceKind);
+        });
+      }
+
+      function renderArtifacts() {
+        document.getElementById('statArtifacts').textContent = String(artifacts.length);
+        var list = document.getElementById('artifactList');
+        var visible = artifacts.filter(function (artifact) { return artifact.kind === resourceKind; });
+        if (!visible.length) {
+          list.innerHTML = '<div class="empty"><p>No ' + esc(kindLabel(resourceKind).toLowerCase()) + ' files yet.</p>' + (auth.hasSession() ? '<span>Use the upload form above to add one.</span>' : '<button type="button" class="btn btn-primary" data-auth-start="1">Sign in to add files</button>') + '</div>';
+          return;
+        }
+        list.innerHTML = visible.map(function (artifact) {
+          var size = artifact.size ? Math.max(1, Math.round(artifact.size / 1024)) + ' KB' : 'Size unavailable';
+          return '<article class="row" data-artifact-id="' + esc(artifact.id) + '"><div class="row-main"><h3 class="row-title"><i class="fa-regular fa-file" aria-hidden="true"></i> ' + esc(artifact.name) + '</h3><p class="row-meta">' + esc(size) + ' · ' + esc(formatDate(artifact.createdAt)) + (artifact.description ? ' · ' + esc(artifact.description) : '') + '</p></div><div class="row-actions"><button type="button" class="btn" data-download-artifact="' + esc(artifact.id) + '"><i class="fa-solid fa-download" aria-hidden="true"></i> Download</button><button type="button" class="btn btn-danger" data-delete-artifact="' + esc(artifact.id) + '">Remove</button></div></article>';
+        }).join('');
+      }
+
+      function updateVersionOptions() {
+        var select = document.getElementById('artifactVersion');
+        select.innerHTML = '<option value="">Unversioned</option>' + versions.map(function (version) {
+          return '<option value="' + esc(version.id) + '">' + esc(version.label) + '</option>';
+        }).join('');
+      }
+
+      function loadInsightsFrame() {
+        var frame = document.getElementById('insightsFrame');
+        var src = 'feedback.html?id=' + encodeURIComponent(id) + '&embedded=1' + keyParam;
+        if (frame.getAttribute('src') !== src) frame.src = src;
+      }
+
+      function loadChangelogFrame() {
+        var frame = document.getElementById('changelogFrame');
+        var src = 'changelog.html?id=' + encodeURIComponent(id) + '&embedded=1' + keyParam;
+        if (frame.getAttribute('src') !== src) frame.src = src;
+      }
+
+      function findMockArtifact() {
+        return artifacts.find(function (artifact) { return artifact.kind === 'mock'; }) || null;
+      }
+
+      function setMockUrl() {
+        if (item.path) {
+          mockUrl = new URL(item.path, location.href).href;
+          applyMockUrl();
+          return;
+        }
+        var mock = findMockArtifact();
+        if (!mock || !auth.hasSession()) {
+          mockUrl = '';
+          applyMockUrl();
+          return;
+        }
+        library.signedUrl(mock).then(function (url) {
+          mockUrl = url;
+          applyMockUrl();
+        }).catch(function () {
+          mockUrl = '';
+          applyMockUrl();
+        });
+      }
+
+      function applyMockUrl() {
+        var frame = document.getElementById('previewFrame');
+        var empty = document.getElementById('previewEmpty');
+        var text = document.getElementById('previewEmptyText');
+        if (mockUrl) {
+          frame.hidden = false;
+          empty.hidden = true;
+          frame.src = mockUrl;
+          openMock.hidden = false;
+          openMock.href = mockUrl;
+          downloadBtn.disabled = false;
+          document.getElementById('previewLabel').textContent = item.path ? 'Repository mock' : 'Uploaded HTML';
+        } else {
+          frame.hidden = true;
+          empty.hidden = false;
+          text.textContent = item.path ? 'The repository mock could not be loaded.' : (auth.hasSession() ? 'No HTML mock has been attached yet.' : 'Sign in to view the private uploaded mock.');
+          openMock.hidden = true;
+          downloadBtn.disabled = true;
+          document.getElementById('previewLabel').textContent = 'No mock';
+        }
+      }
+
+      function loadAuthState() {
+        return auth.refreshUser().then(function (user) {
+          if (user) {
+            authNotice.hidden = false;
+            authNotice.className = 'notice';
+            authNotice.innerHTML = '<span><i class="fa-solid fa-lock" aria-hidden="true"></i> Signed in as <strong>' + esc(user.email || 'team member') + '</strong>. Private developer files are available.</span><button type="button" class="btn" id="signOutBtn">Sign out</button>';
+            document.getElementById('signOutBtn').addEventListener('click', function () {
+              auth.signOut().then(function () { location.reload(); });
+            });
+          } else {
+            authNotice.hidden = false;
+            authNotice.className = 'notice';
+            authNotice.innerHTML = '<span><i class="fa-solid fa-lock" aria-hidden="true"></i> You can browse this workspace, but sign in to add or download private developer files.</span><button type="button" class="btn" id="signInBtn">Sign in</button>';
+            document.getElementById('signInBtn').addEventListener('click', openAuth);
+          }
+          updateResourceUi();
+        });
+      }
+
+      function openAuth() {
+        authModal.hidden = false;
+        document.getElementById('authEmail').focus();
+      }
+
+      function closeAuth() { authModal.hidden = true; }
+
+      function downloadBlob(blob, filename) {
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = filename || 'prototype-file';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      }
+
+      function downloadMock() {
+        if (!mockUrl) return;
+        downloadBtn.disabled = true;
+        downloadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Downloading…';
+        var mock = findMockArtifact();
+        var promise = item.path
+          ? fetch(item.path, { cache: 'no-store' }).then(function (res) { if (!res.ok) throw new Error('Download failed.'); return res.blob(); })
+          : library.downloadArtifact(mock);
+        promise.then(function (blob) {
+          downloadBlob(blob, (item.title || id).toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.html');
+        }).catch(function () {
+          window.open(mockUrl, '_blank', 'noopener');
+        }).finally(function () {
+          downloadBtn.disabled = false;
+          downloadBtn.innerHTML = '<i class="fa-solid fa-download" aria-hidden="true"></i> Download';
+        });
+      }
+
+      function openShare() {
+        document.getElementById('shareUrl').value = item && item.path ? mockUrl : detailsUrl();
+        document.getElementById('shareNote').textContent = item && item.path
+          ? 'Reviewers get the mock only. Share the workspace link with your team when they need Insights, version history, or developer files.'
+          : 'This internal link opens the workspace, Insights, version history, and private developer resources for your team.';
+        document.getElementById('shareStatus').textContent = '';
+        shareModal.hidden = false;
+        document.getElementById('shareUrl').focus();
+        document.getElementById('shareUrl').select();
+      }
+
+      function loadData() {
+        return Promise.all([library.getPrototype(id), library.listVersions(id), library.listArtifacts(id)])
+          .then(function (result) {
+            item = result[0];
+            versions = result[1] || [];
+            artifacts = result[2] || [];
+            if (!item) throw new Error('Prototype not found.');
+            titleEl.textContent = item.title || id;
+            subtitleEl.textContent = item.description || 'Prototype workspace and developer hand-off.';
+            document.title = item.title + ' · Prototype workspace';
+            renderMeta();
+            renderVersions();
+            updateVersionOptions();
+            renderArtifacts();
+            setMockUrl();
+            feedback.count(id).then(function (result) { document.getElementById('statFeedback').textContent = String(result.count || 0); });
+          });
+      }
+
+      document.getElementById('tabs').addEventListener('click', function (event) {
+        var tab = event.target.closest('.tab');
+        if (tab) setTab(tab.getAttribute('data-tab'));
+      });
+
+      document.querySelectorAll('.resource-filter').forEach(function (button) {
+        button.addEventListener('click', function () {
+          resourceKind = button.getAttribute('data-kind');
+          updateResourceUi();
+          renderArtifacts();
+        });
+      });
+
+      document.getElementById('shareBtn').addEventListener('click', openShare);
+      document.getElementById('downloadBtn').addEventListener('click', downloadMock);
+      document.getElementById('closeShareBtn').addEventListener('click', function () { shareModal.hidden = true; });
+      document.getElementById('shareModal').addEventListener('click', function (event) { if (event.target === shareModal) shareModal.hidden = true; });
+      document.getElementById('copyShareBtn').addEventListener('click', function () {
+        var input = document.getElementById('shareUrl');
+        navigator.clipboard.writeText(input.value).then(function () {
+          setStatus(document.getElementById('shareStatus'), 'Copied to clipboard.', 'ok');
+        }).catch(function () {
+          input.select();
+          document.execCommand('copy');
+          setStatus(document.getElementById('shareStatus'), 'Copied to clipboard.', 'ok');
+        });
+      });
+      document.getElementById('closeAuthBtn').addEventListener('click', closeAuth);
+      document.getElementById('authModal').addEventListener('click', function (event) { if (event.target === authModal) closeAuth(); });
+      document.getElementById('authForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var status = document.getElementById('authStatus');
+        setStatus(status, 'Sending sign-in link…');
+        auth.sendMagicLink(document.getElementById('authEmail').value).then(function () {
+          setStatus(status, 'Check your email for the sign-in link.', 'ok');
+        }).catch(function (error) {
+          setStatus(status, error.message || 'Could not send the sign-in link.', 'error');
+        });
+      });
+
+      document.getElementById('manageBtn').addEventListener('click', function () {
+        var panel = document.getElementById('managePanel');
+        panel.hidden = !panel.hidden;
+        if (!panel.hidden) {
+          document.getElementById('editTitle').value = item ? item.title : '';
+          document.getElementById('editDescription').value = item ? item.description : '';
+          document.getElementById('editStatus').value = item ? item.status : 'draft';
+          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+      document.getElementById('cancelManageBtn').addEventListener('click', function () { document.getElementById('managePanel').hidden = true; });
+      document.getElementById('editForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (!auth.hasSession()) { openAuth(); return; }
+        var status = document.getElementById('editStatusMessage');
+        setStatus(status, 'Saving…');
+        library.updatePrototype(id, {
+          title: document.getElementById('editTitle').value.trim(),
+          description: document.getElementById('editDescription').value.trim(),
+          status: document.getElementById('editStatus').value,
+          updated: new Date().toISOString().slice(0, 10),
+        }).then(function () {
+          return library.getPrototype(id);
+        }).then(function (updated) {
+          item = updated;
+          titleEl.textContent = item.title;
+          subtitleEl.textContent = item.description || 'Prototype workspace and developer hand-off.';
+          renderMeta();
+          setStatus(status, 'Saved.', 'ok');
+        }).catch(function (error) {
+          setStatus(status, error.message || 'Could not save changes.', 'error');
+        });
+      });
+
+      document.getElementById('addVersionBtn').addEventListener('click', function () {
+        if (!auth.hasSession()) { openAuth(); return; }
+        document.getElementById('versionForm').hidden = false;
+        document.getElementById('versionLabel').focus();
+      });
+      document.getElementById('versionList').addEventListener('click', function (event) {
+        if (event.target.closest('[data-start-version]')) {
+          document.getElementById('versionForm').hidden = false;
+          document.getElementById('versionLabel').focus();
+        }
+      });
+      document.getElementById('cancelVersionBtn').addEventListener('click', function () { document.getElementById('versionForm').hidden = true; });
+      document.getElementById('versionForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (!auth.hasSession()) { openAuth(); return; }
+        var status = document.getElementById('versionStatus');
+        setStatus(status, 'Saving…');
+        library.addVersion(id, {
+          label: document.getElementById('versionLabel').value.trim(),
+          summary: document.getElementById('versionSummary').value.trim(),
+        }).then(function () {
+          document.getElementById('versionForm').reset();
+          document.getElementById('versionForm').hidden = true;
+          return library.listVersions(id);
+        }).then(function (next) {
+          versions = next;
+          renderVersions();
+          updateVersionOptions();
+        }).catch(function (error) {
+          setStatus(status, error.message || 'Could not save version.', 'error');
+        });
+      });
+
+      document.getElementById('uploadForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (!auth.hasSession()) { openAuth(); return; }
+        var file = document.getElementById('artifactFile').files[0];
+        var status = document.getElementById('uploadStatus');
+        setStatus(status, 'Uploading…');
+        library.uploadArtifact(id, file, resourceKind, document.getElementById('artifactDescription').value.trim(), document.getElementById('artifactVersion').value)
+          .then(function () {
+            document.getElementById('uploadForm').reset();
+            setStatus(status, 'File uploaded.', 'ok');
+            return library.listArtifacts(id);
+          }).then(function (next) {
+            artifacts = next;
+            renderArtifacts();
+            setMockUrl();
+          }).catch(function (error) {
+            setStatus(status, error.message || 'Could not upload file.', 'error');
+          });
+      });
+
+      document.getElementById('artifactList').addEventListener('click', function (event) {
+        var authStart = event.target.closest('[data-auth-start]');
+        if (authStart) {
+          openAuth();
+          return;
+        }
+        var download = event.target.closest('[data-download-artifact]');
+        var remove = event.target.closest('[data-delete-artifact]');
+        if (download) {
+          var found = artifacts.find(function (artifact) { return artifact.id === download.getAttribute('data-download-artifact'); });
+          if (!found) return;
+          download.disabled = true;
+          library.downloadArtifact(found).then(function (blob) { downloadBlob(blob, found.name); }).catch(function (error) { window.alert(error.message || 'Could not download file.'); }).finally(function () { download.disabled = false; });
+        }
+        if (remove) {
+          var artifact = artifacts.find(function (entry) { return entry.id === remove.getAttribute('data-delete-artifact'); });
+          if (!artifact || !window.confirm('Remove ' + artifact.name + '?')) return;
+          remove.disabled = true;
+          library.removeArtifact(artifact).then(function () { return library.listArtifacts(id); }).then(function (next) { artifacts = next; renderArtifacts(); setMockUrl(); }).catch(function (error) { remove.disabled = false; window.alert(error.message || 'Could not remove file.'); });
+        }
+      });
+
+      document.getElementById('overviewResourcesBtn').addEventListener('click', function () { setTab('components'); });
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          shareModal.hidden = true;
+          authModal.hidden = true;
+        }
+      });
+
+      loadAuthState().then(loadData).then(function () {
+        setTab(initialTab);
+      }).catch(function (error) {
+        setError(error.message || 'Could not load this prototype.');
+        titleEl.textContent = id;
+        subtitleEl.textContent = 'The prototype could not be loaded.';
+      });
+    })();
+  </script>
+</body>
+</html>

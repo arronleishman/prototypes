@@ -472,6 +472,17 @@
     @media (max-width: 640px) {
       .stats { grid-template-columns: 1fr; }
     }
+    body.is-embedded { background: transparent; }
+    body.is-embedded .wrap { width: 100%; padding: 0 0 28px; }
+    body.is-embedded .back,
+    body.is-embedded .eyebrow,
+    body.is-embedded h1,
+    body.is-embedded #subtitle,
+    body.is-embedded #actions #openMock,
+    body.is-embedded #actions #workspaceLink,
+    body.is-embedded #actions a { display: none; }
+    body.is-embedded .toolbar { margin-top: 0; }
+    body.is-embedded .tabs { margin-top: 0; }
   </style>
 </head>
 <body>
@@ -486,6 +497,7 @@
       <button type="button" class="btn-ghost" id="exportBtn" disabled>
         <i class="fa-solid fa-download" aria-hidden="true"></i> Export comments
       </button>
+      <a class="btn-ghost" id="workspaceLink" href="#">Workspace</a>
       <a class="btn-ghost" href="index.html">Back to hub</a>
     </div>
 
@@ -558,6 +570,8 @@
   <script>
     (function () {
       if (!window.PrototypesAccess.requireInternalAccess()) return;
+      var embedded = new URLSearchParams(location.search).get('embedded') === '1';
+      if (embedded) document.body.classList.add('is-embedded');
 
       var params = new URLSearchParams(location.search);
       var id = (params.get('id') || '').trim();
@@ -1094,6 +1108,7 @@
           if (mockPath) {
             openMock.href = mockPath;
           } else openMock.hidden = true;
+          document.getElementById('workspaceLink').href = access.detailsUrlWithKey(id, 'insights');
           loadTelemetry();
         })
         .catch(function () {

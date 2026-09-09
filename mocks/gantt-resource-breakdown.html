@@ -450,9 +450,6 @@ button { font-family: inherit; }
     font-weight: 600;
 }
 
-/* Slim availability strip in the left panel gutter */
-.SlimGutter { height: var(--slim-h); }
-
 /* Timeline cells */
 .Track-weeks { display: flex; flex-direction: column; }
 .Track-subrow { display: flex; height: var(--sub-row-h); border-bottom: var(--border-xs) solid var(--border-subtle); }
@@ -464,6 +461,9 @@ button { font-family: inherit; }
     height: calc(var(--sub-row-h) - var(--border-xs));
     flex: 0 0 calc(var(--sub-row-h) - var(--border-xs));
 }
+/* Open rows push the sub-row's own rule down past the revealed bookings, so the
+   hours strip carries the divider itself and stays visually capped. */
+.Track-hours.is-open { border-bottom: var(--border-xs) solid var(--border-subtle); }
 
 /* Daylight PhaseWeekCell (Figma 16232:17192). */
 .Cellw {
@@ -1378,9 +1378,15 @@ button.CreateBooking-unit:hover,
 // The Resource Breakdown menu item is fully gated by the Gantt Aggregation
 // flag. MVP only breaks down by Role, so a customer without roles configured
 // has nothing to aggregate on and never sees the item (DEVO-29502).
+//
+// Job roles are a separate environment setting with its own "mandatory"
+// switch, giving three tenant shapes to review: roles off, roles on and
+// optional, roles on and mandatory. Under mandatory roles a task cannot exist
+// without one, so Other holds unavailabilities alone.
 var FLAGS = {
     ganttAggregation: true,
-    rolesEnabled: true
+    rolesEnabled: true,
+    rolesMandatory: false
 };
 
 function breakdownAvailable() { return FLAGS.ganttAggregation && FLAGS.rolesEnabled; }
@@ -1389,6 +1395,8 @@ function breakdownAvailable() { return FLAGS.ganttAggregation && FLAGS.rolesEnab
 var WEEK_COUNT = 52;
 var WEEK_W = 112.6;
 var DAY_W = WEEK_W / 5;
+// Height of the slim availability strip; mirrors the --slim-h CSS token.
+var SLIM_H = 5;
 
 // Booking bars match the main Gantt's 23px .gantt-item, stacked with a 2px gap.
 var BAR_H = 23;
@@ -1428,8 +1436,11 @@ var DIMENSIONS = {
 
 var PHASE_ORDER  = ['Preparation', 'First Review', 'Second Review'];
 var PHASE_COLOUR = { 'Preparation': '#2398f2', 'First Review': '#2d7d46', 'Second Review': '#7b3fa0' };
-var ROLE_ORDER   = ['Partner', 'Principal', 'Senior Manager', 'Manager', 'Project Manager',
-                    'Senior Associate', 'Associate', 'Audit Assistant'];
+
+// Customers can glossarize the Other row — "Non-chargeable", "Unavailability"
+// and so on. Whatever it is renamed to, it sorts last rather than into the
+// alphabetical run of roles.
+var OTHER_LABEL = 'Other';
 
 // ── Data ───────────────────────────────────────────────────────────────────
 // Engagement spec: [jobName, code, phase, role, bookingType, resourceRequirement,
@@ -1615,6 +1626,12 @@ DATA.forEach(function (group) {
                 kind: spec[9] || 'booking'
             };
         });
+        // A tenant with mandatory job roles could not have produced the
+        // role-less bookings in this sample, so they drop out and Other is left
+        // holding unavailabilities only.
+        if (FLAGS.rolesMandatory) {
+            wk.items = wk.items.filter(function (it) { return it.role || it.kind === 'unavailability'; });
+        }
         WORKERS.push(wk);
     });
 });
@@ -1680,13 +1697,18 @@ function dimValueOf(item, dim) {
     return item[field] || null;
 }
 
+// Roles sort alphabetically. Phase keeps its lifecycle order because
+// alphabetical would read as nonsense there.
 function orderIndex(dim, value) {
-    if (dim === 'phase') return PHASE_ORDER.indexOf(value);
-    if (dim === 'role') { var i = ROLE_ORDER.indexOf(value); return i === -1 ? 999 : i; }
-    return 999;
+    return dim === 'phase' ? PHASE_ORDER.indexOf(value) : 0;
 }
 
-/** Client-side aggregation of already-loaded Gantt data (DEVO-29503). */
+/**
+ * Client-side aggregation of already-loaded Gantt data (DEVO-29503). Role
+ * buckets and Other are built in a single pass over the resource's tasks — no
+ * second loop to work out what fell through, since the Gantt is performance
+ * sensitive and this runs on the client's machine.
+ */
 function buildBreakdownRows(worker, dim) {
     if (dim === 'none') return null;
     var map = {}, order = [], other = [];
@@ -1703,9 +1725,10 @@ function buildBreakdownRows(worker, dim) {
     var rows = order.map(function (v) {
         return { key: v, label: v, items: map[v], accent: dim === 'phase' ? PHASE_COLOUR[v] : null };
     });
-    // The Other row always renders, and merges unavailabilities with items that
-    // have no value for the chosen dimension (DEVO-29669).
-    rows.push({ key: '__other', label: 'Other', items: other, isOther: true });
+    // Other merges unavailabilities with items that have no value for the
+    // chosen dimension (DEVO-29669). It renders even when every cell is zero,
+    // so work can still be created against it, and always sits last.
+    rows.push({ key: '__other', label: OTHER_LABEL, items: other, isOther: true });
     return rows;
 }
 
@@ -1892,9 +1915,14 @@ function buildWorkerRow(worker, index) {
     weeksCol.style.width = '100%';
     track.appendChild(weeksCol);
 
-    // Slim availability strip — top-level resource row only (DEVO-29673)
+    // Slim availability strip — top-level resource row only (DEVO-29673).
+    // The strip lives on the timeline; in the label column its height is folded
+    // into the first row's top padding instead of a separate spacer, so the
+    // resource separator reads as a single line rather than doubling up above an
+    // empty band.
+    var slimCap = 0;
     if (state.showAvailability) {
-        dims.appendChild(el('div', 'SlimGutter'));
+        slimCap = SLIM_H;
         var slim = el('div', 'SlimRow');
         WEEKS.forEach(function (d, wi) {
             var c = el('div', 'SlimCell');
@@ -1919,22 +1947,28 @@ function buildWorkerRow(worker, index) {
         bars.style.inset = '0';
         flat.appendChild(bars);
         weeksCol.appendChild(flat);
-        dims.appendChild(el('div', 'DimLabel', ''));
-        dims.lastChild.style.height = flatH + 'px';
+        var flatLbl = el('div', 'DimLabel', '');
+        flatLbl.style.height = (flatH + slimCap) + 'px';
+        if (slimCap) flatLbl.style.paddingTop = (2 + slimCap) + 'px';
+        dims.appendChild(flatLbl);
     } else {
-        rows.forEach(function (r) {
+        rows.forEach(function (r, ri) {
             var open = rowExpanded(worker, r);
             var itemCount = open ? r.items.length : 0;
             var h = 24 + (itemCount ? barsHeight(itemCount, BAR_PAD) : 0);
+            // The first label absorbs the slim-strip height so it lines up with
+            // the timeline's strip + first sub-row and needs no separate spacer.
+            var cap = ri === 0 ? slimCap : 0;
 
             // Left label
             var lbl = el('div', 'DimLabel' + (r.isOther ? ' is-other' : '') + (open ? ' is-expanded' : ''));
-            lbl.style.height = h + 'px';
+            lbl.style.height = (h + cap) + 'px';
+            if (cap) lbl.style.paddingTop = (2 + cap) + 'px';
             if (h > 24) lbl.style.alignItems = 'flex-start';
             if (r.accent) lbl.style.borderLeftColor = r.accent;
             lbl.appendChild(el('span', null, r.label));
             lbl.title = r.isOther
-                ? 'Other — unavailabilities and items with no ' + DIMENSIONS[state.breakdown].label.toLowerCase()
+                ? r.label + ' — unavailabilities and items with no ' + DIMENSIONS[state.breakdown].label.toLowerCase()
                 : r.label;
             if (r.items.length) {
                 lbl.classList.add('is-clickable');
@@ -1959,7 +1993,7 @@ function buildWorkerRow(worker, index) {
             sub.style.flexDirection = 'column';
             sub.style.position = 'relative';
 
-            var hoursRow = el('div', 'Track-hours');
+            var hoursRow = el('div', 'Track-hours' + (open && r.items.length ? ' is-open' : ''));
             WEEKS.forEach(function (d, wi) {
                 hoursRow.appendChild(buildCell(worker, r, wi, d));
             });
@@ -1988,9 +2022,9 @@ function buildCell(worker, row, wi, weekDate) {
     if (state.selectedCell === key) c.classList.add('is-selected');
     c.classList.add('is-clickable');
 
-    // Click expands the row so this cell's bookings are visible. Clicking the
-    // open cell again closes it. Does not open the side panel — that only
-    // follows from selecting a booking bar.
+    // Click expands the row so this cell's bookings are visible. Any cell in an
+    // open row closes it again, not just the one that opened it. Does not open
+    // the side panel — that only follows from selecting a booking bar.
     c.addEventListener('click', function () {
         if (!items.length) {
             state.selectedCell = null;
@@ -1998,12 +2032,12 @@ function buildCell(worker, row, wi, weekDate) {
             render();
             return;
         }
-        if (state.selectedCell === key && state.expandedRows[rowKey]) {
+        if (state.expandedRows[rowKey]) {
             state.selectedCell = null;
             delete state.expandedRows[rowKey];
         } else {
             state.selectedCell = key;
-            if (row.items.length) openRow(worker, row);
+            openRow(worker, row);
         }
         state.selection = [];
         render();
@@ -2273,12 +2307,21 @@ function availabilityFlyout() {
     f.addEventListener('click', function (e) { e.stopPropagation(); });
     f.appendChild(el('div', 'Flyout-title', 'Availability Display Settings'));
 
-    // Slim/Full stay visible while a breakdown is active, but locked to Slim.
+    // Slim/Full both stay visible while a breakdown is active. Slim reads as
+    // the active choice; only Full is greyed out, with a tooltip saying why —
+    // breakdown rows split one resource's time, so there is no separate
+    // capacity to shade each row against.
     [[true, 'Display Slim View'], [false, 'Display Full View']].forEach(function (v) {
-        var r = el('div', 'Radio' + (state.slimView === v[0] ? ' is-checked' : '') + (locked ? ' is-disabled' : ''));
+        var greyed = locked && !v[0];
+        var r = el('div', 'Radio' + (state.slimView === v[0] ? ' is-checked' : '') + (greyed ? ' is-disabled' : ''));
         r.appendChild(el('div', 'Radio-dot'));
         r.appendChild(el('span', null, v[1]));
-        if (!locked) {
+        if (greyed) {
+            r.title = 'Not available while a resource breakdown is active — breakdown rows share the '
+                + 'resource\'s capacity, so there is no separate figure to shade against.';
+        } else if (locked) {
+            r.title = 'Locked to Slim View while a resource breakdown is active.';
+        } else {
             r.addEventListener('click', function () { state.slimView = v[0]; renderMenu(); render(); });
         }
         f.appendChild(r);
@@ -2777,7 +2820,8 @@ function openCreateModal(worker, row, weekDate) {
 
     var noteText;
     if (row.isOther) {
-        noteText = 'Opened from the <strong>Other</strong> row, so no ' + esc(DIMENSIONS[dim].label.toLowerCase()) +
+        noteText = 'Opened from the <strong>' + esc(OTHER_LABEL) + '</strong> row, so no ' +
+                   esc(DIMENSIONS[dim].label.toLowerCase()) +
                    ' is inferred — the practitioner picks the value.';
     } else if (dim === 'none') {
         noteText = 'No breakdown is active, so nothing beyond the resource and date is pre-filled.';

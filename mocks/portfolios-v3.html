@@ -121,15 +121,15 @@
     --gantt-label-width: 300px;
 
     /* Portfolio Team Gantt (resource-breakdown parity) */
-    --pf-team-left-w: 460px;
+    --pf-team-left-w: 404px;
     --pf-team-week-w: 112.6px;
     --pf-team-col-select-w: 48px;
     --pf-team-col-name-w: 195px;
     --pf-team-col-grade-w: 69px;
     --pf-team-col-expand-w: 25px;
     --pf-team-col-dim-w: 100px;
-    --pf-team-col-hours-w: 56px;
     --pf-team-sub-row-h: 24px;
+    --pf-team-full-row-h: 27px;
     --pf-team-group-h: 27px;
     --pf-team-slim-h: 5px;
     --pf-team-bar-h: 23px;
@@ -140,9 +140,9 @@
     --surface-booking-trait-3: #67b95b;
     --border-xs: 1px;
     --border-emphasis: #babfd1;
-    --surface-row-alt: #f8f8fa;
-    --surface-header: #f8f8f8;
-    --surface-unavailability: #d4d4dc;
+    --surface-row-alt: #f8f9fb;
+    --surface-header: #fafafa;
+    --surface-unavailability: #e8e1f8;
     --surface-list-item-selected-light: #f0effb;
     --surface-icon-hover: #e2e3e9;
     --text-label: #4c5172;
@@ -781,6 +781,7 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     background: var(--surface-default);
     display: flex;
     flex-direction: column;
+    position: relative;
     overflow: hidden;
     min-height: 0;
     flex: 1 1 auto;
@@ -799,7 +800,7 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-headCorner {
     position: sticky; left: 0; z-index: 4;
     width: var(--pf-team-left-w); flex: 0 0 var(--pf-team-left-w);
-    background: var(--surface-default);
+    background: var(--surface-header);
     border-right: var(--border-xs) solid var(--border-subtle);
     display: flex; flex-direction: column; justify-content: flex-start;
     box-sizing: border-box;
@@ -863,7 +864,7 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     border-top: 1px solid var(--border-subtle);
     min-height: 27px;
     box-sizing: border-box;
-    background: var(--surface-default);
+    background: var(--surface-header);
 }
 .PfTeam-headCol {
     font-size: 11px; font-weight: var(--font-weight-regular);
@@ -888,11 +889,38 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     position: relative;
     background: var(--surface-default);
 }
+.PfTeam-bottomControls {
+    position: absolute; right: 16px; bottom: 16px; z-index: 45;
+    display: flex; align-items: center; gap: 5px;
+}
+.PfTeam-zoomGroup {
+    display: flex; align-items: stretch; width: 108px; height: 28px;
+}
+.PfTeam-bottomControls .Btn--iconSoft {
+    width: 35px; height: 28px; padding: 0; justify-content: center;
+    background: var(--surface-default); border: var(--border-xs) solid var(--border-default);
+    border-radius: 0; color: var(--text-accent);
+}
+.PfTeam-zoomGroup .Btn--iconSoft:first-child { border-radius: var(--border-radius-default) 0 0 var(--border-radius-default); }
+.PfTeam-zoomGroup .Btn--iconSoft:last-child { border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0; }
+.PfTeam-zoomGroup .Btn--iconSoft + .Btn--iconSoft { border-left: 0; }
+.PfTeam-bottomControls > .Btn--iconSoft { border-radius: var(--border-radius-default); }
+.PfTeam-bottomControls .Btn--iconSoft:hover { background: var(--surface-list-item-hover); }
+.PfTeam-zoomOptions {
+    position: absolute; right: 0; bottom: 33px; min-width: 120px; padding: 6px 0;
+    background: var(--surface-default); border: var(--border-xs) solid var(--border-subtle);
+    border-radius: var(--border-radius-default); box-shadow: 0 2px 8px rgb(39 35 61 / 16%);
+}
+.PfTeam-zoomOption {
+    display: block; width: 100%; padding: 7px 12px; border: 0; background: transparent;
+    color: var(--text-default); font: inherit; text-align: left; cursor: pointer;
+}
+.PfTeam-zoomOption:hover { background: var(--surface-list-item-hover); }
 .PfTeam-inner { position: relative; width: max-content; min-width: 100%; }
 .PfTeam-months, .PfTeam-weeks, .PfTeam-days { display: flex; }
 .PfTeam-month {
-    flex: 0 0 auto; height: 27px;
-    border-right: var(--border-xs) solid var(--border-emphasis);
+    flex: 0 0 auto; height: 24px;
+    border-right: 4px solid var(--border-subtle);
     border-bottom: var(--border-xs) solid var(--border-subtle);
     font-size: 11px; color: var(--text-default); font-weight: var(--font-weight-regular);
     display: flex; align-items: center; justify-content: center;
@@ -900,17 +928,17 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 }
 .PfTeam-week {
     width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); height: 23px;
-    border-right: var(--border-xs) solid var(--border-emphasis);
+    border-right: 4px solid var(--border-subtle);
     border-bottom: var(--border-xs) solid var(--border-subtle);
     font-size: 11px; color: var(--text-default); font-weight: var(--font-weight-regular);
     display: flex; align-items: center; justify-content: center;
     background: var(--surface-default);
 }
-.PfTeam-dayset { width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); display: flex; border-right: var(--border-xs) solid var(--border-emphasis); }
+.PfTeam-dayset { width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); display: flex; border-right: 4px solid var(--border-subtle); }
 .PfTeam-day {
     flex: 1; height: 24px;
     border-right: var(--border-xs) solid var(--border-subtle);
-    border-bottom: var(--border-xs) solid var(--border-emphasis);
+    border-bottom: var(--border-xs) solid var(--border-subtle);
     font-size: 11px; color: var(--text-default); font-weight: var(--font-weight-regular);
     display: flex; align-items: center; justify-content: center;
     background: var(--surface-default);
@@ -1022,25 +1050,6 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     border-left-color: transparent;
 }
 
-/* Job Editor .gantt-labels-row-data.narrow — total hours on left labels */
-.PfTeam-cellHours {
-    width: var(--pf-team-col-hours-w); flex: 0 0 var(--pf-team-col-hours-w);
-    align-self: stretch;
-    display: flex; align-items: flex-start;
-    padding: 6px 3px;
-    border-left: var(--border-xs) solid var(--border-subtle);
-    box-sizing: border-box;
-    overflow: hidden;
-}
-.PfTeam-cellHours-value {
-    width: 100%;
-    min-height: var(--pf-team-sub-row-h);
-    display: flex; align-items: center;
-    font-size: var(--font-size-label);
-    color: var(--text-label);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
 .PfTeam-slimGutter { height: var(--pf-team-slim-h); }
 .PfTeam-trackWeeks { display: flex; flex-direction: column; }
 .PfTeam-subrow { display: flex; height: var(--pf-team-sub-row-h); border-bottom: var(--border-xs) solid var(--border-subtle); }
@@ -1066,6 +1075,14 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-cellw.is-clickable { cursor: pointer; }
 .PfTeam-cellw.is-clickable:hover { background: var(--surface-list-item-hover); }
 .PfTeam-cellw.is-selected { background: var(--surface-default); }
+.PfTeam-fullCell {
+    width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w);
+    height: var(--pf-team-full-row-h); box-sizing: border-box;
+    display: flex; align-items: center; justify-content: center;
+    border-right: var(--border-xs) solid var(--surface-default);
+    border-bottom: var(--border-xs) solid var(--surface-default);
+    color: var(--text-default); font-size: var(--font-size-small);
+}
 
 .PfTeam-grid { position: absolute; inset: 0; display: flex; pointer-events: none; z-index: 1; }
 .PfTeam-grid > i { width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); display: flex; border-right: var(--border-xs) solid var(--border-emphasis); }
@@ -1077,9 +1094,9 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-bar {
     position: absolute; height: var(--pf-team-bar-h); min-width: 2px;
     border: var(--border-xs) solid var(--pf-team-bar-border);
-    border-radius: 2px; background-color: var(--surface-booking-trait-1); color: var(--text-white);
+    border-radius: 3px; background-color: var(--surface-booking-trait-1); color: var(--text-white);
     display: flex; justify-content: space-between;
-    transition: box-shadow .1s, opacity .1s; cursor: grab;
+    transition: box-shadow .1s, opacity .1s; cursor: pointer;
     user-select: none; -webkit-user-select: none;
 }
 .PfTeam-bar:hover { box-shadow: 1px 1px 6px 2px rgba(64, 64, 64, .3); }
@@ -1087,8 +1104,8 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-bar.is-dragging,
 .PfTeam-bar.is-resizing { cursor: grabbing; z-index: 14; transition: none; }
 .PfTeam-barContent {
-    flex: 1 1 auto; min-width: 0; display: flex; height: 21px; line-height: 21px;
-    font-size: 13px; font-weight: var(--font-weight-regular); padding-left: 2px; margin-right: 4px;
+    flex: 1 1 auto; min-width: 0; display: flex; height: 21px; line-height: 22px;
+    font-size: var(--font-size-label); font-weight: 300; padding-left: 2px; margin-right: 7px;
     border-radius: 2px; overflow: hidden; white-space: nowrap; pointer-events: none;
 }
 .PfTeam-bar.is-selected .PfTeam-barContent { font-weight: var(--font-weight-regular); }
@@ -1122,6 +1139,88 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     background-color: var(--surface-booking-trait-3);
 }
 
+/* Gantt aggregation selection panel — shared Portfolio detail pattern */
+.PfSelectionPanel {
+    position: fixed; top: calc(var(--topbar-h, 58px) + var(--tabbar-h, 41px)); right: 0; bottom: 0;
+    width: 394px; max-width: calc(100vw - 48px);
+    display: flex; flex-direction: column;
+    background: var(--surface-default);
+    border-left: var(--border-xs) solid var(--border-subtle);
+    box-shadow: -6px 0 18px rgba(39, 35, 61, .14);
+    z-index: 150; overflow: hidden;
+}
+.PfSelectionPanel-head {
+    display: flex; flex-direction: column; gap: 8px;
+    padding: var(--padding-sm); padding-right: 48px;
+    border-bottom: var(--border-xs) solid var(--border-section);
+    flex: 0 0 auto;
+}
+.PfSelectionPanel-headTop { position: relative; display: flex; align-items: flex-start; gap: 12px; }
+.PfSelectionPanel-close {
+    position: absolute; top: 0; right: -36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; flex: 0 0 24px; padding: 0;
+    border: var(--border-xs) solid var(--border-subtle); border-radius: var(--border-radius-default);
+    background: var(--surface-subtle-dark); color: var(--text-accent); cursor: pointer;
+}
+.PfSelectionPanel-title {
+    flex: 1 1 auto; min-width: 0; margin: 0;
+    color: var(--text-emphasis); font-size: 16px; font-weight: var(--font-weight-bold);
+    line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.PfSelectionPanel-code { color: var(--text-link-color); font-size: var(--font-size-medium); }
+.PfSelectionPanel-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.PfSelectionPanel-badge {
+    display: inline-flex; align-items: center; min-height: 30px; padding: 0 var(--padding-xs);
+    border: var(--border-xs) solid var(--border-subtle); border-radius: var(--border-radius-default);
+    color: var(--text-subtle); font-size: var(--font-size-small); font-weight: var(--font-weight-bold);
+}
+.PfSelectionPanel-actions { display: flex; align-items: center; gap: 4px; }
+.PfSelectionPanel-actions .Btn--iconSoft {
+    width: 28px; height: 28px; padding: 0; border: var(--border-xs) solid var(--border-default);
+    background: var(--surface-default); color: var(--text-accent);
+}
+.PfSelectionPanel-body { flex: 1 1 auto; overflow-y: auto; }
+.PfSelectionPanel-section { border-bottom: var(--border-xs) solid var(--border-default); }
+.PfSelectionPanel-section--collapsed { cursor: pointer; }
+.PfSelectionPanel-section--collapsed .PfSelectionPanel-sectionTitle {
+    display: flex; align-items: center; gap: 6px; min-height: 46px; box-sizing: border-box;
+}
+.PfSelectionPanel-section--collapsed .PfSelectionPanel-sectionTitle::before {
+    content: "\f054"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 12px;
+}
+.PfSelectionPanel-section--collapsed.is-open .PfSelectionPanel-sectionTitle::before { content: "\f078"; }
+.PfSelectionPanel-section--collapsed .PfSelectionPanel-fields { display: none; }
+.PfSelectionPanel-section--collapsed.is-open .PfSelectionPanel-fields { display: flex; }
+.PfSelectionPanel-sectionTitle {
+    margin: 0; padding: 12px; color: var(--text-default);
+    font-size: var(--font-size-medium); font-weight: var(--font-weight-bold);
+}
+.PfSelectionPanel-fields { display: flex; flex-direction: column; gap: 8px; padding: 0 12px 12px; }
+.PfSelectionPanel-field { display: flex; align-items: center; gap: 8px; min-height: 35px; }
+.PfSelectionPanel-field i { width: 14px; color: var(--icon-default); text-align: center; }
+.PfSelectionPanel-fieldLabel { color: var(--text-subtle); font-size: var(--font-size-small); }
+.PfSelectionPanel-fieldValue {
+    margin-left: auto; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    color: var(--text-emphasis); font-size: var(--font-size-medium); text-align: right;
+}
+.PfSelectionPanel-empty { padding: 16px 12px; color: var(--text-subtle); font-size: var(--font-size-small); }
+.PfSelectionPanel-schedule { padding: 0 12px 12px; }
+.PfSelectionPanel-scheduleTitle { margin: 0 0 8px; color: var(--text-default); font-size: var(--font-size-medium); font-weight: var(--font-weight-bold); }
+.PfSelectionPanel-scheduleGrid { display: grid; grid-template-columns: 1fr 28px 1fr; gap: 6px 4px; align-items: center; }
+.PfSelectionPanel-input {
+    min-width: 0; height: 24px; box-sizing: border-box; padding: 2px 8px;
+    border: var(--border-xs) solid var(--border-subtle); border-radius: 3px;
+    color: var(--text-primary); background: var(--surface-default); font: inherit; font-size: var(--font-size-small);
+    text-align: center;
+}
+.PfSelectionPanel-scheduleIcon { color: var(--text-default); text-align: center; }
+.PfSelectionPanel-scheduleMeta { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+.PfSelectionPanel-scheduleMeta i { width: 14px; color: var(--icon-default); text-align: center; }
+.PfSelectionPanel-scheduleMetaValue { color: var(--text-primary); font-size: var(--font-size-small); }
+.PfSelectionPanel-scheduleActions { display: flex; gap: 4px; margin-top: 8px; }
+.PfSelectionPanel-scheduleActions .Btn--iconSoft { width: 31px; height: 31px; padding: 0; }
+
 .PfTeam-slim { display: flex; height: var(--pf-team-slim-h); position: relative; z-index: 2; }
 .PfTeam-slimCell { width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); height: var(--pf-team-slim-h); }
 .PfTeam-slimCell i { display: block; width: 100%; height: 100%; }
@@ -1142,21 +1241,51 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     box-shadow: 0 2px 8px 2px rgb(178 178 178 / 30%);
 }
 .PfTeam-menuGroup { display: flex; flex-direction: column; }
+.PfTeam-menuGroup + .PfTeam-menuGroup {
+    border-top: var(--border-xs) solid var(--border-subtle);
+    padding-top: 15px;
+}
 .PfTeam-menuSection {
     padding: 15px var(--pf-team-menu-inset) 0;
     border-top: var(--border-xs) solid var(--border-subtle);
 }
 .PfTeam-menuGroup:first-child > .PfTeam-menuSection { border-top: 0; padding-top: 0; }
 .PfTeam-menuTitle {
+    padding: 0 var(--pf-team-menu-inset);
     font-size: var(--font-size-medium); color: var(--text-subtle);
     text-transform: uppercase; line-height: normal;
 }
+.PfTeam-menuSection .PfTeam-menuTitle { padding-left: 0; padding-right: 0; }
+.PfTeam-menuSection.has-select { display: flex; flex-direction: column; gap: 19px; padding-bottom: 8px; }
+.PfTeam-menuSelect {
+    width: 100%; height: 35px; box-sizing: border-box; padding: 0 12px;
+    border: var(--border-xs) solid var(--border-default); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--text-emphasis); font: inherit;
+}
+.PfTeam-menuSegment { display: flex; height: 35px; margin: 0 var(--pf-team-menu-inset); }
+.PfTeam-menuSegment button {
+    flex: 1; min-width: 0; padding: 0 8px; border: var(--border-xs) solid var(--border-default);
+    border-left: 0; background: var(--surface-default); color: var(--text-accent);
+    font: inherit; cursor: pointer;
+}
+.PfTeam-menuSegment button:first-child { border-left: var(--border-xs) solid var(--border-default); border-radius: var(--border-radius-default) 0 0 var(--border-radius-default); }
+.PfTeam-menuSegment button:last-child { border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0; }
+.PfTeam-menuSegment button.is-active { background: var(--surface-emphasis); color: var(--text-inverse); border-color: var(--surface-emphasis); }
+.PfTeam-menuSegment button:disabled { color: var(--text-disabled); cursor: not-allowed; background: var(--surface-default); }
+.PfTeam-menuCheck {
+    display: flex; align-items: center; gap: 8px; margin: 0 var(--pf-team-menu-inset);
+    font-size: var(--font-size-medium); color: var(--text-default); cursor: pointer;
+}
+.PfTeam-menuCheck input { width: 16px; height: 16px; accent-color: var(--primary); }
+.PfTeam-flyout .PfTeam-menuSegment,
+.PfTeam-flyout .PfTeam-menuCheck { margin-left: 0; margin-right: 0; }
 .PfTeam-menuItem {
     padding: 8px 33px 8px 24px; font-size: var(--font-size-medium); color: var(--text-default);
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
     cursor: pointer; line-height: normal;
 }
 .PfTeam-menuItem:hover, .PfTeam-menuItem.is-open { background: var(--surface-list-item-hover); }
+.PfTeam-menuItem.is-checked { font-weight: var(--font-weight-semibold); }
 .PfTeam-menuItem.is-static { cursor: default; }
 .PfTeam-menuItem i.fa-chevron-left { font-size: 10px; color: var(--text-default); opacity: 0; }
 .PfTeam-menuItem:hover i.fa-chevron-left, .PfTeam-menuItem.is-open i.fa-chevron-left { opacity: 1; }
@@ -1183,6 +1312,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     border-radius: 50%; border: var(--border-xs) solid var(--border-default); background: #fff;
 }
 .PfTeam-radio.is-checked .PfTeam-radioDot { border: 5px solid var(--primary); }
+.PfTeam-radio.is-disabled { color: var(--text-subtle); cursor: not-allowed; }
+.PfTeam-radio.is-disabled .PfTeam-radioDot { border-color: var(--border-emphasis); background: var(--surface-disabled); }
 .PfTeam-radioTag {
     margin-left: auto; font-size: var(--font-size-xsmall); color: var(--text-subtle);
     background: var(--surface-subtle-dark); border-radius: 9px; padding: 1px 7px;
@@ -1218,7 +1349,19 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 }
 .Modal-portfolioName-input:focus { outline: none; box-shadow: 0 0 0 3px var(--primary-accent); }
 .Modal-portfolioName-input[hidden] { display: none !important; }
-.Modal-portfolioName-edit { flex-shrink: 0; }
+.Modal-portfolioName-edit,
+.Modal-portfolioName-edit-actions .PfIconBtn {
+    width: 32px; min-width: 32px; height: 32px; min-height: 32px;
+    flex-shrink: 0; padding: 0; font-size: 12px; box-sizing: border-box;
+}
+.Modal-portfolioNameBar .PfIconBtn.Btn--tertiary {
+    background: var(--surface-subtle-dark); color: var(--text-primary); border-color: var(--border-subtle);
+}
+.Modal-portfolioNameBar .PfIconBtn.Btn--tertiary:hover {
+    background: var(--surface-accent); color: var(--text-primary);
+}
+.Modal-portfolioName-edit-actions { display: inline-flex; align-items: center; gap: 12px; }
+.Modal-portfolioName-edit-actions[hidden] { display: none !important; }
 .Modal-title { font-size: var(--font-size-h2); font-weight: var(--font-weight-regular); margin: 0; color: var(--text-default); line-height: 27px; flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .Modal-title[hidden] { display: none !important; }
 .Modal-close { flex: 0 0 28px; width: 28px; height: 28px; margin-left: auto; border: none; background: none; font-size: 14px; color: var(--icon-default); cursor: pointer; padding: 0; border-radius: var(--border-radius-default); display: inline-flex; align-items: center; justify-content: center; }
@@ -2121,6 +2264,14 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <div class="PfTeam-scroller" id="pfTeamScroller">
                     <div class="PfTeam-inner" id="pfTeamInner"></div>
                 </div>
+                <div class="PfTeam-bottomControls" aria-label="Gantt navigation">
+                    <div class="PfTeam-zoomGroup" role="group" aria-label="Zoom actions">
+                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomOut" title="Zoom out" aria-label="Zoom out" onclick="pfSetZoom(pfTeamState.zoom - 0.25)"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
+                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomReset" title="Reset zoom" aria-label="Reset zoom" onclick="pfSetZoom(1); document.getElementById('pfTeamScroller').scrollLeft = 0"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
+                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomIn" title="Zoom in" aria-label="Zoom in" onclick="pfSetZoom(pfTeamState.zoom + 0.25)"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+                    </div>
+                    <button type="button" class="Btn--iconSoft" id="pfTeamZoomOptionsButton" title="Zoom options" aria-label="Zoom options" onclick="pfToggleZoomOptions(event)"><i class="fa-solid fa-caret-down" aria-hidden="true"></i></button>
+                </div>
             </div>
         </section>
     </div>
@@ -2134,7 +2285,11 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <div class="Modal-portfolioNameBar" id="modalPortfolioNameBar" hidden>
                     <span class="Modal-portfolioName-text" id="portfolioNameDisplay"></span>
                     <input id="portfolioName" class="Modal-portfolioName-input" type="text" maxlength="120" hidden oninput="onPortfolioNameInput()" onblur="onPortfolioNameBlur()" onkeydown="onPortfolioNameKeydown(event)" />
-                    <button type="button" class="PfIconBtn Modal-portfolioName-edit" id="portfolioNameEditBtn" aria-label="Edit portfolio name" onclick="togglePortfolioNameEdit()"><i class="fa-solid fa-pencil" aria-hidden="true"></i></button>
+                    <button type="button" class="Btn Btn--tertiary PfIconBtn Modal-portfolioName-edit" id="portfolioNameEditBtn" aria-label="Edit portfolio name" onclick="togglePortfolioNameEdit()"><i class="fa-solid fa-pencil" aria-hidden="true"></i></button>
+                    <span class="Modal-portfolioName-edit-actions" id="portfolioNameEditActions" hidden>
+                        <button type="button" class="Btn Btn--tertiary PfIconBtn" aria-label="Save portfolio name" title="Save" onmousedown="event.preventDefault()" onclick="onPortfolioNameBlur()"><i class="fa-solid fa-check" aria-hidden="true"></i></button>
+                        <button type="button" class="Btn Btn--tertiary PfIconBtn" aria-label="Cancel editing portfolio name" title="Cancel" onmousedown="event.preventDefault()" onclick="cancelPortfolioNameEdit()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                    </span>
                 </div>
                 <h2 class="Modal-title" id="modalTitle">Create portfolio</h2>
             </div>
@@ -3886,6 +4041,7 @@ function updatePortfolioNameUI() {
     const display = document.getElementById("portfolioNameDisplay");
     const input = document.getElementById("portfolioName");
     const editBtn = document.getElementById("portfolioNameEditBtn");
+    const editActions = document.getElementById("portfolioNameEditActions");
     const show = showPortfolioNameInHeader();
     if (bar) bar.hidden = !show;
     if (!show) {
@@ -3903,6 +4059,7 @@ function updatePortfolioNameUI() {
         if (!editing && input.value.trim() !== name) input.value = name;
     }
     if (editBtn) editBtn.hidden = editing;
+    if (editActions) editActions.hidden = !editing;
 }
 function onPortfolioNameInput() {
     updatePortfolioNameUI();
@@ -3915,17 +4072,21 @@ function onPortfolioNameBlur() {
     updatePortfolioNameUI();
     updateModalPrimary();
 }
+function cancelPortfolioNameEdit() {
+    const input = document.getElementById("portfolioName");
+    const display = document.getElementById("portfolioNameDisplay");
+    if (input && display) input.value = display.textContent.trim();
+    modalState.nameEditing = false;
+    updatePortfolioNameUI();
+    updateModalPrimary();
+}
 function onPortfolioNameKeydown(e) {
     if (e.key === "Enter") {
         e.preventDefault();
         onPortfolioNameBlur();
     } else if (e.key === "Escape") {
         e.preventDefault();
-        const input = document.getElementById("portfolioName");
-        const display = document.getElementById("portfolioNameDisplay");
-        if (input && display) input.value = display.textContent.trim();
-        modalState.nameEditing = false;
-        updatePortfolioNameUI();
+        cancelPortfolioNameEdit();
     }
 }
 
@@ -4823,8 +4984,8 @@ function renderMetricsTable() {
    Visual/interaction basis: gantt-resource-breakdown.html
    ============================================================ */
 const PF_WEEK_COUNT = 52;
-const PF_WEEK_W = 112.6;
-const PF_DAY_W = PF_WEEK_W / 5;
+let PF_WEEK_W = 112.6;
+let PF_DAY_W = PF_WEEK_W / 5;
 const PF_BAR_H = 23;
 const PF_BAR_PITCH = PF_BAR_H + 2;
 const PF_BAR_PAD = 2;
@@ -5141,10 +5302,15 @@ const pfTeamState = {
     pivot: "resource",
     breakdown: "none",
     showAvailability: false,
+    availabilityMode: "full",
+    tasksInGrey: false,
+    zoom: 1,
     expandedRows: {},
     collapsedEngagements: {},
     selectedCell: null,
     selectedItemId: null,
+    selectedItemIds: [],
+    lastBarSelection: null,
     menu: null,
     flyout: null
 };
@@ -5261,6 +5427,8 @@ function setTeamPivot(pivot) {
     pfTeamState.pivot = pivot;
     pfTeamState.expandedRows = {};
     pfTeamState.selectedCell = null;
+    pfTeamState.selectedItemId = null;
+    pfTeamState.selectedItemIds = [];
     pfTeamState.menu = null;
     pfTeamState.flyout = null;
     renderGantt();
@@ -5285,6 +5453,44 @@ function pivotTeamView(e) {
     setTeamPivot(pfTeamState.pivot === "engagement" ? "resource" : "engagement");
 }
 
+function pfSetZoom(next) {
+    pfTeamState.zoom = Math.max(0.75, Math.min(1.5, next));
+    PF_WEEK_W = 112.6 * pfTeamState.zoom;
+    PF_DAY_W = PF_WEEK_W / 5;
+    renderGantt();
+}
+
+function pfScrollHorizon(delta) {
+    const host = document.getElementById("pfTeamScroller");
+    if (host) host.scrollBy({ left: delta * PF_WEEK_W * 4, behavior: "smooth" });
+}
+
+function pfToggleZoomOptions(event) {
+    event.stopPropagation();
+    const existing = document.getElementById("pfTeamZoomOptions");
+    if (existing) {
+        existing.remove();
+        return;
+    }
+    const wrap = document.querySelector(".PfTeam-bottomControls");
+    if (!wrap) return;
+    const options = document.createElement("div");
+    options.id = "pfTeamZoomOptions";
+    options.className = "PfTeam-zoomOptions";
+    [[0.75, "75%"], [1, "100%"], [1.25, "125%"], [1.5, "150%"]].forEach(function (entry) {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "PfTeam-zoomOption";
+        option.textContent = entry[1];
+        option.addEventListener("click", function () {
+            pfSetZoom(entry[0]);
+            options.remove();
+        });
+        options.appendChild(option);
+    });
+    wrap.appendChild(options);
+}
+
 function pfBuildHeadCorner() {
     const corner = pfEl("div", "PfTeam-headCorner");
     const tools = pfEl("div", "PfTeam-headTools");
@@ -5296,13 +5502,6 @@ function pfBuildHeadCorner() {
     addBtn.title = "Add Resource Requirement";
     addBtn.addEventListener("click", function (e) { e.stopPropagation(); openReqModal(); });
     tools.appendChild(addBtn);
-
-    const skillsBtn = pfEl("button", "Btn Btn--secondary");
-    skillsBtn.type = "button";
-    skillsBtn.id = "pfTeamSkillsBtn";
-    skillsBtn.title = "Team Skills";
-    skillsBtn.innerHTML = '<span>Team Skills</span><span class="PfTeam-skillCount" aria-label="2 skills">2</span>';
-    tools.appendChild(skillsBtn);
 
     const viewBtn = pfEl("button", "Btn Btn--iconSoft");
     viewBtn.type = "button";
@@ -5334,11 +5533,6 @@ function pfBuildHeadCorner() {
 
     corner.appendChild(tools);
 
-    const cols = pfEl("div", "PfTeam-headCols");
-    cols.appendChild(pfEl("div", "PfTeam-headCol PfTeam-headCol--name", "Name"));
-    cols.appendChild(pfEl("div", "PfTeam-headCol PfTeam-headCol--grade", "Grade"));
-    cols.appendChild(pfEl("div", "PfTeam-headCol PfTeam-headCol--hours", "Hours"));
-    corner.appendChild(cols);
     return corner;
 }
 
@@ -5418,14 +5612,12 @@ function pfBuildGroupRow(label, collapseKey, opts) {
     return row;
 }
 
-function pfWorkerTotalHours(worker) {
-    let total = 0;
-    (worker.items || []).forEach(function (it) {
-        if (it.kind === "unavailability") return;
-        const cells = it.cells || {};
-        Object.keys(cells).forEach(function (k) { total += Number(cells[k]) || 0; });
-    });
-    return Math.round(total);
+function pfBuildFullCell(worker, wi) {
+    const hours = pfWeekConsumed(worker, wi);
+    const cell = pfEl("div", "PfTeam-fullCell", pfFmtHours(hours));
+    cell.style.background = pfSlimColour(hours, worker.cap);
+    cell.title = Math.round(hours * 10) / 10 + " h of " + worker.cap + " h — " + pfWcLabel(PF_WEEKS[wi]);
+    return cell;
 }
 
 function pfBuildWorkerRow(worker, index) {
@@ -5473,20 +5665,14 @@ function pfBuildWorkerRow(worker, index) {
     const dims = pfEl("div", "PfTeam-dims");
     left.appendChild(dims);
 
-    const totalHours = pfWorkerTotalHours(worker);
-    const hoursCell = pfEl("div", "PfTeam-cellHours");
-    const hoursVal = pfEl("div", "PfTeam-cellHours-value", String(totalHours));
-    hoursVal.title = totalHours + " hours";
-    hoursCell.appendChild(hoursVal);
-    left.appendChild(hoursCell);
-
     const track = pfEl("div", "PfTeam-rowTrack");
     track.style.width = (PF_WEEKS.length * PF_WEEK_W) + "px";
     track.title = "Double-click to create a booking";
     track.addEventListener("click", function (e) {
         if (e.target.closest(".PfTeam-bar, button, a")) return;
-        if (pfTeamState.selectedItemId) {
+        if (pfTeamState.selectedItemId || pfTeamState.selectedItemIds.length) {
             pfTeamState.selectedItemId = null;
+            pfTeamState.selectedItemIds = [];
             renderGantt();
         }
     });
@@ -5502,7 +5688,7 @@ function pfBuildWorkerRow(worker, index) {
     weeksCol.style.width = "100%";
     track.appendChild(weeksCol);
 
-    if (pfTeamState.showAvailability) {
+    if (pfTeamState.showAvailability && pfTeamState.availabilityMode === "slim") {
         dims.appendChild(pfEl("div", "PfTeam-slimGutter"));
         const slim = pfEl("div", "PfTeam-slim");
         PF_WEEKS.forEach(function (d, wi) {
@@ -5516,7 +5702,15 @@ function pfBuildWorkerRow(worker, index) {
         weeksCol.appendChild(slim);
     }
 
-    if (!rows) {
+    if (pfTeamState.showAvailability && pfTeamState.availabilityMode === "full") {
+        const full = pfEl("div", "PfTeam-subrow PfTeam-fullAvailability");
+        full.style.height = "var(--pf-team-full-row-h)";
+        PF_WEEKS.forEach(function (d, wi) { full.appendChild(pfBuildFullCell(worker, wi)); });
+        weeksCol.appendChild(full);
+        const fullLabel = pfEl("div", "PfTeam-dimLabel is-spacer", "");
+        fullLabel.style.height = "var(--pf-team-full-row-h)";
+        dims.appendChild(fullLabel);
+    } else if (!rows) {
         const flatH = pfBarsHeight(pfLaneCount(worker.items), PF_BAR_PAD);
         const flat = pfEl("div", "PfTeam-subrow");
         flat.style.height = flatH + "px";
@@ -5613,6 +5807,170 @@ function pfGridLines() {
     return g;
 }
 
+function pfSelectedItemContext() {
+    if (!pfTeamState.selectedItemId) return null;
+    for (const worker of pfTeamWorkers) {
+        const item = (worker.items || []).find(function (it) { return it.id === pfTeamState.selectedItemId; });
+        if (item) return { item: item, worker: worker };
+    }
+    return null;
+}
+
+function clearPfSelection() {
+    pfTeamState.selectedItemId = null;
+    pfTeamState.selectedItemIds = [];
+    renderGantt();
+}
+
+function pfSelectedContexts() {
+    const ids = pfTeamState.selectedItemIds.length
+        ? pfTeamState.selectedItemIds
+        : (pfTeamState.selectedItemId ? [pfTeamState.selectedItemId] : []);
+    const contexts = [];
+    pfTeamWorkers.forEach(function (worker) {
+        (worker.items || []).forEach(function (item) {
+            if (ids.indexOf(item.id) !== -1) contexts.push({ item: item, worker: worker });
+        });
+    });
+    return contexts;
+}
+
+function pfPanelField(icon, label, value) {
+    return `<div class="PfSelectionPanel-field">
+        <i class="${icon}" aria-hidden="true"></i>
+        <span class="PfSelectionPanel-fieldLabel">${htmlEsc(label)}</span>
+        <span class="PfSelectionPanel-fieldValue">${htmlEsc(value == null || value === "" ? "—" : value)}</span>
+    </div>`;
+}
+
+function pfPanelSection(title, suffix, hasAction, isOpen) {
+    const cls = "PfSelectionPanel-section PfSelectionPanel-section--collapsed" + (isOpen ? " is-open" : "");
+    const action = hasAction
+        ? `<button type="button" class="Btn--iconSoft" title="${htmlEsc(title)} actions" aria-label="${htmlEsc(title)} actions"><i class="fa-solid fa-filter"></i></button>`
+        : "";
+    return `<section class="${cls}">
+        <h3 class="PfSelectionPanel-sectionTitle"><span>${htmlEsc(title)}${suffix ? ` <span style="font-weight:400">${htmlEsc("(" + suffix + ")")}</span>` : ""}</span>${action}</h3>
+        <div class="PfSelectionPanel-fields">${pfPanelField("fa-solid fa-circle-info", "Details", "—")}</div>
+    </section>`;
+}
+
+function renderPfSelectionPanel() {
+    const old = document.getElementById("pfSelectionPanel");
+    if (old) old.remove();
+    const contexts = pfSelectedContexts();
+    if (!contexts.length) return;
+    const context = contexts[0];
+    const item = context.item;
+    const worker = context.worker;
+    const multi = contexts.length > 1;
+    const panel = document.createElement("aside");
+    panel.id = "pfSelectionPanel";
+    panel.className = "PfSelectionPanel";
+    panel.setAttribute("aria-label", "Booking details");
+    const hours = pfItemHours(item);
+    const start = PF_WEEKS[item.startWeek];
+    const end = PF_WEEKS[Math.min(PF_WEEK_COUNT - 1, item.startWeek + item.span - 1)];
+    const startLabel = start ? pfWcLabel(start) : "—";
+    const endLabel = end ? pfWcLabel(end) : "—";
+    panel.innerHTML = `
+        <div class="PfSelectionPanel-head">
+            <div class="PfSelectionPanel-headTop">
+                <div>
+                    <h2 class="PfSelectionPanel-title">${multi ? contexts.length + " Selected Bookings" : htmlEsc(item.job || "Booking")}</h2>
+                    ${!multi && item.code ? `<div class="PfSelectionPanel-code">${htmlEsc(item.code)}</div>` : ""}
+                </div>
+                <button type="button" class="PfSelectionPanel-close" aria-label="Close booking details" title="Close" onclick="clearPfSelection()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+            </div>
+            <div class="PfSelectionPanel-actions">
+                <button type="button" class="Btn--iconSoft" title="Clone" aria-label="Clone"><i class="fa-regular fa-clone"></i></button>
+                <button type="button" class="Btn--iconSoft" title="Delete" aria-label="Delete"><i class="fa-regular fa-trash-can"></i></button>
+                <button type="button" class="Btn--iconSoft" title="Jump to" aria-label="Jump to"><i class="fa-solid fa-crosshairs"></i></button>
+                <button type="button" class="Btn--iconSoft" title="Swap or reassign" aria-label="Swap or reassign"><i class="fa-solid fa-retweet"></i></button>
+                <button type="button" class="Btn--iconSoft" title="Audit history" aria-label="Audit history"><i class="fa-solid fa-clock-rotate-left"></i></button>
+            </div>
+        </div>
+        <div class="PfSelectionPanel-body">
+            <section class="PfSelectionPanel-section">
+                <div class="PfSelectionPanel-schedule">
+                    <h3 class="PfSelectionPanel-scheduleTitle">Schedule</h3>
+                    <div class="PfSelectionPanel-scheduleGrid">
+                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "08:30AM " + startLabel.replace("w.c. ", "")}" readonly aria-label="Start date">
+                        <span class="PfSelectionPanel-scheduleIcon"><i class="fa-solid fa-lock"></i></span>
+                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "04:30PM " + endLabel.replace("w.c. ", "")}" readonly aria-label="End date">
+                        <span class="PfSelectionPanel-scheduleIcon"><i class="fa-solid fa-arrows-left-right"></i></span><span>–</span><span></span>
+                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "08:30AM " + startLabel.replace("w.c. ", "")}" readonly aria-label="Start date and time">
+                        <span>–</span>
+                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "04:30PM " + endLabel.replace("w.c. ", "")}" readonly aria-label="End date and time">
+                    </div>
+                    <div class="PfSelectionPanel-scheduleMeta"><i class="fa-solid fa-hourglass-half"></i><span class="PfSelectionPanel-input" style="width:52px">${multi ? "--" : hours}</span><span>h</span><span class="PfSelectionPanel-input" style="width:52px">0</span><span>m</span></div>
+                    <div class="PfSelectionPanel-scheduleMeta"><i class="fa-solid fa-user"></i><span class="PfSelectionPanel-scheduleMetaValue">${multi ? "—" : (pfIsUnassigned(worker) ? "Unassigned" : worker.name)}</span></div>
+                    <div class="PfSelectionPanel-scheduleActions">
+                        <button type="button" class="Btn--iconSoft" title="Expand schedule" aria-label="Expand schedule"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
+                        <button type="button" class="Btn--iconSoft" title="Schedule options" aria-label="Schedule options"><i class="fa-solid fa-arrows-up-down"></i></button>
+                        <button type="button" class="Btn--iconSoft" title="Calendar options" aria-label="Calendar options"><i class="fa-regular fa-calendar-xmark"></i></button>
+                    </div>
+                </div>
+            </section>
+            ${pfPanelSection("Suggestions", "0", false, false)}
+            ${pfPanelSection("Resource Requirements", multi ? contexts.length : "", true, false)}
+            ${pfPanelSection("Traits", multi ? "8" : "Detail", false, false)}
+            ${!multi ? pfPanelSection("Booking State", "Definite", false, false) : ""}
+            ${pfPanelSection("Engagement", multi ? contexts.length : (item.job || "—"), true, false)}
+            ${pfPanelSection("Economics", "Recovery Rate 74%, Margin 56%", false, false)}
+            ${pfPanelSection("Percentage Scheduled", "72.9%", false, false)}
+            ${pfPanelSection("Location", "", false, false)}
+            ${pfPanelSection("Notes", multi ? "Note goes here" : "", false, false)}
+        </div>`;
+    panel.querySelectorAll(".PfSelectionPanel-section--collapsed").forEach(function (section) {
+        section.addEventListener("click", function () { section.classList.toggle("is-open"); });
+    });
+    document.body.appendChild(panel);
+}
+
+function pfSelectBarItem(it, event) {
+    const now = Date.now();
+    if (pfTeamState.lastBarSelection
+        && pfTeamState.lastBarSelection.id === it.id
+        && now - pfTeamState.lastBarSelection.time < 300) return;
+    pfTeamState.lastBarSelection = { id: it.id, time: now };
+    const additive = event.ctrlKey || event.metaKey;
+    const selectedIds = pfTeamState.selectedItemIds.length
+        ? pfTeamState.selectedItemIds.slice()
+        : (pfTeamState.selectedItemId ? [pfTeamState.selectedItemId] : []);
+    const index = selectedIds.indexOf(it.id);
+    if (additive) {
+        if (index === -1) selectedIds.push(it.id);
+        else selectedIds.splice(index, 1);
+    } else if (index !== -1 && selectedIds.length === 1) {
+        selectedIds.length = 0;
+    } else {
+        selectedIds.splice(0, selectedIds.length, it.id);
+    }
+    pfTeamState.selectedItemIds = selectedIds;
+    pfTeamState.selectedItemId = selectedIds.length === 1 ? selectedIds[0] : null;
+    renderGantt();
+}
+
+function pfPrimeBarSelection(it, event, bar) {
+    const additive = event.ctrlKey || event.metaKey;
+    const selectedIds = pfTeamState.selectedItemIds.length
+        ? pfTeamState.selectedItemIds.slice()
+        : (pfTeamState.selectedItemId ? [pfTeamState.selectedItemId] : []);
+    const index = selectedIds.indexOf(it.id);
+    if (index !== -1 && !additive) return false;
+    if (additive) {
+        if (index === -1) selectedIds.push(it.id);
+    } else {
+        selectedIds.splice(0, selectedIds.length, it.id);
+    }
+    pfTeamState.selectedItemIds = selectedIds;
+    pfTeamState.selectedItemId = selectedIds.length === 1 ? selectedIds[0] : null;
+    bar.dataset.selectionPrimed = "1";
+    bar.classList.add("is-selected");
+    renderPfSelectionPanel();
+    return true;
+}
+
 function pfBuildBars(worker, row, topPad) {
     const pad = topPad == null ? PF_BAR_PAD : topPad;
     const pack = pfPackBarLanes(row.items);
@@ -5623,7 +5981,7 @@ function pfBuildBars(worker, row, topPad) {
 
     row.items.forEach(function (it) {
         const lane = pack.laneOf[it.id] != null ? pack.laneOf[it.id] : 0;
-        const selected = pfTeamState.selectedItemId === it.id;
+        const selected = pfTeamState.selectedItemIds.indexOf(it.id) !== -1 || pfTeamState.selectedItemId === it.id;
         const isUa = pfIsUnassigned(worker);
         const bar = pfEl("div", "PfTeam-bar"
             + (it.kind === "unavailability" ? " PfTeam-bar--unavail" : "")
@@ -5634,7 +5992,9 @@ function pfBuildBars(worker, row, topPad) {
         bar.style.width = (it.span * PF_WEEK_W - 5) + "px";
         bar.style.top = (pad + lane * PF_BAR_PITCH) + "px";
         if (it.kind !== "unavailability") {
-            if (isUa) {
+            if (pfTeamState.tasksInGrey) {
+                bar.style.backgroundColor = "#9298b4";
+            } else if (isUa) {
                 bar.style.backgroundColor = "var(--surface-booking-trait-3)";
             } else {
                 bar.style.backgroundColor = PF_PHASE_COLOUR[it.phase] || "var(--surface-booking-trait-1)";
@@ -5667,16 +6027,18 @@ function pfBuildBars(worker, row, topPad) {
         bar.addEventListener("mousedown", function (e) {
             if (e.button !== 0) return;
             if (e.target.closest(".PfTeam-barHandle")) return;
+            pfPrimeBarSelection(it, e, bar);
             e.preventDefault();
             e.stopPropagation();
             pfStartBarInteract(e, it, worker, bar, "move");
         });
         bar.addEventListener("click", function (e) {
             e.stopPropagation();
-            if (pfTeamState.selectedItemId !== it.id) {
-                pfTeamState.selectedItemId = it.id;
-                renderGantt();
+            if (bar.dataset.selectionPrimed) {
+                delete bar.dataset.selectionPrimed;
+                return;
             }
+            pfSelectBarItem(it, e);
         });
         box.appendChild(bar);
     });
@@ -5722,6 +6084,7 @@ function pfStartBarInteract(e, it, worker, bar, mode) {
     if (!barsEl) return;
 
     pfTeamState.selectedItemId = it.id;
+    pfTeamState.selectedItemIds = [it.id];
     document.querySelectorAll(".PfTeam-bar.is-selected").forEach(function (el) {
         if (el !== bar) el.classList.remove("is-selected");
     });
@@ -5906,6 +6269,7 @@ function renderGantt() {
     host.scrollTop = scrollTop;
     // Re-anchor open menus after DOM rebuild
     if (pfTeamState.menu) pfRenderMenu();
+    renderPfSelectionPanel();
 }
 
 function pfRenderMenu() {
@@ -5932,15 +6296,25 @@ function pfRenderMenu() {
 
     const anchor = settingsBtn.getBoundingClientRect();
     const menu = pfEl("div", "PfTeam-menu");
-    menu.style.left = Math.max(8, anchor.right - PF_MENU_W) + "px";
+    menu.style.left = Math.max(8, anchor.left) + "px";
     menu.style.top = (anchor.bottom + 4) + "px";
     menu.addEventListener("click", function (e) { e.stopPropagation(); });
 
     const rowLayout = pfEl("div", "PfTeam-menuGroup");
-    const section = pfEl("div", "PfTeam-menuSection");
+    const section = pfEl("div", "PfTeam-menuSection has-select");
     section.appendChild(pfEl("div", "PfTeam-menuTitle", "Row Layout"));
+    const rowSelect = document.createElement("select");
+    rowSelect.className = "PfTeam-menuSelect";
+    rowSelect.setAttribute("aria-label", "Row layout");
+    ["Business Unit", "Location", "Job Profile"].forEach(function (label) {
+        const option = document.createElement("option");
+        option.textContent = label;
+        rowSelect.appendChild(option);
+    });
+    section.appendChild(rowSelect);
     rowLayout.appendChild(section);
-
+    rowLayout.appendChild(pfEl("div", "PfTeam-menuItem", "Resource Data"));
+    rowLayout.appendChild(pfEl("div", "PfTeam-menuItem", "Resource Sorting"));
     const bd = pfEl("div", "PfTeam-menuItem" + (pfTeamState.flyout === "breakdown" ? " is-open" : ""));
     bd.innerHTML = "<span>Resource Breakdown</span><i class=\"fa-solid fa-chevron-left\"></i>";
     bd.addEventListener("mouseenter", function () {
@@ -5948,19 +6322,120 @@ function pfRenderMenu() {
         pfRenderMenu();
     });
     rowLayout.appendChild(bd);
+    menu.appendChild(rowLayout);
 
-    const sa = pfEl("div", "PfTeam-menuItem");
+    const time = pfEl("div", "PfTeam-menuGroup");
+    time.appendChild(pfEl("div", "PfTeam-menuTitle", "Time Settings"));
+    time.appendChild(pfEl("div", "PfTeam-menuItem", "Gantt Start Date"));
+    time.appendChild(pfEl("div", "PfTeam-menuItem", "Visible Time (Auto)"));
+    menu.appendChild(time);
+
+    const avail = pfEl("div", "PfTeam-menuGroup");
+    avail.appendChild(pfEl("div", "PfTeam-menuTitle", "Availability Settings"));
+    const sa = pfEl("div", "PfTeam-menuItem" + (pfTeamState.showAvailability ? " is-checked" : ""));
     sa.innerHTML = "<span>Show Availability</span>" + (pfTeamState.showAvailability ? '<i class="fa-solid fa-check"></i>' : "");
     sa.addEventListener("click", function () {
         pfTeamState.showAvailability = !pfTeamState.showAvailability;
         pfRenderMenu();
         renderGantt();
     });
-    rowLayout.appendChild(sa);
-    menu.appendChild(rowLayout);
+    avail.appendChild(sa);
+    const display = pfEl("div", "PfTeam-menuItem" + (pfTeamState.flyout === "availability" ? " is-open" : ""));
+    display.innerHTML = "<span>Availability Settings</span><i class=\"fa-solid fa-chevron-left\"></i>";
+    display.addEventListener("mouseenter", function () {
+        pfTeamState.flyout = "availability";
+        pfRenderMenu();
+    });
+    avail.appendChild(display);
+    menu.appendChild(avail);
+
+    const other = pfEl("div", "PfTeam-menuGroup");
+    other.appendChild(pfEl("div", "PfTeam-menuTitle", "Other Settings"));
+    other.appendChild(pfEl("div", "PfTeam-menuItem", "Show Draft Bookings"));
+    other.appendChild(pfEl("div", "PfTeam-menuItem", "Show Draft Unavailability"));
+    other.appendChild(pfEl("div", "PfTeam-menuItem", "Show Debug Labels"));
+    menu.appendChild(other);
+
+    const colour = pfEl("div", "PfTeam-menuGroup");
+    const colourSection = pfEl("div", "PfTeam-menuSection has-select");
+    colourSection.appendChild(pfEl("div", "PfTeam-menuTitle", "Colour Scheme"));
+    const colourSelect = document.createElement("select");
+    colourSelect.className = "PfTeam-menuSelect";
+    colourSelect.setAttribute("aria-label", "Colour scheme");
+    ["Trait Color", "Phase Color", "Engagement Color"].forEach(function (label) {
+        const option = document.createElement("option");
+        option.textContent = label;
+        colourSelect.appendChild(option);
+    });
+    colourSection.appendChild(colourSelect);
+    colour.appendChild(colourSection);
+    menu.appendChild(colour);
+
+    const requirements = pfEl("div", "PfTeam-menuGroup");
+    requirements.appendChild(pfEl("div", "PfTeam-menuTitle", "Resource Requirements"));
+    requirements.appendChild(pfEl("div", "PfTeam-menuItem", "Suitability Scoring"));
+    menu.appendChild(requirements);
     layer.appendChild(menu);
 
-    if (pfTeamState.flyout === "breakdown") {
+    if (pfTeamState.flyout === "availability") {
+        const flyout = pfEl("div", "PfTeam-flyout");
+        flyout.appendChild(pfEl("div", "PfTeam-flyoutTitle", "Availability Display"));
+        ["slim", "full"].forEach(function (mode) {
+            const locked = pfBreakdownOn() && mode === "full";
+            const option = pfEl("div", "PfTeam-radio"
+                + (pfTeamState.availabilityMode === mode ? " is-checked" : "")
+                + (locked ? " is-disabled" : ""));
+            option.appendChild(pfEl("div", "PfTeam-radioDot"));
+            option.appendChild(pfEl("span", null, mode === "slim" ? "Display Slim View" : "Display Full View"));
+            if (locked) {
+                option.title = "Not available while a resource breakdown is active — breakdown rows share the resource capacity.";
+            } else option.addEventListener("click", function () {
+                pfTeamState.availabilityMode = mode;
+                pfTeamState.showAvailability = true;
+                pfTeamState.flyout = null;
+                pfTeamState.menu = null;
+                pfRenderMenu();
+                renderGantt();
+            });
+            flyout.appendChild(option);
+        });
+        const grouping = document.createElement("div");
+        grouping.className = "PfTeam-menuSegment";
+        ["By Day", "By Week", "By Month"].forEach(function (label, index) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = label;
+            button.className = index === 0 ? "is-active" : "";
+            grouping.appendChild(button);
+        });
+        flyout.appendChild(grouping);
+        const hours = document.createElement("div");
+        hours.className = "PfTeam-menuSegment";
+        ["Consumed hours", "Available hours"].forEach(function (label) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = label;
+            button.disabled = true;
+            hours.appendChild(button);
+        });
+        flyout.appendChild(hours);
+        const colourTitle = pfEl("div", "PfTeam-flyoutTitle", "Availability Colour Settings");
+        flyout.appendChild(colourTitle);
+        const grey = document.createElement("label");
+        grey.className = "PfTeam-menuCheck";
+        grey.innerHTML = '<input type="checkbox"' + (pfTeamState.tasksInGrey ? " checked" : "") + '> <span>Display tasks in grey</span>';
+        grey.querySelector("input").addEventListener("change", function (e) {
+            pfTeamState.tasksInGrey = e.target.checked;
+            renderGantt();
+        });
+        flyout.appendChild(grey);
+        flyout.appendChild(pfEl("div", "PfTeam-flyoutTitle", "Availability Colour Settings"));
+        layer.appendChild(flyout);
+        document.body.appendChild(layer);
+        const a = display.getBoundingClientRect();
+        flyout.style.left = (parseFloat(menu.style.left) + PF_MENU_W - 1) + "px";
+        flyout.style.top = Math.max(8, Math.min(a.top, window.innerHeight - flyout.offsetHeight - 8)) + "px";
+    } else if (pfTeamState.flyout === "breakdown") {
         const flyout = pfEl("div", "PfTeam-flyout");
         flyout.addEventListener("click", function (e) { e.stopPropagation(); });
         flyout.appendChild(pfEl("div", "PfTeam-flyoutTitle", "Resource Breakdown"));
@@ -5972,6 +6447,7 @@ function pfRenderMenu() {
             if (def.deferred) r.appendChild(pfEl("span", "PfTeam-radioTag", "Deferred"));
             r.addEventListener("click", function () {
                 pfTeamState.breakdown = key;
+                if (key !== "none") pfTeamState.availabilityMode = "slim";
                 pfTeamState.expandedRows = {};
                 pfTeamState.selectedCell = null;
                 pfTeamState.menu = null;

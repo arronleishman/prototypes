@@ -20510,6 +20510,15 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
                 font-size: 12px;
                 color: var(--text-subtle, #6a708f);
             }
+            .TemplateAppliedNotice {
+                margin: 0 15px 12px;
+                padding: 10px 12px;
+                border: 1px solid var(--border-success-subtle, #b7dec8);
+                border-radius: 4px;
+                background: var(--surface-success-subtle, #eef8f1);
+                color: var(--text-success-dark, #236b45);
+                font-size: 13px;
+            }
 
             .JobEditor-teamSection.njeg {
                 padding: 0 0 10px;
@@ -20898,6 +20907,7 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
                         </h3>
                     </div>
                     <div id="teamSectionContent" class="JobEditor-teamSection njeg section-content position-relative w-100">
+                        <div id="templateAppliedNotice" class="TemplateAppliedNotice" role="status" style="display:none"></div>
                         <div id="teamBlankSlate" class="jobEditor-teamBlankSlate full-height" data-test="JobEditor-teamBlankSlate">
                             <div class="BlankSlate EmptyTeam text-center my-4">
                                 <img class="BlankSlate-image" data-test="EmptyTeam-Image" alt="Decorative Calendar Icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAyIiBoZWlnaHQ9IjE3NCIgdmlld0JveD0iMCAwIDIwMiAxNzQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik05My4zMzMzIDE2MEMxMzcuNTE2IDE2MCAxNzMuMzMzIDEyNC4xODMgMTczLjMzMyA4MEMxNzMuMzMzIDM1LjgxNzIgMTM3LjUxNiAwIDkzLjMzMzMgMEM0OS4xNTA1IDAgMTMuMzMzMyAzNS44MTcyIDEzLjMzMzMgODBDMTMuMzMzMyAxMjQuMTgzIDQ5LjE1MDUgMTYwIDkzLjMzMzMgMTYwWiIgZmlsbD0iI0VCRjBGNCIvPgo8ZyBjbGlwLXBhdGg9InVybCgjY2xpcDBfNDYwOV80MTc4KSI+CjxnIGZpbHRlcj0idXJsKCNmaWx0ZXIwX2RfNDYwOV80MTc4KSI+CjxyZWN0IHg9IjUzLjMzMzIiIHk9IjI3LjE2NjYiIHdpZHRoPSI4My4wMiIgaGVpZ2h0PSIxMDMuMzUzIiByeD0iMTAuNjY2NyIgZmlsbD0id2hpdGUiLz4KPC9nPgo8cGF0aCBkPSJNMTIyLjcyNiA0Ni4xNjY2SDExNS4xMTlWMzcuMjI5MUMxMTUuMTE5IDM2LjA5NDggMTE0LjI2MyAzNS4xNjY2IDExMy4yMTcgMzUuMTY2NkgxMTEuOTQ5QzExMC45MDMgMzUuMTY2NiAxMTAuMDQ3IDM2LjA5NDggMTEwLjA0NyAzNy4yMjkxVjQ2LjE2NjZINzkuNjE4OVYzNy4yMjkxQzc5LjYxODkgMzYuMDk0OCA3OC43NjMxIDM1LjE2NjYgNzcuNzE3MSAzNS4xNjY2SDc2LjQ0OTNDNzUuNDAzMyAzNS4xNjY2IDc0LjU0NzUgMzYuMDk0OCA3NC41NDc1IDM3LjIyOTFWNDYuMTY2Nkg2Ni45NDAzQzYyLjc0MDYgNDYuMTY2NiA1OS4zMzMyIDQ5Ljg2MTkgNTkuMzMzMiA1NC40MTY2VjExNC45MTdDNTkuMzMzMiAxMTkuNDcxIDYyLjc0MDYgMTIzLjE2NyA2Ni45NDAzIDEyMy4xNjdIMTIyLjcyNkMxMjYuOTI2IDEyMy4xNjcgMTMwLjMzMyAxMTkuNDcxIDEzMC4zMzMgMTE0LjkxN1Y1NC40MTY2QzEzMC4zMzMgNDkuODYxOSAxMjYuOTI2IDQ2LjE2NjYgMTIyLjcyNiA0Ni4xNjY2Wk02Ni45NDAzIDUxLjY2NjZIMTIyLjcyNkMxMjQuMTIxIDUxLjY2NjYgMTI1LjI2MiA1Mi45MDQxIDEyNS4yNjIgNTQuNDE2NlY2Mi42NjY2SDY0LjQwNDZWNTQuNDE2NkM2NC40MDQ2IDUyLjkwNDEgNjUuNTQ1NyA1MS42NjY2IDY2Ljk0MDMgNTEuNjY2NlpNMTIyLjcyNiAxMTcuNjY3SDY2Ljk0MDNDNjUuNTQ1NyAxMTcuNjY3IDY0LjQwNDYgMTE2LjQyOSA2NC40MDQ2IDExNC45MTdWNjguMTY2NkgxMjUuMjYyVjExNC45MTdDMTI1LjI2MiAxMTYuNDI5IDEyNC4xMjEgMTE3LjY2NyAxMjIuNzI2IDExNy42NjdaIiBmaWxsPSIjQ0NENkREIi8+CjxyZWN0IHg9IjY4LjMzMzIiIHk9IjcyLjkwNDIiIHdpZHRoPSI1My42NyIgaGVpZ2h0PSI2LjUzMzMzIiByeD0iMy4yNjY2NyIgZmlsbD0iI0NDRDZERCIvPgo8cmVjdCB4PSI2OC4zMzMyIiB5PSI5My40Mzc2IiB3aWR0aD0iNTMuNjciIGhlaWdodD0iNi41MzMzMyIgcng9IjMuMjY2NjciIGZpbGw9IiNDQ0Q2REQiLz4KPHJlY3QgeD0iNjguMzMzMiIgeT0iODMuNDM3NiIgd2lkdGg9IjI1IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjNkI4MThEIi8+CjxyZWN0IHg9IjY4LjMzMzIiIHk9IjEwMy45NzEiIHdpZHRoPSIyMS42NyIgaGVpZ2h0PSI2LjUzMzMzIiByeD0iMy4yNjY2NyIgZmlsbD0iI0NDRDZERCIvPgo8cmVjdCB4PSI5My4zMzMyIiB5PSIxMDQuMjMzIiB3aWR0aD0iMjkiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNDQ0Q2REQiLz4KPC9nPgo8ZyBmaWx0ZXI9InVybCgjZmlsdGVyMV9kXzQ2MDlfNDE3OCkiPgo8cGF0aCBkPSJNMTg1LjQzMyAxMS42MTZIMTQ1LjM4QzE0My41MTMgMTEuNjE2IDE0MiAxMy4yMDgzIDE0MiAxNS4xNzI2VjM0Ljk4NTNDMTQyIDM2Ljk0OTYgMTQzLjUxMyAzOC41NDE5IDE0NS4zOCAzOC41NDE5SDE4NS40MzNDMTg3LjMgMzguNTQxOSAxODguODEzIDM2Ljk0OTYgMTg4LjgxMyAzNC45ODUzVjE1LjE3MjZDMTg4LjgxMyAxMy4yMDgzIDE4Ny4zIDExLjYxNiAxODUuNDMzIDExLjYxNloiIGZpbGw9IndoaXRlIi8+CjwvZz4KPHBhdGggZD0iTTE1MiAyOS4zMzM0QzE1NC4yMDkgMjkuMzMzNCAxNTYgMjcuNTQyNSAxNTYgMjUuMzMzNEMxNTYgMjMuMTI0MiAxNTQuMjA5IDIxLjMzMzQgMTUyIDIxLjMzMzRDMTQ5Ljc5MSAyMS4zMzM0IDE0OCAyMy4xMjQyIDE0OCAyNS4zMzM0QzE0OCAyNy41NDI1IDE0OS43OTEgMjkuMzMzNCAxNTIgMjkuMzMzNFoiIGZpbGw9IiNDQ0Q2REQiLz4KPHJlY3QgeD0iMTYxLjMzMyIgeT0iMjEuMzMzMyIgd2lkdGg9IjIxLjMzMzMiIGhlaWdodD0iOCIgcng9IjQiIGZpbGw9IiNFQkYwRjQiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zMi44NzYzIDQxLjQ0NzhDMzIuODYzNyA0MC40OTcxIDMyLjc0NDUgMzkuNTM4MiAzMi41MDU5IDM4LjU3MjhDMzEuNjY5NSAzNS4xODQ3IDI3LjkzNzYgMzMuMDA5NiAyMy45NjU2IDMyLjQ5ODJDMTkuOTk1MSAzMS45ODY4IDE1Ljg2NjIgMzMuMTUwNiAxNC4yNzQ5IDM2LjA5NzdDMTMuMzY0NyAzNy43ODI3IDEzLjIzOTEgMzkuMjM1IDEzLjYxMTEgNDAuNDU5NEMxMy45ODE0IDQxLjY3NzMgMTQuODYwMiA0Mi42ODY5IDE2LjA1MjkgNDMuNDczN0MxOS4zNzgzIDQ1LjY2NTIgMjUuMjAyMiA0Ni4xMTI3IDI3Ljg1OTEgNDUuMTk2NEMyOS4wODc5IDQ0Ljc3MTkgMzAuMjg4NCA0NC4yNjA1IDMxLjQ1NzYgNDMuNjc1NEMzMC43ODkxIDQ3LjUwNiAyOC4yOTg1IDUxLjEzNSAyNC45NzQ2IDU0LjQwNUMxNy43NTA5IDYxLjUxMjIgNi41NDExMyA2Ni45MDY1IDAuNDM2Mzc1IDY4Ljg4OThDMC4xMDgzODIgNjguOTk2NCAtMC4wNzM2Nzc1IDY5LjM2MDMgMC4wMjgzMjk5IDY5LjcwMjhDMC4xMzAzMzcgNzAuMDQ1NCAwLjQ3ODcyNiA3MC4yMzcyIDAuODA2NzE5IDcwLjEzMDdDNy4wMzIzMSA2OC4xMDggMTguNDYwMyA2Mi41OTg5IDI1LjgyNjggNTUuMzUwOEMyOS42MzI1IDUxLjYwNyAzMi4zNDQzIDQ3LjM5MjkgMzIuODA3MiA0Mi45NjIzQzQxLjQxMDQgMzguMTYxNCA0OC40NzU2IDI5LjQ1MTEgNTQuNTE2IDIyLjEyMUM1NC43NDA0IDIxLjg1MDUgNTQuNzEwNiAyMS40MzkxIDU0LjQ1MDEgMjEuMjA0N0M1NC4xODk2IDIwLjk3MiA1My43OTcyIDIxLjAwMTUgNTMuNTcyOCAyMS4yNzM1QzQ3Ljc3ODggMjguMzAzNyA0MS4wNTQxIDM2LjY2NjUgMzIuODc2MyA0MS40NDc4Wk0zMS42MjU2IDQyLjE0NDRDMzEuNjcyNiA0MS4wNzU3IDMxLjU3MjIgMzkuOTkwNiAzMS4zMDA3IDM4Ljg5NTdDMzAuNTc3MiAzNS45NjMzIDI3LjI1MTggMzQuMjI5MSAyMy44MTMzIDMzLjc4NjZDMjEuNzA1NyAzMy41MTYxIDE5LjUzODUgMzMuNzM5IDE3LjgzODkgMzQuNTMyNEMxNi43NzAxIDM1LjAzMDcgMTUuODg5NyAzNS43NTM1IDE1LjM1OTIgMzYuNzM3QzE0LjY2MjUgMzguMDI3IDE0LjUxMTggMzkuMTMwMSAxNC43OTc0IDQwLjA2NkMxNS4wODMgNDEuMDA4NSAxNS43OTI0IDQxLjc2NTggMTYuNzE2OCA0Mi4zNzM5QzE5Ljc0NzIgNDQuMzcyIDI1LjA1IDQ0Ljc5NjUgMjcuNDY4MyA0My45NjIyQzI4Ljg5NDkgNDMuNDcwNSAzMC4yNzkxIDQyLjg1NzQgMzEuNjI1NiA0Mi4xNDQ0WiIgZmlsbD0iIzMzNDM0QiIvPgo8Y2lyY2xlIGN4PSIxODkuMzMzIiBjeT0iMTIyLjMzMyIgcj0iNCIgZmlsbD0iIzhBOUVBOCIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTMyLjI1NjMgMTMwLjkyOUMzMi45NzAyIDEzMC42NjIgMzMuNzIxNCAxMzAuMzA2IDM0LjMwMDcgMTI5Ljc5MUMzNC45ODg3IDEyOS4xNzkgMzUuMjY4NSAxMjguMzkxIDM1LjQ1NjQgMTI3LjU2MkMzNS42OTc2IDEyNi40OTYgMzUuNzk0IDEyNS4zNjEgMzYuMDg2NSAxMjQuMjk0QzM2LjE5NDggMTIzLjg5NyAzNi40MDMyIDEyMy43NDggMzYuNDkyNyAxMjMuNjgxQzM2LjcxODcgMTIzLjUxMyAzNi45NDcyIDEyMy40NjggMzcuMTYyMiAxMjMuNDg1QzM3LjQxNyAxMjMuNTA1IDM3Ljc2NjkgMTIzLjYwNiAzNy45OTcxIDEyNC4wNTVDMzguMDI5OSAxMjQuMTIgMzguMDcyNiAxMjQuMjE4IDM4LjEwMTMgMTI0LjM1MkMzOC4xMjIyIDEyNC40NSAzOC4xMzU3IDEyNC43NTggMzguMTU3OSAxMjQuODg1QzM4LjIxMzMgMTI1LjE5OCAzOC4yNTk2IDEyNS41MSAzOC4zMDMxIDEyNS44MjVDMzguNDQ3OSAxMjYuODcxIDM4LjUzMTIgMTI3Ljc1OSAzOC45ODg3IDEyOC43MjFDMzkuNjA5NCAxMzAuMDI1IDQwLjIzMTMgMTMwLjgyNCA0MS4wNzQ4IDEzMS4xNzdDNDEuODkwNCAxMzEuNTE5IDQyLjg2NTYgMTMxLjQ1NSA0NC4xMTE1IDEzMS4xODdDNDQuMjMwMSAxMzEuMTU3IDQ0LjM0NzQgMTMxLjEzMSA0NC40NjM1IDEzMS4xMDlDNDUuMDEyOSAxMzEuMDA4IDQ1LjUzOCAxMzEuMzg4IDQ1LjY0NTkgMTMxLjk2NEM0NS43NTM4IDEzMi41MzkgNDUuNDA0NyAxMzMuMSA0NC44NjAzIDEzMy4yMjdDNDQuNzQ2NiAxMzMuMjUzIDQ0LjYzNDYgMTMzLjI3OCA0NC41MjM4IDEzMy4zMDFDNDIuODQwMiAxMzMuNzQgNDAuODkxIDEzNS4zMDUgMzkuNzU4MyAxMzYuNjc2QzM5LjQwOTIgMTM3LjA5OSAzOC44OTggMTM4LjI4IDM4LjM3NjYgMTM5LjAzNEMzNy45OTE3IDEzOS41OSAzNy41NTkzIDEzOS45NTcgMzcuMTk2MiAxNDAuMDg2QzM2Ljk1MyAxNDAuMTc0IDM2Ljc0NzggMTQwLjE2IDM2LjU3ODQgMTQwLjExNkMzNi4zMzIzIDE0MC4wNTIgMzYuMTI4IDEzOS45MTIgMzUuOTcxMiAxMzkuNjg5QzM1Ljg4NTkgMTM5LjU2NyAzNS44MDY3IDEzOS40MDMgMzUuNzY5IDEzOS4xOTRDMzUuNzUwOSAxMzkuMDkzIDM1Ljc0ODkgMTM4LjgzOCAzNS43NDkzIDEzOC43MjJDMzUuNjQzIDEzOC4zMzcgMzUuNTEzIDEzNy45NjIgMzUuNDE4MiAxMzcuNTc0QzM1LjE5MjIgMTM2LjY0OCAzNC43NDg3IDEzNi4wNjEgMzQuMjIxOSAxMzUuMjg3QzMzLjcyOTIgMTM0LjU2MiAzMy4yIDEzNC4xMDYgMzIuNDI0MiAxMzMuNzQzQzMyLjMyMzIgMTMzLjcxNyAzMS41MDg5IDEzMy41MDcgMzEuMjIxMyAxMzMuMzg3QzMwLjgwMTIgMTMzLjIxIDMwLjYwMSAxMzIuOTE0IDMwLjUyODQgMTMyLjc1NUMzMC40MDQ5IDEzMi40ODUgMzAuMzkyMiAxMzIuMjQ4IDMwLjQxNjggMTMyLjA1MkMzMC40NTMzIDEzMS43NjEgMzAuNTc3MiAxMzEuNTEyIDMwLjc5NzEgMTMxLjMxMkMzMC45MzMzIDEzMS4xODcgMzEuMTM2OCAxMzEuMDY1IDMxLjQwOTIgMTMxLjAwNkMzMS42MTk2IDEzMC45NiAzMi4xNzggMTMwLjkzMyAzMi4yNTYzIDEzMC45MjlaTTM3LjAzMzggMTI5LjQyQzM3LjA3MTUgMTI5LjUwOCAzNy4xMTE3IDEyOS41OTcgMzcuMTU0NCAxMjkuNjg3QzM4LjA2MzUgMTMxLjU5OCAzOS4wODAxIDEzMi42NjUgNDAuMzE1OCAxMzMuMTgzTDQwLjM1NzMgMTMzLjJDMzkuNTMwNiAxMzMuODQ1IDM4Ljc4MjMgMTM0LjU2NyAzOC4yMTA0IDEzNS4yNTlDMzcuOTc0OSAxMzUuNTQ0IDM3LjY2MzEgMTM2LjEzNiAzNy4zMjYzIDEzNi43NDNDMzcuMDIwMyAxMzUuNjk2IDM2LjUxOTcgMTM0Ljk1NiAzNS44OTA0IDEzNC4wM0MzNS40MDk2IDEzMy4zMjMgMzQuOTA1OCAxMzIuNzkyIDM0LjI4NjcgMTMyLjM1OEMzNC43NjcxIDEzMi4wOTkgMzUuMjI1NCAxMzEuNzk1IDM1LjYyNDYgMTMxLjQ0QzM2LjI4OTIgMTMwLjg0OSAzNi43Mjg2IDEzMC4xNjQgMzcuMDMzOCAxMjkuNDJaIiBmaWxsPSIjOEE5RUE4Ii8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTMyLjc0IDE0OS41NDJDMTQxLjMyNiAxNDkuNTQyIDE0OS4zMDYgMTQ2Ljk0NSAxNTUuOTM3IDE0Mi40OTNMMTgzLjA3IDE2OC4zOTRMMTkyLjkxIDE1Ni45NzdMMTY2LjcyOCAxMzEuOTg0QzE3MS41NjMgMTI1LjE3OSAxNzQuNDA2IDExNi44NTkgMTc0LjQwNiAxMDcuODc2QzE3NC40MDYgODQuODYzNyAxNTUuNzUyIDY2LjIwODkgMTMyLjc0IDY2LjIwODlDMTA5LjcyOCA2Ni4yMDg5IDkxLjA3MyA4NC44NjM3IDkxLjA3MyAxMDcuODc2QzkxLjA3MyAxMzAuODg3IDEwOS43MjggMTQ5LjU0MiAxMzIuNzQgMTQ5LjU0MlpNMTY4LjI3OSAxMDcuODc2QzE2OC4yNzkgMTI3LjM1OCAxNTIuNDg2IDE0My4xNTEgMTMzLjAwMyAxNDMuMTUxQzExMy41MjEgMTQzLjE1MSA5Ny43MjggMTI3LjM1OCA5Ny43MjggMTA3Ljg3NkM5Ny43MjggODguMzkzNSAxMTMuNTIxIDcyLjYwMDEgMTMzLjAwMyA3Mi42MDAxQzE1Mi40ODYgNzIuNjAwMSAxNjguMjc5IDg4LjM5MzUgMTY4LjI3OSAxMDcuODc2WiIgZmlsbD0iIzhBOUVBOCIvPgo8ZyBmaWx0ZXI9InVybCgjZmlsdGVyMl9iXzQ2MDlfNDE3OCkiPgo8cGF0aCBkPSJNMTMyLjMzMyAxNDRDMTUyLjQgMTQ0IDE2OC42NjcgMTI3Ljg4MiAxNjguNjY3IDEwOEMxNjguNjY3IDg4LjExNzcgMTUyLjQgNzIgMTMyLjMzMyA3MkMxMTIuMjY3IDcyIDk2IDg4LjExNzcgOTYgMTA4Qzk2IDEyNy44ODIgMTEyLjI2NyAxNDQgMTMyLjMzMyAxNDRaIiBmaWxsPSJ3aGl0ZSIvPgo8L2c+CjxwYXRoIGQ9Ik0xMzEgMTA2LjMwNkMxMzUuNDE5IDEwNi4zMDYgMTM5IDEwMi42NTYgMTM5IDk4LjE1MzFDMTM5IDkzLjY0OTggMTM1LjQxOSA5MCAxMzEgOTBDMTI2LjU4MSA5MCAxMjMgOTMuNjQ5OCAxMjMgOTguMTUzMUMxMjMgMTAyLjY1NiAxMjYuNTgxIDEwNi4zMDYgMTMxIDEwNi4zMDZaTTEzNi42IDEwOC4zNDVIMTM1LjU1NkMxMzQuMTY5IDEwOC45OTQgMTMyLjYyNSAxMDkuMzY0IDEzMSAxMDkuMzY0QzEyOS4zNzUgMTA5LjM2NCAxMjcuODM3IDEwOC45OTQgMTI2LjQ0NCAxMDguMzQ1SDEyNS40QzEyMC43NjIgMTA4LjM0NSAxMTcgMTEyLjE3OSAxMTcgMTE2LjkwNVYxMTkuNTU1QzExNyAxMjEuMjQzIDExOC4zNDQgMTIyLjYxMyAxMjAgMTIyLjYxM0gxNDJDMTQzLjY1NiAxMjIuNjEzIDE0NSAxMjEuMjQzIDE0NSAxMTkuNTU1VjExNi45MDVDMTQ1IDExMi4xNzkgMTQxLjIzNyAxMDguMzQ1IDEzNi42IDEwOC4zNDVaTTE1Ni43ODcgMTAwLjE2NkwxNTUuMDUgOTguMzc2MUMxNTQuNzYyIDk4LjA3NjcgMTU0LjI5NCA5OC4wNzY3IDE1NCA5OC4zNjk3TDE0Ny40NSAxMDQuOTk0TDE0NC42MDYgMTAyLjA3N0MxNDQuMzE5IDEwMS43NzcgMTQzLjg1IDEwMS43NzcgMTQzLjU1NiAxMDIuMDdMMTQxLjggMTAzLjg0OEMxNDEuNTA2IDEwNC4xNDEgMTQxLjUwNiAxMDQuNjE4IDE0MS43OTQgMTA0LjkxOEwxNDYuOSAxMTAuMTZDMTQ3LjE4NyAxMTAuNDU5IDE0Ny42NTYgMTEwLjQ1OSAxNDcuOTUgMTEwLjE2NkwxNTYuNzgxIDEwMS4yMzZDMTU3LjA2OSAxMDAuOTM3IDE1Ny4wNzUgMTAwLjQ1OSAxNTYuNzg3IDEwMC4xNjZaIiBmaWxsPSIjRUM2NTQ4Ii8+CjxwYXRoIGQ9Ik0xODMuMDY4IDE2OC4zOTVMMTkyLjkwOCAxNTYuOTc4TDE5NC4zOSAxNTguMzkzQzE5NS44MjggMTU5Ljc2NiAxOTYuNjg5IDE2MS42ODQgMTk2Ljc4MyAxNjMuNzI0QzE5Ni44NzggMTY1Ljc2NSAxOTYuMTk4IDE2Ny43NjIgMTk0Ljg5NCAxNjkuMjc1VjE2OS4yNzVDMTkzLjU4OSAxNzAuNzg5IDE5MS43NjcgMTcxLjY5NSAxODkuODI4IDE3MS43OTRDMTg3Ljg4OSAxNzEuODk0IDE4NS45OTIgMTcxLjE3OCAxODQuNTUzIDE2OS44MDZMMTgzLjA3MSAxNjguMzkxTDE4My4wNjggMTY4LjM5NVoiIGZpbGw9IiNFQkYwRjQiLz4KPGRlZnM+CjxmaWx0ZXIgaWQ9ImZpbHRlcjBfZF80NjA5XzQxNzgiIHg9IjMzLjMzMzIiIHk9IjIwLjUiIHdpZHRoPSIxMjMuMDIiIGhlaWdodD0iMTQzLjM1MyIgZmlsdGVyVW5pdHM9InVzZXJTcGFjZU9uVXNlIiBjb2xvci1pbnRlcnBvbGF0aW9uLWZpbHRlcnM9InNSR0IiPgo8ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPgo8ZmVDb2xvck1hdHJpeCBpbj0iU291cmNlQWxwaGEiIHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAxMjcgMCIgcmVzdWx0PSJoYXJkQWxwaGEiLz4KPGZlT2Zmc2V0IGR5PSIxMy4zMzMzIi8+CjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjEwIi8+CjxmZUNvbXBvc2l0ZSBpbjI9ImhhcmRBbHBoYSIgb3BlcmF0b3I9Im91dCIvPgo8ZmVDb2xvck1hdHJpeCB0eXBlPSJtYXRyaXgiIHZhbHVlcz0iMCAwIDAgMCAwLjU3MDgzMyAwIDAgMCAwIDAuNTcwODMzIDAgMCAwIDAgMC41NzA4MzMgMCAwIDAgMC4xOSAwIi8+CjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2VGaXgiIHJlc3VsdD0iZWZmZWN0MV9kcm9wU2hhZG93XzQ2MDlfNDE3OCIvPgo8ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9ImVmZmVjdDFfZHJvcFNoYWRvd180NjA5XzQxNzgiIHJlc3VsdD0ic2hhcGUiLz4KPC9maWx0ZXI+CjxmaWx0ZXIgaWQ9ImZpbHRlcjFfZF80NjA5XzQxNzgiIHg9IjEzNy4zMzMiIHk9IjUuNjE1OTciIHdpZHRoPSI2NC4xNDYiIGhlaWdodD0iNDQuMjU5MyIgZmlsdGVyVW5pdHM9InVzZXJTcGFjZU9uVXNlIiBjb2xvci1pbnRlcnBvbGF0aW9uLWZpbHRlcnM9InNSR0IiPgo8ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPgo8ZmVDb2xvck1hdHJpeCBpbj0iU291cmNlQWxwaGEiIHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAxMjcgMCIgcmVzdWx0PSJoYXJkQWxwaGEiLz4KPGZlT2Zmc2V0IGR4PSI0IiBkeT0iMi42NjY2NyIvPgo8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI0LjMzMzMzIi8+CjxmZUNvbXBvc2l0ZSBpbjI9ImhhcmRBbHBoYSIgb3BlcmF0b3I9Im91dCIvPgo8ZmVDb2xvck1hdHJpeCB0eXBlPSJtYXRyaXgiIHZhbHVlcz0iMCAwIDAgMCAwLjEwNDYxOCAwIDAgMCAwIDAuNDY1NjEyIDAgMCAwIDAgMC41NDU4MzMgMCAwIDAgMC4wOSAwIi8+CjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2VGaXgiIHJlc3VsdD0iZWZmZWN0MV9kcm9wU2hhZG93XzQ2MDlfNDE3OCIvPgo8ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluPSJTb3VyY2VHcmFwaGljIiBpbjI9ImVmZmVjdDFfZHJvcFNoYWRvd180NjA5XzQxNzgiIHJlc3VsdD0ic2hhcGUiLz4KPC9maWx0ZXI+CjxmaWx0ZXIgaWQ9ImZpbHRlcjJfYl80NjA5XzQxNzgiIHg9IjkwLjY2NjciIHk9IjY2LjY2NjciIHdpZHRoPSI4My4zMzM0IiBoZWlnaHQ9IjgyLjY2NjciIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj4KPGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz4KPGZlR2F1c3NpYW5CbHVyIGluPSJCYWNrZ3JvdW5kSW1hZ2VGaXgiIHN0ZERldmlhdGlvbj0iMi42NjY2NyIvPgo8ZmVDb21wb3NpdGUgaW4yPSJTb3VyY2VBbHBoYSIgb3BlcmF0b3I9ImluIiByZXN1bHQ9ImVmZmVjdDFfYmFja2dyb3VuZEJsdXJfNDYwOV80MTc4Ii8+CjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iZWZmZWN0MV9iYWNrZ3JvdW5kQmx1cl80NjA5XzQxNzgiIHJlc3VsdD0ic2hhcGUiLz4KPC9maWx0ZXI+CjxjbGlwUGF0aCBpZD0iY2xpcDBfNDYwOV80MTc4Ij4KPHJlY3Qgd2lkdGg9IjEzMCIgaGVpZ2h0PSIxNDQiIGZpbGw9IndoaXRlIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNS4zMzMyIDEwLjE2NjYpIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==" />
@@ -21004,14 +21014,22 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="atHours">Total hours</label>
+                        <label for="atHours">Target job hours</label>
                         <input type="number" class="form-control" id="atHours" min="1" step="1" value="120" />
                     </div>
                     <div class="form-group col-md-6">
                         <label for="atEnd">Project end date</label>
                         <input type="date" class="form-control" id="atEnd" />
-                        <small class="form-text text-muted">Timeline uses template durations and buffers, working backwards from this date. Edit dates below to override.</small>
+                        <small class="form-text text-muted">The plan is scheduled backwards from this date. Edit dates below to override.</small>
                     </div>
+                </div>
+                <div class="form-group">
+                    <label for="atScaling">Template effort</label>
+                    <select class="form-control" id="atScaling">
+                        <option value="scale">Scale to target job hours</option>
+                        <option value="preserve">Keep template baseline hours</option>
+                    </select>
+                    <small class="form-text text-muted" id="atScalingHint"></small>
                 </div>
                 <div class="ApplyPreview" id="atPreview"></div>
             </div>
@@ -21463,6 +21481,13 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
         "Planning": "#9a6fb0",
         "Fieldwork": "#2f8f6b"
     };
+    var BOOKING_COLORS = {
+        "Client work": "#ff8d6c",
+        "Review": "#0295b2",
+        "Meeting": "#6881c5",
+        "Administration": "#6a708f",
+        "Training": "#167983"
+    };
 
     // Published templates from the demand profile catalogue.
     var TEMPLATES = [
@@ -21519,6 +21544,19 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
                     { grade: "Partner", role: "", count: 1, sharePercent: null }
                 ]}
             ]
+        },
+        {
+            id: "dpt-unphased",
+            name: "General advisory demand profile",
+            version: 1,
+            returnType: "",
+            phaseWorld: false,
+            baselineHours: 80,
+            resourceRequests: [
+                { id: "rr-advisory", grade: "Manager", role: "Engagement Manager", count: 1, bookingType: "Client work", effortUnit: "hours", effortValue: 24, weightPercent: 50, segments: [{ startWeek: 0, durationWeeks: 2 }] },
+                { id: "rr-analysis", grade: "Senior", role: "Senior Analyst", count: 1, bookingType: "Client work", effortUnit: "hours", effortValue: 24, weightPercent: 50, segments: [{ startWeek: 0, durationWeeks: 2 }] },
+                { id: "rr-review", grade: "Director", role: "Technical Review", count: 1, bookingType: "Review", effortUnit: "hours", effortValue: 32, weightPercent: 100, segments: [{ startWeek: 2, durationWeeks: 1 }] }
+            ]
         }
     ];
 
@@ -21565,8 +21603,69 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
     function isPhaseItem(p) {
         return !p.kind || p.kind === "phase";
     }
+
+    function normaliseTemplate(source) {
+        var template = JSON.parse(JSON.stringify(source || {}));
+        if (Array.isArray(template.resourceRequests)) {
+            return template;
+        }
+        template.resourceRequests = [];
+        var cursor = 0;
+        (template.phases || []).forEach(function (phase) {
+            var weeks = Math.max(1, Number(phase.durationWeeks) || 1);
+            if (phase.kind === "buffer") {
+                cursor += weeks;
+                return;
+            }
+            (phase.slots || []).forEach(function (slot, index) {
+                template.resourceRequests.push({
+                    id: phase.name + "-" + index,
+                    grade: slot.grade || "",
+                    role: slot.role || "",
+                    count: Math.max(1, Number(slot.count) || 1),
+                    phase: phase.name || "",
+                    bookingType: "",
+                    weightPercent: slot.sharePercent == null ? 100 : Number(slot.sharePercent),
+                    effortUnit: "percentage",
+                    effortValue: null,
+                    segments: [{ startWeek: cursor, durationWeeks: weeks, phase: phase.name || "" }]
+                });
+            });
+            cursor += weeks;
+        });
+        template.baselineHours = Number(template.baselineHours) || 120;
+        return template;
+    }
+
+    function templateRequirements(template) {
+        return normaliseTemplate(template).resourceRequests || [];
+    }
+
     function effortPhases(template) {
-        return (template.phases || []).filter(isPhaseItem);
+        var normalised = normaliseTemplate(template);
+        var phases = (normalised.phases || []).filter(isPhaseItem);
+        if (phases.length) return phases;
+        var groups = {};
+        templateRequirements(normalised).forEach(function (request) {
+            var type = request.bookingType || "Unphased work";
+            if (!groups[type]) groups[type] = { kind: "phase", name: type, weight: 0, durationWeeks: 0, slots: [] };
+            var end = (request.segments || []).reduce(function (max, segment) {
+                return Math.max(max, (Number(segment.startWeek) || 0) + (Number(segment.durationWeeks) || 0));
+            }, 0);
+            groups[type].durationWeeks = Math.max(groups[type].durationWeeks, end);
+            groups[type].slots.push({
+                grade: request.grade,
+                role: request.role,
+                count: request.count,
+                sharePercent: request.weightPercent
+            });
+        });
+        var names = Object.keys(groups);
+        var total = names.reduce(function (sum, name) { return sum + groups[name].durationWeeks; }, 0) || 1;
+        return names.map(function (name) {
+            groups[name].weight = Math.round(groups[name].durationWeeks / total * 100);
+            return groups[name];
+        });
     }
 
     function slotHours(phase, slot, phaseHours) {
@@ -21576,43 +21675,35 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
     }
 
     /**
-     * Works backwards from the deadline using template duration weeks and buffers.
-     * Weight % still splits total hours across effort phases only.
+     * Works backwards from the deadline using the shared requirement shape.
+     * Phase/booking-type shares split the applied effort between groups.
      */
-    function schedule(template, totalHours, endDate) {
+    function schedule(template, totalHours, endDate, scalingMode) {
+        template = normaliseTemplate(template);
         var end = isWorkingDay(endDate) ? new Date(endDate) : previousWorkingDay(endDate);
         var efforts = effortPhases(template);
+        var appliedHours = scalingMode === "preserve"
+            ? (Number(template.baselineHours) || totalHours)
+            : totalHours;
         var effortWeight = efforts.reduce(function (a, p) { return a + (Number(p.weight) || 0); }, 0) || 1;
         var hoursByName = {};
         var allocated = 0;
         efforts.forEach(function (p, index) {
             var hours = index === efforts.length - 1
-                ? totalHours - allocated
-                : Math.round(totalHours * p.weight / effortWeight);
+                ? appliedHours - allocated
+                : Math.round(appliedHours * p.weight / effortWeight);
             allocated += hours;
             hoursByName[p.name] = hours;
         });
 
         var timeline = [];
-        (template.phases || []).forEach(function (p) {
-            if (p.kind === "buffer") {
-                timeline.push({
-                    kind: "buffer",
-                    name: "Buffer",
-                    color: BUFFER_COLOR,
-                    weight: null,
-                    hours: 0,
-                    resources: 0,
-                    durationWeeks: Number(p.durationWeeks) || 1,
-                    workingDays: weeksToWorkingDays(p.durationWeeks),
-                    source: p
-                });
-                return;
-            }
+        efforts.forEach(function (p) {
             timeline.push({
                 kind: "phase",
                 name: p.name,
-                color: PHASE_COLORS[p.name] || "#6a708f",
+                color: template.phaseWorld === false
+                    ? (BOOKING_COLORS[p.name] || "#6a708f")
+                    : (PHASE_COLORS[p.name] || "#6a708f"),
                 weight: Math.round((Number(p.weight) || 0) / effortWeight * 100),
                 hours: hoursByName[p.name] || 0,
                 resources: p.slots.reduce(function (a, s) { return a + (Number(s.count) || 1); }, 0) || 1,
@@ -21637,19 +21728,24 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
             phases: phases,
             start: timeline.length ? timeline[0].start : end,
             end: timeline.length ? timeline[timeline.length - 1].end : end,
-            totalWorkingDays: totalWorkingDays
+            totalWorkingDays: totalWorkingDays,
+            targetHours: totalHours,
+            appliedHours: appliedHours,
+            baselineHours: Number(template.baselineHours) || totalHours,
+            scalingMode: scalingMode || "scale"
         };
     }
 
     function currentTemplate() {
         var id = document.getElementById("atTemplate").value;
-        return TEMPLATES.filter(function (t) { return t.id === id; })[0] || TEMPLATES[0];
+        return normaliseTemplate(TEMPLATES.filter(function (t) { return t.id === id; })[0] || TEMPLATES[0]);
     }
 
     function readInputs() {
         var hours = Math.max(1, Number(document.getElementById("atHours").value) || 0);
         var end = fromISO(document.getElementById("atEnd").value);
-        return { template: currentTemplate(), hours: hours, end: end };
+        var scaling = document.getElementById("atScaling").value || "scale";
+        return { template: currentTemplate(), hours: hours, end: end, scaling: scaling };
     }
 
     function syncPlanBounds(plan) {
@@ -21685,15 +21781,19 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
     function renderPreview(rebuild) {
         var input = readInputs();
         var efforts = effortPhases(input.template);
-        var buffers = (input.template.phases || []).filter(function (p) { return p.kind === "buffer"; }).length;
-        var weeks = (input.template.phases || []).reduce(function (a, p) { return a + (Number(p.durationWeeks) || 0); }, 0);
+        var weeks = efforts.reduce(function (a, p) { return a + (Number(p.durationWeeks) || 0); }, 0);
 
         var hint = document.getElementById("atTemplateHint");
+        var groupLabel = input.template.phaseWorld === false ? "booking type" : "phase";
         hint.textContent = "v" + input.template.version +
             (input.template.returnType ? " · " + input.template.returnType : "") +
-            " · " + efforts.length + " phase" + (efforts.length === 1 ? "" : "s") +
-            (buffers ? " · " + buffers + " buffer" + (buffers === 1 ? "" : "s") : "") +
+            " · " + efforts.length + " " + groupLabel + (efforts.length === 1 ? "" : "s") +
             " · " + weeks + "w";
+        document.getElementById("atScalingHint").textContent =
+            "Baseline: " + (Number(input.template.baselineHours) || 120) + "h" +
+            (input.scaling === "scale"
+                ? " · scales the demand shape to the target hours."
+                : " · keeps the template’s baseline hours.");
 
         if (isNaN(input.end.getTime())) {
             previewPlan = null;
@@ -21702,7 +21802,7 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
         }
 
         if (rebuild || !previewPlan) {
-            previewPlan = schedule(input.template, input.hours, input.end);
+            previewPlan = schedule(input.template, input.hours, input.end, input.scaling);
         }
 
         var plan = previewPlan;
@@ -21762,20 +21862,21 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
         var beforeWindow = dayIndex(plan.start) < 0;
 
         document.getElementById("atPreview").innerHTML =
-            '<div class="ApplyPreview-title">Resulting plan</div>' +
+            '<div class="ApplyPreview-title">Resulting demand · ' + plan.appliedHours + 'h' +
+                (plan.scalingMode === "scale" ? " · scaled" : " · baseline preserved") + '</div>' +
             '<div class="ApplyPreview-bar">' + bar + "</div>" +
             '<div class="ApplyPreview-dates"><span>Starts ' + formatDate(plan.start) + "</span><span></span><span>Ends " + formatDate(plan.end) + "</span></div>" +
-            '<table class="ApplyPreview-table"><thead><tr><th>Block</th><th>Share</th><th>Hours</th><th>Workers</th><th>Dates</th></tr></thead><tbody>' +
+            '<table class="ApplyPreview-table"><thead><tr><th>' + (input.template.phaseWorld === false ? "Booking type" : "Phase") + '</th><th>Share</th><th>Hours</th><th>Workers</th><th>Dates</th></tr></thead><tbody>' +
                 rows + "</tbody></table>" +
-            '<div class="ApplyPreview-note">Dates come from template durations and buffers (5 working days per week). Edit any date to override for this engagement only.' +
+            '<div class="ApplyPreview-note">Dates come from the template duration and are calculated backwards from the deadline. Edit any date to override for this engagement only.' +
                 (beforeWindow ? " This plan starts before the visible Gantt window." : "") + "</div>";
     }
 
     function applyTemplate() {
+        var input = readInputs();
         if (!previewPlan) {
-            var input = readInputs();
             if (isNaN(input.end.getTime())) return;
-            previewPlan = schedule(input.template, input.hours, input.end);
+            previewPlan = schedule(input.template, input.hours, input.end, input.scaling);
         }
         var plan = previewPlan;
 
@@ -21807,6 +21908,13 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
         });
 
         window.jobPlan.setPlan(units, workers);
+        var notice = document.getElementById("templateAppliedNotice");
+        if (notice) {
+            notice.textContent = "Applied " + input.template.name + " v" + input.template.version +
+                " · " + plan.appliedHours + "h · " + workers.length +
+                " unassigned resource row" + (workers.length === 1 ? "" : "s") + ".";
+            notice.style.display = "block";
+        }
         closeModal();
         document.getElementById("teamSectionContent").scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -21833,7 +21941,8 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
     }
 
     document.getElementById("atTemplate").innerHTML = TEMPLATES.map(function (t) {
-        return '<option value="' + t.id + '">' + esc(t.name) + "</option>";
+        return '<option value="' + t.id + '">' + esc(t.name) + " · v" + t.version +
+            (t.phaseWorld === false ? " · Unphased" : " · Phases available") + "</option>";
     }).join("");
 
     var defaultEnd = new Date(window.jobPlan.ganttStart);
@@ -21842,7 +21951,7 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
 
     document.getElementById("applyTemplateBtn").addEventListener("click", openModal);
     document.getElementById("atApply").addEventListener("click", applyTemplate);
-    ["atTemplate", "atHours", "atEnd"].forEach(function (elementId) {
+    ["atTemplate", "atHours", "atEnd", "atScaling"].forEach(function (elementId) {
         document.getElementById(elementId).addEventListener("input", function () {
             previewPlan = null;
             renderPreview(true);

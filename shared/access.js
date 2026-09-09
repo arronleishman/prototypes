@@ -11,9 +11,9 @@
 
   function hasAccess() {
     var key = configuredKey();
-    if (!key) return true; // no key configured = open (dev fallback)
+    if (!key) return false; // missing config must fail closed
     try {
-      return sessionStorage.getItem(STORAGE_KEY) === key || localStorage.getItem(STORAGE_KEY) === key;
+      return sessionStorage.getItem(STORAGE_KEY) === key;
     } catch (e) {
       return false;
     }
@@ -24,7 +24,6 @@
     if (!expected || key !== expected) return false;
     try {
       sessionStorage.setItem(STORAGE_KEY, expected);
-      localStorage.setItem(STORAGE_KEY, expected);
     } catch (e) {}
     return true;
   }
@@ -52,6 +51,7 @@
       .replace(/\/mocks\/[^/]+$/i, '/')
       .replace(/\/feedback\.html$/i, '/')
       .replace(/\/changelog\.html$/i, '/')
+      .replace(/\/details\.html$/i, '/')
       .replace(/\/index\.html$/i, '/');
     if (!/\/$/.test(path)) path += '/';
     return location.origin + path;
@@ -67,6 +67,15 @@
   function feedbackUrlWithKey(prototypeId) {
     var url = new URL('feedback.html', siteRootUrl());
     if (prototypeId) url.searchParams.set('id', prototypeId);
+    var key = configuredKey();
+    if (key) url.searchParams.set('key', key);
+    return url.href;
+  }
+
+  function detailsUrlWithKey(prototypeId, tab) {
+    var url = new URL('details.html', siteRootUrl());
+    if (prototypeId) url.searchParams.set('id', prototypeId);
+    if (tab) url.searchParams.set('tab', tab);
     var key = configuredKey();
     if (key) url.searchParams.set('key', key);
     return url.href;
@@ -118,8 +127,7 @@
 
   /** Call on hub + feedback pages. Returns false if page should stop booting. */
   function requireInternalAccess(options) {
-    if (!configuredKey()) return true;
-    if (absorbKeyFromUrl() || hasAccess()) return true;
+    if (configuredKey() && (absorbKeyFromUrl() || hasAccess())) return true;
     renderGate(options);
     return false;
   }
@@ -131,6 +139,7 @@
     requireInternalAccess: requireInternalAccess,
     hubUrlWithKey: hubUrlWithKey,
     feedbackUrlWithKey: feedbackUrlWithKey,
+    detailsUrlWithKey: detailsUrlWithKey,
     configuredKey: configuredKey,
   };
 })(window);

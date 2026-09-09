@@ -22,9 +22,11 @@
   --surface-primary: #4f3fa0;
   --surface-primary-emphasis: #403577;
   --surface-primary-accent: #dedaf4;
+  --surface-strong: #3d425c;
   --surface-accent: #e2e3e9;
   --surface-default: #fff;
-  --surface-subtle-light: #f8f8f8;
+  --surface-subtle-light: #f7f7fa;
+  --surface-page: #f8f8f8;
   --surface-subtle-dark: #f1f1f4;
   --surface-list-item-hover: #f1f1f4;
   --surface-list-item-selected-light: #f0effb;
@@ -51,6 +53,7 @@
   /* Phase trait colours copied from the current templating mock */
   --phase-depreciation: #ff8d6c;
   --phase-gather-organize: #0295b2;
+  --phase-gather: #0295b2;
   --phase-roll-binder: #7c3aed;
   --phase-ext-prepare: #16a34a;
   --phase-ext-review: #ea580c;
@@ -60,11 +63,11 @@
   --phase-intl-prepare: #6366f1;
   --phase-intl-review: #14b8a6;
   --phase-prep-trait: #dc2626;
-  --phase-tax-detailed-review: #9333ea;
-  --phase-tax-prep: #0d9488;
+  --phase-tax-detailed-review: #7059e8;
+  --phase-tax-prep: #167983;
   --phase-tax-project-leader: #d97706;
   --phase-tax-signer-approval: #2563eb;
-  --phase-tax-technical-review: #64748b;
+  --phase-tax-technical-review: #4c5172;
   /* Legacy seeded examples retain their existing planning colours. */
   --phase-prep: #ff8d6c;
   --phase-first-review: #0295b2;
@@ -78,6 +81,7 @@
   --text-accent: #4c5172;
   --text-emphasis: #3d425c;
   --text-subtle: #6a708f;
+  --icon-default: #222430;
   --text-primary: #4f3fa0;
   --text-link-color: #7059e8;
   --text-inverse: #fff;
@@ -147,50 +151,98 @@ a { color: var(--text-link-color); text-decoration: none; }
 .App { display: flex; min-height: 100vh; }
 .NavBar {
   width: 48px; flex: 0 0 48px; background: var(--deep-black);
-  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow: clip;
+  display: flex; position: sticky; top: 0; height: 100vh; overflow: hidden;
 }
-.NavBar-logoWrapper { height: 42px; margin: 5px 5px 24px; display: flex; align-items: center; justify-content: center; }
-.NavBar-dayshapeIcon { background: var(--surface-default); border-radius: 2px; height: 38px; width: 38px; object-fit: cover; }
+.NavBar.is-subnav-open { width: 252px; flex-basis: 252px; }
+.NavBar-rail {
+  width: 48px; flex: 0 0 48px; background: var(--deep-black);
+  display: flex; flex-direction: column; min-height: 100%;
+}
+.NavBar-logoWrapper { height: 60px; padding: 4px 4px 16px; display: flex; align-items: flex-start; justify-content: center; }
+.NavBar-dayshapeIcon { background: var(--surface-default); border-radius: 4px; height: 40px; width: 40px; object-fit: cover; }
 .NavBar-mainMenuContent { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1 1 auto; }
-.NavBar-li { min-height: 42px; border-left: solid 3px transparent; position: relative; }
-.NavBar-li:hover, .NavBar-li.is-active { border-left-color: var(--text-inverse); }
+.NavBar-li { min-height: 44px; position: relative; }
+.NavBar-li.is-active::before { content: ""; position: absolute; left: 0; top: 0; width: 4px; height: 44px; background: var(--text-inverse); z-index: 1; }
 .NavBar-menuLink {
-  height: 40px; padding: 12px 10px; color: var(--text-inverse);
-  display: flex; align-items: center; cursor: pointer; text-decoration: none;
+  width: 48px; height: 44px; padding: 12px; color: var(--text-inverse);
+  display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none;
 }
 .NavBar-menuLink:hover { color: var(--text-inverse); text-decoration: none; }
-.NavBar-menuIcon { width: 1.25rem; text-align: center; font-size: 1.1rem; }
+.NavBar-menuIcon { width: 20px; text-align: center; font-size: 20px; }
 .NavBar-li:hover .NavBar-menuIcon, .NavBar-li.is-active .NavBar-menuIcon { font-weight: 900; }
-.NavBar-hr { border: 0; border-top: solid 1px var(--neutral-grey-d3); margin: 12px 8px; opacity: .6; }
-.NavBar-menuBottom { display: flex; flex-direction: column; align-items: flex-end; padding-bottom: 12px; }
+.NavBar-hr { border: 0; border-top: solid 1px var(--neutral-grey-d3); margin: 16px 4px; opacity: .8; }
+.NavBar-menuBottom { display: flex; flex-direction: column; align-items: flex-end; padding-bottom: 20px; }
 .NavBar-expandButton {
-  background: var(--neutral-deep-grey-14); height: 31px; width: 40px;
+  background: var(--neutral-deep-grey-14); height: 34px; width: 40px;
   display: flex; align-items: center; justify-content: center;
   border-radius: 5px 0 0 5px; border: 0; cursor: pointer; color: var(--deep-black);
 }
+.NavBar.is-subnav-open .NavBar-expandButton i { transform: rotate(180deg); }
 .NavBar-li[data-tooltip]::after {
   content: attr(data-tooltip);
-  position: absolute; left: 52px; top: 50%; transform: translateY(-50%);
+  position: absolute; left: 40px; top: 50%; transform: translateY(-50%);
   background: var(--deep-black); color: var(--text-inverse); font-size: var(--font-size-small);
   font-weight: var(--font-weight-semibold); padding: 6px 10px;
   border-radius: var(--border-radius-default); white-space: nowrap;
   opacity: 0; visibility: hidden; pointer-events: none; z-index: 200;
 }
 .NavBar-li:hover[data-tooltip]::after { opacity: 1; visibility: visible; }
+.NavBar-subnav {
+  display: none; width: 204px; flex: 0 0 204px; min-height: 100%;
+  padding: 0 8px; background: var(--deep-black);
+  border-left: 1px solid rgba(255,255,255,.22); color: var(--text-inverse);
+}
+.NavBar.is-subnav-open .NavBar-subnav { display: block; }
+.NavBar-subnavHeader {
+  display: flex; align-items: center; gap: 8px; height: 48px;
+  padding: 0 4px; font-size: var(--font-size-medium); font-weight: var(--font-weight-regular);
+}
+.NavBar-subnavBack {
+  width: 16px; padding: 0; border: 0; background: transparent;
+  color: var(--text-inverse); cursor: pointer; font-size: 12px;
+}
+.NavBar-subnavGroup { padding: 0 0 12px; border-bottom: 1px solid rgba(255,255,255,.42); }
+.NavBar-subnavGroup + .NavBar-subnavGroup { padding-top: 12px; }
+.NavBar-subnavLink {
+  display: flex; align-items: center; min-height: 40px; padding: 0 4px 0 8px;
+  border-left: 3px solid transparent; color: var(--text-inverse);
+  font-size: var(--font-size-medium); font-weight: var(--font-weight-regular);
+}
+.NavBar-subnavLink:hover, .NavBar-subnavLink.is-active {
+  border-left-color: var(--text-inverse); color: var(--text-inverse);
+}
 
 .Main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
 .TopBar {
   background: var(--surface-default); border-bottom: 1px solid var(--border-subtle);
-  padding: 14px var(--padding-lg); display: flex; align-items: center; gap: var(--padding-md);
-  position: sticky; top: 0; z-index: 30;
+  padding: 24px; display: flex; align-items: flex-start; gap: 12px;
+  min-height: 83px; height: 83px; position: sticky; top: 0; z-index: 30;
 }
-.TopBar-title { font-size: var(--font-size-h1); font-weight: var(--font-weight-semibold); margin: 0; }
+.TopBar-title {
+  font-size: 24px; line-height: 33px; font-weight: var(--font-weight-regular);
+  color: var(--text-default); margin: 0;
+}
+.TopBar-action {
+  width: 90px; height: 35px; min-height: 35px; padding: 0 12px; gap: 8px;
+  font-size: 14px; font-weight: var(--font-weight-regular);
+}
 .TopBar-spacer { flex: 1 1 auto; }
-.TopBar-mode { display: none; align-items: center; gap: var(--padding-sm); }
-.TopBar-mode.is-visible { display: inline-flex; }
-.TopBar-modeLabel {
-  font-size: var(--font-size-small); font-weight: var(--font-weight-semibold); color: var(--text-subtle);
+.Btn-iconOnly.TopBar-back {
+  position: relative; flex: 0 0 32px; width: 32px; height: 32px; min-height: 32px;
+  padding: 0; border: 0; border-radius: var(--border-radius-circle);
+  background: var(--surface-accent); color: var(--icon-default);
+  font-size: 14px;
 }
+.Btn-iconOnly.TopBar-back:hover { background: var(--surface-accent); color: var(--icon-default); }
+.TopBar-back::after {
+  content: attr(data-tooltip); position: absolute; left: 50%; top: calc(100% + 6px);
+  transform: translateX(-50%); z-index: 200; pointer-events: none;
+  padding: 6px 10px; border-radius: var(--border-radius-default);
+  background: var(--deep-black); color: var(--text-inverse);
+  font-size: var(--font-size-small); font-weight: var(--font-weight-semibold);
+  white-space: nowrap; opacity: 0; visibility: hidden;
+}
+.TopBar-back:hover::after, .TopBar-back:focus-visible::after { opacity: 1; visibility: visible; }
 
 .Btn {
   font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold);
@@ -201,6 +253,13 @@ a { color: var(--text-link-color); text-decoration: none; }
 .Btn:hover { background: var(--surface-subtle-dark); }
 .Btn--primary { background: var(--surface-primary); color: var(--text-inverse); border-color: var(--surface-primary); }
 .Btn--primary:hover { background: var(--primary-emphasis); }
+.Btn--tertiary {
+  background: var(--surface-subtle-dark); color: var(--text-primary); border-color: var(--border-subtle);
+  font-weight: var(--font-weight-regular);
+}
+.Btn--tertiary:hover:not(:disabled) {
+  background: var(--surface-accent); color: var(--text-primary); border-color: var(--border-subtle);
+}
 .Btn--primary:disabled, .Btn:disabled { opacity: .45; cursor: not-allowed; }
 .Btn--sm { padding: 4px 10px; font-size: var(--font-size-small); min-height: 28px; }
 .Btn-iconOnly {
@@ -209,6 +268,12 @@ a { color: var(--text-link-color); text-decoration: none; }
   color: var(--icon-subtle); cursor: pointer;
 }
 .Btn-iconOnly:hover { background: var(--surface-list-item-hover); color: var(--text-accent); }
+.Btn-iconOnly.Btn--tertiary {
+  background: var(--surface-subtle-dark); color: var(--text-primary); border-color: var(--border-subtle);
+}
+.Btn-iconOnly.Btn--tertiary:hover:not(:disabled) {
+  background: var(--surface-accent); color: var(--text-primary); border-color: var(--border-subtle);
+}
 .Btn-iconOnly:disabled { opacity: .45; cursor: not-allowed; }
 .Btn-iconOnly.is-locked {
   color: var(--text-primary); background: var(--surface-list-item-selected-light);
@@ -217,8 +282,48 @@ a { color: var(--text-link-color); text-decoration: none; }
 
 .Page { padding: var(--padding-lg); flex: 1 1 auto; }
 .Page--narrow { width: 100%; max-width: none; }
-#screen-catalogue { width: 100%; }
+#screen-catalogue { width: 100%; padding: 24px; background: var(--surface-page); }
 #screen-wizard { padding-bottom: calc(60px + var(--padding-lg)); }
+
+.CatalogueTable {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  box-shadow: none;
+  overflow: hidden;
+  font-size: var(--font-size-medium);
+  table-layout: fixed;
+}
+.CatalogueTable thead th {
+  height: 40px; min-height: 40px; padding: 12px; font-size: 14px; line-height: 21px;
+  background: var(--surface-subtle-dark); border-top: 0;
+  box-shadow: inset 0 -2px 0 var(--border-default);
+  vertical-align: middle;
+}
+.CatalogueTable tbody td {
+  height: 48px; min-height: 40px; padding: 12px; font-size: 14px; line-height: 21px;
+  background: var(--surface-default); vertical-align: middle;
+}
+.CatalogueTable th:nth-child(1), .CatalogueTable td:nth-child(1) { width: 46.7%; }
+.CatalogueTable th:nth-child(2), .CatalogueTable td:nth-child(2) { width: 50.3%; }
+.CatalogueSort { display: inline-flex; align-items: center; gap: 4px; }
+.CatalogueSort i { color: var(--text-emphasis); font-size: 9px; }
+.CataloguePagination {
+  display: flex; align-items: center; justify-content: flex-end; gap: var(--padding-xs);
+  min-height: 59px; height: 59px; padding: 12px 8px; border: 1px solid var(--border-subtle);
+  border-top: 0; border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+  background: var(--surface-default); color: var(--text-accent); font-size: 14px; line-height: 21px;
+}
+.CataloguePagination:empty { display: none; }
+.CataloguePageButton {
+  width: 33px; height: 35px; min-height: 35px; padding: 0 12px;
+  border: 1px solid var(--border-default); color: var(--text-accent);
+  background: var(--surface-default); font-size: 14px;
+}
+.CataloguePageButton:hover:not(:disabled) { background: var(--surface-subtle-dark); }
+.CataloguePageButton.is-current {
+  color: var(--text-inverse); background: var(--surface-primary);
+  border-color: var(--surface-primary);
+}
 
 .Pill {
   display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px;
@@ -235,6 +340,17 @@ a { color: var(--text-link-color); text-decoration: none; }
 .Field-hint { font-size: var(--font-size-small); color: var(--text-subtle); line-height: 1.4; }
 .Field-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 @media (max-width: 900px) { .Field-row { grid-template-columns: 1fr; } }
+.DetailsFields { display: flex; flex-direction: column; gap: var(--padding-md); max-width: 720px; }
+.DetailsFields .Field { margin-bottom: 0; gap: 8px; }
+.DetailsFields .Field-row { width: 100%; gap: var(--padding-lg); }
+.DetailsFields .Field-row--single { grid-template-columns: minmax(0, 1fr); }
+.DetailsFields .Input, .DetailsFields .Select,
+.DetailsFields .TreeInput .Input { min-height: 40px; }
+.DetailsFields .TreeInput-append { min-height: 40px; }
+.DetailsFields .BtnGroup { min-height: 40px; }
+.DetailsFields .Field > .BtnGroup { align-self: flex-start; width: max-content; }
+.DetailsFields .BtnGroup > button { min-height: 38px; padding-inline: 16px; }
+.DetailsFields .BusinessUnitTree { max-width: 690px; }
 .Input, .Select {
   border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
   background: var(--surface-default); padding: 0 12px; min-height: 35px;
@@ -324,49 +440,170 @@ a { color: var(--text-link-color); text-decoration: none; }
 .TreeInput-empty {
   padding: 10px 12px; color: var(--text-subtle); font-size: var(--font-size-small);
 }
+.BusinessUnitTree .TreeInput-treeView { max-height: 280px; }
+.BusinessUnitTree .TreeInput-node { padding-left: 8px; }
+.BusinessUnitTree .TreeInput-node--root { padding-left: 4px; font-weight: var(--font-weight-semibold); }
+.BusinessUnitTree .TreeInput-node--child { padding-left: 20px; }
+.BusinessUnitTree-chevron {
+  display: inline-grid; place-items: center; width: 16px; height: 16px; flex: 0 0 16px;
+  color: var(--icon-subtle); font-size: 11px;
+}
+.BusinessUnitTree-chevron.is-empty { visibility: hidden; }
 .ValidIcon { color: var(--text-success); margin-left: var(--padding-xxs); }
 .BtnGroup {
   display: inline-flex; align-items: stretch; width: auto;
-  border: 1px solid var(--surface-primary-emphasis);
+  border: 1px solid var(--border-default);
   border-radius: var(--border-radius-default); overflow: hidden; background: var(--surface-default);
 }
 .BtnGroup > button {
-  appearance: none; flex: 0 0 auto; border: 0; margin: 0; min-height: 35px; padding: 0 14px;
+  appearance: none; flex: 0 0 auto; border: 0; margin: 0; min-height: 35px; padding: 0 12px;
   background: transparent; color: var(--text-accent); font: inherit;
-  font-size: var(--font-size-small); font-weight: var(--font-weight-semibold); cursor: pointer;
+  font-size: 14px; font-weight: var(--font-weight-regular); cursor: pointer;
 }
-.BtnGroup > button + button { border-left: 1px solid var(--surface-primary-emphasis); }
+.BtnGroup > button + button { border-left: 1px solid var(--border-default); }
 .BtnGroup > button:hover { background: var(--surface-subtle-dark); }
 .BtnGroup > button.is-active {
-  background: var(--surface-primary-emphasis); color: var(--text-inverse);
+  background: var(--surface-strong); color: var(--text-inverse);
 }
-.BtnGroup > button.is-active:hover { background: var(--surface-primary-emphasis); }
+.BtnGroup > button.is-active:hover { background: var(--surface-strong); }
 .DurationControl { display: flex; align-items: stretch; gap: var(--padding-xs); max-width: 450px; }
 .DurationControl > .Input { width: 120px; flex: 0 0 120px; }
 .DurationControl .BtnGroup > button { min-width: 64px; }
 .DurationEquivalent { min-height: 18px; margin-top: 2px; }
 .StructureTimeline {
-  margin-bottom: var(--padding-md); padding: var(--padding-md);
+  display: flex; flex-direction: column; gap: var(--padding-sm);
+  margin-bottom: var(--padding-md); padding: var(--padding-sm);
   border: 1px solid var(--border-subtle); border-radius: var(--border-radius-default);
   background: var(--surface-subtle-light);
 }
 .StructureTimeline-title {
-  margin: 0 0 var(--padding-sm); font-size: var(--font-size-medium);
+  margin: 0; font-size: var(--font-size-medium);
   font-weight: var(--font-weight-semibold);
 }
 .StructureTimeline-head {
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--padding-sm);
-  margin-bottom: var(--padding-sm);
+  min-height: 28px;
 }
 .StructureTimeline-head .StructureTimeline-title { margin: 0; }
+.TimelineActions {
+  display: inline-flex; align-items: center; gap: var(--padding-xs); flex-wrap: nowrap;
+}
+.TimelineActions .Btn:disabled {
+  opacity: .55; cursor: not-allowed;
+}
+.PhaseTimelineEditor {
+  display: flex; flex-direction: column; gap: var(--padding-md);
+  margin: 0; padding: var(--padding-md);
+  background: var(--surface-default); border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+}
+.StructureTimeline-scale { margin: 0; }
+.PhaseTimelineEditor-empty {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--padding-sm); color: var(--text-subtle); font-size: var(--font-size-small);
+}
+.PhaseTimelineEditor-help {
+  display: flex; align-items: center; gap: var(--padding-sm);
+  color: var(--text-default); font-size: var(--font-size-extra-small);
+}
+.PhaseTimelineEditor-help strong,
+.PhaseTimelineEditor-help span { color: var(--text-default); }
+.PhaseTimelineEditor-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) 101px 156px 35px;
+  align-items: center; column-gap: 20px; row-gap: var(--padding-xs);
+  padding: var(--padding-sm) var(--padding-xs);
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 2px;
+  background: var(--surface-default);
+}
+.PhaseTimelineEditor-row + .PhaseTimelineEditor-row {
+  margin-top: 0;
+}
+.PhaseTimelineEditor-rows { display: flex; flex-direction: column; gap: 0; }
+.PhaseTimelineEditor-row.is-dragging { opacity: .5; }
+.PhaseTimelineEditor-row.is-dropTarget { box-shadow: inset 0 2px 0 0 var(--border-primary); }
+.PhaseTimelineEditor-name {
+  display: flex; align-items: center; gap: var(--padding-sm); min-width: 0;
+}
+.PhaseTimelineEditor-handle {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: 0 0 16px; width: 16px; height: 16px; padding: 0;
+  border: 0; background: transparent; color: var(--icon-default);
+  cursor: grab; border-radius: var(--border-radius-default);
+}
+.PhaseTimelineEditor-handle:hover,
+.PhaseTimelineEditor-handle:focus-visible {
+  background: var(--surface-list-item-hover); color: var(--text-accent);
+}
+.PhaseTimelineEditor-handle:active { cursor: grabbing; }
+.PhaseTimelineEditor-name .Select { flex: 1 1 auto; min-width: 0; }
+.PhaseTimelineEditor-dot {
+  width: 10px; height: 10px; flex: 0 0 10px; border-radius: 50%;
+  background: var(--surface-emphasis);
+}
+.PhaseWeightControl {
+  display: flex; align-items: stretch; gap: 20px; min-width: 0;
+}
+.PhaseWeightControl .input-group { width: 101px; flex: 0 0 101px; }
+.PhaseWeightControl .input-group .Input { width: 66px; max-width: 66px; flex-basis: 66px; }
+.PhaseWeightControl .Input { min-width: 0; }
+.PhaseWeightLock { flex: 0 0 30px; width: 30px; height: 35px; min-height: 35px; }
+.PhaseWeightLock.is-locked { color: var(--text-primary); background: var(--surface-accent); }
+.PhaseTimelineEditor .PhaseWeightLock,
+.PhaseTimelineEditor .Btn-iconOnly { width: 35px; min-width: 35px; }
+.ReviewPhaseWeights {
+  display: flex; flex-wrap: wrap; gap: var(--padding-xs) var(--padding-md);
+  margin-top: var(--padding-sm); color: var(--text-subtle); font-size: var(--font-size-small);
+}
+.ReviewPhaseWeight { display: inline-flex; align-items: center; gap: 6px; }
+.ReviewPhaseWeight-dot {
+  width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%;
+}
+.PhaseTimelineVisual { margin: 0 0 var(--padding-sm); }
+.PhaseTimelineVisual:empty { display: none; }
+.PhaseTimelineVisual-label {
+  margin: 0 0 var(--padding-xxs); color: var(--text-subtle);
+  font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold);
+}
+.PhaseTimelineVisual-track {
+  display: flex; width: 100%; height: 32px; overflow: hidden;
+  border: 1px solid var(--border-subtle); border-radius: var(--border-radius-default);
+  background: var(--surface-subtle-dark);
+}
+.PhaseTimelineVisual-segment {
+  display: flex; align-items: center; justify-content: center; min-width: 0;
+  padding: 0 8px; color: var(--text-default); font-size: var(--font-size-extra-small);
+  font-weight: var(--font-weight-semibold); white-space: nowrap; overflow: hidden;
+  cursor: help;
+  text-overflow: ellipsis; border-right: 1px solid rgba(255,255,255,.35);
+}
+.PhaseTimelineVisual-segment:last-child { border-right: 0; }
+.PhaseTimelineVisual-segment:focus-visible { outline: 2px solid var(--border-primary); outline-offset: -2px; }
+@media (max-width: 700px) {
+  .TimelineActions { width: 100%; }
+  .StructureTimeline { gap: var(--padding-sm); }
+  .StructureTimeline-head { align-items: flex-start; }
+  .StructureTimeline-headEnd { width: 100%; margin-left: 0; justify-content: flex-start; }
+  .PhaseTimelineEditor-row { grid-template-columns: minmax(0, 1fr) 96px 118px 35px; column-gap: var(--padding-sm); }
+  .PhaseTimelineEditor { padding: var(--padding-sm); }
+  .PhaseTimelineEditor-row > .input-group { width: 96px; }
+  .PhaseTimelineEditor-row > .input-group .Input {
+    width: 61px; max-width: 61px; flex-basis: 61px;
+  }
+  .PhaseWeightControl { gap: var(--padding-xs); }
+  .PhaseWeightControl .input-group { width: 80px; flex-basis: 80px; }
+  .PhaseWeightControl .input-group .Input {
+    width: 45px; max-width: 45px; flex-basis: 45px;
+  }
+}
 .SequenceToggle {
-  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
-  color: var(--text-default); font-size: var(--font-size-small); cursor: pointer;
+  display: inline-flex; align-items: center; gap: var(--padding-md); white-space: nowrap;
+  color: var(--text-default); font-size: var(--font-size-medium); cursor: pointer;
 }
 .SequenceToggle input { width: 16px; height: 16px; margin: 0; accent-color: var(--primary); }
 .StructureTimeline-headEnd {
   display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap;
-  gap: var(--padding-xs) var(--padding-sm); min-width: 0; margin-left: auto;
+  gap: var(--padding-md); min-width: 0; margin-left: auto;
 }
 .SequenceWarning { display: flex; align-items: center; gap: 6px; margin: 0; min-width: 0; text-align: left; }
 
@@ -524,46 +761,32 @@ a { color: var(--text-link-color); text-decoration: none; }
 .Wizard-content { min-width: 0; width: 100%; }
 .Stepper--vertical {
   flex-direction: column;
+  gap: var(--padding-xs);
+  align-items: stretch;
   width: 100%;
 }
 .Stepper-step { display: flex; min-width: 0; }
 .Stepper--vertical .Stepper-step {
-  display: grid;
-  grid-template-columns: 27px minmax(0, 1fr);
-  column-gap: var(--padding-sm);
-  min-height: 96px;
-  border-radius: var(--border-radius-default);
-}
-.Stepper--vertical .Stepper-step[role="button"] { cursor: pointer; }
-.Stepper--vertical .Stepper-step[role="button"]:not(.Stepper-step--current):hover {
-  background: var(--surface-list-item-hover);
+  flex-direction: row;
+  align-items: stretch;
+  gap: var(--padding-md);
+  width: 100%;
 }
 .Stepper--vertical .Stepper-step.is-locked .Stepper-info { opacity: 0.5; }
-.Stepper-step[role="button"]:focus-visible {
-  outline: 2px solid var(--border-primary-focus);
-  outline-offset: var(--padding-xs);
-}
-.Stepper-rail {
-  display: flex; flex-direction: row; align-items: center; justify-content: center;
-  gap: var(--padding-sm); width: 100%; flex-shrink: 0;
-}
-.Stepper--vertical .Stepper-rail {
-  grid-column: 1;
-  grid-row: 1;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: var(--padding-xs);
-  width: 27px;
-  height: 100%;
+.Stepper-indicator {
+  display: flex; flex-direction: column; align-items: center; gap: var(--padding-xs);
+  flex-shrink: 0; min-height: 67px; align-self: stretch;
 }
 .Stepper-marker {
   box-sizing: border-box; width: 27px; height: 27px; border-radius: var(--border-radius-circle);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   font-size: var(--font-size-small); font-weight: var(--font-weight-semibold); line-height: 1;
   transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+  cursor: pointer;
 }
 .Stepper-marker:hover { transform: scale(1.06); }
 .Stepper-marker:focus-visible { outline: 2px solid var(--border-primary-focus); outline-offset: 3px; }
+.Stepper-step.is-locked .Stepper-marker { cursor: not-allowed; opacity: .5; }
 .Stepper-marker--current { background: var(--surface-primary); color: var(--text-inverse); }
 .Stepper-marker--future { background: var(--surface-container-default); color: var(--text-emphasis); }
 .Stepper-marker--current:hover { background: var(--surface-primary-emphasis); }
@@ -588,15 +811,10 @@ a { color: var(--text-link-color); text-decoration: none; }
 .Stepper-line--inactive::after { background-color: var(--border-subtle); }
 .Stepper-line--success::after { background-color: var(--border-success); }
 .Stepper-line--error::after { background-color: var(--border-danger); }
-.Stepper-info { display: flex; flex-direction: column; gap: var(--padding-xxs); flex: 1 1 auto; min-width: 0; }
+.Stepper-info { display: flex; flex-direction: column; gap: var(--padding-xxs); flex: 1 1 auto; min-width: 0; padding-bottom: var(--padding-sm); overflow-wrap: anywhere; }
 .Stepper-info--centered { align-items: center; text-align: center; }
-.Stepper--vertical .Stepper-info {
-  grid-column: 2;
-  grid-row: 1;
-  align-items: flex-start;
-  text-align: left;
-  padding: 3px 0 var(--padding-md);
-}
+.Stepper--vertical .Stepper-info { align-items: flex-start; text-align: left; padding-top: 3px; }
+.Stepper--vertical .Stepper-step--last .Stepper-indicator { min-height: 0; }
 .Stepper-title {
   margin: 0; font-size: var(--font-size-h3); font-weight: var(--font-weight-semibold);
   line-height: normal; color: var(--text-emphasis);
@@ -633,21 +851,22 @@ a { color: var(--text-link-color); text-decoration: none; }
 .ShapeTimeline { display: flex; flex-direction: column; gap: var(--padding-sm); margin: 0; }
 .ShapeLabels {
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: var(--padding-xs);
-  min-width: 0; font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold);
+  min-width: 0; height: 16px; font-size: 10px; font-weight: var(--font-weight-regular);
   color: var(--text-subtle);
 }
 .ShapeLabels span { min-width: 0; white-space: normal; line-height: 1.25; }
-.ShapeLabels span:nth-child(2) { color: var(--text-primary); text-align: center; }
+.ShapeLabels span:nth-child(2) { color: var(--text-primary); text-align: center; font-weight: var(--font-weight-semibold); }
 .ShapeLabels span:last-child { color: var(--text-default); text-align: right; }
 .ShapeBarWrap { position: relative; min-width: 0; }
 .ShapeBar {
-  display: flex; width: 100%; height: 48px; border-radius: var(--border-radius-default); overflow: hidden;
-  background: var(--surface-subtle-dark); border: 1px solid var(--border-subtle);
+  display: flex; width: 100%; height: 40px; border-radius: var(--border-radius-default); overflow: hidden;
+  background: var(--surface-subtle-dark);
 }
 .ShapeSeg {
   display: flex; align-items: center; justify-content: center; overflow: hidden;
-  color: var(--text-inverse); font-size: var(--font-size-small); font-weight: var(--font-weight-semibold);
+  color: var(--text-default); font-size: var(--font-size-small); font-weight: var(--font-weight-semibold);
   border-right: 1px solid var(--surface-inverse-divider); min-width: 0;
+  padding: 0 8px; white-space: nowrap; text-overflow: ellipsis;
   cursor: pointer;
 }
 /* Uncoloured segments sit on a light background, so the inverse divider would vanish */
@@ -681,11 +900,23 @@ a { color: var(--text-link-color); text-decoration: none; }
   border-bottom: 1px solid var(--border-default);
   transform: translateX(-50%) rotate(45deg);
 }
-.ShapeLegend { display: flex; flex-wrap: wrap; gap: 10px 14px; }
-.ShapeLegend-item {
-  display: inline-flex; align-items: center; gap: 6px; font-size: var(--font-size-small); color: var(--text-subtle);
+.GanttConstraintTooltip {
+  position: fixed; z-index: 2100; max-width: 280px; padding: 8px 10px;
+  background: var(--deep-black); color: var(--text-inverse);
+  border-radius: var(--border-radius-default); box-shadow: var(--shadow-footer);
+  font-size: var(--font-size-small); line-height: 1.4; pointer-events: none;
+  opacity: 0; visibility: hidden; transform: translate(-50%, calc(-100% - 10px));
+  transition: opacity .15s ease, visibility .15s ease;
 }
-.ShapeLegend-swatch { width: 10px; height: 10px; border-radius: 2px; flex: 0 0 auto; }
+.GanttConstraintTooltip.is-open { opacity: 1; visibility: visible; }
+@media (prefers-reduced-motion: reduce) {
+  .GanttConstraintTooltip { transition: none; }
+}
+.ShapeLegend { display: flex; flex-wrap: wrap; gap: 10px 16px; min-height: 18px; }
+.ShapeLegend-item {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-subtle);
+}
+.ShapeLegend-swatch { width: 9px; height: 9px; border-radius: 2px; flex: 0 0 auto; }
 .ReviewMeta {
   display: flex; align-items: center; gap: var(--padding-md);
   padding: var(--padding-md);
@@ -699,12 +930,34 @@ a { color: var(--text-link-color); text-decoration: none; }
   font-size: var(--font-size-h2); font-weight: var(--font-weight-semibold);
 }
 .ReviewMeta-detail { color: var(--text-subtle); }
+.ReviewSummaryCard {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--padding-lg);
+  min-height: 93px; padding: 24px; margin-bottom: 24px;
+  border: 1px solid var(--border-subtle); border-radius: var(--border-radius-default);
+  background: var(--surface-default);
+}
+.ReviewSummary-copy { min-width: 0; flex: 1 1 auto; }
+.ReviewSummary-title {
+  margin: 0 0 var(--padding-xxs); color: var(--text-default);
+  font-size: var(--font-size-h2); font-weight: var(--font-weight-semibold);
+}
+.ReviewSummary-detail { color: var(--text-subtle); font-size: var(--font-size-small); }
+.ReviewSummary-metrics { display: flex; align-items: stretch; flex: 0 0 auto; }
+.ReviewSummary-metric {
+  min-width: 101px; padding: 0 16px; text-align: center;
+  display: flex; flex-direction: column; justify-content: center; gap: 2px;
+}
+.ReviewSummary-metric + .ReviewSummary-metric { border-left: 1px solid var(--border-subtle); }
+.ReviewSummary-metricLabel { color: var(--text-subtle); font-size: var(--font-size-small); }
+.ReviewSummary-metricValue { color: var(--text-default); font-size: var(--font-size-h2); font-weight: var(--font-weight-semibold); }
 .ReviewSection {
   border: 1px solid var(--border-subtle);
   border-radius: var(--border-radius-default);
   overflow: hidden;
   background: var(--surface-default);
 }
+.ReviewSummaryCard + .ReviewSection { margin-top: 0; }
+.ReviewSection + .ReviewSection { margin-top: 24px; }
 .ReviewSection-head {
   display: flex; align-items: center; gap: var(--padding-sm);
   padding: 10px var(--padding-sm);
@@ -712,6 +965,12 @@ a { color: var(--text-link-color); text-decoration: none; }
   background: var(--surface-subtle-light);
 }
 .ReviewSection-title { flex: 1 1 auto; font-weight: var(--font-weight-semibold); }
+#reviewSummary > .ReviewSection:first-of-type { padding: var(--padding-md); }
+#reviewSummary > .ReviewSection:first-of-type .ReviewSection-head {
+  padding: 0 0 var(--padding-md);
+  border-bottom: 0;
+  background: transparent;
+}
 .ReviewPhase {
   display: grid; grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
   gap: var(--padding-md); padding: var(--padding-sm);
@@ -724,6 +983,29 @@ a { color: var(--text-link-color); text-decoration: none; }
 }
 .ReviewSlots { display: flex; flex-direction: column; gap: var(--padding-xs); }
 .ReviewSlot { color: var(--text-accent); }
+.ReviewDemandGroup { padding: 24px 24px 0; }
+.ReviewDemandGroup:last-child { padding-bottom: 24px; }
+.ReviewDemandGroup-title {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 12px;
+  color: var(--text-emphasis); font-size: 14px; font-weight: var(--font-weight-semibold);
+}
+.ReviewDemandTable {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  border: 1px solid var(--border-subtle); border-radius: var(--border-radius-default);
+  overflow: hidden; font-size: 11px;
+}
+.ReviewDemandTable th {
+  height: 40px; padding: 0 12px; background: var(--surface-subtle-light);
+  border-bottom: 1px solid var(--border-subtle); color: var(--text-emphasis);
+  text-align: left; font-weight: var(--font-weight-semibold);
+}
+.ReviewDemandTable th:not(:first-child), .ReviewDemandTable td:not(:first-child) { text-align: right; }
+.ReviewDemandTable td {
+  height: 40px; padding: 0 12px; border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-accent); vertical-align: middle;
+}
+.ReviewDemandTable tr:last-child td { border-bottom: 0; }
+.ReviewDemandResource { color: var(--text-emphasis); font-weight: var(--font-weight-semibold); }
 
 .Input[aria-invalid="true"], .Select[aria-invalid="true"] {
   border-color: var(--border-danger);
@@ -895,68 +1177,114 @@ a { color: var(--text-link-color); text-decoration: none; }
 }
 .MiniGantt-toolbar {
   display: flex; align-items: center; gap: var(--padding-sm);
-  padding: 10px var(--padding-sm); border-bottom: 1px solid var(--border-subtle);
+  height: 52px; min-height: 52px; padding: 0 var(--padding-sm); border-bottom: 1px solid var(--border-subtle);
   background: var(--surface-subtle-light);
 }
-.MiniGantt-title { flex: 1 1 auto; min-width: 0; font-weight: var(--font-weight-semibold); }
-.MiniGantt-help { padding: 8px var(--padding-sm); color: var(--text-subtle); font-size: var(--font-size-small); border-bottom: 1px solid var(--border-subtle); }
+.MiniGantt-title { flex: 1 1 auto; min-width: 0; color: var(--text-emphasis); font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold); }
+.MiniGantt-help {
+  display: flex; align-items: center; min-height: 47px; padding: 0 var(--padding-sm);
+  color: var(--text-subtle); font-size: 11px; border-bottom: 1px solid var(--border-subtle);
+}
 .MiniGantt-scroll { overflow-x: auto; overflow-y: visible; }
-.MiniGantt-canvas { min-width: 100%; width: max-content; --label-w: 230px; --week-w: 40px; }
+.MiniGantt-canvas { min-width: 100%; width: max-content; --label-w: 192px; --week-w: 40px; }
 .MiniGantt-months, .MiniGantt-weeks, .MiniGantt-row { display: flex; min-width: 100%; }
 .MiniGantt-corner, .MiniGantt-label {
   position: sticky; left: 0; z-index: 4; flex: 0 0 var(--label-w); width: var(--label-w);
-  border-right: 1px solid var(--border-default); background: var(--surface-default);
+  border-right: 1px solid var(--border-subtle); background: var(--surface-default);
 }
 .MiniGantt-corner {
   display: flex; align-items: center; padding: 0 var(--padding-sm);
-  color: var(--text-subtle); font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold);
-  text-transform: uppercase; letter-spacing: .03em;
+  color: var(--text-emphasis); font-size: 12px; font-weight: var(--font-weight-semibold);
+}
+.MiniGantt-weeks .MiniGantt-corner {
+  position: sticky; left: 0; z-index: 5; transform: translateY(-12px);
 }
 .MiniGantt-month {
-  height: 28px; display: flex; align-items: center; justify-content: center;
-  border-right: 1px solid var(--border-default); border-bottom: 1px solid var(--border-subtle);
+  height: 24px; display: flex; align-items: center; justify-content: center;
+  border-right: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
   background: var(--surface-subtle-light); color: var(--text-accent);
-  font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold);
+  font-size: 10px; font-weight: var(--font-weight-semibold);
 }
 .MiniGantt-week {
-  flex: 0 0 var(--week-w); width: var(--week-w); height: 25px;
+  flex: 0 0 var(--week-w); width: var(--week-w); height: 24px;
   display: flex; align-items: center; justify-content: center;
   border-right: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-default);
   color: var(--text-subtle); font-size: 10px; background: var(--surface-default);
 }
-.MiniGantt-row { min-height: 46px; border-bottom: 1px solid var(--border-subtle); }
-.MiniGantt-row:last-child { border-bottom: 0; }
+.MiniGantt-row { min-height: 44px; height: 44px; border-bottom: 1px solid var(--border-subtle); }
 .MiniGantt-label {
-  display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center;
-  gap: 8px; padding: 5px 8px;
+  display: grid; grid-template-columns: 9px minmax(0, 1fr) auto; align-items: center;
+  gap: 6px; height: 44px; padding: 4px 8px 4px 10px;
 }
 .MiniGantt-labelCopy { min-width: 0; }
-.MiniGantt-labelTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--font-weight-semibold); font-size: var(--font-size-small); }
-.MiniGantt-labelMeta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-subtle); font-size: var(--font-size-extra-small); }
-.MiniGantt-actions { display: inline-flex; }
-.MiniGantt-actions .Btn-iconOnly { width: 28px; height: 28px; }
+.MiniGantt-labelTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-emphasis); font-weight: var(--font-weight-semibold); font-size: 11px; }
+.MiniGantt-labelMeta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-subtle); font-size: 10px; }
+.MiniGantt-actions { display: inline-flex; gap: 4px; }
+.MiniGantt-actions .Btn-iconOnly {
+  width: 24px; height: 24px; min-height: 24px; font-size: 11px;
+  background: var(--surface-container-default); border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+.MiniGantt-actions .Btn-iconOnly:hover {
+  background: var(--surface-container-hover); color: var(--text-primary);
+}
 .MiniGantt-track {
-  position: relative; flex: 0 0 calc(var(--weeks) * var(--week-w)); width: calc(var(--weeks) * var(--week-w));
+  position: relative; flex: 0 0 calc(var(--weeks) * var(--week-w)); width: calc(var(--weeks) * var(--week-w)); height: 44px;
   background-color: var(--surface-default);
-  background-image: repeating-linear-gradient(to right, transparent 0, transparent calc(var(--week-w) - 1px), var(--border-subtle) calc(var(--week-w) - 1px), var(--border-subtle) var(--week-w));
+  background-image: linear-gradient(to right, transparent calc(100% - 1px), var(--border-subtle) calc(100% - 1px));
+  background-size: var(--week-w) 100%; background-repeat: repeat-x;
   cursor: crosshair;
 }
 .MiniGantt-track:hover { background-color: var(--surface-list-item-hover); }
 .MiniGantt-bar {
-  position: absolute; top: 7px; height: 32px; min-width: 8px;
+  position: absolute; top: 10px; height: 24px; min-width: 8px;
   display: flex; align-items: center; justify-content: center;
-  border-radius: var(--border-radius-default); color: var(--text-inverse);
+  border-radius: var(--border-radius-default); color: var(--text-default);
   font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold);
-  cursor: grab; overflow: hidden; user-select: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.14);
+  cursor: grab; overflow: hidden; user-select: none;
 }
 .MiniGantt-bar:active { cursor: grabbing; }
 .MiniGantt-resize {
   position: absolute; top: 0; bottom: 0; width: 8px; cursor: ew-resize;
-  background: rgba(255,255,255,.18);
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.75); color: currentColor; font-size: 12px; line-height: 1;
 }
 .MiniGantt-resize--left { left: 0; }
 .MiniGantt-resize--right { right: 0; }
-.MiniGantt-empty { padding: 28px var(--padding-md); text-align: center; color: var(--text-subtle); }
+.MiniGantt-empty {
+  min-height: 299px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--padding-xs); padding: var(--padding-lg) var(--padding-md); text-align: center;
+  color: var(--text-subtle);
+}
+.MiniGantt-emptyIcon {
+  display: grid; place-items: center; width: 64px; height: 64px; margin-bottom: var(--padding-xs);
+  border-radius: 50%; background: var(--surface-subtle-light); color: var(--text-primary);
+  font-size: 28px;
+}
+.MiniGantt-emptyTitle {
+  color: var(--text-default); font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-semibold);
+}
+.MiniGantt-emptyCopy { max-width: 420px; font-size: var(--font-size-small); }
+.MiniGantt-empty .Btn { margin-top: var(--padding-xs); }
+.MiniGantt-addRow { display: flex; min-width: 100%; min-height: 44px; border-top: 1px solid var(--border-subtle); }
+.MiniGantt-label--add {
+  display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+  position: sticky; left: 0; z-index: 4; flex: 0 0 var(--label-w); width: var(--label-w);
+  border-right: 1px solid var(--border-default); background: var(--surface-default);
+  color: var(--text-primary); font-size: var(--font-size-small); font-weight: var(--font-weight-semibold);
+}
+.MiniGantt-addTrack {
+  display: flex; flex: 0 0 calc(var(--weeks) * var(--week-w)); width: calc(var(--weeks) * var(--week-w));
+  background: var(--surface-default);
+  background-image: linear-gradient(to right, transparent calc(100% - 1px), var(--border-subtle) calc(100% - 1px));
+  background-size: var(--week-w) 100%; background-repeat: repeat-x;
+}
+.MiniGantt-addWeek {
+  flex: 0 0 var(--week-w); width: var(--week-w); min-height: 44px; padding: 0;
+  border: 0; border-right: 1px solid transparent; background: transparent; cursor: pointer;
+}
+.MiniGantt-addWeek:hover, .MiniGantt-addWeek:focus-visible { background: var(--surface-list-item-hover); outline: 2px solid var(--border-primary); outline-offset: -2px; }
 .MiniGantt-readonly .MiniGantt-track { cursor: default; }
 .MiniGantt-readonly .MiniGantt-bar { cursor: default; }
 
@@ -967,30 +1295,53 @@ a { color: var(--text-link-color); text-decoration: none; }
 }
 .ModalOverlay.is-open { display: flex; }
 .Modal {
-  width: min(640px, 100%); max-height: calc(100vh - 2 * var(--padding-lg));
+  width: min(648px, 100%); max-height: calc(100vh - 2 * var(--padding-lg));
   display: flex; flex-direction: column; overflow: visible;
   border-radius: var(--border-radius-default); background: var(--surface-default); box-shadow: var(--shadow-footer);
 }
+.Modal--small { width: min(440px, 100%); }
+.ExitConfirm-copy { margin: 0; color: var(--text-accent); line-height: 1.5; }
 .Modal-header, .Modal-footer { display: flex; align-items: center; gap: var(--padding-sm); padding: var(--padding-md); }
 .Modal-header { border-bottom: 1px solid var(--border-default); }
 .Modal-title { flex: 1 1 auto; margin: 0; font-size: var(--font-size-h2); font-weight: var(--font-weight-regular); }
-.Modal-body { padding: var(--padding-md); overflow-y: auto; }
+.Modal .Modal-header .Btn-iconOnly { width: 28px; height: 28px; min-height: 28px; }
+.Modal-body { display: flex; flex-direction: column; gap: var(--padding-md); padding: var(--padding-md); overflow-y: auto; }
 .Modal-footer { justify-content: space-between; border-top: 1px solid var(--border-default); }
 .Modal-actions { display: flex; gap: var(--padding-sm); margin-left: auto; }
 .ModalFieldRow {
-  display: grid; grid-template-columns: 190px minmax(0, 1fr); align-items: center;
-  gap: var(--padding-sm); min-height: 50px;
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: 4px; min-height: 0;
 }
-.ModalFieldRow .Field-label { font-weight: var(--font-weight-regular); }
+.ModalFieldRow .Field-label { color: var(--text-emphasis); font-size: 14px; font-weight: var(--font-weight-semibold); }
+.ModalFieldRow .Select { min-height: 35px; }
+.ModalFieldRow .Field-hint { font-size: 14px; }
 .RequiredMark { color: var(--text-danger); }
 .TypeSelectWrap { position: relative; display: flex; align-items: center; }
-.TypeSelectWrap .Select { padding-left: 30px; }
-.TypeSelectSwatch { position: absolute; left: 12px; z-index: 1; width: 8px; height: 8px; border-radius: 50%; background: transparent; pointer-events: none; }
+.TypeSelectWrap .Select { padding-left: 12px; }
+.Modal .TypeSelectSwatch { display: none; }
 .ModalStack { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .ModalNumField { display: flex; align-items: center; gap: 8px; }
 .ModalNumField > .Input { width: 120px; flex: 0 0 120px; }
 .ModalNumField-unit { color: var(--text-subtle); font-size: var(--font-size-small); }
-.Modal .DurationControl .BtnGroup > button { min-width: 56px; padding: 0 10px; }
+.EffortControl { display: flex; align-items: stretch; gap: 8px; max-width: 557px; }
+.EffortControl > .Input { width: 249px; flex: 1 1 auto; }
+.EffortControl-group { flex: 0 0 300px; min-height: 35px; border-color: var(--border-default); }
+.EffortControl-group > button { flex: 1 1 0; min-height: 35px; padding: 0 12px; font-size: 14px; }
+.EffortControl-group > button.is-active { background: var(--surface-strong); color: var(--text-inverse); }
+.EffortControl-group > button + button { border-left-color: var(--border-default); }
+.Modal .DurationControl { width: 560px; max-width: 100%; gap: 8px; }
+.Modal .DurationControl > .Input { width: 180px; flex: 0 0 180px; }
+.Modal .DurationControl .BtnGroup { flex: 1 1 auto; min-height: 35px; border-color: var(--border-default); }
+.Modal .DurationControl .BtnGroup > button { flex: 1 1 0; min-width: 0; min-height: 35px; padding: 0 12px; font-size: 14px; }
+.Modal .DurationControl .BtnGroup > button.is-active { background: var(--surface-strong); color: var(--text-inverse); }
+.Modal .DurationControl .BtnGroup > button + button { border-left-color: var(--border-default); }
+.ModalFieldRow#resourceStartRow .ModalNumField > .Input { width: 180px; flex: 0 0 180px; }
+.ModalFieldRow#resourceStartRow .ModalNumField-unit { display: none; }
+#resourceModalOverlay .Modal-body { padding: 16px 24px; }
+#resourceModalOverlay .Modal-footer .Btn:not(.Btn--primary) {
+  border-color: var(--border-primary); color: var(--text-primary); background: var(--surface-default);
+}
+.Modal .DurationControl .BtnGroup > button { min-width: 56px; padding: 0 12px; }
 .Modal .DurationEquivalent { min-height: 0; }
 
 .hidden { display: none !important; }
@@ -1001,7 +1352,6 @@ a { color: var(--text-link-color); text-decoration: none; }
 .Muted { color: var(--text-subtle); }
 .Strong { font-weight: var(--font-weight-semibold); }
 .Stack { display: flex; flex-direction: column; gap: 12px; }
-.RowActions { text-align: center; }
 .Toast {
   position: fixed; bottom: var(--padding-lg); left: 50%; z-index: 2000;
   transform: translateX(-50%); max-width: 90%; padding: 10px var(--padding-md);
@@ -1014,6 +1364,66 @@ a { color: var(--text-link-color); text-decoration: none; }
   margin: 18px 0 8px; font-size: var(--font-size-extra-small); font-weight: var(--font-weight-bold);
   letter-spacing: .04em; text-transform: uppercase; color: var(--text-subtle);
 }
+
+/* Demand Templates catalogue — match the supplied Figma frame */
+#screen-catalogue {
+  padding: 24px;
+  background: var(--surface-page);
+}
+#screen-catalogue .CatalogueTable {
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  box-shadow: none;
+  overflow: hidden;
+  table-layout: fixed;
+  font-size: 14px;
+}
+#screen-catalogue .CatalogueTable thead th {
+  height: 40px;
+  min-height: 40px;
+  padding: 12px;
+  background: var(--surface-subtle-dark);
+  border-top: 0;
+  box-shadow: inset 0 -2px 0 var(--border-default);
+  font-size: 14px;
+  line-height: 21px;
+  vertical-align: middle;
+}
+#screen-catalogue .CatalogueTable tbody td {
+  height: 48px;
+  min-height: 40px;
+  padding: 12px;
+  background: var(--surface-default);
+  font-size: 14px;
+  line-height: 21px;
+  vertical-align: middle;
+}
+#screen-catalogue .CatalogueTable th:nth-child(1),
+#screen-catalogue .CatalogueTable td:nth-child(1) { width: 46.7%; }
+#screen-catalogue .CatalogueTable th:nth-child(2),
+#screen-catalogue .CatalogueTable td:nth-child(2) { width: 53.3%; }
+#screen-catalogue .CataloguePagination {
+  height: 59px;
+  min-height: 59px;
+  padding: 12px 8px;
+  gap: 16px;
+  border: 1px solid var(--border-subtle);
+  border-top: 0;
+  border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+  background: var(--surface-default);
+  color: var(--text-accent);
+  font-size: 14px;
+  line-height: 21px;
+}
+#screen-catalogue .CataloguePageButton {
+  width: 33px;
+  height: 35px;
+  min-height: 35px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
 @media (max-width: 860px) {
   .Wizard-layout { grid-template-columns: 1fr; max-width: 760px; }
   .Wizard-sidebar { position: static; }
@@ -1024,7 +1434,20 @@ a { color: var(--text-link-color); text-decoration: none; }
   .Page { padding: var(--padding-md); }
   .Stepper-description { display: none; }
   .Stepper--horizontal .Stepper-step { gap: var(--padding-xs); }
-  .Stepper-rail { gap: var(--padding-xs); }
+  .ReviewSummaryCard { align-items: flex-start; flex-direction: column; }
+  .ReviewSummary-copy { width: 100%; }
+  .ReviewSummary-title,
+  .ReviewSummary-detail,
+  .ReviewSummary-metricValue { overflow-wrap: anywhere; }
+  .ReviewSummary-metrics {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%;
+  }
+  .ReviewSummary-metric { flex: 1 1 0; min-width: 0; padding-inline: 8px; }
+  .ReviewSummary-metric:nth-child(3) {
+    grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--border-subtle);
+    margin-top: var(--padding-sm); padding-top: var(--padding-sm);
+    text-align: left; align-items: flex-start;
+  }
   .SegRow {
     grid-template-columns: minmax(110px, 1fr) 107px 107px 35px 35px;
     gap: var(--padding-xs); padding: 8px;
@@ -1047,11 +1470,20 @@ a { color: var(--text-link-color); text-decoration: none; }
   .SlotTable { min-width: 620px; }
   .PhaseCard-body { overflow-x: auto; }
 }
+@media (max-width: 420px) {
+  .ReviewSummary-metrics { grid-template-columns: 1fr; }
+  .ReviewSummary-metric + .ReviewSummary-metric {
+    border-left: 0; border-top: 1px solid var(--border-subtle);
+    margin-top: var(--padding-sm); padding-top: var(--padding-sm);
+  }
+  .ReviewSummary-metric:nth-child(3) { margin-top: var(--padding-sm); }
+}
 </style>
 </head>
 <body>
 <div class="App">
-  <nav class="NavBar" aria-label="Main">
+  <nav class="NavBar" id="navBar" aria-label="Main">
+    <div class="NavBar-rail">
     <div class="NavBar-logoWrapper">
       <img class="NavBar-dayshapeIcon" src="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzEuOTUgMTcxLjQ4Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmNTkzYjt9PC9zdHlsZT48L2RlZnM+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTExLjczLDUzLjYzYTczLjA3LDczLjA3LDAsMCwxLDAsNjUuMzRDMTIxLjE1LDExMS4yMSwxMjgsOTkuNDYsMTI4LDg2LjNTMTIxLjE1LDYxLjM5LDExMS43Myw1My42M1oiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik03OS40OCw0NC44OWE3NCw3NCwwLDAsMSwwLDgzLjM4LDQyLjMxLDQyLjMxLDAsMCwwLDAtODMuMzhaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNTIuMDUsNDRoLS4xNnY4NC4zNWguMTZDNzEuMzQsMTI4LjM0LDg3LDEwOS40Niw4Nyw4Ni4xNlM3MS4zNCw0NCw1Mi4wNSw0NFoiLz48L3N2Zz4=" alt="Dayshape" />
     </div>
@@ -1062,63 +1494,66 @@ a { color: var(--text-link-color); text-decoration: none; }
       <li class="NavBar-li" data-tooltip="Dashboard"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-solid fa-chart-line"></i></a></li>
       <li class="NavBar-li" data-tooltip="Schedule"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-regular fa-calendar"></i></a></li>
       <li class="NavBar-li" data-tooltip="Portfolios"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-solid fa-folder-open"></i></a></li>
-      <li class="NavBar-li is-active" data-tooltip="Demand templates">
-        <a class="NavBar-menuLink" href="#" onclick="showScreen('catalogue'); return false;" title="Demand templates">
-          <i class="NavBar-menuIcon fa-solid fa-clipboard-list"></i>
-        </a>
-      </li>
       <li class="NavBar-li" data-tooltip="Create"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-solid fa-plus"></i></a></li>
       <li class="NavBar-li" data-tooltip="Reports"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-regular fa-file-lines"></i></a></li>
       <li class="NavBar-li" data-tooltip="Referential data"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-solid fa-folder-tree"></i></a></li>
-      <li class="NavBar-li" data-tooltip="Configuration"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-solid fa-wrench"></i></a></li>
+      <li class="NavBar-li is-active" data-tooltip="Demand templates">
+        <a class="NavBar-menuLink" href="#" onclick="toggleNavSubnav(); return false;" title="Demand templates">
+          <i class="NavBar-menuIcon fa-solid fa-wrench"></i>
+        </a>
+      </li>
       <li class="NavBar-li" data-tooltip="Profile"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-regular fa-user"></i></a></li>
       <li><hr class="NavBar-hr" /></li>
       <li class="NavBar-li" data-tooltip="Help"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-regular fa-circle-question"></i></a></li>
       <li class="NavBar-li" data-tooltip="Log out"><a class="NavBar-menuLink" href="#"><i class="NavBar-menuIcon fa-solid fa-right-from-bracket"></i></a></li>
     </ul>
     <div class="NavBar-menuBottom">
-      <button class="NavBar-expandButton" type="button" aria-label="Expand navigation"><i class="fa-solid fa-chevron-right"></i></button>
+        <button class="NavBar-expandButton" type="button" aria-label="Expand navigation" onclick="toggleNavSubnav()"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
+    </div>
+    <aside class="NavBar-subnav" aria-label="Demand templates">
+      <div class="NavBar-subnavHeader">
+        <button class="NavBar-subnavBack" type="button" aria-label="Collapse menu" onclick="closeNavSubnav()">
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+        </button>
+        <span>Configuration</span>
+      </div>
+      <div class="NavBar-subnavGroup">
+        <a class="NavBar-subnavLink is-active" href="#" onclick="requestWizardExit(); return false;">Demand templates</a>
+      </div>
+      <div class="NavBar-subnavGroup">
+        <a class="NavBar-subnavLink" href="#" onclick="openWizard(); return false;">Template builder</a>
+        <a class="NavBar-subnavLink" href="#" onclick="toast('Apply template to job'); return false;">Apply template to job</a>
+      </div>
+    </aside>
   </nav>
 
   <div class="Main">
     <header class="TopBar">
-      <h1 class="TopBar-title" id="topTitle">Demand profile templates</h1>
+      <button class="Btn-iconOnly TopBar-back hidden" id="topBarBack" type="button"
+        data-tooltip="Back" onclick="wizardHeaderBack()" aria-label="Back">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      </button>
+      <h1 class="TopBar-title" id="topTitle">Demand Templates</h1>
       <div class="TopBar-spacer"></div>
-      <div class="TopBar-mode" id="topBarMode" aria-label="Template type">
-        <span class="TopBar-modeLabel">Template type</span>
-        <div class="BtnGroup" role="group" aria-label="Template type">
-          <button type="button" id="modePhases" class="is-active" onclick="setPhaseWorld(true)">With phases</button>
-          <button type="button" id="modeFlat" onclick="setPhaseWorld(false)">Without phases</button>
-        </div>
-      </div>
+      <button class="Btn Btn--primary TopBar-action" id="topCreate" type="button"
+        onclick="openWizard(true)">
+        <i class="fa-solid fa-plus" aria-hidden="true"></i> Create
+      </button>
     </header>
 
     <!-- Catalogue -->
     <div class="Page screen is-active" id="screen-catalogue">
-      <div class="Toolbar">
-        <div class="Search">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input id="catalogueSearch" type="search" placeholder="Search demand profiles…" oninput="renderCatalogue()" />
-        </div>
-        <div class="Toolbar-spacer"></div>
-        <button class="Btn Btn--primary" type="button" onclick="openWizard(true)">
-          <i class="fa-solid fa-plus"></i> Create demand template
-        </button>
-      </div>
-      <table class="u-table table-hover">
+      <table class="u-table table-hover CatalogueTable">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Version</th>
-            <th>Return type</th>
-            <th>Status</th>
-            <th>Shape</th>
-            <th style="width:90px"></th>
+            <th><span class="CatalogueSort"><i class="fa-solid fa-sort" aria-hidden="true"></i>Name</span></th>
+            <th><span class="CatalogueSort"><i class="fa-solid fa-sort" aria-hidden="true"></i>Resource Requirements</span></th>
           </tr>
         </thead>
         <tbody id="catalogueBody"></tbody>
       </table>
+      <div id="cataloguePagination" class="CataloguePagination"></div>
     </div>
 
     <!-- Wizard -->
@@ -1134,9 +1569,10 @@ a { color: var(--text-link-color); text-decoration: none; }
             <h2 class="Wizard-stepTitle">Details</h2>
             <p class="Wizard-stepIntro">Set the template details. The timeline length is shaped by the resource requirements you add next.</p>
 
-            <div class="Field-row Wizard-metaFields">
+            <div class="DetailsFields">
+            <div class="Field-row">
               <div class="Field">
-                <label class="Field-label" for="wp-name">Name *</label>
+                <label class="Field-label" for="wp-name">Name <span class="RequiredMark">*</span></label>
                 <input class="Input" id="wp-name" type="text" placeholder="Corporate Return demand profile"
                   aria-describedby="nameError"
                   oninput="onNameInput(this)" />
@@ -1151,8 +1587,33 @@ a { color: var(--text-link-color); text-decoration: none; }
                   <option value="1065">1065</option>
                   <option value="Trust">Trust</option>
                 </select>
-                <span class="Field-hint" id="returnHint">Optional. Stored for search and reporting; it does not decide the phases.</span>
+                <span class="Field-hint" id="returnHint">Optional custom field used for matching and reporting.</span>
               </div>
+            </div>
+            <div class="Field-row Field-row--single">
+              <div class="Field DetailsBusinessUnit">
+                <label class="Field-label" for="wp-business-unit">Business unit <span class="RequiredMark">*</span></label>
+                <div class="TreeInput BusinessUnitTree" id="businessUnitPicker">
+                  <div class="input-group">
+                    <input class="Input TreeInput-text" id="wp-business-unit" type="text"
+                      autocomplete="off" placeholder="Business Unit"
+                      aria-describedby="businessUnitError"
+                      onfocus="openBusinessUnitPicker()"
+                      oninput="filterBusinessUnitPicker(this.value)"
+                      onkeydown="businessUnitKeydown(event)"
+                      onblur="blurBusinessUnitPicker()" />
+                    <button class="TreeInput-append" type="button" title="Choose business unit"
+                      onmousedown="event.preventDefault()" onclick="toggleBusinessUnitPicker()">
+                      <i class="fa-solid fa-building" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  <div class="TreeInput-treeView" id="businessUnitTreeView" role="tree"
+                    onmousedown="event.preventDefault()"></div>
+                </div>
+                <p class="InlineError hidden" id="businessUnitError">Choose a business unit.</p>
+                <span class="Field-hint">Controls where this template is available through configuration.</span>
+              </div>
+            </div>
             </div>
 
           </div>
@@ -1167,10 +1628,6 @@ a { color: var(--text-link-color); text-decoration: none; }
                 <div class="StructureTimeline-head">
                   <strong class="StructureTimeline-title">Demand shape</strong>
                   <div class="StructureTimeline-headEnd">
-                    <p class="InlineError SequenceWarning hidden" id="sequenceWarning" role="alert">
-                      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-                      <span id="sequenceWarningText"></span>
-                    </p>
                     <label class="SequenceToggle">
                       <input type="checkbox" id="allowOverlap" checked onchange="setAllowOverlap(this.checked)">
                       <span>Allow work to overlap</span>
@@ -1195,9 +1652,20 @@ a { color: var(--text-link-color); text-decoration: none; }
                         <span class="SequenceHelp-note" id="sequenceHelpNote"></span>
                       </span>
                     </span>
+                    <p class="InlineError SequenceWarning hidden" id="sequenceWarning" role="alert">
+                      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                      <span id="sequenceWarningText"></span>
+                    </p>
+                    <div class="TimelineActions" aria-label="Timeline actions">
+                      <button class="Btn Btn--primary Btn--sm" id="addPhaseButton" type="button" onclick="addPhaseFromTimeline()">
+                        <i class="fa-solid fa-plus" aria-hidden="true"></i> Add Phase
+                      </button>
+                    </div>
                   </div>
                 </div>
+                <div id="timelineScale" class="ShapeTimeline StructureTimeline-scale"></div>
                 <div class="ShapeTimeline" id="timelineShapeVisual"></div>
+                <div id="phaseTimelineEditor" class="PhaseTimelineEditor"></div>
               </div>
               <div id="slotEditor" class="Stack"></div>
             </div>
@@ -1214,7 +1682,7 @@ a { color: var(--text-link-color); text-decoration: none; }
 
       <div class="Wizard-footer">
         <div class="Wizard-footerInner">
-          <button class="Btn" type="button" onclick="showScreen('catalogue')">Cancel</button>
+          <button class="Btn" type="button" onclick="requestWizardExit()">Cancel</button>
           <span class="Wizard-footerSummary" id="wizardFooterSummary"></span>
           <div class="Wizard-footerActions">
             <button class="Btn hidden" type="button" id="wizardBack" onclick="wizardNav(-1)">Back</button>
@@ -1227,6 +1695,26 @@ a { color: var(--text-link-color); text-decoration: none; }
 </div>
 
 <div id="shapeSegPopover" class="ShapeSegPopover" role="tooltip" aria-hidden="true"><div class="ShapeSegPopover-arrow"></div><div class="ShapeSegPopover-content"></div></div>
+<div id="ganttConstraintTooltip" class="GanttConstraintTooltip" role="status" aria-live="polite" aria-hidden="true"></div>
+<div class="ModalOverlay" id="exitConfirmOverlay" role="presentation" onclick="if(event.target===this)closeExitConfirm()">
+  <div class="Modal Modal--small" role="dialog" aria-modal="true" aria-labelledby="exitConfirmTitle">
+    <div class="Modal-header">
+      <h2 class="Modal-title" id="exitConfirmTitle">Exit template creation?</h2>
+      <button class="Btn-iconOnly" type="button" aria-label="Close" onclick="closeExitConfirm()">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="Modal-body">
+      <p class="ExitConfirm-copy">Are you sure you want to exit? Leaving now will delete your unsaved progress.</p>
+    </div>
+    <div class="Modal-footer">
+      <div class="Modal-actions">
+        <button class="Btn" type="button" onclick="closeExitConfirm()">Keep editing</button>
+        <button class="Btn Btn--primary" type="button" onclick="confirmWizardExit()">Exit and discard</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="ModalOverlay" id="resourceModalOverlay" role="presentation" onclick="if(event.target===this)closeResourceModal()">
   <div class="Modal" role="dialog" aria-modal="true" aria-labelledby="resourceModalTitle">
     <div class="Modal-header">
@@ -1237,28 +1725,43 @@ a { color: var(--text-link-color); text-decoration: none; }
     </div>
     <div class="Modal-body">
       <div class="ModalFieldRow">
-        <label class="Field-label" for="resourceTypeSelect"><span id="resourceTypeLabel">Phase</span> <span class="RequiredMark">*</span></label>
+        <label class="Field-label" for="resourceTypeSelect"><span id="resourceTypeLabel">Phase</span></label>
         <div class="TypeSelectWrap">
           <span class="TypeSelectSwatch" id="resourceTypeSwatch" aria-hidden="true"></span>
-          <select class="Select" id="resourceTypeSelect" onchange="syncResourceModalConfirm()"></select>
+          <select class="Select" id="resourceTypeSelect" onchange="onResourceTypeChange()"></select>
         </div>
+        <span class="Field-hint" id="resourceTypeHint">The phase colour is inherited by the timeline segment.</span>
       </div>
       <div class="ModalFieldRow">
-        <label class="Field-label" for="resourceGradeSelect">Grade <span class="RequiredMark">*</span></label>
+        <label class="Field-label" for="resourceGradeSelect">Grade</label>
         <select class="Select" id="resourceGradeSelect" onchange="syncResourceModalConfirm()"></select>
+        <span class="Field-hint">Choose the grade required for this work.</span>
+      </div>
+      <div class="ModalFieldRow ResourceRoleField hidden">
+        <label class="Field-label" for="resourceRoleSelect">Project role</label>
+        <select class="Select" id="resourceRoleSelect" onchange="syncResourceModalConfirm()">
+          <option value="">Not set</option>
+        </select>
+        <span class="Field-hint">Optional role used when the same resource works across different types of work.</span>
       </div>
       <div class="ModalFieldRow">
-        <label class="Field-label" for="resourceWeightInput">Weighting <span class="RequiredMark">*</span></label>
+        <label class="Field-label" for="resourceWeightInput">Effort</label>
         <div class="ModalStack">
-          <div class="ModalNumField">
-            <input class="Input" id="resourceWeightInput" type="number" min="0" max="100" step="1" value="100" oninput="syncResourceModalConfirm()">
-            <span class="ModalNumField-unit">%</span>
+          <div class="EffortControl">
+            <input class="Input" id="resourceWeightInput" type="number" min="0" max="100" step="1" value="100"
+              oninput="resourceModalState.weightTouched = true; syncResourceModalConfirm()">
+            <div class="BtnGroup EffortControl-group" role="group" aria-label="Effort unit">
+              <button type="button" data-effort-unit="percentage" class="is-active" aria-pressed="true"
+                onclick="setResourceEffortUnit('percentage')">Percentage</button>
+              <button type="button" data-effort-unit="hours" aria-pressed="false"
+                onclick="setResourceEffortUnit('hours')">Hours</button>
+            </div>
           </div>
-          <span class="Field-hint" id="resourceWeightHint">The requirements in this phase must total 100%.</span>
+          <span class="Field-hint" id="resourceWeightHint">Requirements in this phase must total 100%.</span>
         </div>
       </div>
       <div class="ModalFieldRow" id="resourceWeeksRow">
-        <label class="Field-label" for="resourceWeeksInput">Duration <span class="RequiredMark">*</span></label>
+        <label class="Field-label" for="resourceWeeksInput">Duration</label>
         <div class="ModalStack">
           <div class="DurationControl">
             <input class="Input" id="resourceWeeksInput" type="number" min="1" step="1" value="4" oninput="syncResourceModalConfirm()">
@@ -1273,10 +1776,11 @@ a { color: var(--text-link-color); text-decoration: none; }
         </div>
       </div>
       <div class="ModalFieldRow" id="resourceStartRow">
-        <label class="Field-label" for="resourceStartInput">Start week <span class="RequiredMark">*</span></label>
+        <label class="Field-label" for="resourceStartInput">Start week</label>
         <div class="ModalStack">
           <div class="ModalNumField">
-            <input class="Input" id="resourceStartInput" type="number" min="1" step="1" value="1" oninput="syncResourceModalConfirm()">
+            <input class="Input" id="resourceStartInput" type="number" min="1" step="1" value="1"
+              oninput="resourceModalState.startTouched = true; syncResourceModalConfirm()">
             <span class="ModalNumField-unit">of the template</span>
           </div>
           <span class="Field-hint" id="resourceStartHint">Week 1 is the start of the template.</span>
@@ -1284,10 +1788,9 @@ a { color: var(--text-link-color); text-decoration: none; }
       </div>
     </div>
     <div class="Modal-footer">
-      <span><span class="RequiredMark">*</span> Mandatory fields</span>
       <div class="Modal-actions">
         <button class="Btn" type="button" onclick="closeResourceModal()">Cancel</button>
-        <button class="Btn Btn--primary" id="resourceModalConfirm" type="button" onclick="confirmResourceModal()" disabled>Confirm</button>
+        <button class="Btn Btn--primary" id="resourceModalConfirm" type="button" onclick="confirmResourceModal()" disabled>Add</button>
       </div>
     </div>
   </div>
@@ -1308,6 +1811,15 @@ const GRADES = [
   'Associate'
 ];
 const ROLES = ['Tax Analyst', 'Senior Tax Analyst', 'Tax Manager', 'Tax Partner'];
+const BUSINESS_UNIT_TREE = [
+  { name: 'Audit and Assurance', children: [{ name: 'Audit' }, { name: 'Assurance' }] },
+  { name: 'Canada', children: [{ name: 'Canada' }] },
+  { name: 'Chile', children: [{ name: 'Chile' }] },
+  { name: 'Consulting', children: [{ name: 'Consulting' }] },
+  { name: 'IT Consulting', children: [{ name: 'IT Consulting' }] },
+  { name: 'Tax & Legal', children: [{ name: 'Tax' }, { name: 'Legal' }] }
+];
+const businessUnitExpanded = new Set(['Root']);
 /* Phase traits and colours copied from the current Templating mock. */
 const PHASE_LIBRARY = {
   '.Depreciation': 'var(--phase-depreciation)',
@@ -1337,8 +1849,19 @@ const BOOKING_TYPE_LIBRARY = {
 const UNNAMED_PHASE_COLOR = '';
 const BUFFER_COLOR = 'var(--surface-accent)';
 const DEFAULT_PHASE_WEEKS = 1;
+// In this prototype, Tax is the configured phase-enabled business unit.
+// Other business units demonstrate the booking-type fallback.
+const PHASE_ENABLED_BUSINESS_UNITS = new Set(['Tax']);
+
+function phasesConfigured(d = state.draft) {
+  if (!d) return false;
+  if (typeof d.phasesConfigured === 'boolean') return d.phasesConfigured;
+  if (d.businessUnit) return PHASE_ENABLED_BUSINESS_UNITS.has(d.businessUnit);
+  return Array.isArray(d.phases) && d.phases.some(isPhaseItem);
+}
+
 function isPhaseWorld(d = state.draft) {
-  return !d || d.phaseWorld !== false;
+  return phasesConfigured(d);
 }
 
 function wizardSteps() {
@@ -1365,6 +1888,52 @@ function phaseColor(name) {
 
 function bookingTypeColor(name) {
   return BOOKING_TYPE_LIBRARY[name] || 'var(--surface-emphasis)';
+}
+
+function parseCssColor(color) {
+  let value = String(color || '').trim();
+  const variable = value.match(/^var\((--[^,)]+)/);
+  if (variable && document?.documentElement) {
+    value = getComputedStyle(document.documentElement).getPropertyValue(variable[1]).trim();
+  }
+  const hex = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hex) {
+    const digits = hex[1].length === 3
+      ? hex[1].split('').map(digit => digit + digit).join('')
+      : hex[1];
+    return [0, 2, 4].map(index => parseInt(digits.slice(index, index + 2), 16));
+  }
+  const rgb = value.match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i);
+  return rgb ? [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])] : null;
+}
+
+// Pick the text colour with the strongest contrast against every fill. This
+// also handles demand-shape gradients, where one colour must work across all stops.
+function accessibleTextColor(backgrounds) {
+  const fills = (Array.isArray(backgrounds) ? backgrounds : [backgrounds])
+    .map(parseCssColor).filter(Boolean);
+  if (!fills.length) return 'var(--text-default)';
+  const candidates = [
+    { value: 'var(--text-default)', rgb: [34, 36, 48] },
+    { value: 'var(--text-inverse)', rgb: [255, 255, 255] }
+  ];
+  const contrast = (foreground, background) => {
+    const luminance = rgb => rgb.reduce((total, channel, index) => {
+      const linear = channel / 255 <= 0.03928
+        ? channel / 255 / 12.92
+        : ((channel / 255 + 0.055) / 1.055) ** 2.4;
+      return total + linear * [0.2126, 0.7152, 0.0722][index];
+    }, 0);
+    const light = Math.max(luminance(foreground), luminance(background));
+    const dark = Math.min(luminance(foreground), luminance(background));
+    return (light + 0.05) / (dark + 0.05);
+  };
+  return candidates
+    .map(candidate => ({
+      ...candidate,
+      score: Math.min(...fills.map(fill => contrast(candidate.rgb, fill)))
+    }))
+    .sort((a, b) => b.score - a.score)[0].value;
 }
 
 let uid = 1;
@@ -1470,9 +2039,23 @@ function showScreen(name) {
   state.screen = name;
   document.querySelectorAll('.screen').forEach(el => el.classList.toggle('is-active', el.id === `screen-${name}`));
   document.getElementById('topTitle').textContent =
-    name === 'wizard' ? 'Create demand template' : 'Demand profile templates';
-  document.getElementById('topBarMode')?.classList.toggle('is-visible', name === 'wizard');
+    name === 'wizard' ? 'Create Demand Template' : 'Demand Templates';
+  document.getElementById('topBarBack')?.classList.toggle('hidden', name !== 'wizard');
+  document.getElementById('topCreate')?.classList.toggle('hidden', name !== 'catalogue');
   if (name === 'catalogue') renderCatalogue();
+}
+
+function toggleNavSubnav() {
+  const nav = document.getElementById('navBar');
+  if (!nav) return;
+  nav.classList.toggle('is-subnav-open');
+  const expanded = nav.classList.contains('is-subnav-open');
+  document.querySelector('.NavBar-expandButton')?.setAttribute('aria-label', expanded ? 'Collapse navigation' : 'Expand navigation');
+}
+
+function closeNavSubnav() {
+  document.getElementById('navBar')?.classList.remove('is-subnav-open');
+  document.querySelector('.NavBar-expandButton')?.setAttribute('aria-label', 'Expand navigation');
 }
 
 function toast(msg) {
@@ -1483,9 +2066,64 @@ function toast(msg) {
   toast._t = setTimeout(() => { el.style.opacity = '0'; }, 2600);
 }
 
+function wizardHeaderBack() {
+  if (state.screen !== 'wizard') return;
+  requestWizardExit();
+}
+
+function comparableDraft(d) {
+  const copy = JSON.parse(JSON.stringify(d || {}));
+  delete copy._editing;
+  delete copy._initialSnapshot;
+  delete copy.status;
+  delete copy.version;
+  delete copy.id;
+  delete copy.durationDays;
+  delete copy.durationUnit;
+  return JSON.stringify(copy);
+}
+
+function draftHasProgress(d = state.draft) {
+  if (!d) return false;
+  if (d._initialSnapshot) return comparableDraft(d) !== d._initialSnapshot;
+  return Boolean(
+    d.name ||
+    d.returnType ||
+    d.businessUnit ||
+    effortPhases(d).length ||
+    requestItems(d).length ||
+    d.sequencing?.allowOverlap === false
+  );
+}
+
+function requestWizardExit() {
+  if (state.screen !== 'wizard') {
+    state.draft = null;
+    showScreen('catalogue');
+    return;
+  }
+  readWizardForm();
+  if (!draftHasProgress()) {
+    state.draft = null;
+    showScreen('catalogue');
+    return;
+  }
+  document.getElementById('exitConfirmOverlay')?.classList.add('is-open');
+}
+
+function closeExitConfirm() {
+  document.getElementById('exitConfirmOverlay')?.classList.remove('is-open');
+}
+
+function confirmWizardExit() {
+  closeExitConfirm();
+  state.draft = null;
+  showScreen('catalogue');
+}
+
 /* ---------- Catalogue ---------- */
 function renderCatalogue() {
-  const q = (document.getElementById('catalogueSearch').value || '').toLowerCase();
+  const q = (document.getElementById('catalogueSearch')?.value || '').toLowerCase();
   const body = document.getElementById('catalogueBody');
   const rows = state.catalogue.filter(t =>
     !q || t.name.toLowerCase().includes(q) || (t.returnType || '').toLowerCase().includes(q)
@@ -1493,15 +2131,22 @@ function renderCatalogue() {
   body.innerHTML = rows.map(t => `
     <tr onclick="editProfile('${t.id}')">
       <td class="cell-name">${esc(t.name)}</td>
-      <td>v${t.version}</td>
-      <td>${esc(t.returnType || '—')}</td>
-      <td>${statusPill(t.status)}</td>
       <td>${catalogueShapeLabel(t)}</td>
-      <td class="RowActions" onclick="event.stopPropagation()">
-        <button class="Btn Btn--sm" type="button" onclick="editProfile('${t.id}')">Edit</button>
-      </td>
     </tr>
-  `).join('') || `<tr><td colspan="6" class="cell-muted">No demand profiles match.</td></tr>`;
+  `).join('') || `<tr><td colspan="2" class="cell-muted">No demand templates match.</td></tr>`;
+  const pagination = document.getElementById('cataloguePagination');
+  if (pagination) {
+    const total = rows.length;
+    pagination.innerHTML = `
+      <span>Showing ${total ? 1 : 0}-${total} of ${total}</span>
+      <button class="Btn-iconOnly CataloguePageButton" type="button" aria-label="Previous page" disabled>
+        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+      </button>
+      <button class="Btn-iconOnly CataloguePageButton is-current" type="button" aria-current="page">1</button>
+      <button class="Btn-iconOnly CataloguePageButton" type="button" aria-label="Next page" disabled>
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      </button>`;
+  }
 }
 
 function catalogueShapeLabel(t) {
@@ -1513,7 +2158,7 @@ function catalogueShapeLabel(t) {
   if (!n && t.phaseWorld !== false) {
     n = (t.phases || []).reduce((sum, phase) => sum + (phase.slots?.length || 0), 0);
   }
-  return `${n} resource request${n === 1 ? '' : 's'}`;
+  return `${n}`;
 }
 
 function statusPill(s) {
@@ -1531,6 +2176,7 @@ function editProfile(pid) {
   if (!Array.isArray(state.draft.phases)) state.draft.phases = [];
   if (!Array.isArray(state.draft.items)) state.draft.items = [];
   normaliseResourceRequests(state.draft);
+  state.draft._initialSnapshot = comparableDraft(state.draft);
   openWizard(false);
 }
 
@@ -1543,6 +2189,109 @@ function effortPhases(d = state.draft) {
   return (d.phases || []).filter(isPhaseItem);
 }
 
+function lockedPhaseWeightTotal(phases, excludedId = '') {
+  return phases
+    .filter(phase => phase.id !== excludedId && phase.locked)
+    .reduce((sum, phase) => sum + Math.max(0, Number(phase.weight) || 0), 0);
+}
+
+function phaseWeightMax(phaseId, d = state.draft) {
+  const phases = effortPhases(d);
+  const phase = phases.find(item => item.id === phaseId);
+  if (!phase || phase.locked) return 100;
+  return Math.max(0, Math.min(100, 100 - lockedPhaseWeightTotal(phases, phaseId)));
+}
+
+function syncPhaseWeights(d = state.draft) {
+  const phases = effortPhases(d);
+  if (!phases.length) return;
+  const values = phases.map(phase => Number(phase.weight));
+  const sum = values.reduce((total, value) => total + (Number.isFinite(value) ? value : 0), 0);
+  const valid = values.every(value => Number.isFinite(value) && value >= 0 && value <= 100);
+  if (valid && sum === 100) return;
+  const lockedTotal = lockedPhaseWeightTotal(phases);
+  const unlocked = phases.filter(phase => !phase.locked);
+  if (lockedTotal <= 100 && unlocked.length) {
+    distributePhaseWeights(unlocked, 100 - lockedTotal);
+    return;
+  }
+  const each = Math.floor(100 / phases.length);
+  const remainder = 100 - each * phases.length;
+  phases.forEach((phase, index) => { phase.weight = each + (index < remainder ? 1 : 0); });
+}
+
+function distributePhaseWeights(phases, total) {
+  const unlocked = phases.filter(phase => !phase.locked);
+  if (!unlocked.length) return;
+  const each = Math.floor(total / unlocked.length);
+  const remainder = total - each * unlocked.length;
+  unlocked.forEach((phase, index) => {
+    phase.weight = each + (index < remainder ? 1 : 0);
+  });
+}
+
+function rebalancePhaseWeight(phaseId, value) {
+  const phases = effortPhases();
+  const target = phases.find(phase => phase.id === phaseId);
+  if (!target || target.locked) return;
+  const lockedTotal = lockedPhaseWeightTotal(phases, phaseId);
+  const next = Math.min(phaseWeightMax(phaseId), Math.max(0, Math.round(Number(value) || 0)));
+  target.weight = next;
+  const peers = phases.filter(phase => phase.id !== phaseId && !phase.locked);
+  const remainder = Math.max(0, 100 - lockedTotal - next);
+  const peerTotal = peers.reduce((sum, phase) => sum + Math.max(0, Number(phase.weight) || 0), 0);
+  if (!peers.length) {
+    target.weight = 100 - lockedTotal;
+    return;
+  }
+  if (!peerTotal) {
+    distributePhaseWeights(peers, remainder);
+    return;
+  }
+  let allocated = 0;
+  peers.forEach((phase, index) => {
+    if (index === peers.length - 1) phase.weight = Math.max(0, remainder - allocated);
+    else {
+      phase.weight = Math.max(0, Math.round(remainder * ((Number(phase.weight) || 0) / peerTotal)));
+      allocated += phase.weight;
+    }
+  });
+}
+
+function previewPhaseWeight(phaseId, value) {
+  if (value === '' || value == null) return;
+  rebalancePhaseWeight(phaseId, value);
+  effortPhases().forEach(phase => {
+    const input = document.querySelector(`.PhaseWeightInput[data-phase-id="${phase.id}"]`);
+    if (input) input.value = phase.weight;
+  });
+  renderStepper();
+}
+
+function commitPhaseWeight(phaseId, value) {
+  const input = document.querySelector(`.PhaseWeightInput[data-phase-id="${phaseId}"]`);
+  if (value === '' || value == null) {
+    const phase = effortPhases().find(item => item.id === phaseId);
+    if (input && phase) input.value = phase.weight;
+    return;
+  }
+  previewPhaseWeight(phaseId, value);
+}
+
+function togglePhaseWeightLock(phaseId) {
+  const phases = effortPhases();
+  const phase = phases.find(item => item.id === phaseId);
+  if (!phase) return;
+  if (!phase.locked && phases.filter(item => !item.locked).length === 1) {
+    toast('Keep at least one phase unlocked');
+    return;
+  }
+  phase.locked = !phase.locked;
+  syncPhaseWeights();
+  renderPhaseTimelineEditor();
+  renderStepper();
+}
+
 function isWorkPeriod(item) {
   return item?.kind === 'period';
 }
@@ -1552,7 +2301,14 @@ function workPeriods(d = state.draft) {
 }
 
 function requestTypeKey(request, d = state.draft) {
-  return isPhaseWorld(d) ? request?.phase : request?.bookingType;
+  return request?.phase || request?.bookingType || '';
+}
+
+function requestEffortLabel(request) {
+  if (request?.effortUnit === 'hours' && Number.isFinite(Number(request.effortValue))) {
+    return `${Number(request.effortValue)}h`;
+  }
+  return `${Math.round(Number(request?.weightPercent) || 0)}%`;
 }
 
 function requestsForType(type, d = state.draft) {
@@ -1611,7 +2367,9 @@ function normaliseRequestGroup(type, d = state.draft) {
 }
 
 function normaliseResourceWeights(d = state.draft) {
-  const types = [...new Set(requestItems(d).map(request => requestTypeKey(request, d)).filter(Boolean))];
+  const types = [...new Set(requestItems(d)
+    .map(request => requestTypeKey(request, d))
+    .filter(type => type !== undefined && type !== null))];
   types.forEach(type => normaliseRequestGroup(type, d));
 }
 
@@ -1638,6 +2396,15 @@ function normaliseResourceRequests(d) {
     : (d.items || []).reduce((sum, item) => sum + (Number(item.durationWeeks) || 0), 0);
   d.durationDays = Math.max(1, Math.round(Number(d.durationDays) || legacyWeeks * 7 || 90));
   d.durationUnit = ['days', 'weeks', 'months'].includes(d.durationUnit) ? d.durationUnit : 'days';
+  if (d._editing && !d.businessUnit) {
+    d.businessUnit = d.phaseWorld === false ? 'IT Consulting' : 'Tax';
+  }
+  if (typeof d.phasesConfigured !== 'boolean') {
+    d.phasesConfigured = d.businessUnit
+      ? PHASE_ENABLED_BUSINESS_UNITS.has(d.businessUnit)
+      : d.phaseWorld !== false && (d.phases || []).some(isPhaseItem);
+  }
+  d.phaseWorld = d.phasesConfigured;
 
   if (Array.isArray(d.resourceRequests)) {
     d.resourceRequests = d.resourceRequests.map(request => ({
@@ -1650,11 +2417,17 @@ function normaliseResourceRequests(d) {
       weightPercent: Number.isFinite(Number(request.weightPercent ?? request.effortPercent))
         ? Math.min(100, Math.max(0, Math.round(Number(request.weightPercent ?? request.effortPercent))))
         : null,
+      effortUnit: request.effortUnit === 'hours' ? 'hours' : 'percentage',
+      effortValue: Number.isFinite(Number(request.effortValue))
+        ? Math.max(0, Number(request.effortValue))
+        : null,
       segments: Array.isArray(request.segments)
         ? request.segments.map(segment => ({
             id: segment.id || id('seg'),
             startWeek: Math.max(0, Math.round(Number(segment.startWeek) || 0)),
-            durationWeeks: Math.max(1, Math.round(Number(segment.durationWeeks) || 1))
+            durationWeeks: Math.max(1, Math.round(Number(segment.durationWeeks) || 1)),
+            phase: isPhaseWorld(d) ? (segment.phase || request.phase || '') : '',
+            bookingType: isPhaseWorld(d) ? '' : (segment.bookingType || request.bookingType || '')
           }))
         : []
     }));
@@ -1843,16 +2616,12 @@ function contentWeeks(d = state.draft) {
   requestItems(d).forEach(request => (request.segments || []).forEach(segment => {
     weeks = Math.max(weeks, (Number(segment.startWeek) || 0) + (Number(segment.durationWeeks) || 0));
   }));
-  if (isPhaseWorld(d)) {
-    const shapeWeeks = (d.phases || []).reduce((sum, item) => sum + (Number(item.durationWeeks) || 0), 0);
-    weeks = Math.max(weeks, shapeWeeks);
-  }
   return Math.max(1, weeks);
 }
 
 // The canvas keeps a little empty room to the right so new work can always be drawn or extended.
 const GANTT_CANVAS_SLACK = 2;
-const GANTT_MIN_CANVAS = 8;
+const GANTT_MIN_CANVAS = 12;
 function timelineWeeks(d = state.draft) {
   return Math.max(GANTT_MIN_CANVAS, contentWeeks(d) + GANTT_CANVAS_SLACK);
 }
@@ -1879,6 +2648,10 @@ function normaliseSequencing(d = state.draft) {
   requestItems(d).forEach(request => {
     const type = requestTypeKey(request, d);
     if (type && !d.sequencing.typeOrder.includes(type)) d.sequencing.typeOrder.push(type);
+    (request.segments || []).forEach(segment => {
+      const segmentType = segmentTypeName(request, segment, d);
+      if (segmentType && !d.sequencing.typeOrder.includes(segmentType)) d.sequencing.typeOrder.push(segmentType);
+    });
   });
 }
 
@@ -1889,7 +2662,9 @@ function ensureTypeSequence(type, d = state.draft) {
 }
 
 function requestTypeBounds(type, d = state.draft) {
-  const segments = requestsForType(type, d).flatMap(request => request.segments || []);
+  const segments = requestItems(d).flatMap(request =>
+    (request.segments || []).filter(segment => segmentTypeName(request, segment, d) === type)
+  );
   if (!segments.length) return null;
   return {
     start: Math.min(...segments.map(segment => Number(segment.startWeek) || 0)),
@@ -1901,7 +2676,9 @@ function requestTypeBounds(type, d = state.draft) {
 function sequencingIssue(d = state.draft) {
   if (!d) return null;
   normaliseSequencing(d);
-  const activeTypes = new Set(requestItems(d).map(request => requestTypeKey(request, d)).filter(Boolean));
+  const activeTypes = new Set(requestItems(d).flatMap(request =>
+    (request.segments || []).map(segment => segmentTypeName(request, segment, d))
+  ).filter(Boolean));
   const order = d.sequencing.typeOrder.filter(type => activeTypes.has(type));
   for (let index = 1; index < order.length; index += 1) {
     const previousType = order[index - 1];
@@ -1984,7 +2761,9 @@ function blankDraft() {
     version: 1,
     status: 'draft',
     returnType: '',
-    phaseWorld: true,
+    businessUnit: '',
+    phaseWorld: false,
+    phasesConfigured: false,
     durationDays: 90,
     durationUnit: 'days',
     sequencing: { allowOverlap: true, typeOrder: [] },
@@ -1997,38 +2776,16 @@ function blankDraft() {
 
 function openWizard(fresh = true) {
   if (fresh || !state.draft) state.draft = blankDraft();
-  if (state.draft.phaseWorld == null) state.draft.phaseWorld = true;
+  if (state.draft.phasesConfigured == null) {
+    state.draft.phasesConfigured = phasesConfigured(state.draft);
+  }
+  state.draft.phaseWorld = state.draft.phasesConfigured;
   if (!Array.isArray(state.draft.phases)) state.draft.phases = [];
   if (!Array.isArray(state.draft.items)) state.draft.items = [];
   normaliseResourceRequests(state.draft);
   state.wizardStep = 1;
   showScreen('wizard');
   syncWizardForm();
-  syncModeToggle();
-  renderWizard();
-}
-
-function syncModeToggle() {
-  const phase = isPhaseWorld();
-  document.getElementById('modePhases')?.classList.toggle('is-active', phase);
-  document.getElementById('modeFlat')?.classList.toggle('is-active', !phase);
-}
-
-function setPhaseWorld(on) {
-  if (!state.draft) return;
-  const next = !!on;
-  if (state.draft.phaseWorld === next) return;
-  readWizardForm();
-  state.draft.phaseWorld = next;
-  // Requirements are typed by phase or booking type, so switching modes clears them.
-  state.draft.phases = [];
-  state.draft.items = [];
-  state.draft.resourceRequests = [];
-  normaliseSequencing();
-  state.draft.sequencing.typeOrder = [];
-  state.wizardStep = 1;
-  syncModeToggle();
-  toast(next ? 'Switched to with phases' : 'Switched to without phases');
   renderWizard();
 }
 
@@ -2036,6 +2793,7 @@ function syncWizardForm() {
   const d = state.draft;
   document.getElementById('wp-name').value = d.name;
   document.getElementById('wp-return').value = d.returnType || '';
+  document.getElementById('wp-business-unit').value = d.businessUnit || '';
   syncDurationControl();
 }
 
@@ -2043,6 +2801,7 @@ function readWizardForm() {
   const d = state.draft;
   d.name = document.getElementById('wp-name').value.trim();
   d.returnType = document.getElementById('wp-return').value;
+  d.businessUnit = document.getElementById('wp-business-unit').value;
 }
 
 function durationDisplayValue(days = state.draft.durationDays, unit = state.draft.durationUnit) {
@@ -2091,6 +2850,122 @@ function onReturnTypeChange(value) {
   state.draft.returnType = value;
 }
 
+function businessUnitTreeMarkup(nodes, query = '', depth = 0) {
+  const q = query.trim().toLowerCase();
+  return nodes.flatMap(node => {
+    const matches = !q || node.name.toLowerCase().includes(q);
+    const childMarkup = node.children?.length
+      ? businessUnitTreeMarkup(node.children, query, depth + 1)
+      : '';
+    if (!matches && !childMarkup) return [];
+    const expanded = businessUnitExpanded.has(node.name) || Boolean(q);
+    const hasChildren = Boolean(node.children?.length);
+    return [`
+      <button class="TreeInput-node${depth === 0 ? ' TreeInput-node--root' : ' TreeInput-node--child'}"
+        type="button" role="treeitem" aria-expanded="${hasChildren ? expanded : 'false'}"
+        onclick="selectBusinessUnit('${esc(node.name)}')">
+        <span class="BusinessUnitTree-chevron${hasChildren ? '' : ' is-empty'}"
+          ${hasChildren ? `role="button" tabindex="0" onclick="event.stopPropagation(); toggleBusinessUnitNode(event, '${esc(node.name)}')"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleBusinessUnitNode(event, '${esc(node.name)}')}"` : ''}>
+          <i class="fa-solid fa-chevron-${expanded ? 'down' : 'right'}" aria-hidden="true"></i>
+        </span>
+        <span>${esc(node.name)}</span>
+      </button>
+      ${expanded && childMarkup ? `<div role="group">${childMarkup}</div>` : ''}
+    `];
+  }).join('');
+}
+
+function renderBusinessUnitTree(query = '') {
+  const view = document.getElementById('businessUnitTreeView');
+  if (!view) return;
+  view.innerHTML = `
+    <button class="TreeInput-node TreeInput-node--root" type="button" role="treeitem" aria-expanded="true"
+      onclick="selectBusinessUnit('Root')">
+      <span class="BusinessUnitTree-chevron"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></span>
+      <span>Root</span>
+    </button>
+    ${businessUnitTreeMarkup(BUSINESS_UNIT_TREE, query)}
+  `;
+}
+
+function openBusinessUnitPicker() {
+  const picker = document.getElementById('businessUnitPicker');
+  if (!picker) return;
+  closeAllTreePickers('businessUnit');
+  picker.classList.add('is-open');
+  renderBusinessUnitTree(document.getElementById('wp-business-unit')?.value || '');
+  document.getElementById('businessUnitTreeView')?.classList.add('is-visible');
+}
+
+function toggleBusinessUnitPicker() {
+  const picker = document.getElementById('businessUnitPicker');
+  if (!picker?.classList.contains('is-open')) openBusinessUnitPicker();
+  else closeBusinessUnitPicker();
+}
+
+function toggleBusinessUnitNode(event, name) {
+  event?.preventDefault();
+  if (businessUnitExpanded.has(name)) businessUnitExpanded.delete(name);
+  else businessUnitExpanded.add(name);
+  renderBusinessUnitTree(document.getElementById('wp-business-unit')?.value || '');
+  document.getElementById('businessUnitTreeView')?.classList.add('is-visible');
+}
+
+function selectBusinessUnit(value) {
+  if (value === 'Root') return;
+  const phasesEnabled = PHASE_ENABLED_BUSINESS_UNITS.has(value);
+  const input = document.getElementById('wp-business-unit');
+  if (input) {
+    input.value = value;
+    input.setAttribute('aria-invalid', 'false');
+  }
+  state.draft.businessUnit = value;
+  state.draft.phasesConfigured = phasesEnabled;
+  state.draft.phaseWorld = phasesEnabled;
+  if (!phasesEnabled) {
+    state.draft.phases = [];
+    state.draft.resourceRequests.forEach(request => {
+      request.phase = '';
+      request.bookingType = request.bookingType || 'Client work';
+      request.segments = (request.segments || []).map(segment => ({
+        ...segment,
+        phase: '',
+        bookingType: segment.bookingType || request.bookingType
+      }));
+    });
+  }
+  document.getElementById('businessUnitError')?.classList.add('hidden');
+  closeBusinessUnitPicker();
+  renderStepper();
+}
+
+function filterBusinessUnitPicker(query) {
+  state.draft.businessUnit = '';
+  document.getElementById('wp-business-unit')?.setAttribute('aria-invalid', 'true');
+  openBusinessUnitPicker();
+  renderBusinessUnitTree(query);
+  document.getElementById('businessUnitTreeView')?.classList.add('is-visible');
+}
+
+function businessUnitKeydown(event) {
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    syncWizardForm();
+    closeBusinessUnitPicker();
+  }
+}
+
+function blurBusinessUnitPicker() {
+  setTimeout(closeBusinessUnitPicker, 120);
+}
+
+function closeBusinessUnitPicker() {
+  const picker = document.getElementById('businessUnitPicker');
+  picker?.classList.remove('is-open');
+  document.getElementById('businessUnitTreeView')?.classList.remove('is-visible');
+}
+
 function toggleAddMenu(event) {
   event.stopPropagation();
   const menu = document.getElementById('addTimelineMenu');
@@ -2123,26 +2998,28 @@ function addPhase() {
 
   if (phases.length === 0) {
     d.phases.push(newPhase(100));
+    syncPhaseWeights(d);
     refreshTimelineEditors();
     updateFooterSummary();
     focusLastPhaseSelect();
     return;
   }
 
-  const unlocked = getSegments().filter(s => !s.locked);
-  if (unlocked.length === 0) {
-    toast('Unlock a phase before adding another');
-    return;
-  }
-  const unlockedSum = unlocked.reduce((a, s) => a + s.weight, 0);
-  const starter = Math.min(20, Math.max(5, Math.floor(unlockedSum / (unlocked.length + 1))));
-
   const phase = newPhase(0);
   d.phases.push(phase);
-  applySegments(redistribute(getSegments(), phase.id, starter));
+  rebalancePhaseWeight(phase.id, Math.floor(100 / d.phases.length));
   refreshTimelineEditors();
   updateFooterSummary();
   focusLastPhaseSelect();
+}
+
+function addPhaseFromTimeline() {
+  if (!state.draft) return;
+  if (!phasesConfigured()) {
+    toast('Phases are not configured for this business unit');
+    return;
+  }
+  addPhase();
 }
 
 function focusLastPhaseSelect() {
@@ -2158,7 +3035,11 @@ function setPhaseName(phaseId, name) {
   phase.color = name ? phaseColor(name) : UNNAMED_PHASE_COLOR;
   requestItems().forEach(request => {
     if (request.phase === previousName) request.phase = name;
+    request.segments = (request.segments || []).map(segment =>
+      segment.phase === previousName ? { ...segment, phase: name } : segment
+    );
   });
+  normalisePhaseSegmentPlacement();
   refreshTimelineEditors();
 }
 
@@ -2177,6 +3058,9 @@ function removePhase(phaseId) {
   if (isPhaseItem(removed)) {
     requestItems(d).forEach(request => {
       if (request.phase === removed.name) request.phase = '';
+      request.segments = (request.segments || []).map(segment =>
+        segment.phase === removed.name ? { ...segment, phase: '' } : segment
+      );
     });
     const segs = getSegments();
     const unlocked = segs.filter(s => !s.locked);
@@ -2205,11 +3089,11 @@ function removePhase(phaseId) {
 const dragState = { phaseId: null };
 
 function phaseDragArm(event) {
-  event.target.closest('.SegRow, .PhaseCard')?.setAttribute('draggable', 'true');
+  event.target.closest('.SegRow, .PhaseCard, .PhaseTimelineEditor-row')?.setAttribute('draggable', 'true');
 }
 
 function phaseDragDisarm(event) {
-  event.target.closest('.SegRow, .PhaseCard')?.setAttribute('draggable', 'false');
+  event.target.closest('.SegRow, .PhaseCard, .PhaseTimelineEditor-row')?.setAttribute('draggable', 'false');
 }
 
 function onPhaseDragStart(event, phaseId) {
@@ -2217,6 +3101,23 @@ function onPhaseDragStart(event, phaseId) {
   event.dataTransfer.effectAllowed = 'move';
   event.dataTransfer.setData('text/plain', phaseId);
   event.currentTarget.classList.add('is-dragging');
+}
+
+function onPhaseHandleKeydown(event, phaseId) {
+  if (!['ArrowUp', 'ArrowDown'].includes(event.key)) return;
+  event.preventDefault();
+  const phases = state.draft.phases;
+  const from = phases.findIndex(phase => phase.id === phaseId);
+  const to = from + (event.key === 'ArrowUp' ? -1 : 1);
+  if (from < 0 || to < 0 || to >= phases.length) return;
+  [phases[from], phases[to]] = [phases[to], phases[from]];
+  normalisePhaseSegmentPlacement();
+  refreshTimelineEditors();
+  updateFooterSummary();
+  requestAnimationFrame(() => {
+    [...document.querySelectorAll('.PhaseTimelineEditor-handle')]
+      .find(handle => handle.dataset.phaseId === phaseId)?.focus();
+  });
 }
 
 function onPhaseDragOver(event, phaseId) {
@@ -2239,6 +3140,7 @@ function onPhaseDrop(event, targetId) {
   dragState.phaseId = null;
   if (from === -1 || to === -1 || from === to) return;
   phases.splice(to, 0, phases.splice(from, 1)[0]);
+  normalisePhaseSegmentPlacement();
   refreshTimelineEditors();
   updateFooterSummary();
 }
@@ -2247,7 +3149,8 @@ function onPhaseDragEnd(event) {
   dragState.phaseId = null;
   event.currentTarget.classList.remove('is-dragging');
   event.currentTarget.setAttribute('draggable', 'false');
-  document.querySelectorAll('.SegRow.is-dropTarget, .PhaseCard.is-dropTarget').forEach(el => el.classList.remove('is-dropTarget'));
+  document.querySelectorAll('.SegRow.is-dropTarget, .PhaseCard.is-dropTarget, .PhaseTimelineEditor-row.is-dropTarget')
+    .forEach(el => el.classList.remove('is-dropTarget'));
 }
 
 function normaliseTo100() {
@@ -2265,7 +3168,6 @@ function normaliseTo100() {
 }
 
 function renderWizard() {
-  syncModeToggle();
   const steps = wizardSteps();
   if (state.wizardStep > steps.length) state.wizardStep = steps.length;
   if (state.wizardStep < 1) state.wizardStep = 1;
@@ -2307,7 +3209,7 @@ function renderStepper() {
     const connectorStatus = horizontalConnectorStatus(steps, step.stepNumber);
     const reachable = canReachStep(step.stepNumber);
     const blockedBy = reachable ? '' : firstStepIssue(step.stepNumber);
-    const stepInteraction = reachable
+    const markerInteraction = reachable
       ? `role="button" tabindex="0" onclick="onStepperClick(${step.stepNumber})"
           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();onStepperClick(${step.stepNumber})}"`
       : `aria-disabled="true" title="${esc(blockedBy)}"`;
@@ -2320,14 +3222,14 @@ function renderStepper() {
     return `
       <li class="Stepper-step Stepper-step--${step.status}${step.isLast ? ' Stepper-step--last' : ''}${reachable ? '' : ' is-locked'}"
           data-test="Stepper-step-${step.stepNumber}"
-          ${stepInteraction}
           ${step.status === 'current' || step.status === 'error' ? 'aria-current="step"' : ''}>
-        <div class="Stepper-rail" data-test="Stepper-rail">
-          <div class="Stepper-marker Stepper-marker--${step.status}" data-test="Stepper-marker">
-            ${markerInner}
+        <div class="Stepper-indicator">
+          <div class="Stepper-marker Stepper-marker--${step.status}" data-test="Stepper-marker"
+            ${markerInteraction}>
+              ${markerInner}
           </div>
           ${!step.isLast
-            ? `<div class="Stepper-line Stepper-line--vertical Stepper-line--after Stepper-line--${connectorStatus}" aria-hidden="true"></div>`
+            ? `<div class="Stepper-line Stepper-line--vertical Stepper-line--${connectorStatus}" aria-hidden="true" data-test="Stepper-line"></div>`
             : ''}
         </div>
         <div class="Stepper-info">
@@ -2372,6 +3274,7 @@ function onNameInput(field) {
 function stepIssue(panelId) {
   if (panelId === 'details') {
     if (!(state.draft && state.draft.name)) return 'Enter a template name';
+    if (!(state.draft && state.draft.businessUnit)) return 'Choose a business unit';
     return null;
   }
   if (panelId === 'timeline') return timelineIssue();
@@ -2393,6 +3296,15 @@ function canReachStep(stepNumber) {
 
 function renderDetails() {
   syncDurationControl();
+}
+
+function shapeScaleMarkup(d, centerLabel = '') {
+  const total = contentWeeks(d);
+  return `<div class="ShapeLabels">
+    <span>Start</span>
+    <span>${centerLabel || `${total} week${total === 1 ? '' : 's'}`}</span>
+    <span>Deadline</span>
+  </div>`;
 }
 
 function shapeTimelineMarkup(d) {
@@ -2432,7 +3344,7 @@ function shapeTimelineMarkup(d) {
     const hasColor = s.kind !== 'buffer' && Boolean(s.color);
     const cls = `${s.kind === 'buffer' ? ' ShapeSeg--buffer' : ''}${hasColor ? '' : ' ShapeSeg--plain'}`;
     const bg = hasColor ? `background:${s.color};` : '';
-    const textColor = hasColor ? 'var(--text-inverse)' : 'var(--text-default)';
+    const textColor = hasColor ? accessibleTextColor(s.color) : 'var(--text-default)';
     const payload = encodeURIComponent(JSON.stringify({
       kind: s.kind,
       name: s.name,
@@ -2450,12 +3362,7 @@ function shapeTimelineMarkup(d) {
       onblur="hideShapeSegPopover()">${width >= 8 ? esc(width >= 14 ? label : `${s.weeks}w`) : ''}</div>`;
   }).join('') || `<div class="ShapeSeg" style="width:100%; background:var(--surface-subtle-dark); color:var(--text-subtle);">${esc(emptyLabel)}</div>`;
 
-  return `
-    <div class="ShapeLabels">
-      <span>Start</span>
-      <span>${total} week${total === 1 ? '' : 's'}</span>
-      <span>Deadline</span>
-    </div>
+  return `${shapeScaleMarkup(d)}
     <div class="ShapeBarWrap">
       <div class="ShapeBar">${bar}</div>
     </div>
@@ -2472,7 +3379,7 @@ function shapeSegPopoverHtml(data) {
     const rows = (data.types || []).map(type =>
       `<div class="ShapeSegPopover-row">
         <span><span class="SegRow-dot" style="background:${type.color};margin-right:6px;" aria-hidden="true"></span>${esc(type.name)}</span>
-        <strong>${type.count} req${type.count === 1 ? '' : 's'}</strong>
+        <strong>${esc(type.effort || '—')} · ${type.count} req${type.count === 1 ? '' : 's'}</strong>
       </div>`).join('');
     return `<div class="ShapeSegPopover-title"><span>${esc(data.name)}</span></div>
       <div class="ShapeSegPopover-rows">
@@ -2491,6 +3398,15 @@ function shapeSegPopoverHtml(data) {
       <div class="ShapeSegPopover-rows">
         <div class="ShapeSegPopover-row"><span>Duration</span><strong>${data.weeks}w</strong></div>
         <div class="ShapeSegPopover-row"><span>Resource requests</span><strong>${data.requestCount || 0}</strong></div>
+      </div>`;
+  }
+  if (data.kind === 'phase') {
+    return `<div class="ShapeSegPopover-title"><span class="SegRow-dot" style="background:${phaseColorByName(data.name)}" aria-hidden="true"></span><span>${esc(data.name)}</span></div>
+      <div class="ShapeSegPopover-rows">
+        <div class="ShapeSegPopover-row"><span>Duration</span><strong>${data.weeks}w</strong></div>
+        <div class="ShapeSegPopover-row"><span>Timeline share</span><strong>${data.weight}%</strong></div>
+        <div class="ShapeSegPopover-row"><span>Resource requirements</span><strong>${data.requestCount || 0}</strong></div>
+        <div class="ShapeSegPopover-row"><span>Utilised</span><strong>${data.utilisedWeeks} of ${data.weeks} weeks · ${data.utilisation}%</strong></div>
       </div>`;
   }
   const shareLabel = 'Demand share';
@@ -2544,12 +3460,14 @@ function renderShapeTimeline(targetId = 'shapeTimeline') {
 }
 
 // Read-only overview derived from the placed requirements: which types are live in each week.
-function demandShapeMarkup(d = state.draft) {
+function demandShapeMarkup(d = state.draft, includeScale = true) {
   const requests = requestItems(d);
   const total = contentWeeks(d);
-  if (!requests.some(request => (request.segments || []).length)) {
+  const hasWork = requests.some(request => (request.segments || []).length);
+  const scale = includeScale ? shapeScaleMarkup(d, hasWork ? '' : 'Nothing placed yet') : '';
+  if (!hasWork) {
     return `
-      <div class="ShapeLabels"><span>Start</span><span>Nothing placed yet</span><span>Deadline</span></div>
+      ${scale}
       <div class="ShapeBarWrap">
         <div class="ShapeBar">
           <div class="ShapeSeg ShapeSeg--plain" style="width:100%;color:var(--text-subtle);">Add resource requirements to build the shape</div>
@@ -2559,15 +3477,21 @@ function demandShapeMarkup(d = state.draft) {
 
   const weeks = Array.from({ length: total }, () => new Map());
   requests.forEach(request => {
-    const name = requestTypeName(request, d);
-    const color = requestColor(request, d);
     (request.segments || []).forEach(segment => {
+      const name = segmentTypeName(request, segment, d);
+      const color = segmentColor(request, segment, d);
       const start = Math.max(0, Math.round(Number(segment.startWeek) || 0));
       const end = Math.min(total, start + Math.max(0, Math.round(Number(segment.durationWeeks) || 0)));
       for (let week = start; week < end; week += 1) {
         const entry = weeks[week].get(name);
-        if (entry) entry.count += 1;
-        else weeks[week].set(name, { name, color, count: 1 });
+        if (entry) {
+          entry.count += 1;
+          entry.efforts.add(requestEffortLabel(request));
+        } else {
+          weeks[week].set(name, {
+            name, color, count: 1, efforts: new Set([requestEffortLabel(request)])
+          });
+        }
       }
     });
   });
@@ -2575,7 +3499,9 @@ function demandShapeMarkup(d = state.draft) {
   // Collapse neighbouring weeks that carry an identical mix so the bar reads as blocks, not 40 slivers.
   const runs = [];
   weeks.forEach((map, index) => {
-    const types = [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+    const types = [...map.values()]
+      .map(({ efforts, ...type }) => ({ ...type, effort: [...efforts].join(' / ') }))
+      .sort((a, b) => a.name.localeCompare(b.name));
     const key = types.map(type => `${type.name}:${type.count}`).join('|');
     const last = runs[runs.length - 1];
     if (last && last.key === key) {
@@ -2605,42 +3531,46 @@ function demandShapeMarkup(d = state.draft) {
       weeks: run.weeks,
       types: run.types
     }));
-    return `<div class="ShapeSeg${count ? '' : ' ShapeSeg--plain'}" style="width:${width}%;${background}color:${count ? 'var(--text-inverse)' : 'var(--text-default)'};"
+    const textColor = count ? accessibleTextColor(run.types.map(type => type.color)) : 'var(--text-default)';
+    return `<div class="ShapeSeg${count ? '' : ' ShapeSeg--plain'}" style="width:${width}%;${background}color:${textColor};"
       tabindex="0" role="button" aria-label="${esc(full)}"
       data-shape-popover="${payload}"
       onmouseenter="showShapeSegPopover(event)"
       onmouseleave="hideShapeSegPopover()"
       onfocus="showShapeSegPopover(event)"
-      onblur="hideShapeSegPopover()">${width >= 8 ? esc(width >= 16 ? full : `${run.weeks}w`) : ''}</div>`;
+      onblur="hideShapeSegPopover()">${width >= 8 ? esc(width >= 30 ? full : `${run.weeks}w`) : ''}</div>`;
   }).join('');
 
   const legendTypes = [];
   requests.forEach(request => {
     if (!(request.segments || []).length) return;
-    const name = requestTypeName(request, d);
-    if (!legendTypes.some(entry => entry.name === name)) {
-      legendTypes.push({ name, color: requestColor(request, d) });
-    }
+    (request.segments || []).forEach(segment => {
+      const name = segmentTypeName(request, segment, d);
+      if (!legendTypes.some(entry => entry.name === name)) {
+        legendTypes.push({ name, color: segmentColor(request, segment, d) });
+      }
+    });
   });
   const legend = legendTypes.map(entry =>
     `<span class="ShapeLegend-item"><span class="ShapeLegend-swatch" style="background:${entry.color}"></span>${esc(entry.name)}</span>`
   ).join('');
 
-  return `
-    <div class="ShapeLabels">
-      <span>Start</span>
-      <span>${total} week${total === 1 ? '' : 's'}</span>
-      <span>Deadline</span>
-    </div>
+  return `${scale}
     <div class="ShapeBarWrap">
       <div class="ShapeBar">${bar}</div>
     </div>
     <div class="ShapeLegend">${legend}</div>`;
 }
 
-function renderDemandShape(targetId, d = state.draft) {
+function renderDemandShape(targetId, d = state.draft, includeScale = true) {
   const el = document.getElementById(targetId);
-  if (el) el.innerHTML = demandShapeMarkup(d);
+  if (el) el.innerHTML = demandShapeMarkup(d, includeScale);
+}
+
+function renderTimelineScale(d = state.draft) {
+  const el = document.getElementById('timelineScale');
+  const hasWork = requestItems(d).some(request => (request.segments || []).length);
+  if (el) el.innerHTML = shapeScaleMarkup(d, hasWork ? '' : 'Nothing placed yet');
 }
 
 function refreshTimelineEditors() {
@@ -2746,8 +3676,11 @@ function setItemDuration(itemId, value) {
   const item = findTimelineItem(itemId);
   if (!item) return;
   item.durationWeeks = Math.max(1, Math.min(52, Math.round(Number(value) || 1)));
+  normalisePhaseSegmentPlacement();
+  if (isPhaseItem(item)) syncPhaseWeights();
   if (currentWizardPanel() === 'timeline') {
-    renderShapeTimeline('wizardTimelineShape');
+    renderTimelineScale();
+    renderDemandShape('timelineShapeVisual', state.draft, false);
     updateFooterSummary();
     return;
   }
@@ -3167,13 +4100,113 @@ function linkSourceLabel(slot) {
 
 function renderTimeline() {
   const intro = document.getElementById('timelineIntro');
-  if (intro) {
-    intro.textContent = isPhaseWorld()
-      ? 'Add resource requirements against their phase, then shape when each one is needed. The timeline length follows the work you place.'
-      : 'Add resource requirements against their booking type, then shape when each one is needed. The timeline length follows the work you place.';
+  const phaseEnabled = phasesConfigured();
+  const phaseButton = document.getElementById('addPhaseButton');
+  if (phaseButton) {
+    phaseButton.disabled = !phaseEnabled;
+    phaseButton.title = phaseEnabled
+      ? 'Add an optional phase'
+      : 'Phases are unavailable because this business unit has no phases configured';
+    phaseButton.setAttribute('aria-disabled', String(!phaseEnabled));
   }
+  if (intro) {
+    intro.textContent = 'Add resource requirements, optionally organise them into phases, then shape when each one is needed. The timeline length follows the work you place.';
+  }
+  renderPhaseTimelineEditor();
   renderResourceGantt('slotEditor');
   renderStepper();
+}
+
+function phaseUtilisation(phase, phaseIndex, d = state.draft) {
+  const phases = effortPhases(d);
+  const weeks = Math.max(1, Number(phase.durationWeeks) || 1);
+  const phaseStart = phases.slice(0, phaseIndex).reduce((sum, item) =>
+    sum + Math.max(1, Number(item.durationWeeks) || 1), 0);
+  const phaseEnd = phaseStart + weeks;
+  const covered = [];
+  requestItems(d).forEach(request => (request.segments || []).forEach(segment => {
+    if (segmentTypeName(request, segment, d) !== phase.name) return;
+    const rawStart = Number(segment.startWeek) || 0;
+    const start = Math.max(phaseStart, rawStart);
+    const end = Math.min(phaseEnd, rawStart + Math.max(0, Number(segment.durationWeeks) || 0));
+    if (end > start) covered.push([start, end]);
+  }));
+  covered.sort((a, b) => a[0] - b[0]);
+  const merged = covered.reduce((ranges, range) => {
+    const last = ranges[ranges.length - 1];
+    if (last && range[0] <= last[1]) last[1] = Math.max(last[1], range[1]);
+    else ranges.push(range);
+    return ranges;
+  }, []);
+  const utilisedWeeks = merged.reduce((sum, range) => sum + range[1] - range[0], 0);
+  return {
+    weeks,
+    utilisedWeeks,
+    requestCount: requestsForType(phase.name, d).length,
+    percent: Math.round((utilisedWeeks / weeks) * 100)
+  };
+}
+
+function renderPhaseTimelineEditor() {
+  const target = document.getElementById('phaseTimelineEditor');
+  if (!target) return;
+  const d = state.draft;
+  const phases = effortPhases(d);
+  syncPhaseWeights(d);
+  if (isPhaseWorld(d) && phases.length) {
+    target.innerHTML = `<div class="PhaseTimelineEditor-help"><strong>Phases</strong></div>` +
+      `<div class="PhaseTimelineEditor-rows">${phases.map((phase, index) => {
+      const usage = phaseUtilisation(phase, index, d);
+      const usageLabel = `${usage.requestCount} resource requirement${usage.requestCount === 1 ? '' : 's'} · ${usage.utilisedWeeks} of ${usage.weeks} weeks utilised`;
+      return `
+        <div class="PhaseTimelineEditor-row" data-phase-id="${phase.id}" draggable="false"
+          ondragstart="onPhaseDragStart(event, '${phase.id}')"
+          ondragover="onPhaseDragOver(event, '${phase.id}')"
+          ondragleave="onPhaseDragLeave(event)"
+          ondrop="onPhaseDrop(event, '${phase.id}')"
+          ondragend="onPhaseDragEnd(event)">
+          <div class="PhaseTimelineEditor-name">
+            <button class="PhaseTimelineEditor-handle" type="button" data-phase-id="${phase.id}"
+              title="Drag to reorder. Use Up or Down to move." aria-label="Drag ${esc(phase.name || `phase ${index + 1}`)} to reorder"
+              aria-keyshortcuts="ArrowUp ArrowDown" onkeydown="onPhaseHandleKeydown(event, '${phase.id}')"
+              onmousedown="phaseDragArm(event)" onmouseup="phaseDragDisarm(event)">
+              <i class="fa-solid fa-grip-vertical" aria-hidden="true"></i>
+            </button>
+            <span class="PhaseTimelineEditor-dot" style="background:${phase.color || 'var(--surface-emphasis)'}" aria-hidden="true"></span>
+            <select class="Select" aria-label="Phase ${index + 1} name" title="${esc(usageLabel)}"
+              onchange="setPhaseName('${phase.id}', this.value)">${phaseOptionsMarkup(phase.name)}</select>
+          </div>
+          ${durationCell(phase.id, Math.max(1, Number(phase.durationWeeks) || 1), phase.name || `Phase ${index + 1}`)}
+          <div class="PhaseWeightControl" title="Weighting is used to split demand between phases">
+            <div class="input-group">
+              <input class="Input PhaseWeightInput" type="number" min="0" max="${phaseWeightMax(phase.id, d)}" step="1"
+                data-phase-id="${phase.id}" value="${phase.weight}" aria-label="${esc(phase.name || `Phase ${index + 1}`)} weighting"
+                ${phase.locked ? 'disabled' : ''}
+                oninput="previewPhaseWeight('${phase.id}', this.value)"
+                onchange="commitPhaseWeight('${phase.id}', this.value)">
+              <span class="input-group-text">%</span>
+            </div>
+            <button class="Btn-iconOnly Btn--tertiary PhaseWeightLock${phase.locked ? ' is-locked' : ''}" type="button"
+              title="${phase.locked ? 'Unlock phase weighting' : 'Lock phase weighting'}"
+              aria-label="${phase.locked ? 'Unlock phase weighting' : 'Lock phase weighting'}"
+              aria-pressed="${phase.locked}" onclick="togglePhaseWeightLock('${phase.id}')">
+              <i class="fa-solid fa-${phase.locked ? 'lock' : 'lock-open'}" aria-hidden="true"></i>
+            </button>
+          </div>
+          <button class="Btn-iconOnly Btn--tertiary" type="button" title="Remove phase" aria-label="Remove phase"
+            onclick="removePhase('${phase.id}')"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
+        </div>`;
+      }).join('')}</div>`;
+  } else if (isPhaseWorld(d)) {
+    target.innerHTML = `<div class="PhaseTimelineEditor-empty">
+      <span>Add a phase to organise demand by handoff. You can also continue with unphased work.</span>
+      <button class="Btn Btn--primary Btn--sm" type="button" onclick="addPhaseFromTimeline()">Add Phase</button>
+    </div>`;
+  } else {
+    target.innerHTML = `<div class="PhaseTimelineEditor-empty">
+      <span>There are no phases configured for this business unit, so resource requirements use booking types.</span>
+    </div>`;
+  }
 }
 
 function newRequest(weight = 0) {
@@ -3811,7 +4844,10 @@ function validateSharesUI() {
 }
 
 /* ---------- Resource request modal + mini-Gantt ---------- */
-const resourceModalState = { editingId: null, durationUnit: 'weeks' };
+const resourceModalState = {
+  editingId: null, durationUnit: 'weeks', effortUnit: 'percentage',
+  startWeek: null, segmentId: null, weightTouched: false, startTouched: false
+};
 // The Gantt is week-granular, so other units are conveniences that round to whole weeks.
 const DAYS_PER_WEEK = 7;
 const WEEKS_PER_MONTH = 4;
@@ -3849,10 +4885,91 @@ function setResourceDurationUnit(unit) {
   syncResourceDurationUnits();
   syncResourceModalConfirm();
 }
+
+function syncResourcePlacementBounds() {
+  const type = document.getElementById('resourceTypeSelect')?.value.trim();
+  const weeksInput = document.getElementById('resourceWeeksInput');
+  const startInput = document.getElementById('resourceStartInput');
+  if (!weeksInput || !startInput) return;
+
+  const window = dependencyWindowForType(type);
+  if (!window) {
+    weeksInput.removeAttribute('max');
+    startInput.min = '1';
+    startInput.removeAttribute('max');
+    weeksInput.removeAttribute('title');
+    startInput.removeAttribute('title');
+    return;
+  }
+
+  const placementMessage = dependencyWindowMessage(window);
+  weeksInput.title = placementMessage;
+  startInput.title = placementMessage;
+  if (window.end != null) {
+    const availableWeeks = window.end - window.start;
+    if (!weeksInput.disabled) {
+      weeksInput.max = String(resourceDurationDisplay(availableWeeks, resourceModalState.durationUnit));
+      if (resourceDurationWeeks() > availableWeeks) {
+        weeksInput.value = resourceDurationDisplay(availableWeeks, resourceModalState.durationUnit);
+      }
+    }
+    const duration = weeksInput.disabled ? 1 : resourceDurationWeeks();
+    const maxStart = window.end - duration + 1;
+    startInput.min = String(window.start + 1);
+    startInput.max = String(Math.max(window.start + 1, maxStart));
+    if (!startInput.disabled) {
+      const current = Number(startInput.value) || window.start + 1;
+      startInput.value = Math.max(window.start + 1, Math.min(maxStart, current));
+    }
+    return;
+  }
+
+  weeksInput.removeAttribute('max');
+  startInput.min = String(window.start + 1);
+  startInput.removeAttribute('max');
+  if (!startInput.disabled) {
+    startInput.value = Math.max(window.start + 1, Number(startInput.value) || window.start + 1);
+  }
+}
+
+function syncResourceEffortUnit() {
+  document.querySelectorAll('#resourceModalOverlay [data-effort-unit]').forEach(button => {
+    const active = button.dataset.effortUnit === resourceModalState.effortUnit;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  const input = document.getElementById('resourceWeightInput');
+  if (input) input.max = resourceModalState.effortUnit === 'hours' ? '9999' : '100';
+}
+
+function setResourceEffortUnit(unit) {
+  if (!['percentage', 'hours'].includes(unit)) return;
+  resourceModalState.effortUnit = unit;
+  syncResourceEffortUnit();
+  syncResourceModalConfirm();
+}
+
 let ganttDragState = null;
 
 function requestTypeName(request, d = state.draft) {
-  return isPhaseWorld(d) ? (request.phase || 'No phase') : (request.bookingType || 'No booking type');
+  return request.phase || request.bookingType ||
+    (isPhaseWorld(d) ? 'No phase' : 'No booking type');
+}
+
+function segmentTypeName(request, segment, d = state.draft) {
+  return segment?.phase || segment?.bookingType || request?.phase || request?.bookingType ||
+    (isPhaseWorld(d) ? 'No phase' : 'No booking type');
+}
+
+function segmentColor(request, segment, d = state.draft) {
+  const type = segmentTypeName(request, segment, d);
+  if (segment?.bookingType || (!segment?.phase && request?.bookingType)) return bookingTypeColor(type);
+  return phaseColorByName(type);
+}
+
+function requestTypeSummary(request, d = state.draft) {
+  return [...new Set((request.segments || []).map(segment => segmentTypeName(request, segment, d)))].join(' + ')
+    || requestTypeName(request, d);
 }
 
 function phaseColorByName(name) {
@@ -3865,37 +4982,88 @@ function requestColor(request, d = state.draft) {
     : bookingTypeColor(request.bookingType);
 }
 
-// Both modes now pick from a fixed library; nothing is defined at template level.
-function resourceTypeOptions() {
-  const library = isPhaseWorld() ? PHASE_LIBRARY : BOOKING_TYPE_LIBRARY;
+function requestDotStyle(request, d = state.draft) {
+  const colors = [...new Set((request.segments || []).map(segment => segmentColor(request, segment, d)))];
+  if (colors.length <= 1) return `background:${colors[0] || requestColor(request, d)}`;
+  const stops = colors.map((color, index) => {
+    const start = Math.round((index / colors.length) * 100);
+    const end = Math.round(((index + 1) / colors.length) * 100);
+    return `${color} ${start}%, ${color} ${end}%`;
+  }).join(', ');
+  return `background:linear-gradient(135deg, ${stops})`;
+}
+
+// Booking types use the fixed library; phased requirements use only phases
+// already added to this template's Timeline.
+function resourceTypeOptions(selected = '') {
+  const library = isPhaseWorld()
+    ? Object.fromEntries(effortPhases().filter(phase => phase.name).map(phase => [
+      phase.name, phaseColorByName(phase.name)
+    ]))
+    : BOOKING_TYPE_LIBRARY;
+  if (selected && !library[selected]) {
+    library[selected] = isPhaseWorld() ? phaseColorByName(selected) : bookingTypeColor(selected);
+  }
   return Object.entries(library).map(([name, color]) => ({ name, color }));
 }
 
-function openResourceModal(editingId = null) {
-  const typeOptions = resourceTypeOptions();
+function openResourceModal(editingId = null, startWeek = null, segmentId = null) {
   resourceModalState.editingId = editingId;
+  resourceModalState.startWeek = Number.isFinite(Number(startWeek)) ? Math.max(1, Number(startWeek)) : null;
+  resourceModalState.segmentId = segmentId;
+  resourceModalState.weightTouched = false;
+  resourceModalState.startTouched = Boolean(startWeek || segmentId || editingId);
   const editing = editingId ? findRequest(editingId) : null;
+  const selectedSegment = editing && segmentId && segmentId !== 'new'
+    ? editing.segments?.find(segment => segment.id === segmentId)
+    : null;
+  const selectedType = selectedSegment
+    ? segmentTypeName(editing, selectedSegment)
+    : editing ? requestTypeName(editing) : '';
+  const typeOptions = resourceTypeOptions(selectedType);
   document.getElementById('resourceModalTitle').textContent =
     editing ? 'Edit Resource Requirement' : 'Add Resource Requirement';
   const typeLabel = isPhaseWorld() ? 'Phase' : 'Booking type';
+  document.getElementById('resourceTypeRequired')?.classList.toggle('hidden', !isPhaseWorld());
   document.getElementById('resourceTypeLabel').textContent = typeLabel;
+  document.getElementById('resourceTypeHint').textContent = isPhaseWorld()
+    ? typeOptions.length
+      ? 'Only phases added to the Timeline are available here.'
+      : 'Add a phase above before adding a phased resource requirement.'
+    : 'The booking type colour is inherited by the timeline segment.';
   document.getElementById('resourceTypeSelect').innerHTML =
-    `<option value="">Choose ${typeLabel.toLowerCase()}</option>` +
+    `<option value="">${isPhaseWorld()
+      ? (typeOptions.length ? `Choose ${typeLabel.toLowerCase()}` : 'No phases added yet')
+      : 'No booking type (optional)'}</option>` +
     typeOptions.map(option => `<option value="${esc(option.name)}">${esc(option.name)}</option>`).join('');
   document.getElementById('resourceTypeSelect').value =
-    editing ? (isPhaseWorld() ? editing.phase : editing.bookingType) : '';
+    selectedSegment
+      ? segmentTypeName(editing, selectedSegment)
+      : editing ? (isPhaseWorld() ? editing.phase : editing.bookingType) : '';
+  document.getElementById('resourceTypeSelect').disabled = isPhaseWorld() && !typeOptions.length;
   document.getElementById('resourceGradeSelect').innerHTML =
     '<option value="">Choose grade</option>' +
     GRADES.map(grade => `<option value="${esc(grade)}">${esc(grade)}</option>`).join('');
   document.getElementById('resourceGradeSelect').value = editing?.grade || '';
+  document.getElementById('resourceRoleSelect').innerHTML =
+    '<option value="">Not set</option>' +
+    ROLES.map(role => `<option value="${esc(role)}">${esc(role)}</option>`).join('');
+  document.getElementById('resourceRoleSelect').value = editing?.role || '';
 
   const weightInput = document.getElementById('resourceWeightInput');
   const weightHint = document.getElementById('resourceWeightHint');
-  weightInput.value = editing ? Math.round(Number(editing.weightPercent) || 0) : 100;
-  weightInput.disabled = !editing;
-  weightHint.textContent = editing
+  const initialWeightPeers = typeOptions.length && !editing
+    ? requestsForType(document.getElementById('resourceTypeSelect').value).length
+    : 0;
+  weightInput.value = editing
+    ? Math.round(Number(editing.effortUnit === 'hours' ? editing.effortValue : editing.weightPercent) || 0)
+    : initialWeightPeers ? Math.floor(100 / (initialWeightPeers + 1)) : 100;
+  weightInput.disabled = !!segmentId;
+  weightHint.textContent = segmentId
+    ? 'Weighting applies to the whole resource requirement, not an individual segment.'
+    : editing
     ? `Changing this redistributes the remainder across the other requirements in this ${typeLabel.toLowerCase()}.`
-    : `Automatically balanced with the other requirements in this ${typeLabel.toLowerCase()} when added.`;
+    : `Starts with an equal share. Adjusting it redistributes the remainder across this ${typeLabel.toLowerCase()}.`;
 
   const weeksInput = document.getElementById('resourceWeeksInput');
   const weeksHint = document.getElementById('resourceWeeksHint');
@@ -3903,34 +5071,66 @@ function openResourceModal(editingId = null) {
   const startHint = document.getElementById('resourceStartHint');
   const segments = editing?.segments || [];
   const placedWeeks = segments.reduce((sum, seg) => sum + (Number(seg.durationWeeks) || 0), 0);
-  const multiSegment = segments.length > 1;
+  const multiSegment = segments.length > 1 && !segmentId;
 
   resourceModalState.durationUnit = 'weeks';
+  resourceModalState.effortUnit = editing?.effortUnit || 'percentage';
   syncResourceDurationUnits();
-  weeksInput.value = editing ? (placedWeeks || 4) : 4;
+  syncResourceEffortUnit();
+  weeksInput.value = selectedSegment?.durationWeeks || (editing && !segmentId ? (placedWeeks || 4) : 4);
   weeksInput.disabled = multiSegment;
   weeksHint.textContent = multiSegment
     ? 'Split across the timeline — reshape the blocks there.'
     : 'Adds a block you can reshape on the timeline.';
 
-  startInput.value = (Number(segments[0]?.startWeek) || 0) + 1;
+  startInput.value = selectedSegment
+    ? (Number(selectedSegment.startWeek) || 0) + 1
+    : editing
+    ? (Number(segments[0]?.startWeek) || 0) + 1
+    : (resourceModalState.startWeek || (requestItems().length ? contentWeeks() + 1 : 1));
   startInput.disabled = multiSegment;
   startHint.textContent = multiSegment
     ? 'First block starts here — move the blocks on the timeline to change it.'
-    : 'Week 1 is the start of the template.';
+    : resourceModalState.startWeek
+      ? `Week ${resourceModalState.startWeek} was selected from the timeline.`
+    : requestItems().length
+      ? `Starts after the existing work in week ${contentWeeks() + 1}.`
+      : 'Week 1 is the start of the template.';
 
-  document.getElementById('resourceModalConfirm').textContent = editing ? 'Save' : 'Confirm';
+  document.getElementById('resourceModalConfirm').textContent = editing ? 'Save' : 'Add';
   document.getElementById('resourceModalOverlay').classList.add('is-open');
   syncResourceModalConfirm();
   setTimeout(() => document.getElementById('resourceTypeSelect')?.focus(), 0);
 }
 
+function onResourceTypeChange() {
+  const type = document.getElementById('resourceTypeSelect')?.value || '';
+  if (!resourceModalState.startTouched && type && isPhaseWorld()) {
+    const phases = effortPhases();
+    const phaseIndex = phases.findIndex(phase => phase.name === type);
+    if (phaseIndex >= 0) {
+      const startWeek = phases.slice(0, phaseIndex).reduce((sum, phase) =>
+        sum + Math.max(1, Number(phase.durationWeeks) || 1), 0) + 1;
+      const startInput = document.getElementById('resourceStartInput');
+      if (startInput) startInput.value = startWeek;
+      const startHint = document.getElementById('resourceStartHint');
+      if (startHint) startHint.textContent = `Starts inside ${type}, after the preceding phase time.`;
+    }
+  }
+  syncResourceModalConfirm();
+}
+
 function closeResourceModal() {
   document.getElementById('resourceModalOverlay')?.classList.remove('is-open');
   resourceModalState.editingId = null;
+  resourceModalState.startWeek = null;
+  resourceModalState.segmentId = null;
+  resourceModalState.weightTouched = false;
+  resourceModalState.startTouched = false;
 }
 
 function syncResourceModalConfirm() {
+  syncResourcePlacementBounds();
   const type = document.getElementById('resourceTypeSelect')?.value.trim();
   const grade = document.getElementById('resourceGradeSelect')?.value.trim();
   const weightEl = document.getElementById('resourceWeightInput');
@@ -3942,8 +5142,8 @@ function syncResourceModalConfirm() {
   const startEl = document.getElementById('resourceStartInput');
   const weeksOk = weeksEl.disabled || Number(weeksEl.value) > 0;
   const startOk = startEl.disabled || Number(startEl.value) >= 1;
-  if (!resourceModalState.editingId && weightEl) {
-    const peers = type ? requestsForType(type).length : 0;
+  if (!resourceModalState.editingId && !resourceModalState.weightTouched && weightEl) {
+    const peers = requestsForType(type).length;
     weightEl.value = peers ? Math.floor(100 / (peers + 1)) : 100;
   }
   const weightOk = Number(weightEl?.value) >= 0 && Number(weightEl?.value) <= 100;
@@ -3958,22 +5158,65 @@ function syncResourceModalConfirm() {
     }
   }
 
-  document.getElementById('resourceModalConfirm').disabled = !(type && grade && weeksOk && startOk && weightOk);
+  const typeOk = isPhaseWorld() ? !!type : true;
+  document.getElementById('resourceModalConfirm').disabled = !(typeOk && grade && weeksOk && startOk && weightOk);
 }
 
 function confirmResourceModal() {
   const type = document.getElementById('resourceTypeSelect').value.trim();
   const grade = document.getElementById('resourceGradeSelect').value.trim();
+  const role = document.getElementById('resourceRoleSelect').value.trim();
   const weeksEl = document.getElementById('resourceWeeksInput');
   const weeks = resourceDurationWeeks();
   const startWeek = Math.max(0, Math.round(Number(document.getElementById('resourceStartInput').value) || 1) - 1);
   const weightPercent = Math.min(100, Math.max(0, Math.round(Number(document.getElementById('resourceWeightInput').value) || 0)));
-  if (!type || !grade) return;
+  const effortValue = Math.max(0, Number(document.getElementById('resourceWeightInput').value) || 0);
+  if ((isPhaseWorld() && !type) || !grade) return;
   ensureTypeSequence(type);
   const existing = resourceModalState.editingId ? findRequest(resourceModalState.editingId) : null;
+  const candidate = {
+    id: resourceModalState.segmentId && resourceModalState.segmentId !== 'new'
+      ? resourceModalState.segmentId
+      : existing?.segments?.[0]?.id || id('seg'),
+    startWeek,
+    durationWeeks: weeks,
+    phase: isPhaseWorld() ? type : '',
+    bookingType: isPhaseWorld() ? '' : type
+  };
+  const dependencyRequest = existing || {
+    phase: isPhaseWorld() ? type : '',
+    bookingType: isPhaseWorld() ? '' : type,
+    segments: []
+  };
+  const dependencyIssue = segmentDependencyIssue(dependencyRequest, candidate, state.draft);
+  if (dependencyIssue) {
+    showGanttConstraintTooltip(dependencyIssue, document.getElementById('resourceStartInput'));
+    return;
+  }
   if (existing) {
+    if (resourceModalState.segmentId) {
+      const segment = resourceModalState.segmentId === 'new'
+        ? { id: id('seg'), startWeek, durationWeeks: weeks }
+        : existing.segments?.find(item => item.id === resourceModalState.segmentId);
+      if (!segment) return;
+      segment.startWeek = startWeek;
+      segment.durationWeeks = weeks;
+      segment.phase = isPhaseWorld() ? type : '';
+      segment.bookingType = isPhaseWorld() ? '' : type;
+      if (resourceModalState.segmentId === 'new') existing.segments.push(segment);
+      existing.grade = grade;
+      existing.role = role;
+      closeResourceModal();
+      renderResourceGantt('slotEditor');
+      updateFooterSummary();
+      renderStepper();
+      return;
+    }
     const previousType = requestTypeKey(existing);
     existing.grade = grade;
+    existing.role = role;
+    existing.effortUnit = resourceModalState.effortUnit;
+    existing.effortValue = effortValue;
     existing.weightPercent = weightPercent;
     if (isPhaseWorld()) {
       existing.phase = type;
@@ -3992,15 +5235,18 @@ function confirmResourceModal() {
     const request = {
       id: id('rr'),
       grade,
-      role: '',
+      role,
       count: 1,
       phase: isPhaseWorld() ? type : '',
       bookingType: isPhaseWorld() ? '' : type,
       weightPercent,
+      effortUnit: resourceModalState.effortUnit,
+      effortValue,
       segments: [{ id: id('seg'), startWeek, durationWeeks: weeks }]
     };
     state.draft.resourceRequests.push(request);
-    equaliseRequestGroup(type);
+    if (resourceModalState.weightTouched) rebalanceRequestWeight(request.id);
+    else equaliseRequestGroup(type);
   }
   closeResourceModal();
   renderResourceGantt('slotEditor');
@@ -4027,11 +5273,12 @@ function miniGanttMarkup(d = state.draft, readOnly = false) {
   const toolbar = readOnly ? '' : `
     <div class="MiniGantt-toolbar">
       <span class="MiniGantt-title">Resource requirements</span>
-      <button class="Btn Btn--sm" type="button" onclick="openResourceModal()">
-        <i class="fa-solid fa-plus"></i> Add Resource Requirement
+      <button class="Btn Btn--primary Btn--sm" type="button" onclick="openResourceModal()">
+        <i class="fa-solid fa-plus"></i> Add Resource
       </button>
-    </div>
-    <div class="MiniGantt-help">Double-click an empty week to add work. Drag bars to move them, drag either edge to resize, and right-click to remove a segment.</div>`;
+    </div>`;
+  const help = requests.length ? `
+    <div class="MiniGantt-help">Double-click an empty week to add work. Drag bars to move them, drag either edge to resize, and right-click to remove a segment.</div>` : '';
   const months = monthChunks.map((weeks, index) =>
     `<div class="MiniGantt-month" style="flex:0 0 calc(${weeks} * var(--week-w));width:calc(${weeks} * var(--week-w));">Month ${index + 1}</div>`
   ).join('');
@@ -4039,22 +5286,22 @@ function miniGanttMarkup(d = state.draft, readOnly = false) {
     `<div class="MiniGantt-week">W${index + 1}</div>`
   ).join('');
   const rows = requests.map(request => {
-    const color = requestColor(request, d);
     const requestWeeks = (request.segments || []).reduce((sum, segment) => sum + (Number(segment.durationWeeks) || 0), 0);
-    const metaBits = [requestTypeName(request, d), `${Math.round(Number(request.weightPercent) || 0)}%`];
+    const metaBits = [requestTypeSummary(request, d), `${Math.round(Number(request.weightPercent) || 0)}%`];
+    if (request.role) metaBits.unshift(request.role);
     if (requestWeeks) metaBits.push(`${requestWeeks}w`);
     const bars = (request.segments || []).map(segment => `
-      <div class="MiniGantt-bar" style="left:calc(${segment.startWeek} * var(--week-w));width:calc(${segment.durationWeeks} * var(--week-w));background:${color};"
-        title="${segment.durationWeeks} week${segment.durationWeeks === 1 ? '' : 's'}${readOnly ? '' : ' · Right-click to remove'}"
-        ${readOnly ? '' : `onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','move')" oncontextmenu="deleteGanttSegment(event,'${request.id}','${segment.id}')"`}>
-        ${readOnly ? '' : `<span class="MiniGantt-resize MiniGantt-resize--left" onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','resize-left')"></span>`}
+      <div class="MiniGantt-bar" style="left:calc(${segment.startWeek} * var(--week-w));width:calc(${segment.durationWeeks} * var(--week-w));background:${segmentColor(request, segment, d)};color:${accessibleTextColor(segmentColor(request, segment, d))};"
+        title="${segment.durationWeeks} week${segment.durationWeeks === 1 ? '' : 's'}"
+        ${readOnly ? '' : `onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','move')" ondblclick="event.stopPropagation(); openResourceModal('${request.id}', null, '${segment.id}')" oncontextmenu="deleteGanttSegment(event,'${request.id}','${segment.id}')"`}>
+        ${readOnly ? '' : `<span class="MiniGantt-resize MiniGantt-resize--left" style="color:${segmentColor(request, segment, d)};" onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','resize-left')">⋮</span>`}
         <span>${segment.durationWeeks}w</span>
-        ${readOnly ? '' : `<span class="MiniGantt-resize MiniGantt-resize--right" onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','resize-right')"></span>`}
+        ${readOnly ? '' : `<span class="MiniGantt-resize MiniGantt-resize--right" style="color:${segmentColor(request, segment, d)};" onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','resize-right')">⋮</span>`}
       </div>`).join('');
     return `
       <div class="MiniGantt-row">
         <div class="MiniGantt-label">
-          <span class="SegRow-dot" style="background:${color}" aria-hidden="true"></span>
+          <span class="SegRow-dot" style="${requestDotStyle(request, d)}" aria-hidden="true"></span>
           <div class="MiniGantt-labelCopy">
             <div class="MiniGantt-labelTitle">${esc(request.grade || 'Resource requirement')}</div>
             <div class="MiniGantt-labelMeta">${esc(metaBits.join(' · '))}</div>
@@ -4068,25 +5315,34 @@ function miniGanttMarkup(d = state.draft, readOnly = false) {
           ${readOnly ? '' : `ondblclick="addGanttSegment(event,'${request.id}')"`}>${bars}</div>
       </div>`;
   }).join('');
+  const addRow = '';
   const empty = requests.length ? '' : `
     <div class="MiniGantt-empty">
-      <div class="Strong" style="margin-bottom:4px;">No resource requirements yet</div>
-      <div>Add a resource requirement, then double-click its timeline row to shape the work.</div>
+      <div class="MiniGantt-emptyIcon" aria-hidden="true"><i class="fa-solid fa-calendar-check"></i></div>
+      <div class="MiniGantt-emptyTitle">No resource requirements yet</div>
+      <div class="MiniGantt-emptyCopy">${readOnly
+        ? 'Add resource requirements to build the shape.'
+        : 'Add a resource requirement to start shaping demand on the timeline.'}</div>
+      ${readOnly ? '' : `<button class="Btn Btn--primary" type="button" onclick="openResourceModal()">Add resource requirement</button>`}
     </div>`;
-  return `
-    <div class="MiniGantt${readOnly ? ' MiniGantt-readonly' : ''}">
-      ${toolbar}
+  const timeline = requests.length ? `
       <div class="MiniGantt-scroll">
         <div class="MiniGantt-canvas" data-weeks="${totalWeeks}" style="--weeks:${totalWeeks};">
           <div class="MiniGantt-months">
-            <div class="MiniGantt-corner">Resource</div>${months}
+            <div class="MiniGantt-corner" aria-hidden="true"></div>${months}
           </div>
           <div class="MiniGantt-weeks">
-            <div class="MiniGantt-corner">Timeline</div>${weekHeaders}
+            <div class="MiniGantt-corner" aria-label="Resource">Resource</div>${weekHeaders}
           </div>
           ${rows}
+          ${addRow}
         </div>
-      </div>
+      </div>` : '';
+  return `
+    <div class="MiniGantt${readOnly ? ' MiniGantt-readonly' : ''}">
+      ${toolbar}
+      ${help}
+      ${timeline}
       ${empty}
     </div>`;
 }
@@ -4105,7 +5361,7 @@ function sizeMiniGantt(mount) {
   const available = scroll.clientWidth;
   if (!available) return;
   const weeks = Math.max(1, Number(canvas.dataset.weeks) || 1);
-  const labelWidth = available < 420 ? 110 : available < 640 ? 160 : 230;
+  const labelWidth = available < 420 ? 110 : available < 640 ? 160 : 192;
   // Floor to hundredths so accumulated sub-pixels never overflow into a scrollbar.
   const fitted = Math.floor(((available - labelWidth) / weeks) * 100) / 100;
   const weekWidth = Math.min(MINI_GANTT_MAX_WEEK_W, Math.max(MINI_GANTT_MIN_WEEK_W, fitted));
@@ -4120,7 +5376,12 @@ function renderResourceGantt(targetId = 'slotEditor', readOnly = false, d = stat
   target.innerHTML = miniGanttMarkup(d, readOnly);
   sizeMiniGantt(target);
   miniGanttObserver?.observe(target);
-  renderDemandShape(targetId === 'reviewGantt' ? 'reviewShapeVisual' : 'timelineShapeVisual', d);
+  if (targetId === 'reviewGantt') {
+    renderDemandShape('reviewShapeVisual', d);
+  } else {
+    renderTimelineScale(d);
+    renderDemandShape('timelineShapeVisual', d, false);
+  }
   if (targetId === 'slotEditor') renderSequencingFeedback();
 }
 
@@ -4134,6 +5395,134 @@ function segmentOverlaps(segments, candidate, ignoreId) {
     candidate.startWeek + candidate.durationWeeks > segment.startWeek);
 }
 
+function dependencyWindowForType(type, d = state.draft) {
+  if (!type || !d) return null;
+  if (isPhaseWorld(d)) {
+    const items = timelineList(d);
+    const index = items.findIndex(item => isPhaseItem(item) && item.name === type);
+    if (index === -1) return null;
+    const start = items.slice(0, index).reduce((sum, item) =>
+      sum + Math.max(1, Number(item.durationWeeks) || 1), 0);
+    return {
+      type,
+      start,
+      end: start + Math.max(1, Number(items[index].durationWeeks) || 1),
+      phase: true
+    };
+  }
+
+  normaliseSequencing(d);
+  const activeTypes = new Set(requestItems(d).flatMap(request =>
+    (request.segments || []).map(segment => segmentTypeName(request, segment, d))
+  ).filter(Boolean));
+  const order = d.sequencing.typeOrder.filter(item => activeTypes.has(item) || item === type);
+  const index = order.indexOf(type);
+  if (index <= 0) return { type, start: 0, end: null, phase: false };
+  const previousType = order[index - 1];
+  const previous = requestTypeBounds(previousType, d);
+  if (!previous) return { type, start: 0, end: null, phase: false };
+  return {
+    type,
+    start: d.sequencing.allowOverlap ? previous.start : previous.end,
+    end: null,
+    phase: false,
+    previousType
+  };
+}
+
+function dependencyWindowMessage(window) {
+  if (!window) return '';
+  if (window.end != null) {
+    return `${window.type} can only use weeks ${window.start + 1}-${window.end}.`;
+  }
+  if (window.previousType) {
+    return window.start
+      ? `${window.type} must start in week ${window.start + 1} or later, after ${window.previousType}.`
+      : `${window.type} cannot start before ${window.previousType}.`;
+  }
+  return '';
+}
+
+function segmentDependencyIssue(request, candidate, d = state.draft) {
+  const type = segmentTypeName(request, candidate, d);
+  const window = dependencyWindowForType(type, d);
+  const start = Math.max(0, Number(candidate.startWeek) || 0);
+  const duration = Math.max(1, Number(candidate.durationWeeks) || 1);
+  const end = start + duration;
+  if (window && start < window.start) return dependencyWindowMessage(window);
+  if (window && window.end != null && end > window.end) {
+    return window.end - window.start < duration
+      ? `${window.type} has ${window.end - window.start} week${window.end - window.start === 1 ? '' : 's'} available, so this requirement is too long.`
+      : dependencyWindowMessage(window);
+  }
+  if (segmentOverlaps(request.segments || [], { startWeek: start, durationWeeks: duration }, candidate.id)) {
+    return 'This resource requirement already has work in that week.';
+  }
+  return null;
+}
+
+function normalisePhaseSegmentPlacement(d = state.draft) {
+  if (!d || !isPhaseWorld(d)) return;
+  requestItems(d).forEach(request => {
+    (request.segments || []).forEach(segment => {
+      const window = dependencyWindowForType(segmentTypeName(request, segment, d), d);
+      if (!window || window.end == null) return;
+      const availableWeeks = Math.max(1, window.end - window.start);
+      const duration = Math.min(availableWeeks, Math.max(1, Number(segment.durationWeeks) || 1));
+      const start = Math.max(window.start, Math.min(
+        window.end - duration,
+        Math.max(0, Number(segment.startWeek) || 0)
+      ));
+      segment.startWeek = start;
+      segment.durationWeeks = duration;
+    });
+  });
+}
+
+function snapSegmentPlacement(request, startWeek, durationWeeks, d = state.draft) {
+  const window = dependencyWindowForType(segmentTypeName(request, null, d), d);
+  let duration = Math.max(1, Number(durationWeeks) || 1);
+  let start = Math.max(0, Number(startWeek) || 0);
+  if (!window) return { startWeek: start, durationWeeks: duration, window: null };
+  if (window.end != null) {
+    duration = Math.min(duration, window.end - window.start);
+    start = Math.max(window.start, Math.min(start, window.end - duration));
+  } else {
+    start = Math.max(window.start, start);
+  }
+  return { startWeek: start, durationWeeks: duration, window };
+}
+
+let ganttConstraintTooltipTimer = null;
+
+function showGanttConstraintTooltip(message, source) {
+  const tooltip = document.getElementById('ganttConstraintTooltip');
+  if (!tooltip || !message) return;
+  tooltip.textContent = message;
+  tooltip.classList.add('is-open');
+  tooltip.setAttribute('aria-hidden', 'false');
+  const rect = source?.getBoundingClientRect?.();
+  const sourceX = Number.isFinite(source?.clientX)
+    ? source.clientX
+    : rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+  const sourceY = Number.isFinite(source?.clientY)
+    ? source.clientY
+    : rect ? rect.top : window.innerHeight / 2;
+  const left = Math.max(12, Math.min(window.innerWidth - 12, sourceX));
+  const top = Math.max(tooltip.offsetHeight + 12, sourceY);
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${top}px`;
+  clearTimeout(ganttConstraintTooltipTimer);
+  ganttConstraintTooltipTimer = setTimeout(hideGanttConstraintTooltip, 2800);
+}
+
+function hideGanttConstraintTooltip() {
+  const tooltip = document.getElementById('ganttConstraintTooltip');
+  if (!tooltip) return;
+  tooltip.classList.remove('is-open');
+  tooltip.setAttribute('aria-hidden', 'true');
+}
+
 function addGanttSegment(event, requestId) {
   const request = findRequest(requestId);
   if (!request) return;
@@ -4142,18 +5531,20 @@ function addGanttSegment(event, requestId) {
   const rect = track.getBoundingClientRect();
   const clickedWeek = Math.max(0, Math.min(totalWeeks - 1,
     Math.floor((event.clientX - rect.left) / (rect.width / totalWeeks))));
-  if ((request.segments || []).some(segment =>
-    clickedWeek >= segment.startWeek && clickedWeek < segment.startWeek + segment.durationWeeks)) return;
-  let durationWeeks = 0;
-  for (let week = clickedWeek; week < totalWeeks && durationWeeks < 4; week += 1) {
-    if (request.segments.some(segment =>
-      week >= segment.startWeek && week < segment.startWeek + segment.durationWeeks)) break;
-    durationWeeks += 1;
+  const snapped = snapSegmentPlacement(request, clickedWeek, 1);
+  if (snapped.startWeek !== clickedWeek) {
+    showGanttConstraintTooltip(
+      `${dependencyWindowMessage(snapped.window)} Snapped to week ${snapped.startWeek + 1}.`,
+      event
+    );
   }
-  if (!durationWeeks) return;
-  request.segments.push({ id: id('seg'), startWeek: clickedWeek, durationWeeks });
-  renderResourceGantt('slotEditor');
-  renderStepper();
+  const placementWeek = snapped.startWeek;
+  if ((request.segments || []).some(segment =>
+    placementWeek >= segment.startWeek && placementWeek < segment.startWeek + segment.durationWeeks)) {
+    showGanttConstraintTooltip('This resource requirement already has work in that week.', event);
+    return;
+  }
+  openResourceModal(requestId, placementWeek + 1, 'new');
 }
 
 function deleteGanttSegment(event, requestId, segmentId) {
@@ -4182,13 +5573,15 @@ function startGanttDrag(event, requestId, segmentId, type) {
     durationWeeks: segment.durationWeeks,
     weekWidth: track.getBoundingClientRect().width / timelineWeeks(),
     lastStart: segment.startWeek,
-    lastDuration: segment.durationWeeks
+    lastDuration: segment.durationWeeks,
+    cancelled: false
   };
 }
 
 function moveGanttDrag(event) {
   if (!ganttDragState) return;
   const drag = ganttDragState;
+  if (drag.cancelled) return;
   const request = findRequest(drag.requestId);
   const segment = request?.segments.find(item => item.id === drag.segmentId);
   if (!request || !segment) return;
@@ -4204,7 +5597,15 @@ function moveGanttDrag(event) {
   } else {
     next.durationWeeks = Math.max(1, Math.min(totalWeeks - drag.startWeek, drag.durationWeeks + delta));
   }
-  if (segmentOverlaps(request.segments, next, segment.id)) return;
+  const issue = segmentDependencyIssue(request, next, state.draft);
+  if (issue) {
+    segment.startWeek = drag.startWeek;
+    segment.durationWeeks = drag.durationWeeks;
+    drag.cancelled = true;
+    renderResourceGantt('slotEditor');
+    showGanttConstraintTooltip(issue, event);
+    return;
+  }
   if (next.startWeek === drag.lastStart && next.durationWeeks === drag.lastDuration) return;
   segment.startWeek = next.startWeek;
   segment.durationWeeks = next.durationWeeks;
@@ -4308,7 +5709,7 @@ function renderReviewLegacy() {
     <div class="ReviewMeta">
       <div class="ReviewMeta-copy">
         <h3 class="ReviewMeta-title">${esc(d.name || '(unnamed)')}</h3>
-        <div class="ReviewMeta-detail">${isPhaseWorld(d) ? 'With phases' : 'Without phases'}${d.returnType ? ` · ${esc(d.returnType)}` : ''} · ${d._editing ? `New version v${d.version + 1}` : 'Version 1'}</div>
+        <div class="ReviewMeta-detail">${isPhaseWorld(d) ? 'With phases' : 'Without phases'}${d.businessUnit ? ` · ${esc(d.businessUnit)}` : ''}${d.returnType ? ` · ${esc(d.returnType)}` : ''} · ${d._editing ? `New version v${d.version + 1}` : 'Version 1'}</div>
       </div>
     </div>
 
@@ -4340,6 +5741,60 @@ function formatDuration(days) {
   return `${days} day${days === 1 ? '' : 's'}`;
 }
 
+function reviewDemandTablesMarkup(d = state.draft) {
+  const requests = requestItems(d);
+  if (!requests.length) {
+    return '<div class="ReviewDemandGroup"><div class="Muted">No resource requirements added yet.</div></div>';
+  }
+  const groups = new Map();
+  requests.forEach(request => {
+    const type = requestTypeKey(request, d) || (isPhaseWorld(d) ? 'No phase' : 'No booking type');
+    if (!groups.has(type)) groups.set(type, []);
+    groups.get(type).push(request);
+  });
+  return [...groups.entries()].map(([type, group]) => `
+    <div class="ReviewDemandGroup">
+      <div class="ReviewDemandGroup-title">
+        <span class="SegRow-dot" style="${requestDotStyle(group[0], d)}" aria-hidden="true"></span>
+        <span>${esc(type)}</span>
+      </div>
+      <table class="ReviewDemandTable">
+        <thead>
+          <tr><th>Resource</th><th>Effort</th><th>Weeks</th><th>Days</th><th>Hours</th></tr>
+        </thead>
+        <tbody>
+          ${group.map(request => {
+            const weeks = (request.segments || []).reduce((sum, segment) =>
+              sum + (Number(segment.durationWeeks) || 0), 0);
+            return `<tr>
+              <td class="ReviewDemandResource">${esc(request.grade || 'Any grade')}${request.role ? ` / ${esc(request.role)}` : ''}</td>
+              <td>${esc(requestEffortLabel(request))}</td>
+              <td>${weeks}</td>
+              <td>${weeks * 7}</td>
+              <td>—</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `).join('');
+}
+
+function reviewPhaseWeightsMarkup(d = state.draft) {
+  const phases = effortPhases(d);
+  if (!phases.length || !isPhaseWorld(d)) return '';
+  syncPhaseWeights(d);
+  return `<div class="ReviewPhaseWeights" aria-label="Phase weighting">
+    ${phases.map((phase, index) => {
+      const usage = phaseUtilisation(phase, index, d);
+      return `<span class="ReviewPhaseWeight">
+        <span class="ReviewPhaseWeight-dot" style="background:${phase.color || 'var(--surface-emphasis)'}" aria-hidden="true"></span>
+        <span>${esc(phase.name || 'Unnamed phase')} · ${phase.weight}% · ${usage.weeks}w${phase.locked ? ' · locked' : ''}</span>
+      </span>`;
+    }).join('')}
+  </div>`;
+}
+
 function renderReview() {
   readWizardForm();
   const d = state.draft;
@@ -4349,28 +5804,50 @@ function renderReview() {
   const ready = !stepIssue('details') && !issue;
   const requests = requestItems(d);
   const segmentCount = requests.reduce((sum, request) => sum + request.segments.length, 0);
+  const totalWeeks = contentWeeks(d);
+  const sequencingLabel = d.sequencing?.allowOverlap !== false
+    ? 'Overlap allowed · start-to-start'
+    : 'No overlap · finish-to-start · gaps consumed when shunting';
 
   document.getElementById('reviewSummary').innerHTML = `
-    <div class="ReviewMeta">
-      <div class="ReviewMeta-copy">
-        <h3 class="ReviewMeta-title">${esc(d.name || '(unnamed)')}</h3>
-        <div class="ReviewMeta-detail">
-          ${isPhaseWorld(d) ? 'With phases' : 'Without phases'}
-          ${d.returnType ? ` · ${esc(d.returnType)}` : ''}
-          · ${formatDuration(d.durationDays)}
-          · ${d.sequencing?.allowOverlap !== false ? 'Work may overlap' : 'Work runs sequentially'}
-          · ${d._editing ? `New version v${d.version + 1}` : 'Version 1'}
+    <div class="ReviewSummaryCard">
+      <div class="ReviewSummary-copy">
+        <h3 class="ReviewSummary-title">${esc(d.name || '(unnamed)')}</h3>
+        <div class="ReviewSummary-detail">
+          ${totalWeeks} weeks · ${esc(sequencingLabel)}
+        </div>
+      </div>
+      <div class="ReviewSummary-metrics">
+        <div class="ReviewSummary-metric">
+          <span class="ReviewSummary-metricLabel">Total Requirements</span>
+          <strong class="ReviewSummary-metricValue">${requests.length} ${requests.length === 1 ? 'Role' : 'Roles'}</strong>
+        </div>
+        <div class="ReviewSummary-metric">
+          <span class="ReviewSummary-metricLabel">Total Weeks</span>
+          <strong class="ReviewSummary-metricValue">${totalWeeks} Weeks</strong>
+        </div>
+        <div class="ReviewSummary-metric">
+          <span class="ReviewSummary-metricLabel">Sequencing</span>
+          <strong class="ReviewSummary-metricValue">${esc(sequencingLabel)}</strong>
         </div>
       </div>
     </div>
 
-    <section class="ReviewSection" aria-labelledby="reviewDemandTitle">
+    <section class="ReviewSection" aria-labelledby="reviewShapeTitle">
       <div class="ReviewSection-head">
-        <div class="ReviewSection-title" id="reviewDemandTitle">Resource demand</div>
+        <div class="ReviewSection-title" id="reviewShapeTitle">Demand shape</div>
         <button class="Btn Btn--sm" type="button" onclick="onStepperClick(${timelineStep})">Edit timeline</button>
       </div>
-      <div class="ShapeTimeline" id="reviewShapeVisual" style="margin-bottom:var(--padding-md);"></div>
-      <div id="reviewGantt"></div>
+      <div class="ShapeTimeline" id="reviewShapeVisual"></div>
+      ${reviewPhaseWeightsMarkup(d)}
+    </section>
+
+    <section class="ReviewSection" aria-labelledby="reviewDemandTitle">
+      <div class="ReviewSection-head">
+        <div class="ReviewSection-title" id="reviewDemandTitle">Resource requirements</div>
+        <button class="Btn Btn--sm" type="button" onclick="onStepperClick(${timelineStep})">Edit timeline</button>
+      </div>
+      ${reviewDemandTablesMarkup(d)}
     </section>
 
     <div class="Banner ${ready ? 'Banner--success' : 'Banner--danger'}" style="margin-bottom:0;">
@@ -4379,7 +5856,7 @@ function renderReview() {
         ? `Ready to publish · ${requests.length} resource requirement${requests.length === 1 ? '' : 's'} · ${segmentCount} work segment${segmentCount === 1 ? '' : 's'} · ${formatDuration(d.durationDays)}`
         : esc(issue || stepIssue('details') || 'Fix the template before publishing')}</div>
     </div>`;
-  renderResourceGantt('reviewGantt', true, d);
+  renderDemandShape('reviewShapeVisual', d);
 }
 
 function wizardNav(dir) {
@@ -4390,9 +5867,10 @@ function wizardNav(dir) {
     if (panel === 'details') {
       const detailsIssue = stepIssue('details');
       if (detailsIssue) {
-        const field = document.getElementById('wp-name');
+        const missingBusinessUnit = !state.draft.businessUnit;
+        const field = document.getElementById(missingBusinessUnit ? 'wp-business-unit' : 'wp-name');
         field.setAttribute('aria-invalid', 'true');
-        document.getElementById('nameError').classList.remove('hidden');
+        document.getElementById(missingBusinessUnit ? 'businessUnitError' : 'nameError').classList.remove('hidden');
         field.focus();
         return;
       }
@@ -4417,13 +5895,25 @@ function timelineIssue() {
   if (requests.some(request => !(request.grade && String(request.grade).trim()))) {
     return 'Choose a grade for every resource requirement';
   }
-  if (isPhaseWorld() && requests.some(request => !PHASE_LIBRARY[request.phase])) {
-    return 'Choose a valid phase for every resource requirement';
+  if (isPhaseWorld() && effortPhases().some(phase => !PHASE_LIBRARY[phase.name])) {
+    return 'Choose a phase name for every phase block';
   }
-  if (!isPhaseWorld() && requests.some(request => !BOOKING_TYPE_LIBRARY[request.bookingType])) {
+  if (isPhaseWorld() && effortPhases().length) {
+    const phaseWeights = effortPhases().map(phase => Number(phase.weight));
+    const phaseWeightTotal = phaseWeights.reduce((sum, value) =>
+      sum + (Number.isFinite(value) ? value : 0), 0);
+    if (!phaseWeights.every(value => Number.isFinite(value) && value >= 0 && value <= 100) ||
+      phaseWeightTotal !== 100) {
+      return 'Phase weightings must total 100%';
+    }
+  }
+  if (isPhaseWorld() && requests.some(request => request.phase && !PHASE_LIBRARY[request.phase])) {
+    return 'Choose a valid phase for every phased resource requirement';
+  }
+  if (!isPhaseWorld() && requests.some(request => request.bookingType && !BOOKING_TYPE_LIBRARY[request.bookingType])) {
     return 'Choose a booking type for every resource requirement';
   }
-  const types = [...new Set(requests.map(request => requestTypeKey(request)).filter(Boolean))];
+  const types = [...new Set(requests.map(request => requestTypeKey(request)))];
   for (const type of types) {
     const group = requestsForType(type);
     const validWeights = group.every(request =>
@@ -4475,7 +5965,9 @@ function publishDraft() {
       existing.version += 1;
       existing.name = d.name;
       existing.returnType = d.returnType;
-      existing.phaseWorld = d.phaseWorld !== false;
+      existing.businessUnit = d.businessUnit;
+      existing.phaseWorld = isPhaseWorld(d);
+      existing.phasesConfigured = phasesConfigured(d);
       existing.durationDays = d.durationDays;
       existing.durationUnit = d.durationUnit;
       existing.phases = JSON.parse(JSON.stringify(d.phases || []));
@@ -4488,8 +5980,11 @@ function publishDraft() {
   } else {
     const t = JSON.parse(JSON.stringify(d));
     delete t._editing;
+    delete t._initialSnapshot;
     t.status = 'published';
     t.version = 1;
+    t.phaseWorld = isPhaseWorld(d);
+    t.phasesConfigured = phasesConfigured(d);
     state.catalogue.unshift(t);
     toast('Published demand template v1');
   }
@@ -4505,6 +6000,10 @@ document.addEventListener('click', (event) => {
   if (!event.target.closest('#addTimelineMenu')) closeAddMenu();
 });
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && document.getElementById('exitConfirmOverlay')?.classList.contains('is-open')) {
+    closeExitConfirm();
+    return;
+  }
   if (event.key === 'Escape' && document.getElementById('resourceModalOverlay')?.classList.contains('is-open')) {
     closeResourceModal();
   }
