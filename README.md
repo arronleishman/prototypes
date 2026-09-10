@@ -153,10 +153,10 @@ Publish directory: `.` · No build command.
 - `Share`, `Open mock`, and `Download` are in the workspace header. The existing direct mock, `feedback.html`, and `changelog.html` URLs continue to work.
 - To add a prototype manually, use **Add prototype** in the hub. Upload the HTML mock, then add Components, Code, Storybook, or Instructions from the workspace tabs.
 - Run `supabase-prototype-library.sql` once in the Supabase SQL editor. The prototype library uses a private `prototype-artifacts` Storage bucket.
-- Internal sharing is role-based: **Designer** links have full authoring access, while **Developer** links are read-only. Set `roleAccessUrl` in `config.js` to an approved server endpoint that exchanges the link for a short-lived Supabase capability token. Until that endpoint is configured, role links provide the UI access model but cannot securely authorize shared Supabase writes.
+- Internal sharing is role-based: **Designer** links have full authoring access, while **Developer** links are read-only. The recipient must enter the internal access token; the role in the URL only selects the permission level and is not an access credential.
 - Add `SUPABASE_SERVICE_ROLE_KEY` as a GitHub Actions secret (and optionally `SUPABASE_URL`; the workflow can read the checked-in URL). On pushes that change a file listed as a mock path in `manifest.json`, the Pages workflow records a `Push <short SHA>` entry in Version history using the commit message and changed files. Re-running a workflow does not duplicate a version.
 - Use the workflow’s `sync_all_versions` input for a one-time baseline snapshot of every repository-backed mock after the SQL migration. The **Add version** button remains available for curated milestones that are not tied to a push.
-- The old `internalAccessKey` is still useful as a navigation gate, but it is not a security boundary. Role links must be backed by server-issued capability tokens and RLS policies; query-string roles alone are only a presentation-layer fallback.
+- The `internalAccessKey` is the password-like navigation gate. It is stored only in session storage after entry and is removed from generated internal URLs.
 
 ## Security migration
 

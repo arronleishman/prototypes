@@ -520,7 +520,7 @@
   </div>
 
   <script src="config.js"></script>
-  <script src="shared/access.js?v=2026-09-09-orange-theme"></script>
+  <script src="shared/access.js?v=2026-09-10-token-gate"></script>
   <script src="shared/changelog-store.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
@@ -536,7 +536,7 @@
       var cfg = window.PROTOTYPES_CONFIG || {};
       var hubHref = access.hubUrlWithKey();
       var keyQ = access.currentRole() ? ('&role=' + encodeURIComponent(access.currentRole())) : (access.configuredKey() ? ('&key=' + encodeURIComponent(access.configuredKey())) : '');
-      var uiVersion = '2026-09-09-orange-theme';
+      var uiVersion = '2026-09-10-token-gate';
 
       var titleEl = document.getElementById('title');
       var subEl = document.getElementById('subtitle');

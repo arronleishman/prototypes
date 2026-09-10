@@ -98,15 +98,6 @@
     }
     .notice.is-error { border-color: var(--danger-line); background: var(--danger-soft); color: var(--danger); }
     .notice[hidden] { display: none; }
-    .resource-auth {
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      margin: 16px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
-      background: #fbfcfb; color: var(--muted); font-size: .82rem; line-height: 1.4;
-    }
-    .resource-auth > span { display: flex; align-items: center; gap: 8px; min-width: 0; }
-    .resource-auth i { color: var(--accent); }
-    .resource-auth .btn { min-height: 34px; padding: 0 10px; flex: 0 0 auto; }
-    .resource-auth[hidden] { display: none; }
     .tabs {
       display: flex; gap: 4px; overflow-x: auto; margin: 16px 0 0; padding: 0;
       border-bottom: 1px solid var(--line);
@@ -259,7 +250,7 @@
       .row { align-items: flex-start; flex-direction: column; }
       .row-actions { width: 100%; }
       .row-actions .btn { flex: 1; }
-      .notice, .resource-auth { align-items: flex-start; flex-direction: column; }
+      .notice { align-items: flex-start; flex-direction: column; }
     }
   </style>
 </head>
@@ -424,7 +415,7 @@
   </div>
 
   <script src="config.js"></script>
-  <script src="shared/access.js?v=2026-09-09-orange-theme"></script>
+  <script src="shared/access.js?v=2026-09-10-token-gate"></script>
   <script src="shared/supabase-auth.js"></script>
   <script src="shared/prototype-library.js"></script>
   <script src="shared/usability-test-store.js"></script>
@@ -449,7 +440,7 @@
       var editingTest = null;
       var resourceKind = 'components';
       var mockUrl = '';
-      var uiVersion = '2026-09-09-orange-theme';
+      var uiVersion = '2026-09-10-token-gate';
       var keyParam = access.currentRole() ? '&role=' + encodeURIComponent(access.currentRole()) : (access.configuredKey() ? '&key=' + encodeURIComponent(access.configuredKey()) : '');
 
       var titleEl = document.getElementById('title');
@@ -786,7 +777,7 @@
         shareRole.value = access.isDeveloper() ? 'developer' : 'designer';
         shareRole.querySelector('option[value="designer"]').disabled = access.isDeveloper();
         updateRoleShareUrl();
-        document.getElementById('shareNote').textContent = 'Choose a role. Designer links can edit the workspace; Developer links can view the mock, Insights, history, changelog, resources, and usability results.';
+        document.getElementById('shareNote').textContent = 'Choose a role. The recipient must enter the internal access token; Designer links can edit, while Developer links are view-only.';
         document.getElementById('shareStatus').textContent = '';
         shareModal.hidden = false;
         document.getElementById('shareUrl').focus();

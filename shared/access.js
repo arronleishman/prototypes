@@ -5,7 +5,7 @@
   var STORAGE_KEY = 'prototypes.internalAccess';
   var ROLE_KEY = 'prototypes.accessRole';
   var CAPABILITY_KEY = 'prototypes.accessCapability';
-  var UI_VERSION = '2026-09-09-orange-theme';
+  var UI_VERSION = '2026-09-10-token-gate';
 
   function validRole(role) {
     return role === 'designer' || role === 'developer';
@@ -20,18 +20,18 @@
     var key = configuredKey();
     if (!key) return false; // missing config must fail closed
     try {
-      return sessionStorage.getItem(STORAGE_KEY) === key || validRole(sessionStorage.getItem(ROLE_KEY));
+      return sessionStorage.getItem(STORAGE_KEY) === key;
     } catch (e) {
       return false;
     }
   }
 
-  function grantAccess(key) {
+  function grantAccess(key, role) {
     var expected = configuredKey();
     if (!expected || key !== expected) return false;
     try {
       sessionStorage.setItem(STORAGE_KEY, expected);
-      sessionStorage.setItem(ROLE_KEY, 'designer');
+      sessionStorage.setItem(ROLE_KEY, validRole(role) ? role : 'designer');
       sessionStorage.removeItem(CAPABILITY_KEY);
     } catch (e) {}
     return true;
@@ -74,11 +74,11 @@
   }
 
   function isDesigner() {
-    return currentRole() === 'designer' || hasAccess() && !currentRole();
+    return hasAccess() && (currentRole() === 'designer' || !currentRole());
   }
 
   function isDeveloper() {
-    return currentRole() === 'developer';
+    return hasAccess() && currentRole() === 'developer';
   }
 
   function keyFromUrl() {
@@ -124,8 +124,6 @@
     var url = new URL(siteRootUrl());
     url.searchParams.set('v', UI_VERSION);
     if (currentRole()) url.searchParams.set('role', currentRole());
-    var key = configuredKey();
-    if (key && !currentRole()) url.searchParams.set('key', key);
     return url.href;
   }
 
@@ -134,8 +132,6 @@
     if (prototypeId) url.searchParams.set('id', prototypeId);
     url.searchParams.set('v', UI_VERSION);
     if (currentRole()) url.searchParams.set('role', currentRole());
-    var key = configuredKey();
-    if (key && !currentRole()) url.searchParams.set('key', key);
     return url.href;
   }
 
@@ -145,26 +141,11 @@
     if (tab) url.searchParams.set('tab', tab);
     url.searchParams.set('v', UI_VERSION);
     if (currentRole()) url.searchParams.set('role', currentRole());
-    var key = configuredKey();
-    if (key && !currentRole()) url.searchParams.set('key', key);
     return url.href;
   }
 
   function absorbKeyFromUrl() {
-    var fromUrl = keyFromUrl();
-    if (!fromUrl) return hasAccess();
-    if (grantAccess(fromUrl)) {
-      // Keep key in URL so internal bookmarks/share-hub links keep working;
-      // still mark session so nested links without key work in this browser.
-      return true;
-    }
-    return false;
-  }
-
-  function absorbRoleFromUrl() {
-    var role = roleFromUrl();
-    if (!role) return !!currentRole();
-    return grantRole(role, capabilityFromUrl());
+    return hasAccess();
   }
 
   function renderGate(options) {
@@ -176,10 +157,10 @@
         '<form id="protoAccessForm" style="width:min(400px,100%);background:#fff;border:1px solid #e4e6ee;border-radius:12px;padding:24px;box-shadow:0 10px 28px rgba(26,29,38,.08)">' +
           '<h1 style="margin:0 0 8px;font-size:1.35rem">Internal access only</h1>' +
           '<p style="margin:0 0 16px;color:#5c6378;line-height:1.45;font-size:.95rem">' +
-            (options.message || 'This hub and feedback threads are private. Shared mock links still work for reviewers — they just can’t open the hub or view threads.') +
+            (options.message || 'This internal page is protected by an access token. Enter the token to continue; the role in the link only selects the level of access.') +
           '</p>' +
-          '<label style="display:grid;gap:6px;font-size:12px;font-weight:700;color:#4c5172">Access key' +
-            '<input id="protoAccessKey" type="password" autocomplete="current-password" placeholder="Paste internal key" ' +
+          '<label style="display:grid;gap:6px;font-size:12px;font-weight:700;color:#4c5172">Internal access token' +
+            '<input id="protoAccessKey" type="password" autocomplete="current-password" placeholder="Enter internal access token" ' +
               'style="height:40px;padding:0 12px;border:1px solid #babfd1;border-radius:8px;font:400 14px/1 system-ui" />' +
           '</label>' +
           '<p id="protoAccessErr" style="min-height:1.2em;margin:10px 0 0;color:#a3003c;font-size:13px"></p>' +
@@ -190,9 +171,10 @@
     document.getElementById('protoAccessForm').addEventListener('submit', function (e) {
       e.preventDefault();
       var value = (document.getElementById('protoAccessKey').value || '').trim();
-      if (grantAccess(value)) {
+      if (grantAccess(value, roleFromUrl())) {
         var url = new URL(location.href);
-        url.searchParams.set('key', value);
+        url.searchParams.delete('key');
+        url.searchParams.set('role', currentRole());
         location.replace(url.href);
         return;
       }
@@ -202,40 +184,26 @@
 
   /** Call on hub + feedback pages. Returns false if page should stop booting. */
   function requireInternalAccess(options) {
-    if ((configuredKey() && (absorbKeyFromUrl() || hasAccess())) || absorbRoleFromUrl()) return true;
+    if (configuredKey() && hasAccess()) {
+      var requestedRole = roleFromUrl();
+      if (requestedRole) grantRole(requestedRole);
+      return true;
+    }
     renderGate(options);
     return false;
   }
 
-  function roleUrl(role, path, prototypeId, tab, token) {
+  function roleUrl(role, path, prototypeId, tab) {
     var url = new URL(path || 'index.html', siteRootUrl());
     if (prototypeId) url.searchParams.set('id', prototypeId);
     if (tab) url.searchParams.set('tab', tab);
     url.searchParams.set('role', role);
-    url.searchParams.set('capability', token || 'demo-role-link');
     url.searchParams.set('v', UI_VERSION);
     return url.href;
   }
 
   function createRoleLink(role, path, prototypeId, tab) {
-    var cfg = global.PROTOTYPES_CONFIG || {};
-    var endpoint = String(cfg.roleAccessUrl || '').trim();
-    if (!endpoint) return Promise.resolve(roleUrl(role, path, prototypeId, tab));
-    return fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Prototype-Access-Key': configuredKey(),
-        Authorization: capability() ? 'Bearer ' + capability() : '',
-      },
-      body: JSON.stringify({ role: role, path: path || 'index.html', prototypeId: prototypeId || '', tab: tab || '' }),
-    }).then(function (response) {
-      if (!response.ok) throw new Error('Could not create a role link.');
-      return response.json();
-    }).then(function (result) {
-      if (!result || !result.token) throw new Error('Role link service returned no capability.');
-      return roleUrl(role, path, prototypeId, tab, result.token);
-    });
+    return Promise.resolve(roleUrl(role, path, prototypeId, tab));
   }
 
   global.PrototypesAccess = {

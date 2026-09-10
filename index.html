@@ -855,7 +855,7 @@
   </div>
 
   <script src="config.js"></script>
-  <script src="shared/access.js?v=2026-09-09-orange-theme"></script>
+  <script src="shared/access.js?v=2026-09-10-token-gate"></script>
   <script src="shared/supabase-auth.js"></script>
   <script src="shared/prototype-library.js"></script>
   <script src="shared/feedback-store.js"></script>
@@ -1289,9 +1289,9 @@
           openShareModal({
             url: access.roleUrl(access.isDeveloper() ? 'developer' : 'designer', 'index.html'),
             heading: 'Share internal hub',
-            subtitle: 'Choose whether the recipient can edit or only view the internal hub.',
+            subtitle: 'Choose whether the recipient can edit or only view the internal hub. They must enter the internal access token.',
             label: 'Internal hub link',
-            note: 'Designer links have full access. Developer links are read-only and can view the workspace, Insights, history, changelog, resources, and usability results.',
+            note: 'Designer links have full access after the recipient enters the internal access token. Developer links are read-only.',
             roleLinks: true,
             rolePath: 'index.html',
           });
@@ -1424,7 +1424,7 @@
       function actionsMarkup(item) {
         var key = access.configuredKey();
         var keyParam = access.currentRole() ? '&role=' + encodeURIComponent(access.currentRole()) : (key ? '&key=' + encodeURIComponent(key) : '');
-        var uiVersion = '2026-09-09-orange-theme';
+        var uiVersion = '2026-09-10-token-gate';
         var feedbackHref = 'feedback.html?id=' + encodeURIComponent(item.id) + '&v=' + uiVersion + keyParam;
         var changelogHref = 'changelog.html?id=' + encodeURIComponent(item.id) + '&v=' + uiVersion + keyParam;
         var shareUrl = item.path ? absoluteUrl(item.path) : access.detailsUrlWithKey(item.id);
