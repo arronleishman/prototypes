@@ -15,8 +15,8 @@
       --line: #e4e6ee;
       --paper: #f7f6f2;
       --panel: #ffffff;
-      --accent: #2f5d50;
-      --accent-soft: #e8f0ed;
+      --accent: #9a3412;
+      --accent-soft: #ffedd5;
     }
     * { box-sizing: border-box; }
     body {
@@ -25,19 +25,19 @@
       font-family: "DM Sans", system-ui, sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(ellipse 80% 50% at 10% -10%, #dde8e4 0%, transparent 55%),
+        radial-gradient(ellipse 80% 50% at 10% -10%, #ffedd5 0%, transparent 55%),
         linear-gradient(180deg, var(--paper) 0%, #efece6 100%);
     }
     .wrap {
-      width: min(780px, calc(100% - 40px));
+      width: min(1180px, calc(100% - 40px));
       margin: 0 auto;
-      padding: 40px 0 80px;
+      padding: 32px 0 64px;
     }
     .back {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       color: var(--muted);
       text-decoration: none;
       font-weight: 600;
@@ -45,7 +45,7 @@
     }
     .back:hover { color: var(--accent); }
     .eyebrow {
-      margin: 0 0 6px;
+      margin: 0 0 8px;
       font-size: 0.8rem;
       font-weight: 700;
       letter-spacing: 0.06em;
@@ -85,9 +85,28 @@
     }
     .btn-primary { background: var(--accent); color: #fff; border: 0; }
     .btn-ghost {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 0 12px;
       border: 1px solid var(--line);
+      border-radius: 7px;
       background: var(--panel);
       color: var(--ink);
+      font: 600 0.84rem/1 "DM Sans", system-ui, sans-serif;
+      cursor: pointer;
+      transition: border-color .15s ease, background .15s ease, color .15s ease;
+    }
+    .btn-ghost:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .btn-ghost:focus-visible {
+      outline: 3px solid rgba(154,52,18,.2);
+      outline-offset: 2px;
     }
     .btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -164,6 +183,56 @@
       font-size: 1.45rem;
       font-weight: 700;
     }
+    .usability-gate,
+    .usability-results { display: grid; gap: 18px; }
+    .usability-gate[hidden],
+    .usability-results[hidden] { display: none; }
+    .usability-gate {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+    }
+    .usability-stat-grid { margin-bottom: 0; }
+    .usability-card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+    }
+    .usability-filters { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+    .usability-filters .btn-ghost { min-height: 34px; padding: 0 9px; }
+    .usability-card h2 { margin: 0 0 6px; font-size: 1.05rem; }
+    .usability-card > p { margin: 0 0 14px; color: var(--muted); }
+    .usability-list { display: grid; gap: 8px; }
+    .usability-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+    }
+    .usability-row:first-child { border-top: 0; }
+    .usability-row strong { display: block; font-size: .9rem; }
+    .usability-row span { color: var(--muted); font-size: .82rem; }
+    .usability-badge {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: .76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .usability-problem {
+      padding: 11px 12px;
+      border-left: 3px solid var(--accent);
+      background: var(--accent-soft);
+      color: var(--ink);
+      font-size: .86rem;
+    }
+    .usability-empty { color: var(--muted); }
 
     .thread { display: grid; gap: 12px; }
     .item {
@@ -353,7 +422,7 @@
       white-space: nowrap;
     }
     .heat-meta .btn-ghost {
-      height: 34px;
+      height: 36px;
       padding: 0 12px;
       flex: 0 0 auto;
     }
@@ -508,6 +577,9 @@
       <button type="button" class="tab" role="tab" aria-selected="false" data-tab="heatmaps">
         <i class="fa-solid fa-fire" aria-hidden="true"></i> Heatmaps
       </button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-tab="usability">
+        <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> Usability
+      </button>
     </div>
 
     <div class="banner" id="localBanner" hidden>
@@ -532,7 +604,7 @@
               <span class="heat-page-label" id="heatPageLabel">Page 1</span>
               <button type="button" id="heatPageNext" aria-label="Next page"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
             </div>
-            <button type="button" class="btn-ghost" id="refreshTelemetry">Refresh heatmap</button>
+            <button type="button" class="btn-ghost" id="refreshTelemetry"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> Refresh heatmap</button>
           </div>
         </div>
         <div class="heat-stage" id="heatStage">
@@ -540,6 +612,45 @@
             <iframe id="heatFrame" title="Prototype preview" sandbox="allow-same-origin allow-scripts"></iframe>
           </div>
           <canvas id="heatCanvas"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-usability" data-panel="usability" hidden>
+      <div class="usability-gate" id="usabilityGate" hidden>
+        <strong>Use an internal Designer or Developer link to view shared usability results.</strong>
+        <span class="usability-empty">Participant runs are private to the internal team.</span>
+      </div>
+      <div class="usability-results" id="usabilityResults">
+        <div class="stats usability-stat-grid">
+          <div class="stat"><p class="stat-label">Runs</p><p class="stat-value" id="usabilityRunCount">0</p></div>
+          <div class="stat"><p class="stat-label">Completion rate</p><p class="stat-value" id="usabilityCompletionRate">—</p></div>
+          <div class="stat"><p class="stat-label">Median duration</p><p class="stat-value" id="usabilityMedianDuration">—</p></div>
+        </div>
+        <div class="usability-card">
+          <h2>Potential usability problems</h2>
+          <p>Signals are highlighted when task drop-off, repeated clicks, duration, or reported issues suggest friction.</p>
+          <div class="usability-list" id="usabilityProblems"><div class="usability-empty">Loading results…</div></div>
+        </div>
+        <div class="usability-card">
+          <h2>Task performance</h2>
+          <p>Compare task completion and time across participant runs.</p>
+          <div class="usability-list" id="usabilityTaskResults"><div class="usability-empty">Loading results…</div></div>
+        </div>
+        <div class="usability-card">
+          <div class="section-heading"><div><h2>Recent runs</h2><p>Review individual participant outcomes.</p></div>
+            <div class="usability-filters">
+              <select class="btn-ghost" id="usabilityTestFilter" aria-label="Filter by test"><option value="all">All tests</option></select>
+              <select class="btn-ghost" id="usabilityVersionFilter" aria-label="Filter by version"><option value="all">All versions</option></select>
+              <select class="btn-ghost" id="usabilityDateFilter" aria-label="Filter by date"><option value="all">All dates</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select>
+              <select class="btn-ghost" id="usabilityRunFilter" aria-label="Filter test runs">
+                <option value="all">All outcomes</option>
+                <option value="completed">Completed</option>
+                <option value="abandoned">Abandoned</option>
+              </select>
+            </div>
+          </div>
+          <div class="usability-list" id="usabilityRunResults"><div class="usability-empty">Loading results…</div></div>
         </div>
       </div>
     </section>
@@ -564,7 +675,10 @@
   </div>
 
   <script src="config.js"></script>
-  <script src="shared/access.js"></script>
+  <script src="shared/access.js?v=2026-09-09-orange-theme"></script>
+  <script src="shared/supabase-auth.js"></script>
+  <script src="shared/prototype-library.js"></script>
+  <script src="shared/usability-test-store.js"></script>
   <script src="shared/feedback-store.js"></script>
   <script src="shared/telemetry-store.js"></script>
   <script>
@@ -592,13 +706,18 @@
       var pendingDeleteId = null;
       var store = window.PrototypesFeedbackStore;
       var telemetry = window.PrototypesTelemetry;
+      var auth = window.PrototypesAuth;
+      var usabilityStore = window.PrototypesUsabilityTests;
+      var library = window.PrototypesLibrary;
       var access = window.PrototypesAccess;
       var cfg = window.PROTOTYPES_CONFIG || {};
       var threadItems = [];
       var telemetryItems = [];
+      var usabilityTests = [];
+      var usabilityRuns = [];
       var threadTitle = id;
       var mockPath = '';
-      var hubHref = 'index.html' + (access.configuredKey() ? ('?key=' + encodeURIComponent(access.configuredKey())) : '');
+      var hubHref = access.hubUrlWithKey();
 
       document.querySelectorAll('a[href="index.html"]').forEach(function (a) {
         a.href = hubHref;
@@ -621,6 +740,147 @@
         return telemetry.list(id).then(function (result) {
           telemetryItems = result.items || [];
           renderHeatmap(telemetryItems);
+        });
+      }
+
+      function formatDuration(ms) {
+        var value = Number(ms || 0);
+        if (!value) return '—';
+        var seconds = Math.round(value / 1000);
+        if (seconds < 60) return seconds + 's';
+        return Math.floor(seconds / 60) + 'm ' + (seconds % 60) + 's';
+      }
+
+      function percent(value, total) {
+        if (!total) return '—';
+        return Math.round((value / total) * 100) + '%';
+      }
+
+      function populateUsabilityFilters() {
+        var testFilter = document.getElementById('usabilityTestFilter');
+        var versionFilter = document.getElementById('usabilityVersionFilter');
+        testFilter.innerHTML = '<option value="all">All tests</option>' + usabilityTests.map(function (test) {
+          return '<option value="' + escapeHtml(test.id) + '">' + escapeHtml(test.title) + '</option>';
+        }).join('');
+        var versions = {};
+        usabilityTests.forEach(function (test) {
+          if (test.versionId) versions[test.versionId] = test.versionId;
+        });
+        usabilityRuns.forEach(function (run) {
+          if (run.versionId) versions[run.versionId] = run.versionId;
+        });
+        versionFilter.innerHTML = '<option value="all">All versions</option>' + Object.keys(versions).map(function (version) {
+          return '<option value="' + escapeHtml(version) + '">' + escapeHtml(version) + '</option>';
+        }).join('');
+      }
+
+      function median(values) {
+        var sorted = (values || []).filter(function (value) { return Number.isFinite(value) && value >= 0; }).sort(function (a, b) { return a - b; });
+        if (!sorted.length) return 0;
+        var middle = Math.floor(sorted.length / 2);
+        return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+      }
+
+      function renderUsabilityResults() {
+        var gate = document.getElementById('usabilityGate');
+        var results = document.getElementById('usabilityResults');
+        var hasInternalRole = access.isDesigner() || access.isDeveloper();
+        gate.hidden = hasInternalRole || usabilityRuns.length > 0;
+        results.hidden = !hasInternalRole && !usabilityRuns.length;
+        if (results.hidden) return;
+
+        var runFilter = document.getElementById('usabilityRunFilter').value;
+        var testFilter = document.getElementById('usabilityTestFilter').value;
+        var versionFilter = document.getElementById('usabilityVersionFilter').value;
+        var dateFilter = document.getElementById('usabilityDateFilter').value;
+        var since = dateFilter === 'all' ? 0 : Date.now() - (Number(dateFilter) * 24 * 60 * 60 * 1000);
+        var visibleRuns = usabilityRuns.filter(function (run) {
+          return (runFilter === 'all' || run.status === runFilter) &&
+            (testFilter === 'all' || run.testId === testFilter) &&
+            (versionFilter === 'all' || run.versionId === versionFilter) &&
+            (!since || new Date(run.startedAt).getTime() >= since);
+        });
+        var completed = visibleRuns.filter(function (run) { return run.status === 'completed'; });
+        var durations = completed.map(function (run) {
+          return Math.max(0, new Date(run.endedAt) - new Date(run.startedAt));
+        });
+        document.getElementById('usabilityRunCount').textContent = String(visibleRuns.length);
+        document.getElementById('usabilityCompletionRate').textContent = percent(completed.length, visibleRuns.length);
+        document.getElementById('usabilityMedianDuration').textContent = formatDuration(median(durations));
+
+        var testMap = {};
+        usabilityTests.forEach(function (test) { testMap[test.id] = test; });
+        var activeTest = usabilityTests[0] || null;
+        var taskMap = {};
+        (activeTest && activeTest.tasks || []).forEach(function (task) {
+          taskMap[task.id] = { task: task, total: 0, completed: 0, skipped: 0, durations: [] };
+        });
+        visibleRuns.forEach(function (run) {
+          var test = testMap[run.testId] || activeTest;
+          (run.taskResults || []).forEach(function (result) {
+            var task = taskMap[result.taskId];
+            if (!task && test) {
+              var definition = (test.tasks || []).find(function (entry) { return entry.id === result.taskId; });
+              if (definition) task = taskMap[result.taskId] = { task: definition, total: 0, completed: 0, skipped: 0, durations: [] };
+            }
+            if (!task) return;
+            task.total += 1;
+            if (result.status === 'completed') task.completed += 1;
+            if (result.status === 'skipped') task.skipped += 1;
+            if (result.durationMs) task.durations.push(Number(result.durationMs));
+          });
+        });
+
+        var taskRows = Object.keys(taskMap).map(function (key) {
+          var item = taskMap[key];
+          var completion = percent(item.completed, item.total);
+          return '<div class="usability-row"><div><strong>' + escapeHtml(item.task.title || item.task.instruction) + '</strong><span>' +
+            completion + ' completed · ' + item.skipped + ' skipped · median ' + formatDuration(median(item.durations)) +
+            '</span></div><span class="usability-badge">' + completion + '</span></div>';
+        });
+        document.getElementById('usabilityTaskResults').innerHTML = taskRows.length ? taskRows.join('') : '<div class="usability-empty">No task runs have been recorded yet.</div>';
+
+        document.getElementById('usabilityRunResults').innerHTML = visibleRuns.length
+          ? visibleRuns.slice(0, 50).map(function (run) {
+            var completedTasks = (run.taskResults || []).filter(function (result) { return result.status === 'completed'; }).length;
+            var taskCount = (run.taskResults || []).length;
+            return '<div class="usability-row"><div><strong>' + escapeHtml(formatWhen(run.startedAt)) + '</strong><span>' +
+              completedTasks + '/' + taskCount + ' tasks completed · ' + formatDuration(Math.max(0, new Date(run.endedAt || run.startedAt) - new Date(run.startedAt))) +
+              '</span></div><span class="usability-badge">' + escapeHtml(run.status) + '</span></div>';
+          }).join('')
+          : '<div class="usability-empty">No runs match this filter.</div>';
+
+        var issueCount = telemetryItems.filter(function (event) { return event.eventType === 'usability_issue'; }).length;
+        var rageCount = telemetryItems.filter(function (event) { return event.eventType === 'rage_click'; }).length;
+        var problems = [];
+        if (visibleRuns.length && completed.length / visibleRuns.length < .7) {
+          problems.push('Fewer than 70% of test runs completed all tasks.');
+        }
+        Object.keys(taskMap).forEach(function (key) {
+          var item = taskMap[key];
+          if (item.total && item.skipped / item.total >= .2) {
+            problems.push('“' + (item.task.title || 'A task') + '” has a high skip rate (' + percent(item.skipped, item.total) + ').');
+          }
+        });
+        if (issueCount) problems.push(issueCount + ' participant-reported problem' + (issueCount === 1 ? '' : 's') + ' were recorded.');
+        if (rageCount) problems.push(rageCount + ' repeated-click signal' + (rageCount === 1 ? '' : 's') + ' suggest interaction friction.');
+        document.getElementById('usabilityProblems').innerHTML = problems.length
+          ? problems.map(function (problem) { return '<div class="usability-problem">' + escapeHtml(problem) + '</div>'; }).join('')
+          : '<div class="usability-empty">No potential problems detected from the current results.</div>';
+      }
+
+      function loadUsabilityResults() {
+        if (!usabilityStore) return Promise.resolve();
+        return Promise.all([
+          usabilityStore.listTests(id),
+          usabilityStore.listRuns(id),
+        ]).then(function (result) {
+          usabilityTests = result[0] || [];
+          usabilityRuns = result[1] && result[1].items ? result[1].items : [];
+          populateUsabilityFilters();
+          renderUsabilityResults();
+        }).catch(function () {
+          renderUsabilityResults();
         });
       }
 
@@ -780,6 +1040,13 @@
         var clicks = (items || []).filter(function (e) {
           return e.eventType === 'click' && e.x != null && e.y != null;
         });
+        function clicksForCurrentPage() {
+          var page = heatPages[heatPageIndex];
+          if (!page || !page.key) return clicks;
+          var tagged = clicks.filter(function (event) { return event.meta && event.meta.pageKey; });
+          if (!tagged.length) return clicks;
+          return tagged.filter(function (event) { return event.meta.pageKey === page.key; });
+        }
         var metaEl = document.getElementById('heatMeta');
         function setMeta(msg) {
           if (metaEl) metaEl.textContent = msg;
@@ -911,8 +1178,9 @@
           var pageBit = heatPages.length > 1
             ? ' · page ' + (heatPageIndex + 1) + '/' + heatPages.length
             : '';
+          var pageClicks = clicksForCurrentPage();
           setMeta(
-            clicks.length + ' click' + (clicks.length === 1 ? '' : 's') +
+            pageClicks.length + ' click' + (pageClicks.length === 1 ? '' : 's') +
             ' · rendered at ' + renderWidth + '×' + renderHeight +
             ' · scale ' + Math.round(scale * 100) + '%' + pageBit
           );
@@ -921,9 +1189,9 @@
           var h = canvas.height;
           var ctx = canvas.getContext('2d');
           ctx.clearRect(0, 0, w, h);
-          if (!clicks.length) return;
+          if (!pageClicks.length) return;
 
-          paintClassicHeatmap(ctx, w, h, clicks);
+          paintClassicHeatmap(ctx, w, h, pageClicks);
         }
 
         function paintClassicHeatmap(ctx, w, h, points) {
@@ -1046,7 +1314,7 @@
       }
 
       function setTab(name) {
-        var allowed = { comments: 1, heatmaps: 1 };
+        var allowed = { comments: 1, heatmaps: 1, usability: 1 };
         if (!allowed[name]) name = 'comments';
         document.querySelectorAll('.tab').forEach(function (tab) {
           var on = tab.getAttribute('data-tab') === name;
@@ -1060,12 +1328,16 @@
         url.searchParams.set('tab', name);
         history.replaceState(null, '', url.href);
         if (name === 'heatmaps') setTimeout(function () { renderHeatmap(telemetryItems); }, 50);
+        if (name === 'usability') loadUsabilityResults();
       }
 
       document.querySelector('.tabs').addEventListener('click', function (e) {
         var tab = e.target.closest('.tab');
         if (!tab) return;
         setTab(tab.getAttribute('data-tab'));
+      });
+      ['usabilityTestFilter', 'usabilityVersionFilter', 'usabilityDateFilter', 'usabilityRunFilter'].forEach(function (id) {
+        document.getElementById(id).addEventListener('change', renderUsabilityResults);
       });
 
       var refreshBtn = document.getElementById('refreshTelemetry');
@@ -1089,8 +1361,10 @@
         }
       });
 
-      fetch('manifest.json', { cache: 'no-store' })
-        .then(function (r) { return r.ok ? r.json() : []; })
+      var prototypesPromise = library
+        ? library.listPrototypes()
+        : fetch('manifest.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : []; });
+      prototypesPromise
         .then(function (items) {
           var flat = (items || []).reduce(function (all, entry) {
             return all.concat(
@@ -1105,11 +1379,20 @@
           subEl.textContent = 'Comments and click heatmap for this prototype';
           document.title = 'Insights · ' + title;
           actions.hidden = false;
-          if (mockPath) {
-            openMock.href = mockPath;
-          } else openMock.hidden = true;
-          document.getElementById('workspaceLink').href = access.detailsUrlWithKey(id, 'insights');
-          loadTelemetry();
+          var privateMockPromise = (!mockPath && library && (access.isDesigner() || access.isDeveloper()))
+            ? library.listArtifacts(id).then(function (artifacts) {
+              var mock = (artifacts || []).find(function (artifact) { return artifact.kind === 'mock'; });
+              return mock ? library.signedUrl(mock) : '';
+            }).catch(function () { return ''; })
+            : Promise.resolve(mockPath);
+          privateMockPromise.then(function (url) {
+            mockPath = url || '';
+            if (mockPath) openMock.href = mockPath;
+            else openMock.hidden = true;
+            document.getElementById('workspaceLink').href = access.detailsUrlWithKey(id, 'insights');
+            loadTelemetry();
+            loadUsabilityResults();
+          });
         })
         .catch(function () {
           titleEl.textContent = id;
@@ -1117,6 +1400,7 @@
           actions.hidden = false;
           openMock.hidden = true;
           loadTelemetry();
+          loadUsabilityResults();
         });
 
       store.list(id).then(function (result) {
@@ -1147,6 +1431,10 @@
                 '<figcaption class="item-shot-label">Referenced UI</figcaption>' +
               '</figure>'
             : '';
+          var deleteButton = access.isDeveloper() ? '' :
+            '<button type="button" class="item-delete" data-delete-id="' + escapeAttr(item.id) + '" aria-label="Delete comment">' +
+              '<i class="fa-regular fa-trash-can" aria-hidden="true"></i> Delete' +
+            '</button>';
           return (
             '<article class="item" data-comment-id="' + escapeAttr(item.id) + '">' +
               '<div class="item-head">' +
@@ -1154,9 +1442,7 @@
                 stars +
                 '<span>' + escapeHtml(when) + '</span>' +
                 '<span class="item-head-spacer"></span>' +
-                '<button type="button" class="item-delete" data-delete-id="' + escapeAttr(item.id) + '" aria-label="Delete comment">' +
-                  '<i class="fa-regular fa-trash-can" aria-hidden="true"></i> Delete' +
-                '</button>' +
+                deleteButton +
               '</div>' +
               '<p class="item-body">' + escapeHtml(item.message) + '</p>' +
               shot +

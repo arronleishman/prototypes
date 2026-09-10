@@ -9,56 +9,73 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
+    @view-transition { navigation: auto; }
+    @keyframes workspace-enter {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes panel-enter {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    html { scrollbar-gutter: stable; }
     :root {
       --ink: #1a1d26;
       --muted: #5c6378;
       --line: #e4e6ee;
       --paper: #f7f6f2;
       --panel: #ffffff;
-      --accent: #2f5d50;
-      --accent-soft: #e8f0ed;
+      --accent: #9a3412;
+      --accent-soft: #ffedd5;
       --danger: #a3003c;
+      --danger-soft: #fff5f8;
+      --danger-line: #edc4d2;
+      --surface-subtle: #fbfcfb;
+      --focus-ring: rgba(154,52,18,.18);
       --shadow: 0 12px 30px rgba(26, 29, 38, .08);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
+      overflow-x: clip;
       font-family: "DM Sans", system-ui, sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(ellipse 80% 50% at 10% -10%, #dde8e4 0%, transparent 55%),
+        radial-gradient(ellipse 80% 50% at 10% -10%, #ffedd5 0%, transparent 55%),
         radial-gradient(ellipse 60% 40% at 100% 0%, #f3e6dc 0%, transparent 50%),
         linear-gradient(180deg, var(--paper) 0%, #efece6 100%);
     }
     button, input, textarea, select { font: inherit; }
     button, a { -webkit-tap-highlight-color: transparent; }
-    .wrap { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 70px; }
+    .wrap {
+      width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 64px;
+      animation: workspace-enter .28s ease-out both;
+    }
     .workspace-header {
-      position: sticky; top: 0; z-index: 50; width: 100vw; margin: -32px 0 18px calc(50% - 50vw);
-      padding: 18px max(20px, calc((100vw - 1180px) / 2)) 0;
+      position: sticky; top: 0; z-index: 50; width: auto; margin: -32px calc(50% - 50vw) 18px;
+      padding: 32px max(20px, calc((100vw - 1180px) / 2)) 0;
       background: rgba(247, 246, 242, .94); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--line);
     }
     .back {
-      display: inline-flex; align-items: center; gap: 8px; color: var(--muted);
-      text-decoration: none; font-size: .9rem; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 8px; margin-bottom: 16px; color: var(--muted);
+      text-decoration: none; font-size: .84rem; font-weight: 600;
     }
     .back:hover { color: var(--accent); }
     .eyebrow {
-      margin: 28px 0 8px; color: var(--accent); text-transform: uppercase;
-      letter-spacing: .08em; font-size: .74rem; font-weight: 700;
+      margin: 0 0 8px; color: var(--accent);
+      letter-spacing: .02em; font-size: .78rem; font-weight: 700;
     }
     .hero {
-      display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
-      padding-bottom: 24px; border-bottom: 1px solid var(--line);
+      display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 28px;
+      padding-bottom: 20px; border-bottom: 1px solid var(--line);
     }
-    h1 { margin: 0; font: 700 clamp(2rem, 4vw, 3rem)/1.06 Fraunces, Georgia, serif; letter-spacing: -.02em; }
-    .subtitle { max-width: 720px; margin: 12px 0 0; color: var(--muted); line-height: 1.55; }
-    .hero-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; min-width: 250px; }
+    h1 { margin: 0; font: 700 clamp(1.9rem, 4vw, 2.8rem)/1.08 Fraunces, Georgia, serif; letter-spacing: -.02em; }
+    .subtitle { max-width: 680px; margin: 10px 0 0; color: var(--muted); line-height: 1.5; }
+    .hero-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; max-width: 440px; }
     .btn {
-      min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 0 13px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+      min-height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 0 12px; border: 1px solid var(--line); border-radius: 7px; background: #fff;
       color: var(--ink); cursor: pointer; text-decoration: none; font-size: .87rem; font-weight: 600;
     }
     .btn:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); color: var(--accent); }
@@ -66,7 +83,7 @@
     .btn-primary:hover { color: #fff; filter: brightness(1.05); }
     .btn-danger { color: var(--danger); border-color: #edc4d2; }
     .btn:disabled { opacity: .55; cursor: wait; }
-    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
     .pill {
       display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
       background: var(--accent-soft); color: var(--accent); font-size: .78rem; font-weight: 700;
@@ -76,10 +93,10 @@
     .pill.is-muted { background: #f0f1f4; color: var(--muted); }
     .notice {
       display: flex; align-items: center; justify-content: space-between; gap: 16px;
-      margin: 18px 0; padding: 13px 15px; border: 1px solid #cfe0da; border-radius: 10px;
-      background: #f1f7f4; color: #345b50; font-size: .9rem; line-height: 1.45;
+      margin: 18px 0; padding: 13px 15px; border: 1px solid #fed7aa; border-radius: 10px;
+      background: #fff7ed; color: #7c2d12; font-size: .9rem; line-height: 1.45;
     }
-    .notice.is-error { border-color: #edc4d2; background: #fff5f8; color: var(--danger); }
+    .notice.is-error { border-color: var(--danger-line); background: var(--danger-soft); color: var(--danger); }
     .notice[hidden] { display: none; }
     .resource-auth {
       display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -91,50 +108,56 @@
     .resource-auth .btn { min-height: 34px; padding: 0 10px; flex: 0 0 auto; }
     .resource-auth[hidden] { display: none; }
     .tabs {
-      display: flex; gap: 3px; overflow-x: auto; margin: 18px 0 0; padding: 4px 0 5px;
-      border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.62);
+      display: flex; gap: 4px; overflow-x: auto; margin: 16px 0 0; padding: 0;
+      border-bottom: 1px solid var(--line);
     }
     .tab {
-      flex: 0 0 auto; min-height: 38px; padding: 0 12px; border: 0; border-radius: 7px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      flex: 0 0 auto; min-height: 40px; padding: 0 12px; border: 0; border-radius: 6px 6px 0 0;
       background: transparent; color: var(--muted); cursor: pointer; font-size: .84rem; font-weight: 600;
-      white-space: nowrap;
+      white-space: nowrap; transition: background-color .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease;
     }
-    .tab:hover { background: #fff; color: var(--ink); }
-    .tab.is-active { background: var(--accent); color: #fff; box-shadow: 0 3px 8px rgba(47,93,80,.18); }
+    .tab:hover { background: #fff; color: var(--ink); transform: translateY(-1px); }
+    .tab.is-active { background: var(--accent-soft); color: var(--accent); box-shadow: inset 0 -3px 0 var(--accent); }
     .tab-panel[hidden] { display: none; }
-    .grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(250px, .75fr); gap: 18px; }
+    .tab-panel.is-active { animation: panel-enter .2s ease-out both; }
+    .grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(250px, .75fr); gap: 20px; }
     .card {
-      min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 12px;
+      min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 10px;
       background: rgba(255,255,255,.86); box-shadow: 0 4px 14px rgba(26,29,38,.03);
     }
     .card h2 { margin: 0 0 8px; font-size: 1.06rem; }
     .card h3 { margin: 0 0 8px; font-size: .9rem; }
     .card p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.55; }
     .preview-card { padding: 0; overflow: hidden; }
-    .preview-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+    .preview-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 15px 16px; border-bottom: 1px solid var(--line); }
     .preview-head h2 { margin: 0; }
     .preview-frame { display: block; width: 100%; height: min(680px, 68vh); border: 0; background: #fff; }
     .preview-empty { display: grid; place-items: center; min-height: 360px; padding: 30px; text-align: center; }
     .preview-empty[hidden] { display: none; }
     .preview-empty p { max-width: 360px; }
-    .stat-list { display: grid; gap: 13px; margin: 0; }
-    .stat { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+    .stat-list { display: grid; margin: 0; }
+    .stat { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .stat:first-child { padding-top: 2px; }
     .stat:last-child { padding-bottom: 0; border-bottom: 0; }
     .stat dt { color: var(--muted); font-size: .83rem; }
     .stat dd { margin: 0; font-size: .95rem; font-weight: 700; text-align: right; }
     .list { display: grid; gap: 10px; }
+    .list-spaced { margin-top: 18px; }
     .row {
       display: flex; align-items: center; justify-content: space-between; gap: 14px;
-      padding: 14px; border: 1px solid var(--line); border-radius: 9px; background: #fff;
+      padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
     }
     .row-main { min-width: 0; }
     .row-title { margin: 0 0 4px; font-size: .94rem; font-weight: 700; overflow-wrap: anywhere; }
     .row-meta { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.45; }
+    .row-summary { margin-top: 5px; }
     .row-actions { display: flex; flex: 0 0 auto; gap: 6px; }
     .row-actions .btn { min-height: 34px; padding: 0 10px; font-size: .78rem; }
     .empty { padding: 34px 20px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); text-align: center; }
     .empty p { margin: 0 auto 12px; max-width: 440px; }
     .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .form-grid-spaced { margin-top: 16px; }
     .field { display: grid; gap: 6px; }
     .field.is-wide { grid-column: 1 / -1; }
     .field label, .field > span { color: var(--muted); font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
@@ -142,30 +165,64 @@
       width: 100%; min-height: 40px; padding: 9px 11px; border: 1px solid #cfd3df; border-radius: 8px;
       color: var(--ink); background: #fff; outline: none;
     }
-    .field textarea { min-height: 100px; resize: vertical; line-height: 1.45; }
-    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47,93,80,.14); }
-    .form-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-    .resource-tabs { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 16px; }
-    .resource-filter {
-      min-height: 34px; padding: 0 11px; border: 1px solid var(--line); border-radius: 999px;
-      background: #fff; color: var(--muted); cursor: pointer; font-size: .8rem; font-weight: 600;
+    .field input[type="file"] {
+      min-height: 44px; padding: 4px; color: var(--muted); cursor: pointer;
     }
-    .resource-filter.is-active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
-    .upload-box { margin-bottom: 18px; padding: 16px; border: 1px dashed #b7c9c1; border-radius: 10px; background: #f5faf7; }
+    .field input[type="file"]::file-selector-button {
+      min-height: 34px; margin-right: 10px; padding: 0 12px; border: 1px solid var(--line);
+      border-radius: 6px; background: var(--accent-soft); color: var(--accent);
+      font: 600 .84rem/1 "DM Sans", system-ui, sans-serif; cursor: pointer;
+    }
+    .field input[type="file"]::file-selector-button:hover {
+      background: var(--accent); color: #fff;
+    }
+    .field input[type="file"]:hover { border-color: var(--accent); }
+    .field textarea { min-height: 100px; resize: vertical; line-height: 1.45; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--focus-ring); }
+    .form-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .section-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+    .test-builder { display: grid; gap: 18px; }
+    .test-builder-gate {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--surface-subtle);
+    }
+    .test-builder-gate[hidden],
+    .test-builder-form[hidden] { display: none; }
+    .test-task-list { display: grid; gap: 12px; }
+    .test-task {
+      display: grid;
+      gap: 12px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fff;
+    }
+    .test-task-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .test-task-head strong { font-size: .9rem; }
+    .test-task-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .test-task-grid .is-wide { grid-column: 1 / -1; }
+    .test-task-remove { color: var(--danger); }
+    .test-builder-status { min-height: 1.3em; margin: 0; color: var(--muted); font-size: .82rem; }
+    .test-builder-status.is-error { color: var(--danger); }
+    .test-builder-status.is-ok { color: var(--accent); }
+    .upload-box { margin-bottom: 18px; padding: 16px; border: 1px dashed #fdba74; border-radius: 8px; background: #fff7ed; }
     .upload-box h3 { margin-bottom: 4px; }
     .upload-box p { margin-bottom: 14px; }
     .auth-box { display: grid; gap: 12px; }
     .auth-box .form-actions { margin-top: 0; }
     .user-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .user-line strong { overflow-wrap: anywhere; }
-    .manage-panel { margin: 0 0 18px; }
-    .manage-panel[hidden] { display: none; }
     .modal {
       position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 20px;
       background: rgba(26,29,38,.44);
     }
     .modal[hidden] { display: none; }
     .modal-card { width: min(500px, 100%); padding: 20px; border: 1px solid var(--line); border-radius: 13px; background: #fff; box-shadow: var(--shadow); }
+    .manage-modal-card { width: min(680px, 100%); }
     .modal-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
     .modal-head h2 { margin: 0; font-size: 1.1rem; }
     .icon-btn { width: 34px; height: 34px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; }
@@ -176,6 +233,16 @@
     .status.is-error { color: var(--danger); }
     .status.is-ok { color: var(--accent); }
     .embedded-frame { width: 100%; height: min(900px, 76vh); border: 0; border-radius: 10px; background: transparent; }
+    .about-block { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+    .modal-copy { margin: 0 0 14px; color: var(--muted); font-size: .88rem; line-height: 1.5; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
     @media (max-width: 800px) {
       .hero { display: block; }
       .hero-actions { justify-content: flex-start; margin-top: 18px; }
@@ -183,8 +250,11 @@
     }
     @media (max-width: 580px) {
       .wrap { width: calc(100% - 28px); padding-top: 24px; }
-      .workspace-header { margin-top: -24px; }
+      .workspace-header { margin-top: -24px; padding-top: 24px; }
+      .section-heading { flex-direction: column; }
       .form-grid { grid-template-columns: 1fr; }
+      .test-task-grid { grid-template-columns: 1fr; }
+      .test-task-grid .is-wide { grid-column: auto; }
       .field.is-wide { grid-column: auto; }
       .row { align-items: flex-start; flex-direction: column; }
       .row-actions { width: 100%; }
@@ -205,39 +275,26 @@
           <div class="meta" id="meta"></div>
         </div>
         <div class="hero-actions">
-          <a class="btn" id="openMock" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i> Open mock</a>
+          <a class="btn btn-primary" id="openMock" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i> Open mock</a>
           <button type="button" class="btn" id="shareBtn"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Share</button>
           <button type="button" class="btn" id="downloadBtn"><i class="fa-solid fa-download" aria-hidden="true"></i> Download</button>
-          <button type="button" class="btn btn-primary" id="manageBtn"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Manage</button>
+          <button type="button" class="btn" id="manageBtn"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Manage</button>
         </div>
       </section>
       <nav class="tabs" id="tabs" role="tablist" aria-label="Prototype details">
-        <button type="button" class="tab is-active" role="tab" data-tab="overview" aria-selected="true">Overview</button>
+        <button type="button" class="tab is-active" role="tab" data-tab="overview" aria-selected="true"><i class="fa-solid fa-table-columns" aria-hidden="true"></i> Overview</button>
+        <button type="button" class="tab" role="tab" data-tab="test-builder" aria-selected="false"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> Test builder</button>
         <button type="button" class="tab" role="tab" data-tab="insights" aria-selected="false"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Insights</button>
-        <button type="button" class="tab" role="tab" data-tab="versions" aria-selected="false">Version history</button>
-        <button type="button" class="tab" role="tab" data-tab="changelog" aria-selected="false">Change log</button>
-        <button type="button" class="tab" role="tab" data-tab="components" aria-selected="false">Components</button>
-        <button type="button" class="tab" role="tab" data-tab="code" aria-selected="false">Code</button>
-        <button type="button" class="tab" role="tab" data-tab="storybook" aria-selected="false">Storybook</button>
-        <button type="button" class="tab" role="tab" data-tab="instructions" aria-selected="false">Instructions</button>
+        <button type="button" class="tab" role="tab" data-tab="versions" aria-selected="false"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Version history</button>
+        <button type="button" class="tab" role="tab" data-tab="changelog" aria-selected="false"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Change log</button>
+        <button type="button" class="tab" role="tab" data-tab="components" aria-selected="false"><i class="fa-solid fa-cubes" aria-hidden="true"></i> Components</button>
+        <button type="button" class="tab" role="tab" data-tab="code" aria-selected="false"><i class="fa-solid fa-code" aria-hidden="true"></i> Code</button>
+        <button type="button" class="tab" role="tab" data-tab="storybook" aria-selected="false"><i class="fa-solid fa-book-open" aria-hidden="true"></i> Storybook</button>
+        <button type="button" class="tab" role="tab" data-tab="instructions" aria-selected="false"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Instructions</button>
       </nav>
     </header>
 
     <div class="notice is-error" id="errorNotice" hidden></div>
-
-    <section class="manage-panel card" id="managePanel" hidden>
-      <h2>Manage prototype</h2>
-      <p>Update the library record or add files from the resource tabs. Changes are shared with your authenticated team.</p>
-      <form id="editForm">
-        <div class="form-grid" style="margin-top:14px">
-          <div class="field"><label for="editTitle">Title</label><input id="editTitle" maxlength="120" required /></div>
-          <div class="field"><label for="editStatus">Status</label><select id="editStatus"><option value="draft">Draft</option><option value="in-development">In development</option><option value="active">Active</option></select></div>
-          <div class="field is-wide"><label for="editDescription">Description</label><textarea id="editDescription" maxlength="1000"></textarea></div>
-        </div>
-        <div class="form-actions"><button class="btn btn-primary" type="submit">Save changes</button><button class="btn" type="button" id="cancelManageBtn">Cancel</button></div>
-        <p class="status" id="editStatusMessage" aria-live="polite"></p>
-      </form>
-    </section>
 
     <section class="tab-panel" id="panel-overview" data-panel="overview">
       <div class="grid">
@@ -255,8 +312,32 @@
             <div class="stat"><dt>Developer files</dt><dd id="statArtifacts">0</dd></div>
             <div class="stat"><dt>Feedback</dt><dd id="statFeedback">Loading…</dd></div>
           </dl>
-          <div style="margin-top:22px"><h3>About this prototype</h3><p id="aboutText">—</p></div>
+          <div class="about-block"><h3>About this prototype</h3><p id="aboutText">—</p></div>
         </aside>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-test-builder" data-panel="test-builder" hidden>
+      <div class="card test-builder">
+        <div class="section-heading">
+          <div><h2>Usability test builder</h2><p>Give reviewers an ordered set of tasks and define how success can be detected.</p></div>
+          <button type="button" class="btn btn-primary" id="newTestBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> New test</button>
+        </div>
+        <div class="test-builder-gate" id="testBuilderGate" hidden>
+          <p>Developer access is read-only. Open a Designer link to create and manage usability tests.</p>
+        </div>
+        <form class="test-builder-form" id="testBuilderForm" hidden>
+          <div class="form-grid form-grid-spaced">
+            <div class="field"><label for="testTitle">Test name</label><input id="testTitle" maxlength="120" placeholder="e.g. Create a demand template" required /></div>
+            <div class="field"><label for="testStatus">Status</label><select id="testStatus"><option value="draft">Draft</option><option value="active">Active</option><option value="archived">Archived</option></select></div>
+            <div class="field"><label for="testVersion">Target version</label><select id="testVersion"><option value="">All versions</option></select></div>
+            <div class="field is-wide"><label for="testIntro">Participant introduction</label><textarea id="testIntro" maxlength="600" placeholder="Tell reviewers what you would like them to try."></textarea></div>
+          </div>
+          <div class="section-heading"><div><h3>Tasks</h3><p>Add the tasks in the order a reviewer should complete them.</p></div><button type="button" class="btn" id="addTestTaskBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add task</button></div>
+          <div class="test-task-list" id="testTaskList"></div>
+          <div class="form-actions"><button class="btn btn-primary" type="submit">Save test</button><button class="btn" type="button" id="resetTestBtn">Reset</button></div>
+          <p class="test-builder-status" id="testBuilderStatus" aria-live="polite"></p>
+        </form>
       </div>
     </section>
 
@@ -266,19 +347,19 @@
 
     <section class="tab-panel" id="panel-versions" data-panel="versions" hidden>
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div class="section-heading">
           <div><h2>Version history</h2><p>Pushes that changed this mock appear automatically, alongside curated milestones.</p></div>
           <button type="button" class="btn btn-primary" id="addVersionBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add version</button>
         </div>
         <form id="versionForm" hidden>
-          <div class="form-grid" style="margin-top:16px">
+          <div class="form-grid form-grid-spaced">
             <div class="field"><label for="versionLabel">Version</label><input id="versionLabel" maxlength="80" placeholder="e.g. v3 · Gantt selection" required /></div>
             <div class="field is-wide"><label for="versionSummary">What changed</label><textarea id="versionSummary" maxlength="1600" placeholder="Summarise the change for a developer."></textarea></div>
           </div>
           <div class="form-actions"><button class="btn btn-primary" type="submit">Save version</button><button class="btn" type="button" id="cancelVersionBtn">Cancel</button></div>
           <p class="status" id="versionStatus" aria-live="polite"></p>
         </form>
-        <div class="list" id="versionList" style="margin-top:18px"><div class="empty">Loading versions…</div></div>
+        <div class="list list-spaced" id="versionList"><div class="empty">Loading versions…</div></div>
       </div>
     </section>
 
@@ -289,13 +370,6 @@
     <section class="tab-panel" id="panel-resources" data-panel="resources" hidden>
       <div class="card">
         <div><h2 id="resourceHeading">Developer resources</h2><p>Add the files developers need to build or understand this prototype.</p></div>
-        <div class="resource-auth" id="resourceAuth" hidden></div>
-        <div class="resource-tabs" style="margin-top:16px">
-          <button type="button" class="resource-filter" data-kind="components">Components</button>
-          <button type="button" class="resource-filter" data-kind="code">Code</button>
-          <button type="button" class="resource-filter" data-kind="storybook">Storybook</button>
-          <button type="button" class="resource-filter" data-kind="instructions">Instructions</button>
-        </div>
         <div class="upload-box" id="uploadBox">
           <h3 id="uploadHeading">Add a component file</h3>
           <p id="uploadHint">Upload a file or add a text-based implementation note for the team.</p>
@@ -317,24 +391,43 @@
   <div class="modal" id="shareModal" hidden>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
       <div class="modal-head"><h2 id="shareTitle">Share prototype</h2><button type="button" class="icon-btn" id="closeShareBtn" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
-      <p style="margin:0 0 14px;color:var(--muted);font-size:.88rem;line-height:1.5" id="shareNote">Share the internal details page with your team.</p>
+      <p class="modal-copy" id="shareNote">Share the internal details page with your team.</p>
+      <div class="field" id="shareRoleField">
+        <label for="shareRole">Access level</label>
+        <select id="shareRole">
+          <option value="designer">Designer — full access</option>
+          <option value="developer">Developer — view only</option>
+        </select>
+      </div>
       <div class="share-url"><input id="shareUrl" type="text" readonly /><button type="button" class="btn btn-primary" id="copyShareBtn">Copy</button></div>
       <p class="status" id="shareStatus" aria-live="polite"></p>
     </div>
   </div>
 
-  <div class="modal" id="authModal" hidden>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-      <div class="modal-head"><h2 id="authTitle">Sign in to manage files</h2><button type="button" class="icon-btn" id="closeAuthBtn" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
-      <p style="margin:0 0 14px;color:var(--muted);font-size:.88rem;line-height:1.5">Use your approved team email. We’ll send a one-time sign-in link.</p>
-      <form id="authForm" class="auth-box"><div class="field"><label for="authEmail">Team email</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@company.com" /></div><div class="form-actions"><button class="btn btn-primary" type="submit">Send sign-in link</button></div><p class="status" id="authStatus" aria-live="polite"></p></form>
+  <div class="modal" id="manageModal" hidden>
+    <div class="modal-card manage-modal-card" role="dialog" aria-modal="true" aria-labelledby="manageTitle">
+      <div class="modal-head">
+        <h2 id="manageTitle">Manage prototype</h2>
+        <button type="button" class="icon-btn" id="closeManageBtn" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p class="modal-copy">Update the prototype record for everyone using the Designer link.</p>
+      <form id="editForm">
+        <div class="form-grid form-grid-spaced">
+          <div class="field"><label for="editTitle">Title</label><input id="editTitle" maxlength="120" required /></div>
+          <div class="field"><label for="editStatus">Status</label><select id="editStatus"><option value="draft">Draft</option><option value="in-development">In development</option><option value="active">Active</option></select></div>
+          <div class="field is-wide"><label for="editDescription">Description</label><textarea id="editDescription" maxlength="1000"></textarea></div>
+        </div>
+        <div class="form-actions"><button class="btn btn-primary" type="submit">Save changes</button><button class="btn" type="button" id="cancelManageBtn">Cancel</button></div>
+        <p class="status" id="editStatusMessage" aria-live="polite"></p>
+      </form>
     </div>
   </div>
 
   <script src="config.js"></script>
-  <script src="shared/access.js"></script>
+  <script src="shared/access.js?v=2026-09-09-orange-theme"></script>
   <script src="shared/supabase-auth.js"></script>
   <script src="shared/prototype-library.js"></script>
+  <script src="shared/usability-test-store.js"></script>
   <script src="shared/feedback-store.js"></script>
   <script>
     (function () {
@@ -345,28 +438,39 @@
       var auth = window.PrototypesAuth;
       var library = window.PrototypesLibrary;
       var feedback = window.PrototypesFeedbackStore;
+      var usability = window.PrototypesUsabilityTests;
       var params = new URLSearchParams(location.search);
       var id = (params.get('id') || '').trim();
       var initialTab = (params.get('tab') || 'overview').toLowerCase();
       var item = null;
       var versions = [];
       var artifacts = [];
+      var tests = [];
+      var editingTest = null;
       var resourceKind = 'components';
       var mockUrl = '';
-      var keyParam = access.configuredKey() ? '&key=' + encodeURIComponent(access.configuredKey()) : '';
+      var uiVersion = '2026-09-09-orange-theme';
+      var keyParam = access.currentRole() ? '&role=' + encodeURIComponent(access.currentRole()) : (access.configuredKey() ? '&key=' + encodeURIComponent(access.configuredKey()) : '');
 
       var titleEl = document.getElementById('title');
       var subtitleEl = document.getElementById('subtitle');
       var metaEl = document.getElementById('meta');
       var errorEl = document.getElementById('errorNotice');
-      var resourceAuth = document.getElementById('resourceAuth');
       var backLink = document.getElementById('backLink');
       var openMock = document.getElementById('openMock');
       var downloadBtn = document.getElementById('downloadBtn');
       var shareModal = document.getElementById('shareModal');
-      var authModal = document.getElementById('authModal');
+      var shareRole = document.getElementById('shareRole');
+      var shareRoleField = document.getElementById('shareRoleField');
+      var manageModal = document.getElementById('manageModal');
 
       backLink.href = access.hubUrlWithKey();
+      var canEdit = access.isDesigner();
+      document.getElementById('manageBtn').hidden = !canEdit;
+      document.getElementById('addVersionBtn').disabled = !canEdit;
+      document.getElementById('newTestBtn').disabled = !canEdit;
+      document.getElementById('addTestTaskBtn').disabled = !canEdit;
+      document.getElementById('uploadForm').querySelector('button[type="submit"]').disabled = !canEdit;
       if (!id) {
         titleEl.textContent = 'Pick a prototype';
         subtitleEl.textContent = 'Open a prototype from the hub to see its details.';
@@ -406,7 +510,8 @@
         var url = new URL('details.html', location.href);
         url.searchParams.set('id', id);
         url.searchParams.set('tab', currentTab());
-        if (access.configuredKey()) url.searchParams.set('key', access.configuredKey());
+        url.searchParams.set('v', uiVersion);
+        if (access.configuredKey() && !access.currentRole()) url.searchParams.set('key', access.configuredKey());
         return url.href;
       }
 
@@ -416,7 +521,7 @@
       }
 
       function setTab(name) {
-        var allowed = { overview: 1, insights: 1, versions: 1, changelog: 1, components: 1, code: 1, storybook: 1, instructions: 1 };
+        var allowed = { overview: 1, 'test-builder': 1, insights: 1, versions: 1, changelog: 1, components: 1, code: 1, storybook: 1, instructions: 1 };
         if (!allowed[name]) name = 'overview';
         document.querySelectorAll('.tab').forEach(function (tab) {
           var active = tab.getAttribute('data-tab') === name;
@@ -426,13 +531,16 @@
         var resource = ['components', 'code', 'storybook', 'instructions'].indexOf(name) !== -1;
         document.querySelectorAll('.tab-panel').forEach(function (panel) {
           var target = panel.getAttribute('data-panel');
-          panel.hidden = resource ? (target !== 'resources') : (target !== name);
+          var visible = resource ? (target === 'resources') : (target === name);
+          panel.hidden = !visible;
+          panel.classList.toggle('is-active', visible);
         });
         if (resource) {
           resourceKind = name;
           updateResourceUi();
           renderArtifacts();
         }
+        if (name === 'test-builder') renderTestBuilder();
         if (name === 'insights') loadInsightsFrame();
         if (name === 'changelog') loadChangelogFrame();
         var url = new URL(location.href);
@@ -459,7 +567,7 @@
           return;
         }
         list.innerHTML = versions.map(function (version) {
-          return '<article class="row"><div class="row-main"><h3 class="row-title">' + esc(version.label) + '</h3><p class="row-meta">' + esc(formatDate(version.createdAt)) + (version.createdBy ? ' · ' + esc(version.createdBy) : '') + '</p><p class="row-meta" style="margin-top:5px">' + esc(version.summary || 'No summary added.') + '</p></div></article>';
+          return '<article class="row"><div class="row-main"><h3 class="row-title">' + esc(version.label) + '</h3><p class="row-meta">' + esc(formatDate(version.createdAt)) + (version.createdBy ? ' · ' + esc(version.createdBy) : '') + '</p><p class="row-meta row-summary">' + esc(version.summary || 'No summary added.') + '</p></div></article>';
         }).join('');
       }
 
@@ -472,12 +580,90 @@
         var label = labels[resourceKind] || 'developer';
         document.getElementById('resourceHeading').textContent = kindLabel(resourceKind);
         document.getElementById('uploadHeading').textContent = 'Add a ' + label + ' file';
-        document.getElementById('uploadHint').textContent = auth.hasSession()
-          ? 'Files are stored privately for authenticated team members.'
-          : 'Sign in to upload a file to the shared private library.';
-        document.querySelectorAll('.resource-filter').forEach(function (button) {
-          button.classList.toggle('is-active', button.getAttribute('data-kind') === resourceKind);
+        document.getElementById('uploadHint').textContent = access.isDesigner()
+          ? 'Designer access can add files for the team.'
+          : 'Developer access can view files but cannot add or remove them.';
+      }
+
+      function blankTest() {
+        return {
+          id: '',
+          prototypeId: id,
+          versionId: '',
+          title: '',
+          intro: '',
+          status: 'draft',
+          tasks: [{ id: 'task-1', title: 'Task 1', instruction: '', success: { type: 'manual', value: '' }, prompt: '' }],
+        };
+      }
+
+      function testTaskMarkup(task, index) {
+        var success = task.success || { type: 'manual', value: '' };
+        return '<article class="test-task" data-test-task>' +
+          '<div class="test-task-head"><strong>Task ' + (index + 1) + '</strong>' +
+            '<button type="button" class="btn test-task-remove" data-remove-test-task>Remove</button></div>' +
+          '<div class="test-task-grid">' +
+            '<div class="field"><label>Task title</label><input data-task-title maxlength="120" value="' + esc(task.title) + '" placeholder="e.g. Find an available resource" /></div>' +
+            '<div class="field is-wide"><label>Instruction</label><textarea data-task-instruction maxlength="500" placeholder="What should the reviewer try?">' + esc(task.instruction) + '</textarea></div>' +
+            '<div class="field"><label>Success signal</label><select data-task-success-type>' +
+              '<option value="manual"' + (success.type === 'manual' ? ' selected' : '') + '>Participant marks complete</option>' +
+              '<option value="selector-click"' + (success.type === 'selector-click' ? ' selected' : '') + '>Click a selector</option>' +
+              '<option value="path"' + (success.type === 'path' ? ' selected' : '') + '>Reach a URL or page</option>' +
+            '</select></div>' +
+            '<div class="field"><label>Rule value (optional)</label><input data-task-success-value maxlength="240" value="' + esc(success.value) + '" placeholder=".save-button or /success" /></div>' +
+            '<div class="field is-wide"><label>Optional follow-up prompt</label><input data-task-prompt maxlength="240" value="' + esc(task.prompt) + '" placeholder="What felt difficult?" /></div>' +
+          '</div>' +
+        '</article>';
+      }
+
+      function readBuilderDraft() {
+        var current = editingTest || blankTest();
+        var tasks = [];
+        document.querySelectorAll('[data-test-task]').forEach(function (node, index) {
+          tasks.push({
+            id: current.tasks[index] && current.tasks[index].id ? current.tasks[index].id : 'task-' + (index + 1),
+            title: (node.querySelector('[data-task-title]').value || '').trim() || 'Task ' + (index + 1),
+            instruction: (node.querySelector('[data-task-instruction]').value || '').trim(),
+            success: {
+              type: node.querySelector('[data-task-success-type]').value,
+              value: (node.querySelector('[data-task-success-value]').value || '').trim(),
+            },
+            prompt: (node.querySelector('[data-task-prompt]').value || '').trim(),
+          });
         });
+        return Object.assign({}, current, {
+          title: document.getElementById('testTitle').value.trim(),
+          intro: document.getElementById('testIntro').value.trim(),
+          status: document.getElementById('testStatus').value,
+          versionId: document.getElementById('testVersion').value,
+          tasks: tasks,
+        });
+      }
+
+      function renderTestBuilder() {
+        var gate = document.getElementById('testBuilderGate');
+        var form = document.getElementById('testBuilderForm');
+        var newButton = document.getElementById('newTestBtn');
+        if (!access.isDesigner()) {
+          gate.hidden = false;
+          form.hidden = true;
+          newButton.disabled = true;
+          return;
+        }
+        gate.hidden = true;
+        form.hidden = false;
+        newButton.disabled = false;
+        var test = editingTest || tests[0] || blankTest();
+        document.getElementById('testTitle').value = test.title || '';
+        document.getElementById('testIntro').value = test.intro || '';
+        document.getElementById('testStatus').value = test.status || 'draft';
+        document.getElementById('testVersion').innerHTML = '<option value="">All versions</option>' +
+          versions.map(function (version) {
+            return '<option value="' + esc(version.id) + '"' + (version.id === test.versionId ? ' selected' : '') + '>' + esc(version.label) + '</option>';
+          }).join('');
+        document.getElementById('testTaskList').innerHTML = (test.tasks || []).map(testTaskMarkup).join('');
+        document.getElementById('testBuilderStatus').textContent = tests.length ? 'Editing the most recent test.' : 'Create a test to show a task widget on the mock.';
+        document.getElementById('testBuilderStatus').className = 'test-builder-status';
       }
 
       function renderArtifacts() {
@@ -485,7 +671,7 @@
         var list = document.getElementById('artifactList');
         var visible = artifacts.filter(function (artifact) { return artifact.kind === resourceKind; });
         if (!visible.length) {
-          list.innerHTML = '<div class="empty"><p>No ' + esc(kindLabel(resourceKind).toLowerCase()) + ' files yet.</p>' + (auth.hasSession() ? '<span>Use the upload form above to add one.</span>' : '<button type="button" class="btn btn-primary" data-auth-start="1">Sign in to add files</button>') + '</div>';
+          list.innerHTML = '<div class="empty"><p>No ' + esc(kindLabel(resourceKind).toLowerCase()) + ' files yet.</p>' + (access.isDesigner() ? '<span>Use the upload form above to add one.</span>' : '<span>Developer access is read-only.</span>') + '</div>';
           return;
         }
         list.innerHTML = visible.map(function (artifact) {
@@ -503,13 +689,13 @@
 
       function loadInsightsFrame() {
         var frame = document.getElementById('insightsFrame');
-        var src = 'feedback.html?id=' + encodeURIComponent(id) + '&embedded=1' + keyParam;
+        var src = 'feedback.html?id=' + encodeURIComponent(id) + '&embedded=1&v=' + uiVersion + keyParam;
         if (frame.getAttribute('src') !== src) frame.src = src;
       }
 
       function loadChangelogFrame() {
         var frame = document.getElementById('changelogFrame');
-        var src = 'changelog.html?id=' + encodeURIComponent(id) + '&embedded=1' + keyParam;
+        var src = 'changelog.html?id=' + encodeURIComponent(id) + '&embedded=1&v=' + uiVersion + keyParam;
         if (frame.getAttribute('src') !== src) frame.src = src;
       }
 
@@ -524,7 +710,7 @@
           return;
         }
         var mock = findMockArtifact();
-        if (!mock || !auth.hasSession()) {
+        if (!mock) {
           mockUrl = '';
           applyMockUrl();
           return;
@@ -553,7 +739,7 @@
         } else {
           frame.hidden = true;
           empty.hidden = false;
-          text.textContent = item.path ? 'The repository mock could not be loaded.' : (auth.hasSession() ? 'No HTML mock has been attached yet.' : 'Sign in to view the private uploaded mock.');
+          text.textContent = item.path ? 'The repository mock could not be loaded.' : (access.isDeveloper() ? 'The private mock could not be loaded from this role link.' : 'No HTML mock has been attached yet.');
           openMock.hidden = true;
           downloadBtn.disabled = true;
           document.getElementById('previewLabel').textContent = 'No mock';
@@ -561,27 +747,10 @@
       }
 
       function loadAuthState() {
-        return auth.refreshUser().then(function (user) {
-          resourceAuth.hidden = false;
-          if (user) {
-            resourceAuth.innerHTML = '<span><i class="fa-solid fa-lock" aria-hidden="true"></i> Signed in as <strong>' + esc(user.email || 'team member') + '</strong>.</span><button type="button" class="btn" id="signOutBtn">Sign out</button>';
-            document.getElementById('signOutBtn').addEventListener('click', function () {
-              auth.signOut().then(function () { location.reload(); });
-            });
-          } else {
-            resourceAuth.innerHTML = '<span><i class="fa-solid fa-lock" aria-hidden="true"></i> Sign in to manage private developer files.</span><button type="button" class="btn" id="resourceSignInBtn">Sign in</button>';
-            document.getElementById('resourceSignInBtn').addEventListener('click', openAuth);
-          }
+        return auth.refreshUser().then(function () {
           updateResourceUi();
         });
       }
-
-      function openAuth() {
-        authModal.hidden = false;
-        document.getElementById('authEmail').focus();
-      }
-
-      function closeAuth() { authModal.hidden = true; }
 
       function downloadBlob(blob, filename) {
         var url = URL.createObjectURL(blob);
@@ -613,22 +782,40 @@
       }
 
       function openShare() {
-        document.getElementById('shareUrl').value = item && item.path ? mockUrl : detailsUrl();
-        document.getElementById('shareNote').textContent = item && item.path
-          ? 'Reviewers get the mock only. Share the workspace link with your team when they need Insights, version history, or developer files.'
-          : 'This internal link opens the workspace, Insights, version history, and private developer resources for your team.';
+        shareRoleField.hidden = false;
+        shareRole.value = access.isDeveloper() ? 'developer' : 'designer';
+        shareRole.querySelector('option[value="designer"]').disabled = access.isDeveloper();
+        updateRoleShareUrl();
+        document.getElementById('shareNote').textContent = 'Choose a role. Designer links can edit the workspace; Developer links can view the mock, Insights, history, changelog, resources, and usability results.';
         document.getElementById('shareStatus').textContent = '';
         shareModal.hidden = false;
         document.getElementById('shareUrl').focus();
         document.getElementById('shareUrl').select();
       }
 
+      function updateRoleShareUrl() {
+        var input = document.getElementById('shareUrl');
+        input.value = 'Creating role link…';
+        access.createRoleLink(shareRole.value, 'details.html', id, currentTab()).then(function (url) {
+          input.value = url;
+        }).catch(function (error) {
+          input.value = '';
+          setStatus(document.getElementById('shareStatus'), error.message || 'Could not create role link.', 'error');
+        });
+      }
+
+      shareRole.addEventListener('change', function () {
+        updateRoleShareUrl();
+      });
+
       function loadData() {
-        return Promise.all([library.getPrototype(id), library.listVersions(id), library.listArtifacts(id)])
+        var testPromise = usability ? usability.listTests(id) : Promise.resolve([]);
+        return Promise.all([library.getPrototype(id), library.listVersions(id), library.listArtifacts(id), testPromise])
           .then(function (result) {
             item = result[0];
             versions = result[1] || [];
             artifacts = result[2] || [];
+            tests = result[3] || [];
             if (!item) throw new Error('Prototype not found.');
             titleEl.textContent = item.title || id;
             subtitleEl.textContent = item.description || 'Prototype workspace and developer hand-off.';
@@ -637,6 +824,7 @@
             renderVersions();
             updateVersionOptions();
             renderArtifacts();
+            renderTestBuilder();
             setMockUrl();
             feedback.count(id).then(function (result) { document.getElementById('statFeedback').textContent = String(result.count || 0); });
           });
@@ -647,11 +835,82 @@
         if (tab) setTab(tab.getAttribute('data-tab'));
       });
 
-      document.querySelectorAll('.resource-filter').forEach(function (button) {
-        button.addEventListener('click', function () {
-          resourceKind = button.getAttribute('data-kind');
-          updateResourceUi();
-          renderArtifacts();
+      document.getElementById('newTestBtn').addEventListener('click', function () {
+        if (!access.isDesigner()) return;
+        editingTest = blankTest();
+        renderTestBuilder();
+      });
+      document.getElementById('addTestTaskBtn').addEventListener('click', function () {
+        if (!access.isDesigner()) return;
+        var draft = readBuilderDraft();
+        draft.tasks.push({
+          id: 'task-' + (draft.tasks.length + 1),
+          title: 'Task ' + (draft.tasks.length + 1),
+          instruction: '',
+          success: { type: 'manual', value: '' },
+          prompt: '',
+        });
+        editingTest = draft;
+        renderTestBuilder();
+      });
+      document.getElementById('testTaskList').addEventListener('click', function (event) {
+        if (!event.target.closest('[data-remove-test-task]')) return;
+        var taskNode = event.target.closest('[data-test-task]');
+        var draft = readBuilderDraft();
+        var nodes = Array.prototype.slice.call(document.querySelectorAll('[data-test-task]'));
+        var index = nodes.indexOf(taskNode);
+        if (index >= 0) draft.tasks.splice(index, 1);
+        editingTest = draft;
+        renderTestBuilder();
+      });
+      document.getElementById('resetTestBtn').addEventListener('click', function () {
+        editingTest = null;
+        renderTestBuilder();
+      });
+      document.getElementById('testBuilderForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (!access.isDesigner()) return;
+        var draft = readBuilderDraft();
+        var status = document.getElementById('testBuilderStatus');
+        if (!draft.title) {
+          status.textContent = 'Add a test name.';
+          status.className = 'test-builder-status is-error';
+          return;
+        }
+        if (!draft.tasks.length || draft.tasks.some(function (task) { return !task.instruction; })) {
+          status.textContent = 'Add an instruction for every task.';
+          status.className = 'test-builder-status is-error';
+          return;
+        }
+        var invalidRule = draft.tasks.find(function (task) {
+          if (task.success.type === 'manual') return false;
+          if (!task.success.value) return true;
+          if (task.success.type !== 'selector-click') return false;
+          try { document.querySelector(task.success.value); return false; } catch (e) { return true; }
+        });
+        if (invalidRule) {
+          status.textContent = 'Check the success rule value for ' + invalidRule.title + '.';
+          status.className = 'test-builder-status is-error';
+          return;
+        }
+        status.textContent = 'Saving…';
+        status.className = 'test-builder-status';
+        usability.saveTest(id, draft).then(function (saved) {
+          var found = false;
+          tests = tests.map(function (test) {
+            if (test.id !== saved.id) return test;
+            found = true;
+            return saved;
+          });
+          if (!found) tests.unshift(saved);
+          editingTest = saved;
+          renderTestBuilder();
+          status = document.getElementById('testBuilderStatus');
+          status.textContent = 'Test saved.';
+          status.className = 'test-builder-status is-ok';
+        }).catch(function (error) {
+          status.textContent = error.message || 'Could not save the test.';
+          status.className = 'test-builder-status is-error';
         });
       });
 
@@ -669,33 +928,24 @@
           setStatus(document.getElementById('shareStatus'), 'Copied to clipboard.', 'ok');
         });
       });
-      document.getElementById('closeAuthBtn').addEventListener('click', closeAuth);
-      document.getElementById('authModal').addEventListener('click', function (event) { if (event.target === authModal) closeAuth(); });
-      document.getElementById('authForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        var status = document.getElementById('authStatus');
-        setStatus(status, 'Sending sign-in link…');
-        auth.sendMagicLink(document.getElementById('authEmail').value).then(function () {
-          setStatus(status, 'Check your email for the sign-in link.', 'ok');
-        }).catch(function (error) {
-          setStatus(status, error.message || 'Could not send the sign-in link.', 'error');
-        });
-      });
+      function openManage() {
+        document.getElementById('editTitle').value = item ? item.title : '';
+        document.getElementById('editDescription').value = item ? item.description : '';
+        document.getElementById('editStatus').value = item ? item.status : 'draft';
+        setStatus(document.getElementById('editStatusMessage'), '');
+        manageModal.hidden = false;
+        document.getElementById('editTitle').focus();
+      }
 
-      document.getElementById('manageBtn').addEventListener('click', function () {
-        var panel = document.getElementById('managePanel');
-        panel.hidden = !panel.hidden;
-        if (!panel.hidden) {
-          document.getElementById('editTitle').value = item ? item.title : '';
-          document.getElementById('editDescription').value = item ? item.description : '';
-          document.getElementById('editStatus').value = item ? item.status : 'draft';
-          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-      document.getElementById('cancelManageBtn').addEventListener('click', function () { document.getElementById('managePanel').hidden = true; });
+      function closeManage() { manageModal.hidden = true; }
+
+      document.getElementById('manageBtn').addEventListener('click', openManage);
+      document.getElementById('closeManageBtn').addEventListener('click', closeManage);
+      document.getElementById('cancelManageBtn').addEventListener('click', closeManage);
+      manageModal.addEventListener('click', function (event) { if (event.target === manageModal) closeManage(); });
       document.getElementById('editForm').addEventListener('submit', function (event) {
         event.preventDefault();
-        if (!auth.hasSession()) { openAuth(); return; }
+        if (!access.isDesigner()) return;
         var status = document.getElementById('editStatusMessage');
         setStatus(status, 'Saving…');
         library.updatePrototype(id, {
@@ -717,7 +967,7 @@
       });
 
       document.getElementById('addVersionBtn').addEventListener('click', function () {
-        if (!auth.hasSession()) { openAuth(); return; }
+        if (!access.isDesigner()) return;
         document.getElementById('versionForm').hidden = false;
         document.getElementById('versionLabel').focus();
       });
@@ -730,7 +980,7 @@
       document.getElementById('cancelVersionBtn').addEventListener('click', function () { document.getElementById('versionForm').hidden = true; });
       document.getElementById('versionForm').addEventListener('submit', function (event) {
         event.preventDefault();
-        if (!auth.hasSession()) { openAuth(); return; }
+        if (!access.isDesigner()) return;
         var status = document.getElementById('versionStatus');
         setStatus(status, 'Saving…');
         library.addVersion(id, {
@@ -751,7 +1001,7 @@
 
       document.getElementById('uploadForm').addEventListener('submit', function (event) {
         event.preventDefault();
-        if (!auth.hasSession()) { openAuth(); return; }
+        if (!access.isDesigner()) return;
         var file = document.getElementById('artifactFile').files[0];
         var status = document.getElementById('uploadStatus');
         setStatus(status, 'Uploading…');
@@ -770,11 +1020,6 @@
       });
 
       document.getElementById('artifactList').addEventListener('click', function (event) {
-        var authStart = event.target.closest('[data-auth-start]');
-        if (authStart) {
-          openAuth();
-          return;
-        }
         var download = event.target.closest('[data-download-artifact]');
         var remove = event.target.closest('[data-delete-artifact]');
         if (download) {
@@ -795,7 +1040,6 @@
       document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
           shareModal.hidden = true;
-          authModal.hidden = true;
         }
       });
 

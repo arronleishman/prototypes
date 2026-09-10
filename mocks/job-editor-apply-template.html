@@ -21607,6 +21607,34 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
     function normaliseTemplate(source) {
         var template = JSON.parse(JSON.stringify(source || {}));
         if (Array.isArray(template.resourceRequests)) {
+            template.resourceRequests = template.resourceRequests.map(function (request) {
+                var explicitUnit = request.effortUnit === "percentage"
+                    ? "percentage"
+                    : request.effortUnit === "hours" || request.effortValue != null
+                        ? "hours"
+                        : "percentage";
+                var value = request.effortValue != null
+                    ? Number(request.effortValue)
+                    : Number(request.weightPercent);
+                return Object.assign({}, request, {
+                    effortUnit: explicitUnit,
+                    effortValue: isFinite(value) ? Math.max(0, value) : null,
+                    segments: Array.isArray(request.segments) ? request.segments.map(function (segment) {
+                        return Object.assign({}, segment, {
+                            startWeek: Math.max(0, Number(segment.startWeek) || 0),
+                            durationWeeks: Math.max(1, Number(segment.durationWeeks) || 1)
+                        });
+                    }) : []
+                });
+            });
+            if (!Number(template.baselineHours)) {
+                var explicitHours = template.resourceRequests
+                    .filter(function (request) { return request.effortUnit === "hours"; })
+                    .reduce(function (sum, request) {
+                        return sum + Math.max(0, Number(request.effortValue) || 0);
+                    }, 0);
+                template.baselineHours = explicitHours || 120;
+            }
             return template;
         }
         template.resourceRequests = [];
@@ -21627,7 +21655,8 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
                     bookingType: "",
                     weightPercent: slot.sharePercent == null ? 100 : Number(slot.sharePercent),
                     effortUnit: "percentage",
-                    effortValue: null,
+                    effortValue: (Number(phase.weight) || 100) *
+                        (slot.sharePercent == null ? 1 : Number(slot.sharePercent) / 100) / weeks,
                     segments: [{ startWeek: cursor, durationWeeks: weeks, phase: phase.name || "" }]
                 });
             });
@@ -21641,8 +21670,114 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
         return normaliseTemplate(template).resourceRequests || [];
     }
 
+    function requirementBaselineValue(request) {
+        var value = Number(request && (request.effortValue != null ? request.effortValue : request.weightPercent));
+        return Math.max(0, isFinite(value) ? value : 0);
+    }
+
+    function requirementGroupValue(request, segment, requestDuration) {
+        var value = requirementBaselineValue(request);
+        var duration = Math.max(1, Number(requestDuration) || 1);
+        var segmentWeeks = Math.max(0, Number(segment && segment.durationWeeks) || 0);
+        if (request && request.effortUnit === "hours") return value * (segmentWeeks / duration);
+        return value * segmentWeeks;
+    }
+
+    function requirementGroups(template) {
+        var requests = templateRequirements(template);
+        var groups = {};
+        var groupOrder = [];
+        var phaseOrder = (template.phases || []).filter(isPhaseItem).map(function (phase) {
+            return phase.name;
+        }).filter(Boolean);
+
+        requests.forEach(function (request) {
+            (request.segments || []).forEach(function (segment) {
+                var name = segment.phase || segment.bookingType || request.phase ||
+                    request.bookingType || "Unphased work";
+                if (!groups[name]) {
+                    groups[name] = {
+                        kind: "phase",
+                        name: name,
+                        score: 0,
+                        startWeek: Number.POSITIVE_INFINITY,
+                        endWeek: 0,
+                        slots: []
+                    };
+                    groupOrder.push(name);
+                }
+                var start = Math.max(0, Number(segment.startWeek) || 0);
+                var end = start + Math.max(1, Number(segment.durationWeeks) || 1);
+                groups[name].startWeek = Math.min(groups[name].startWeek, start);
+                groups[name].endWeek = Math.max(groups[name].endWeek, end);
+                groups[name].score += requirementGroupValue(
+                    request,
+                    segment,
+                    (request.segments || []).reduce(function (sum, item) {
+                        return sum + Math.max(0, Number(item.durationWeeks) || 0);
+                    }, 0)
+                );
+            });
+        });
+
+        var orderedNames = phaseOrder.filter(function (name) { return groups[name]; });
+        groupOrder.forEach(function (name) {
+            if (orderedNames.indexOf(name) === -1) orderedNames.push(name);
+        });
+        var totalScore = orderedNames.reduce(function (sum, name) {
+            return sum + groups[name].score;
+        }, 0) || 1;
+
+        return orderedNames.map(function (name) {
+            var group = groups[name];
+            var groupRequests = [];
+            requests.forEach(function (request) {
+                var contribution = 0;
+                (request.segments || []).forEach(function (segment) {
+                    var segmentName = segment.phase || segment.bookingType || request.phase ||
+                        request.bookingType || "Unphased work";
+                    if (segmentName !== name) return;
+                    contribution += requirementGroupValue(
+                        request,
+                        segment,
+                        (request.segments || []).reduce(function (sum, item) {
+                            return sum + Math.max(0, Number(item.durationWeeks) || 0);
+                        }, 0)
+                    );
+                });
+                if (contribution > 0) {
+                    groupRequests.push({
+                        grade: request.grade || "",
+                        role: request.role || "",
+                        count: Math.max(1, Number(request.count) || 1),
+                        sharePercent: group.score ? contribution / group.score * 100 : 0,
+                        hours: contribution,
+                        request: request
+                    });
+                }
+            });
+            return {
+                kind: "phase",
+                name: name,
+                weight: group.score / totalScore * 100,
+                durationWeeks: Math.max(1, group.endWeek - group.startWeek),
+                startWeek: isFinite(group.startWeek) ? group.startWeek : 0,
+                slots: groupRequests,
+                resources: groupRequests.reduce(function (sum, slot) {
+                    return sum + slot.count;
+                }, 0) || 1,
+                source: group
+            };
+        });
+    }
+
     function effortPhases(template) {
         var normalised = normaliseTemplate(template);
+        if ((normalised.resourceRequests || []).some(function (request) {
+            return (request.segments || []).length;
+        })) {
+            return requirementGroups(normalised);
+        }
         var phases = (normalised.phases || []).filter(isPhaseItem);
         if (phases.length) return phases;
         var groups = {};
@@ -21669,6 +21804,9 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
     }
 
     function slotHours(phase, slot, phaseHours) {
+        if (slot.hours != null && phase && phase.source && phase.source.score) {
+            return phaseHours * (Number(slot.hours) || 0) / phase.source.score;
+        }
         var usesShares = phase.slots.some(function (s) { return s.sharePercent != null; });
         if (!usesShares) return phaseHours / phase.slots.length;
         return phaseHours * (Number(slot.sharePercent) || 0) / 100;
@@ -22027,7 +22165,9 @@ body:not(.minified):not(.Nav-minified) #job-edit-top-bar { left: 180px; }
 <script src="../shared/access.js"></script>
 <script src="../shared/feedback-store.js"></script>
 <script src="../shared/telemetry-store.js"></script>
+<script src="../shared/usability-test-store.js"></script>
 <script src="../shared/telemetry.js" defer></script>
+<script src="../shared/usability-test.js" defer></script>
 <script src="../shared/feedback.js" defer></script>
 </body>
 </html>

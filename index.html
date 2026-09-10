@@ -9,84 +9,271 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
+    @view-transition { navigation: auto; }
+    @keyframes hub-enter {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     :root {
       --ink: #1a1d26;
       --muted: #5c6378;
       --line: #e4e6ee;
       --paper: #f7f6f2;
       --panel: #ffffff;
-      --accent: #2f5d50;
-      --accent-soft: #e8f0ed;
+      --accent: #9a3412;
+      --accent-soft: #ffedd5;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
+      overflow-x: clip;
       font-family: "DM Sans", system-ui, sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(ellipse 80% 50% at 10% -10%, #dde8e4 0%, transparent 55%),
+        radial-gradient(ellipse 80% 50% at 10% -10%, #ffedd5 0%, transparent 55%),
         radial-gradient(ellipse 60% 40% at 100% 0%, #f3e6dc 0%, transparent 50%),
         linear-gradient(180deg, var(--paper) 0%, #efece6 100%);
     }
+    .team-rail {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 100;
+      display: flex;
+      width: 72px;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 32px 0 16px;
+      border-right: 1px solid var(--line);
+      background: rgba(247, 246, 242, .92);
+      backdrop-filter: blur(12px);
+    }
+    .site-logo {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+    }
+    .site-logo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .team-rail-list {
+      display: flex;
+      flex: 1;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .team-button,
+    .team-add {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      color: var(--muted);
+      cursor: pointer;
+      font: 700 .78rem/1 "DM Sans", system-ui, sans-serif;
+      transition: border-radius .15s ease, border-color .15s ease, background-color .15s ease, color .15s ease, transform .15s ease;
+    }
+    .team-button:hover,
+    .team-add:hover {
+      border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .team-button.is-active {
+      border-color: var(--accent);
+      border-radius: 12px;
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(154, 52, 18, .2);
+    }
+    .team-button.is-active::before {
+      position: absolute;
+      left: -15px;
+      width: 4px;
+      height: 24px;
+      border-radius: 0 4px 4px 0;
+      background: var(--accent);
+      content: "";
+    }
+    .team-button .team-avatar-image {
+      width: 30px;
+      height: 30px;
+      padding: 5px;
+      border-radius: inherit;
+      object-fit: contain;
+    }
+    .team-button .team-mark { padding: 6px; }
+    .team-button.is-active .team-mark { filter: brightness(0) invert(1); }
+    .team-add {
+      border-style: dashed;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--accent);
+      font-size: 1rem;
+    }
+    .team-add:hover { border-radius: 50%; }
+    .team-rail-divider {
+      width: 32px;
+      border-top: 1px solid var(--line);
+    }
     .wrap {
-      width: min(920px, calc(100% - 40px));
-      margin: 0 auto;
-      padding: 56px 0 80px;
+      width: min(1180px, calc(100% - 112px));
+      margin: 0 0 0 max(88px, calc(72px + (100vw - 72px - 1180px) / 2));
+      padding: 32px 0 64px;
+      animation: hub-enter .28s ease-out both;
+    }
+    .hub-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .team-page-context {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 700;
+    }
+    .team-context-avatar {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: .62rem;
+      font-weight: 800;
+    }
+    .team-context-avatar img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 2px;
+      object-fit: contain;
+    }
+    .team-settings {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 2px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .team-settings:hover {
+      border-color: var(--line);
+      background: var(--panel);
+      color: var(--accent);
     }
     .brand {
       font-family: "Fraunces", Georgia, serif;
-      font-size: clamp(2.4rem, 5vw, 3.4rem);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
       font-weight: 700;
       letter-spacing: -0.02em;
-      margin: 0 0 10px;
+      margin: 0 0 6px;
       line-height: 1.1;
     }
     .tagline {
-      margin: 0 0 36px;
-      font-size: 1.1rem;
+      margin: 0;
+      font-size: .92rem;
       color: var(--muted);
       max-width: 36em;
       line-height: 1.5;
     }
     .hint {
       display: flex;
+      align-items: center;
+      justify-content: space-between;
       flex-wrap: wrap;
       gap: 10px 18px;
-      margin: 0 0 28px;
-      padding: 14px 16px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: color-mix(in srgb, var(--panel) 85%, transparent);
-      font-size: 0.92rem;
+      margin: 0 0 20px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      font-size: 0.82rem;
       color: var(--muted);
     }
     .hint span { display: inline-flex; align-items: center; gap: 8px; }
     .hint i { color: var(--accent); width: 1em; text-align: center; }
-    .hub-actions { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+    .hub-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
     .hub-action {
-      display: inline-flex; align-items: center; gap: 7px; padding: 0; border: 0; background: none;
-      color: var(--accent); cursor: pointer; font: 600 0.92rem/1 "DM Sans", system-ui, sans-serif;
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--panel);
+      color: var(--ink);
+      cursor: pointer;
+      font: 600 .84rem/1 "DM Sans", system-ui, sans-serif;
+      transition: border-color .15s ease, background-color .15s ease, color .15s ease;
     }
-    .hub-action:hover { text-decoration: underline; }
+    .hub-action:hover {
+      border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .hub-action.is-primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+    .hub-action.is-primary:hover { color: #fff; filter: brightness(1.05); }
+    .hub-action:focus-visible {
+      outline: 3px solid rgba(154,52,18,.2);
+      outline-offset: 2px;
+    }
 
     .list {
       display: grid;
-      gap: 12px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
       list-style: none;
       margin: 0;
       padding: 0;
     }
     .card {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px 20px;
-      align-items: center;
-      padding: 18px 20px;
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      padding: 0;
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 10px;
       color: inherit;
+      overflow: hidden;
       transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
     }
     .card.is-openable,
@@ -106,15 +293,66 @@
       outline-offset: 2px;
     }
     .card h2 {
-      margin: 0 0 4px;
-      font-size: 1.15rem;
+      margin: 0 0 5px;
+      font-size: .9rem;
+      line-height: 1.25;
       font-weight: 700;
     }
     .card p {
       margin: 0;
       color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.45;
+      font-size: .78rem;
+      line-height: 1.4;
+    }
+    .card-preview {
+      position: relative;
+      height: 160px;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+      background: #f1f3f5;
+    }
+    .card-preview-frame {
+      display: block;
+      width: 250%;
+      height: 400px;
+      border: 0;
+      transform: scale(.4);
+      transform-origin: top left;
+      pointer-events: none;
+      background: #fff;
+    }
+    .card-preview.is-empty {
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: .76rem;
+    }
+    .card-preview.is-empty i { color: var(--accent); font-size: 1.1rem; }
+    .card-body {
+      display: flex;
+      min-width: 0;
+      flex: 1;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+    }
+    .card-info { min-width: 0; }
+    .card-info p {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+    .card .meta {
+      margin-top: 9px;
+      gap: 5px;
+      font-size: .7rem;
+    }
+    .card .pill {
+      padding: 3px 7px;
+      font-size: .68rem;
     }
     .meta {
       display: flex;
@@ -147,18 +385,22 @@
       z-index: 2;
     }
     .menu.is-open {
-      z-index: 40;
+      z-index: 120;
     }
     .card:has(.menu.is-open),
     .sub:has(.menu.is-open) {
       position: relative;
-      z-index: 40;
+      z-index: 100;
+      overflow: visible;
+    }
+    .menu {
+      align-self: flex-end;
     }
     .menu-toggle {
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 7px;
       background: #fff;
       color: var(--ink);
       cursor: pointer;
@@ -178,7 +420,7 @@
       position: absolute;
       top: calc(100% + 6px);
       right: 0;
-      z-index: 50;
+      z-index: 150;
       min-width: 200px;
       padding: 6px;
       background: #fff;
@@ -215,27 +457,30 @@
     .menu-panel button:hover i { color: var(--accent); }
 
     .card.is-group { grid-template-columns: 1fr; cursor: default; }
+    .card.is-group { grid-column: 1 / -1; display: block; }
     .card.is-group:hover {
       border-color: var(--line);
       box-shadow: none;
       transform: none;
     }
+    .group-head { padding: 14px 14px 0; }
     .subs {
       display: grid;
-      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
       list-style: none;
-      margin: 16px 0 0;
-      padding: 0;
+      margin: 0;
+      padding: 12px;
     }
     .sub {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px 20px;
-      align-items: center;
-      padding: 13px 15px;
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      padding: 0;
       border: 1px solid var(--line);
       border-radius: 10px;
       background: color-mix(in srgb, var(--paper) 55%, var(--panel));
+      overflow: hidden;
       transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
     }
     .sub h3 {
@@ -249,6 +494,9 @@
       font-size: 0.9rem;
       line-height: 1.45;
     }
+    .sub .card-body { padding: 11px; }
+    .sub h3 { font-size: .86rem; }
+    .sub p { font-size: .76rem; }
     .sub .meta { margin-top: 8px; }
     .empty, .err {
       padding: 28px 20px;
@@ -268,10 +516,22 @@
       padding: 2px 6px;
       border-radius: 4px;
     }
+    @media (max-width: 860px) {
+      .list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .subs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
     @media (max-width: 640px) {
-      .wrap { width: calc(100% - 28px); padding-top: 36px; }
-      .card { grid-template-columns: 1fr; }
-      .sub { grid-template-columns: 1fr; }
+      .team-rail { width: 58px; }
+      .team-button, .team-add { width: 38px; height: 38px; flex-basis: 38px; }
+      .team-button.is-active::before { left: -10px; }
+      .wrap { width: calc(100% - 74px); margin-left: 70px; padding-top: 28px; }
+      .hub-head { display: block; }
+      .hub-actions { margin-top: 12px; }
+      .tagline { margin-bottom: 22px; }
+      .list, .subs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 460px) {
+      .list, .subs { grid-template-columns: 1fr; }
     }
 
     .share-modal {
@@ -374,30 +634,106 @@
       color: var(--muted);
       line-height: 1.4;
     }
+    .share-role {
+      display: grid;
+      gap: 6px;
+      margin: 0 0 12px;
+    }
+    .share-role[hidden] { display: none; }
+    .share-role label {
+      color: var(--muted);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .share-role select {
+      width: 100%;
+      min-height: 40px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: 400 .9rem/1.3 "DM Sans", system-ui, sans-serif;
+    }
     .library-form { display: grid; gap: 13px; }
     .library-form label { display: grid; gap: 6px; color: var(--muted); font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
     .library-form input, .library-form textarea, .library-form select {
       width: 100%; min-height: 40px; padding: 9px 11px; border: 1px solid #cfd3df; border-radius: 8px;
       color: var(--ink); background: #fff; font: 400 .9rem/1.3 "DM Sans", system-ui, sans-serif;
     }
+    .library-form input[type="file"] {
+      min-height: 44px;
+      padding: 4px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .library-form input[type="file"]::file-selector-button {
+      min-height: 34px;
+      margin-right: 10px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font: 600 .84rem/1 "DM Sans", system-ui, sans-serif;
+      cursor: pointer;
+    }
+    .library-form input[type="file"]::file-selector-button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .library-form input[type="file"]:hover { border-color: var(--accent); }
     .library-form textarea { min-height: 88px; resize: vertical; }
-    .library-form input:focus, .library-form textarea:focus, .library-form select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47,93,80,.14); }
+    .library-form input:focus, .library-form textarea:focus, .library-form select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(154,52,18,.18); }
     .library-form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 2px; }
     .library-form-status { min-height: 1.2em; margin: 0; color: var(--muted); font-size: .82rem; }
     .library-form-status.is-error { color: #a3003c; }
     .library-form-status.is-ok { color: var(--accent); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
   </style>
 </head>
 <body>
+  <aside class="team-rail" aria-label="Teams">
+    <div class="site-logo">
+      <img src="assets/dayshape-logo-mark.png" alt="Dayshape" />
+    </div>
+    <div class="team-rail-divider" aria-hidden="true"></div>
+    <div class="team-rail-list" id="teamRail" role="toolbar" aria-label="Team spaces" aria-orientation="vertical"></div>
+    <div class="team-rail-divider" aria-hidden="true"></div>
+    <button type="button" class="team-add" id="addTeamBtn" aria-label="Add team" title="Add team">
+      <i class="fa-solid fa-plus" aria-hidden="true"></i>
+    </button>
+  </aside>
+
   <main class="wrap">
-    <h1 class="brand" id="siteName">High Volume Prototypes</h1>
-    <p class="tagline" id="siteTagline">Click a mock, share the link, leave feedback.</p>
-    <div class="hint" id="hubShareRow" style="margin-top:-12px">
-      <span><i class="fa-solid fa-share-nodes"></i> Internal hub link (team only)</span>
+    <div class="hub-head">
+      <div>
+        <div class="team-page-context">
+          <span class="team-context-avatar" id="teamContextAvatar">HV</span>
+          <span id="activeTeamName">High Volume</span>
+          <button type="button" class="team-settings" id="teamSettingsBtn" aria-label="Team settings" title="Team settings">
+            <i class="fa-solid fa-gear" aria-hidden="true"></i>
+          </button>
+        </div>
+        <h1 class="brand" id="siteName">High Volume Prototypes</h1>
+        <p class="tagline" id="siteTagline">Click a mock, share the link, leave feedback.</p>
+      </div>
       <div class="hub-actions">
-        <button type="button" id="addPrototypeBtn" class="hub-action"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add prototype</button>
+        <button type="button" id="addPrototypeBtn" class="hub-action is-primary"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add prototype</button>
         <button type="button" id="shareHubBtn" class="hub-action"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Share hub link</button>
       </div>
+    </div>
+    <div class="hint" id="hubShareRow">
+      <span><i class="fa-solid fa-share-nodes"></i> Internal hub link (team only)</span>
     </div>
     <ul class="list" id="mockList" aria-live="polite">
       <li class="empty">Loading mocks…</li>
@@ -414,6 +750,13 @@
         <button type="button" class="share-dialog-close" id="shareModalClose" aria-label="Close">&times;</button>
       </div>
       <p class="share-dialog-sub" id="shareModalSub">Reviewers get this mock only — not the hub or feedback threads.</p>
+      <div class="share-role" id="shareRoleField" hidden>
+        <label for="shareRole">Access level</label>
+        <select id="shareRole">
+          <option value="designer">Designer — full access</option>
+          <option value="developer">Developer — view only</option>
+        </select>
+      </div>
       <label class="share-dialog-label" for="shareModalUrl">Reviewer link</label>
       <div class="share-dialog-row">
         <input id="shareModalUrl" type="text" readonly value="" />
@@ -434,7 +777,7 @@
       </div>
       <p class="share-dialog-sub">Create a shared library entry and upload its HTML mock. Add developer resources from the detail page.</p>
       <form class="library-form" id="addPrototypeForm">
-        <p class="library-form-status">You need an approved team sign-in to save uploads.</p>
+        <p class="library-form-status">Designer access is required to create shared prototypes.</p>
         <label for="newPrototypeId">Prototype id
           <input id="newPrototypeId" required maxlength="80" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="e.g. capacity-planner" />
         </label>
@@ -450,9 +793,6 @@
         <label for="newPrototypeFile">HTML mock
           <input id="newPrototypeFile" type="file" accept=".html,text/html" />
         </label>
-        <label for="newPrototypeEmail">Team email (only needed once)
-          <input id="newPrototypeEmail" type="email" autocomplete="email" placeholder="you@company.com" />
-        </label>
         <p class="library-form-status" id="addPrototypeStatus" aria-live="polite"></p>
         <div class="library-form-actions">
           <button type="button" class="share-copy-btn" id="addPrototypeCancel">Cancel</button>
@@ -462,8 +802,60 @@
     </div>
   </div>
 
+  <div class="share-modal" id="teamModal" hidden>
+    <div class="share-dialog" role="dialog" aria-modal="true" aria-labelledby="teamModalTitle">
+      <div class="share-dialog-head">
+        <h2 id="teamModalTitle">Add team</h2>
+        <button type="button" class="share-dialog-close" id="teamModalClose" aria-label="Close">&times;</button>
+      </div>
+      <p class="share-dialog-sub">Create a team space for another group’s prototypes.</p>
+      <form class="library-form" id="teamForm">
+        <label for="teamName">Team name
+          <input id="teamName" required maxlength="40" placeholder="e.g. Operations" />
+        </label>
+        <label for="teamShortName">Short label
+          <input id="teamShortName" required maxlength="2" placeholder="OP" />
+        </label>
+        <label for="teamImage">Profile picture
+          <input id="teamImage" type="file" accept="image/*" />
+        </label>
+        <p class="library-form-status" id="teamStatus" aria-live="polite"></p>
+        <div class="library-form-actions">
+          <button type="button" class="share-copy-btn" id="teamCancel">Cancel</button>
+          <button type="submit" class="share-copy-btn">Add team</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="share-modal" id="teamSettingsModal" hidden>
+    <div class="share-dialog" role="dialog" aria-modal="true" aria-labelledby="teamSettingsTitle">
+      <div class="share-dialog-head">
+        <h2 id="teamSettingsTitle">Team settings</h2>
+        <button type="button" class="share-dialog-close" id="teamSettingsClose" aria-label="Close">&times;</button>
+      </div>
+      <p class="share-dialog-sub">Update how this team appears in the rail and on the team page.</p>
+      <form class="library-form" id="teamSettingsForm">
+        <label for="settingsTeamName">Team name
+          <input id="settingsTeamName" required maxlength="40" />
+        </label>
+        <label for="settingsTeamShort">Short label
+          <input id="settingsTeamShort" required maxlength="2" />
+        </label>
+        <label for="settingsTeamImage">Profile picture
+          <input id="settingsTeamImage" type="file" accept="image/*" />
+        </label>
+        <p class="library-form-status" id="teamSettingsStatus" aria-live="polite"></p>
+        <div class="library-form-actions">
+          <button type="button" class="share-copy-btn" id="teamSettingsCancel">Cancel</button>
+          <button type="submit" class="share-copy-btn">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="config.js"></script>
-  <script src="shared/access.js"></script>
+  <script src="shared/access.js?v=2026-09-09-orange-theme"></script>
   <script src="shared/supabase-auth.js"></script>
   <script src="shared/prototype-library.js"></script>
   <script src="shared/feedback-store.js"></script>
@@ -476,10 +868,10 @@
       var access = window.PrototypesAccess;
       var auth = window.PrototypesAuth;
       var library = window.PrototypesLibrary;
-      if (cfg.siteName) {
-        document.getElementById('siteName').textContent = cfg.siteName;
-        document.title = cfg.siteName;
-      }
+      var canEdit = access.isDesigner();
+      document.getElementById('addPrototypeBtn').hidden = !canEdit;
+      document.getElementById('addTeamBtn').hidden = !canEdit;
+      document.getElementById('teamSettingsBtn').hidden = !canEdit;
       if (cfg.siteTagline) {
         document.getElementById('siteTagline').textContent = cfg.siteTagline;
       }
@@ -494,31 +886,123 @@
       }
 
       var list = document.getElementById('mockList');
+      var teamRail = document.getElementById('teamRail');
+      var allItems = [];
+      var activeTeamId = 'high-volume';
+      var baseTeams = [
+        { id: 'high-volume', name: 'High Volume', short: 'HV' },
+      ];
+
+      function savedTeams() {
+        try {
+          return JSON.parse(localStorage.getItem('prototypes.teams') || '[]');
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function teams() {
+        var saved = savedTeams();
+        var builtIn = baseTeams.map(function (team) {
+          var override = saved.find(function (entry) { return entry.id === team.id; });
+          return override ? Object.assign({}, team, override) : team;
+        });
+        return builtIn.concat(saved.filter(function (team) {
+          return !baseTeams.some(function (base) { return base.id === team.id; });
+        }));
+      }
+
+      function currentTeam() {
+        return teams().find(function (team) { return team.id === activeTeamId; }) || baseTeams[0];
+      }
+
+      function teamAvatarMarkup(team, className) {
+        var name = (className || 'team-avatar-image') + (team.logo ? ' team-mark' : '');
+        return team.avatar
+          ? '<img class="' + name + '" src="' + escapeAttr(team.avatar) + '" alt="" />'
+          : escapeHtml(team.short || '');
+      }
+
+      function renderTeamContext() {
+        var team = currentTeam();
+        document.getElementById('activeTeamName').textContent = team.name;
+        document.getElementById('teamContextAvatar').innerHTML = teamAvatarMarkup(team);
+        document.getElementById('siteName').textContent = team.name + ' Prototypes';
+        document.title = team.name + ' Prototypes';
+      }
+
+      function teamForItem(item) {
+        if (item.team) return item.team;
+        return 'high-volume';
+      }
+
+      function renderTeamRail() {
+        teamRail.innerHTML = teams().map(function (team) {
+          var icon = teamAvatarMarkup(team);
+          return '<button type="button" class="team-button' + (team.id === activeTeamId ? ' is-active' : '') + '" data-team-id="' + escapeAttr(team.id) + '" aria-label="' + escapeAttr(team.name) + '" title="' + escapeAttr(team.name) + '">' + icon + '</button>';
+        }).join('');
+        renderTeamContext();
+      }
+
+      function itemsForActiveTeam() {
+        return allItems.reduce(function (result, item) {
+          if (isGroup(item)) {
+            var children = item.children.filter(function (child) { return teamForItem(child) === activeTeamId; });
+            if (children.length) result.push(Object.assign({}, item, { children: children }));
+          } else if (teamForItem(item) === activeTeamId) {
+            result.push(item);
+          }
+          return result;
+        }, []);
+      }
+
+      function renderList(items) {
+        if (!Array.isArray(items) || !items.length) {
+          var team = teams().find(function (entry) { return entry.id === activeTeamId; });
+          list.innerHTML = '<li class="empty">No prototypes in ' + escapeHtml(team ? team.name : 'this team') + ' yet.</li>';
+          return;
+        }
+        list.innerHTML = items.map(function (item) {
+          return isGroup(item) ? groupMarkup(item) : cardMarkup(item);
+        }).join('');
+
+        prototypesOf(items).forEach(function (item) {
+          store.count(item.id).then(function (result) {
+            var el = document.querySelector('[data-count-for="' + cssEscape(item.id) + '"]');
+            if (!el) return;
+            var n = result.count || 0;
+            el.textContent = n === 1 ? '1 comment' : n + ' comments';
+          });
+        });
+      }
+
       library.listPrototypes()
         .then(function (items) {
           if (!Array.isArray(items) || !items.length) {
             list.innerHTML = '<li class="empty">No mocks yet. Add one in <code>manifest.json</code>.</li>';
             return;
           }
-          list.innerHTML = items.map(function (item) {
-            return isGroup(item) ? groupMarkup(item) : cardMarkup(item);
-          }).join('');
-
-          prototypesOf(items).forEach(function (item) {
-            store.count(item.id).then(function (result) {
-              var el = document.querySelector('[data-count-for="' + cssEscape(item.id) + '"]');
-              if (!el) return;
-              var n = result.count || 0;
-              el.textContent = n === 1 ? '1 comment' : n + ' comments';
-            });
-          });
+          allItems = items;
+          renderTeamRail();
+          renderList(itemsForActiveTeam());
         })
         .catch(function () {
           list.innerHTML = '<li class="err">Couldn’t load <code>manifest.json</code>. Serve this folder over HTTP (not as a file:// page).</li>';
         });
 
+      renderTeamRail();
+      teamRail.addEventListener('click', function (event) {
+        var button = event.target.closest('[data-team-id]');
+        if (!button) return;
+        activeTeamId = button.getAttribute('data-team-id') || 'high-volume';
+        renderTeamRail();
+        renderList(itemsForActiveTeam());
+      });
+
       var shareModal = document.getElementById('shareModal');
       var shareModalUrl = document.getElementById('shareModalUrl');
+      var shareRoleField = document.getElementById('shareRoleField');
+      var shareRole = document.getElementById('shareRole');
       var shareModalTitle = document.getElementById('shareModalTitle');
       var shareModalSub = document.getElementById('shareModalSub');
       var shareModalLabel = document.querySelector('.share-dialog-label');
@@ -527,6 +1011,12 @@
       var shareModalCopyLabel = document.getElementById('shareModalCopyLabel');
       var shareModalClose = document.getElementById('shareModalClose');
       var lastShareFocus = null;
+      var teamModal = document.getElementById('teamModal');
+      var teamForm = document.getElementById('teamForm');
+      var teamStatus = document.getElementById('teamStatus');
+      var teamSettingsModal = document.getElementById('teamSettingsModal');
+      var teamSettingsForm = document.getElementById('teamSettingsForm');
+      var teamSettingsStatus = document.getElementById('teamSettingsStatus');
 
       function openShareModal(options) {
         options = options || {};
@@ -535,17 +1025,82 @@
         shareModalSub.textContent = options.subtitle || 'Reviewers get this mock only — not the hub or feedback threads.';
         shareModalLabel.textContent = options.label || 'Reviewer link';
         shareModalNote.textContent = options.note || 'Paste into Slack, email, or Teams. They can leave feedback on the page; they can’t open Insights.';
-        shareModalUrl.value = options.url || '';
+        shareRoleField.hidden = !options.roleLinks;
+        if (options.roleLinks) {
+          shareRole.value = access.isDeveloper() ? 'developer' : 'designer';
+          shareRole.querySelector('option[value="designer"]').disabled = access.isDeveloper();
+          shareRoleField.dataset.rolePath = options.rolePath || 'index.html';
+        }
+        shareModalUrl.value = options.roleLinks ? 'Creating role link…' : (options.url || '');
         shareModalCopyLabel.textContent = 'Copy link';
         shareModalCopy.classList.remove('is-copied');
         shareModal.hidden = false;
         shareModalUrl.focus();
         shareModalUrl.select();
+        if (options.roleLinks) {
+          access.createRoleLink(shareRole.value, shareRoleField.dataset.rolePath).then(function (url) {
+            shareModalUrl.value = url;
+          }).catch(function () {
+            shareModalUrl.value = access.roleUrl(shareRole.value, shareRoleField.dataset.rolePath);
+          });
+        }
       }
+
+      shareRole.addEventListener('change', function () {
+        if (!shareRoleField.hidden) {
+          shareModalUrl.value = 'Creating role link…';
+          access.createRoleLink(shareRole.value, shareRoleField.dataset.rolePath || 'index.html').then(function (url) {
+            shareModalUrl.value = url;
+          });
+        }
+      });
 
       function closeShareModal() {
         shareModal.hidden = true;
         if (lastShareFocus && lastShareFocus.focus) lastShareFocus.focus();
+      }
+
+      function openTeamModal() {
+        teamStatus.textContent = '';
+        teamStatus.className = 'library-form-status';
+        teamModal.hidden = false;
+        document.getElementById('teamName').focus();
+      }
+
+      function closeTeamModal() {
+        teamModal.hidden = true;
+        teamForm.reset();
+      }
+
+      function openTeamSettings() {
+        var team = currentTeam();
+        document.getElementById('settingsTeamName').value = team.name || '';
+        document.getElementById('settingsTeamShort').value = team.short || '';
+        document.getElementById('settingsTeamImage').value = '';
+        teamSettingsStatus.textContent = '';
+        teamSettingsStatus.className = 'library-form-status';
+        teamSettingsModal.hidden = false;
+        document.getElementById('settingsTeamName').focus();
+      }
+
+      function closeTeamSettings() {
+        teamSettingsModal.hidden = true;
+        teamSettingsForm.reset();
+      }
+
+      function saveTeamSettings(avatar) {
+        var team = currentTeam();
+        var next = savedTeams().filter(function (entry) { return entry.id !== team.id; });
+        next.push({
+          id: team.id,
+          name: document.getElementById('settingsTeamName').value.trim(),
+          short: document.getElementById('settingsTeamShort').value.trim().slice(0, 2).toUpperCase(),
+          avatar: avatar || team.avatar || '',
+        });
+        localStorage.setItem('prototypes.teams', JSON.stringify(next));
+        renderTeamRail();
+        renderList(itemsForActiveTeam());
+        closeTeamSettings();
       }
 
       function copyShareUrl() {
@@ -576,10 +1131,84 @@
       shareModal.addEventListener('click', function (e) {
         if (e.target === shareModal) closeShareModal();
       });
+      document.getElementById('addTeamBtn').addEventListener('click', openTeamModal);
+      document.getElementById('teamModalClose').addEventListener('click', closeTeamModal);
+      document.getElementById('teamCancel').addEventListener('click', closeTeamModal);
+      teamModal.addEventListener('click', function (e) {
+        if (e.target === teamModal) closeTeamModal();
+      });
+      document.getElementById('teamSettingsBtn').addEventListener('click', openTeamSettings);
+      document.getElementById('teamSettingsClose').addEventListener('click', closeTeamSettings);
+      document.getElementById('teamSettingsCancel').addEventListener('click', closeTeamSettings);
+      teamSettingsModal.addEventListener('click', function (e) {
+        if (e.target === teamSettingsModal) closeTeamSettings();
+      });
+      teamSettingsForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var name = document.getElementById('settingsTeamName').value.trim();
+        var short = document.getElementById('settingsTeamShort').value.trim();
+        var file = document.getElementById('settingsTeamImage').files[0];
+        if (!name || !short) {
+          teamSettingsStatus.textContent = 'Add a team name and short label.';
+          teamSettingsStatus.className = 'library-form-status is-error';
+          return;
+        }
+        if (!file) {
+          saveTeamSettings();
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function () { saveTeamSettings(reader.result); };
+        reader.onerror = function () {
+          teamSettingsStatus.textContent = 'Could not read that image.';
+          teamSettingsStatus.className = 'library-form-status is-error';
+        };
+        reader.readAsDataURL(file);
+      });
+      teamForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var name = document.getElementById('teamName').value.trim();
+        var short = document.getElementById('teamShortName').value.trim().slice(0, 2).toUpperCase();
+        var file = document.getElementById('teamImage').files[0];
+        if (!name || !short) {
+          teamStatus.textContent = 'Add a team name and short label.';
+          teamStatus.className = 'library-form-status is-error';
+          return;
+        }
+        var id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        function saveTeam(avatar) {
+          var next = savedTeams().filter(function (team) { return team.id !== id; });
+          next.push({ id: id, name: name, short: short, avatar: avatar || '' });
+          localStorage.setItem('prototypes.teams', JSON.stringify(next));
+          activeTeamId = id;
+          renderTeamRail();
+          renderList(itemsForActiveTeam());
+          closeTeamModal();
+        }
+        if (!file) {
+          saveTeam('');
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function () { saveTeam(reader.result); };
+        reader.onerror = function () {
+          teamStatus.textContent = 'Could not read that image.';
+          teamStatus.className = 'library-form-status is-error';
+        };
+        reader.readAsDataURL(file);
+      });
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && !shareModal.hidden) {
           e.preventDefault();
           closeShareModal();
+        }
+        if (e.key === 'Escape' && !teamModal.hidden) {
+          e.preventDefault();
+          closeTeamModal();
+        }
+        if (e.key === 'Escape' && !teamSettingsModal.hidden) {
+          e.preventDefault();
+          closeTeamSettings();
         }
       });
 
@@ -658,11 +1287,13 @@
       if (shareHubBtn) {
         shareHubBtn.addEventListener('click', function () {
           openShareModal({
-            url: access.hubUrlWithKey(),
+            url: access.roleUrl(access.isDeveloper() ? 'developer' : 'designer', 'index.html'),
             heading: 'Share internal hub',
-            subtitle: 'For your team only — unlocks the hub and Insights.',
+            subtitle: 'Choose whether the recipient can edit or only view the internal hub.',
             label: 'Internal hub link',
-            note: 'Don’t send this to external reviewers. Use Share on a card for reviewer mock links.',
+            note: 'Designer links have full access. Developer links are read-only and can view the workspace, Insights, history, changelog, resources, and usability results.',
+            roleLinks: true,
+            rolePath: 'index.html',
           });
         });
       }
@@ -689,18 +1320,8 @@
       });
       addPrototypeForm.addEventListener('submit', function (e) {
         e.preventDefault();
-        if (!auth.hasSession()) {
-          var email = document.getElementById('newPrototypeEmail').value.trim();
-          if (!email) {
-            setAddStatus('Enter your team email to receive a sign-in link.', 'error');
-            return;
-          }
-          setAddStatus('Sending sign-in link…');
-          auth.sendMagicLink(email).then(function () {
-            setAddStatus('Check your email, follow the link, then reopen Add prototype.', 'ok');
-          }).catch(function (error) {
-            setAddStatus(error.message || 'Could not send the sign-in link.', 'error');
-          });
+        if (!access.isDesigner()) {
+          setAddStatus('Developer access is read-only. Use a Designer link to create prototypes.', 'error');
           return;
         }
         var file = document.getElementById('newPrototypeFile').files[0];
@@ -802,9 +1423,10 @@
 
       function actionsMarkup(item) {
         var key = access.configuredKey();
-        var keyParam = key ? '&key=' + encodeURIComponent(key) : '';
-        var feedbackHref = 'feedback.html?id=' + encodeURIComponent(item.id) + keyParam;
-        var changelogHref = 'changelog.html?id=' + encodeURIComponent(item.id) + keyParam;
+        var keyParam = access.currentRole() ? '&role=' + encodeURIComponent(access.currentRole()) : (key ? '&key=' + encodeURIComponent(key) : '');
+        var uiVersion = '2026-09-09-orange-theme';
+        var feedbackHref = 'feedback.html?id=' + encodeURIComponent(item.id) + '&v=' + uiVersion + keyParam;
+        var changelogHref = 'changelog.html?id=' + encodeURIComponent(item.id) + '&v=' + uiVersion + keyParam;
         var shareUrl = item.path ? absoluteUrl(item.path) : access.detailsUrlWithKey(item.id);
         var fileName = String(item.path || '').split('/').pop() || (item.id + '.html');
         return (
@@ -830,15 +1452,25 @@
         );
       }
 
+      function previewMarkup(item) {
+        if (!item.path) {
+          return '<div class="card-preview is-empty"><i class="fa-regular fa-image" aria-hidden="true"></i><span>No preview yet</span></div>';
+        }
+        return '<div class="card-preview"><iframe class="card-preview-frame" src="' + escapeAttr(item.path) + '" title="Preview of ' + escapeAttr(item.title || item.id) + '" loading="lazy" tabindex="-1" aria-hidden="true" sandbox="allow-same-origin allow-scripts"></iframe></div>';
+      }
+
       function cardMarkup(item) {
         return (
           '<li class="card is-openable" data-prototype-id="' + escapeAttr(item.id) + '" data-href="' + escapeAttr(access.detailsUrlWithKey(item.id)) + '" tabindex="0" role="link" aria-label="Open details for ' + escapeAttr(item.title || item.id) + '">' +
-            '<div>' +
-              '<h2>' + escapeHtml(item.title || item.id) + '</h2>' +
-              '<p>' + escapeHtml(item.description || '') + '</p>' +
-              metaMarkup(item) +
+            previewMarkup(item) +
+            '<div class="card-body">' +
+              '<div class="card-info">' +
+                '<h2>' + escapeHtml(item.title || item.id) + '</h2>' +
+                '<p>' + escapeHtml(item.description || '') + '</p>' +
+                metaMarkup(item) +
+              '</div>' +
+              actionsMarkup(item) +
             '</div>' +
-            actionsMarkup(item) +
           '</li>'
         );
       }
@@ -846,12 +1478,15 @@
       function subMarkup(item) {
         return (
           '<li class="sub is-openable" data-prototype-id="' + escapeAttr(item.id) + '" data-href="' + escapeAttr(access.detailsUrlWithKey(item.id)) + '" tabindex="0" role="link" aria-label="Open details for ' + escapeAttr(item.title || item.id) + '">' +
-            '<div>' +
-              '<h3>' + escapeHtml(item.title || item.id) + '</h3>' +
-              '<p>' + escapeHtml(item.description || '') + '</p>' +
-              metaMarkup(item) +
+            previewMarkup(item) +
+            '<div class="card-body">' +
+              '<div class="card-info">' +
+                '<h3>' + escapeHtml(item.title || item.id) + '</h3>' +
+                '<p>' + escapeHtml(item.description || '') + '</p>' +
+                metaMarkup(item) +
+              '</div>' +
+              actionsMarkup(item) +
             '</div>' +
-            actionsMarkup(item) +
           '</li>'
         );
       }
@@ -860,7 +1495,7 @@
         var n = group.children.length;
         return (
           '<li class="card is-group" data-prototype-group="' + escapeAttr(group.id) + '">' +
-            '<div>' +
+            '<div class="group-head">' +
               '<h2>' + escapeHtml(group.title || group.id) + '</h2>' +
               '<p>' + escapeHtml(group.description || '') + '</p>' +
               metaMarkup(group, n === 1 ? '1 mock' : n + ' mocks') +

@@ -66,9 +66,13 @@ alter table feedback
 
 (Also in `supabase-screenshot.sql`.)
 
-### First-party heatmaps & sessions
+### First-party heatmaps, sessions & usability tests
 
-Mocks record clicks, scroll depth, and sessions automatically. Run `supabase-telemetry.sql` once in Supabase so data syncs across reviewers. Insights → Heatmaps / Sessions then show that data (no Clarity required).
+Mocks record clicks, page views, scroll depth, repeated-click signals, and sessions automatically. Run `supabase-telemetry.sql` once in Supabase so data syncs across reviewers. Insights → Heatmaps then shows the interaction data (no Clarity required).
+
+Prototype workspaces also include a **Test builder** tab. Designers using a Designer role link can create an ordered multi-task test with optional selector or URL success signals. Developers can view the builder and results but cannot edit them. When a test is active, the public mock shows a floating usability-test widget; participants can complete, skip, or report a problem without signing in.
+
+Run `supabase-usability-tests.sql` once in Supabase after the telemetry schema. Usability results are visible in Insights → Usability and include completion rate, task drop-off, duration, reported problems, and repeated-click signals. Anonymous participants are identified only by a temporary browser session ID.
 
 ### Export
 
@@ -120,11 +124,20 @@ Run `supabase-changelog.sql` once in the Supabase SQL Editor so the list syncs a
 
 ### Cloudflare Pages
 
-1. Push this repo to GitHub (already: `arronleishman/prototypes`).
+### Current repository and hosting
+
+Repository: `https://github.com/dayshape/Prototypes-Design-App` (private)
+Supabase remains the temporary backend for Auth, feedback, changelogs, telemetry, and private developer files.
+
+GitHub Pages is not available for this private repository on the current plan. Supabase does not provide private static-site hosting for these HTML files, so use an organisation-approved static host until the Azure migration is complete. Do not publish the internal hub through a public Supabase Storage bucket.
+
+### Cloudflare Pages (optional)
+
+1. Push this repo to the private Dayshape repository (`dayshape/Prototypes-Design-App`).
 2. [Cloudflare Pages](https://pages.cloudflare.com) → Connect repo.
 3. Framework: **None** · Build command: empty · Output directory: `/` or blank.
 
-### Netlify
+### Netlify (optional)
 
 Publish directory: `.` · No build command.
 
@@ -133,4 +146,19 @@ Publish directory: `.` · No build command.
 - **Reviewers:** use **Share** on a hub card (or the mock URL). They get the mock only — can leave feedback, cannot open the hub or view threads.
 - **Your team:** use **Copy hub link** on the hub (includes a secret `?key=`). That unlocks the hub + feedback inboxes.
 - Change `internalAccessKey` in `config.js` anytime to revoke old hub links.
+
+## Prototype workspaces and developer files
+
+- Click a mock card to open its internal **Prototype workspace**. The workspace keeps the mock preview, Insights, Change log, curated Version history, and developer resources together.
+- `Share`, `Open mock`, and `Download` are in the workspace header. The existing direct mock, `feedback.html`, and `changelog.html` URLs continue to work.
+- To add a prototype manually, use **Add prototype** in the hub. Upload the HTML mock, then add Components, Code, Storybook, or Instructions from the workspace tabs.
+- Run `supabase-prototype-library.sql` once in the Supabase SQL editor. The prototype library uses a private `prototype-artifacts` Storage bucket.
+- Internal sharing is role-based: **Designer** links have full authoring access, while **Developer** links are read-only. Set `roleAccessUrl` in `config.js` to an approved server endpoint that exchanges the link for a short-lived Supabase capability token. Until that endpoint is configured, role links provide the UI access model but cannot securely authorize shared Supabase writes.
+- Add `SUPABASE_SERVICE_ROLE_KEY` as a GitHub Actions secret (and optionally `SUPABASE_URL`; the workflow can read the checked-in URL). On pushes that change a file listed as a mock path in `manifest.json`, the Pages workflow records a `Push <short SHA>` entry in Version history using the commit message and changed files. Re-running a workflow does not duplicate a version.
+- Use the workflow’s `sync_all_versions` input for a one-time baseline snapshot of every repository-backed mock after the SQL migration. The **Add version** button remains available for curated milestones that are not tied to a push.
+- The old `internalAccessKey` is still useful as a navigation gate, but it is not a security boundary. Role links must be backed by server-issued capability tokens and RLS policies; query-string roles alone are only a presentation-layer fallback.
+
+## Security migration
+
+The Azure migration, containment, data-protection gates, and go-live acceptance criteria are documented in [azure-migration-security-plan.md](azure-migration-security-plan.md). This is a draft runbook and does not authorise production use or real-user data.
 

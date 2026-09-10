@@ -15,12 +15,12 @@
       --line: #e4e6ee;
       --paper: #f7f6f2;
       --panel: #ffffff;
-      --accent: #2f5d50;
-      --accent-soft: #e8f0ed;
+      --accent: #9a3412;
+      --accent-soft: #ffedd5;
       --todo: #8a5a2b;
       --todo-soft: #f3efe8;
-      --done: #2f5d50;
-      --done-soft: #e8f0ed;
+      --done: #9a3412;
+      --done-soft: #ffedd5;
       --mark: #4f3fa0;
     }
     * { box-sizing: border-box; }
@@ -30,19 +30,19 @@
       font-family: "DM Sans", system-ui, sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(ellipse 80% 50% at 10% -10%, #dde8e4 0%, transparent 55%),
+        radial-gradient(ellipse 80% 50% at 10% -10%, #ffedd5 0%, transparent 55%),
         linear-gradient(180deg, var(--paper) 0%, #efece6 100%);
     }
     .wrap {
-      width: min(780px, calc(100% - 40px));
+      width: min(1180px, calc(100% - 40px));
       margin: 0 auto;
-      padding: 40px 0 100px;
+      padding: 32px 0 64px;
     }
     .back {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       color: var(--muted);
       text-decoration: none;
       font-weight: 600;
@@ -50,7 +50,7 @@
     }
     .back:hover { color: var(--accent); }
     .eyebrow {
-      margin: 0 0 6px;
+      margin: 0 0 8px;
       font-size: 0.8rem;
       font-weight: 700;
       letter-spacing: 0.06em;
@@ -520,7 +520,7 @@
   </div>
 
   <script src="config.js"></script>
-  <script src="shared/access.js"></script>
+  <script src="shared/access.js?v=2026-09-09-orange-theme"></script>
   <script src="shared/changelog-store.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
@@ -534,8 +534,9 @@
       var store = window.PrototypesChangelogStore;
       var access = window.PrototypesAccess;
       var cfg = window.PROTOTYPES_CONFIG || {};
-      var hubHref = 'index.html' + (access.configuredKey() ? ('?key=' + encodeURIComponent(access.configuredKey())) : '');
-      var keyQ = access.configuredKey() ? ('&key=' + encodeURIComponent(access.configuredKey())) : '';
+      var hubHref = access.hubUrlWithKey();
+      var keyQ = access.currentRole() ? ('&role=' + encodeURIComponent(access.currentRole())) : (access.configuredKey() ? ('&key=' + encodeURIComponent(access.configuredKey())) : '');
+      var uiVersion = '2026-09-09-orange-theme';
 
       var titleEl = document.getElementById('title');
       var subEl = document.getElementById('subtitle');
@@ -645,6 +646,13 @@
                 (item.annotation ? '<div class="item-ann" style="' + annStyle(item.annotation) + '"></div>' : '') +
               '</figure>'
             : '';
+          var itemActions = access.isDeveloper() ? '' :
+            '<div class="item-actions">' +
+              (done
+                ? '<button type="button" class="btn-reopen" data-action="reopen">Mark not done</button>'
+                : '<button type="button" class="btn-done" data-action="done"><i class="fa-solid fa-check" aria-hidden="true"></i> Mark done</button>') +
+              '<button type="button" class="btn-danger-ghost" data-action="delete">Delete</button>' +
+            '</div>';
           return (
             '<article class="item' + (done ? ' is-done' : '') + '" data-id="' + escapeAttr(item.id) + '">' +
               '<div class="item-head">' +
@@ -656,12 +664,7 @@
               '<p class="item-meta">' + escapeHtml(formatWhen(item.createdAt)) + '</p>' +
               shot +
               '<p class="item-body">' + escapeHtml(item.summary) + '</p>' +
-              '<div class="item-actions">' +
-                (done
-                  ? '<button type="button" class="btn-reopen" data-action="reopen">Mark not done</button>'
-                  : '<button type="button" class="btn-done" data-action="done"><i class="fa-solid fa-check" aria-hidden="true"></i> Mark done</button>') +
-                '<button type="button" class="btn-danger-ghost" data-action="delete">Delete</button>' +
-              '</div>' +
+              itemActions +
             '</article>'
           );
         }).join('');
@@ -1002,17 +1005,21 @@
           subEl.textContent = 'Developer to-do list for this prototype — annotate changes, mark them done when shipped.';
           document.title = 'Changelog · ' + threadTitle;
           actions.hidden = false;
+          document.getElementById('addBtn').hidden = access.isDeveloper();
+          document.getElementById('composer').hidden = access.isDeveloper();
           var openMock = document.getElementById('openMock');
           var insights = document.getElementById('insightsLink');
           if (mockPath) openMock.href = mockPath;
           else openMock.hidden = true;
           document.getElementById('workspaceLink').href = access.detailsUrlWithKey(id, 'changelog');
-          insights.href = 'feedback.html?id=' + encodeURIComponent(id) + keyQ;
+          insights.href = 'feedback.html?id=' + encodeURIComponent(id) + '&v=' + uiVersion + keyQ;
           load();
         })
         .catch(function () {
           titleEl.textContent = id;
           actions.hidden = false;
+          document.getElementById('addBtn').hidden = access.isDeveloper();
+          document.getElementById('composer').hidden = access.isDeveloper();
           load();
         });
     })();
