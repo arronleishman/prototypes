@@ -5,7 +5,7 @@
   var STORAGE_KEY = 'prototypes.internalAccess';
   var ROLE_KEY = 'prototypes.accessRole';
   var CAPABILITY_KEY = 'prototypes.accessCapability';
-  var UI_VERSION = '2026-09-10-remember-me';
+  var UI_VERSION = '2026-09-10-save-password';
 
   function validRole(role) {
     return role === 'designer' || role === 'developer';
@@ -161,17 +161,17 @@
     document.title = 'Private · ' + site;
     document.body.innerHTML =
       '<main style="min-height:100vh;display:grid;place-items:center;padding:24px;font-family:DM Sans,system-ui,sans-serif;background:#f7f6f2;color:#1a1d26">' +
-        '<form id="protoAccessForm" style="width:min(400px,100%);background:#fff;border:1px solid #e4e6ee;border-radius:12px;padding:24px;box-shadow:0 10px 28px rgba(26,29,38,.08)">' +
+        '<form id="protoAccessForm" autocomplete="on" style="width:min(400px,100%);background:#fff;border:1px solid #e4e6ee;border-radius:12px;padding:24px;box-shadow:0 10px 28px rgba(26,29,38,.08)">' +
           '<h1 style="margin:0 0 8px;font-size:1.35rem">Internal access only</h1>' +
           '<p style="margin:0 0 16px;color:#5c6378;line-height:1.45;font-size:.95rem">' +
             (options.message || 'This internal page is protected by an access token. Enter the token to continue; the role in the link only selects the level of access.') +
           '</p>' +
           '<label style="display:grid;gap:6px;font-size:12px;font-weight:700;color:#4c5172">Internal access token' +
-            '<input id="protoAccessKey" type="password" autocomplete="current-password" placeholder="Enter internal access token" ' +
+            '<input id="protoAccessKey" name="password" type="password" autocomplete="current-password" placeholder="Enter internal access token" ' +
               'style="height:40px;padding:0 12px;border:1px solid #babfd1;border-radius:8px;font:400 14px/1 system-ui" />' +
           '</label>' +
           '<label style="display:flex;align-items:center;gap:8px;margin-top:12px;color:#5c6378;font-size:13px;cursor:pointer">' +
-            '<input id="protoRememberAccess" type="checkbox" style="width:16px;height:16px;accent-color:#9a3412" /> Remember me on this device' +
+            '<input id="protoRememberAccess" type="checkbox" style="width:16px;height:16px;accent-color:#9a3412" /> Remember me / save password on this device' +
           '</label>' +
           '<p id="protoAccessErr" style="min-height:1.2em;margin:10px 0 0;color:#a3003c;font-size:13px"></p>' +
           '<button type="submit" style="margin-top:8px;height:40px;width:100%;border:0;border-radius:8px;background:#9a3412;color:#fff;font:600 14px/1 system-ui;cursor:pointer">Unlock</button>' +
