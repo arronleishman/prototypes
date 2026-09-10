@@ -53,6 +53,8 @@
   }
 
   function activePageKey() {
+    var activeWizardStep = document.querySelector('.screen.is-active [id^="wizard-step-"]:not(.hidden)');
+    if (activeWizardStep && activeWizardStep.id) return activeWizardStep.id;
     var active = document.querySelector('.screen.is-active, section.view.is-active, .view.is-active');
     return active && active.id ? active.id : '';
   }
