@@ -5,7 +5,7 @@
   var STORAGE_KEY = 'prototypes.internalAccess';
   var ROLE_KEY = 'prototypes.accessRole';
   var CAPABILITY_KEY = 'prototypes.accessCapability';
-  var UI_VERSION = '2026-09-10-token-gate';
+  var UI_VERSION = '2026-09-10-remember-me';
 
   function validRole(role) {
     return role === 'designer' || role === 'developer';
@@ -20,19 +20,24 @@
     var key = configuredKey();
     if (!key) return false; // missing config must fail closed
     try {
-      return sessionStorage.getItem(STORAGE_KEY) === key;
+      return sessionStorage.getItem(STORAGE_KEY) === key || localStorage.getItem(STORAGE_KEY) === key;
     } catch (e) {
       return false;
     }
   }
 
-  function grantAccess(key, role) {
+  function grantAccess(key, role, remember) {
     var expected = configuredKey();
     if (!expected || key !== expected) return false;
     try {
-      sessionStorage.setItem(STORAGE_KEY, expected);
-      sessionStorage.setItem(ROLE_KEY, validRole(role) ? role : 'designer');
-      sessionStorage.removeItem(CAPABILITY_KEY);
+      var target = remember ? localStorage : sessionStorage;
+      var other = remember ? sessionStorage : localStorage;
+      target.setItem(STORAGE_KEY, expected);
+      target.setItem(ROLE_KEY, validRole(role) ? role : 'designer');
+      target.removeItem(CAPABILITY_KEY);
+      other.removeItem(STORAGE_KEY);
+      other.removeItem(ROLE_KEY);
+      other.removeItem(CAPABILITY_KEY);
     } catch (e) {}
     return true;
   }
@@ -48,8 +53,10 @@
 
   function currentRole() {
     try {
-      var role = sessionStorage.getItem(ROLE_KEY);
-      return validRole(role) ? role : '';
+      var sessionRole = sessionStorage.getItem(ROLE_KEY);
+      if (sessionStorage.getItem(STORAGE_KEY) === configuredKey() && validRole(sessionRole)) return sessionRole;
+      var rememberedRole = localStorage.getItem(ROLE_KEY);
+      return localStorage.getItem(STORAGE_KEY) === configuredKey() && validRole(rememberedRole) ? rememberedRole : '';
     } catch (e) {
       return '';
     }
@@ -163,6 +170,9 @@
             '<input id="protoAccessKey" type="password" autocomplete="current-password" placeholder="Enter internal access token" ' +
               'style="height:40px;padding:0 12px;border:1px solid #babfd1;border-radius:8px;font:400 14px/1 system-ui" />' +
           '</label>' +
+          '<label style="display:flex;align-items:center;gap:8px;margin-top:12px;color:#5c6378;font-size:13px;cursor:pointer">' +
+            '<input id="protoRememberAccess" type="checkbox" style="width:16px;height:16px;accent-color:#9a3412" /> Remember me on this device' +
+          '</label>' +
           '<p id="protoAccessErr" style="min-height:1.2em;margin:10px 0 0;color:#a3003c;font-size:13px"></p>' +
           '<button type="submit" style="margin-top:8px;height:40px;width:100%;border:0;border-radius:8px;background:#9a3412;color:#fff;font:600 14px/1 system-ui;cursor:pointer">Unlock</button>' +
         '</form>' +
@@ -171,7 +181,8 @@
     document.getElementById('protoAccessForm').addEventListener('submit', function (e) {
       e.preventDefault();
       var value = (document.getElementById('protoAccessKey').value || '').trim();
-      if (grantAccess(value, roleFromUrl())) {
+      var remember = document.getElementById('protoRememberAccess').checked;
+      if (grantAccess(value, roleFromUrl(), remember)) {
         var url = new URL(location.href);
         url.searchParams.delete('key');
         url.searchParams.set('role', currentRole());
