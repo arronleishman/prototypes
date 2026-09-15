@@ -8,16 +8,18 @@ How should sequential work, overlap, and task shunting be represented and constr
 The decision must cover:
 
 - Where “Allow work to overlap” belongs in the flow.
-  - Not answered yet. It has been placed in Timeline so far, but Details and a less prominent template setting were also discussed.
+  - Strong direction: let users shape the demand first, then make the overlap/sequencing choice at the end of the creation experience. Keeping the checkbox at the top may force an unnecessarily linear creation order.
 - Whether later phases automatically start after earlier phases, or may overlap.
-  - Strong direction: later phases start after earlier phases by default; overlap is an explicit opt-in.
+  - Later phases should respect dependencies. If overlap is allowed, the next item still should not start before the previous item has started. If overlap is not allowed, later work is naturally bumped or shifted.
 - How moving or resizing earlier work shunts dependent work.
-  - Current understanding: dependent work should move to preserve the sequencing rule. Whether shunting cascades through every later phase or only the next affected phase is not answered yet.
+  - The latest discussion suggests shunting should not be a separately configurable template feature for MVP. “Do not allow overlap” communicates that later work will be bumped. Exact cascade behaviour is not answered yet.
 - How invalid placements are prevented, snapped, or explained.
-  - Strong direction: prevent invalid states. New work should snap to a valid week; invalid drag or resize attempts should return to the original placement and show an explanation.
+  - The current mock direction remains sensible: prevent invalid states, snap new work to a valid week, and return invalid drag/resize attempts to their original position with an explanation. This still needs validation with users.
 - Whether sequencing is a phase-only rule or also applies to non-phase booking types and work periods.
-  - Not answered yet. The phase case is clear, but the same rule for non-phase Work Periods and booking types still needs a decision.
+  - Current understanding: dependencies are needed for phase-based work. A non-phase world may not need phase dependencies and can be shaped directly from resource requirements. The exact non-phase rule is not answered yet.
 - What warning or preview the user sees before applying a template.
   - The current Timeline warning, help animation, and Gantt feedback are useful authoring patterns. Whether an equivalent warning is required in Apply-to-engagement is not answered yet.
 - Whether overlap is allowed between requirements inside one phase.
   - Not answered yet. The discussions mainly covered overlap between sequential phases.
+- How phase order is established when users create phases out of order.
+  - Not answered yet. The transcript raised workflow-driven ordering and manual dependency links, but neither was selected.

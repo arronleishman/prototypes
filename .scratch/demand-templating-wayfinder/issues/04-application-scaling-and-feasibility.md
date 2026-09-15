@@ -20,6 +20,10 @@ The decision must cover:
 - What belongs in template creation versus Apply-to-engagement.
   - Creation defines the reusable demand intent and shape. Apply-to-engagement handles deadline placement, scaling, availability, and feasibility.
 - How manual edits, API application, and bulk application fit the same model.
-  - Strong direction: all application paths should use the same underlying semantics. The precise API, bulk, and post-application editing behaviour is not answered yet.
+  - The latest discussion explicitly identified four application entry points: an existing job, a net-new job during job creation, upload, and integration. They should use the same underlying semantics, although upload/integration may not need bespoke UI in the MVP.
 - Whether every template stores both a shape and an hours baseline.
   - Not answered yet.
+- Whether the template must support applying demand during new-job creation.
+  - Answered: yes, this should be supported, alongside applying to an existing job.
+- Whether upload and integration are part of the feature scope.
+  - Answered as a capability requirement, but not as a detailed UI requirement. The exact MVP boundary is not answered yet.

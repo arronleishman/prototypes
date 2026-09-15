@@ -8,6 +8,7 @@ Produce a decision-ready specification for demand-template authoring and applica
 - Primary sources:
   - 3 September 2026 meeting: `Steven & Arron - (In Person) Design Reviews, Discussions and Brainstorming Time.docx`
   - `templating-catch-up-summary.md`, based on the 26 August 2026 catch-up
+  - `Templating Chat .docx`, 8 September 2026, which records the Miro/Wayfinder discussion with Steven
   - The earlier **Demand templates mock** conversation from 7 August 2026
   - The current **Demand templates mock** conversation, including the Timeline, Gantt, phase weighting, overlap, Figma, and catalogue work
 - Existing terminology to preserve unless a ticket resolves it: demand template, phase, work period, resource requirement, phase weighting, resource weighting, booking type, overlap, shunting, effort mode, and application-time scaling.
@@ -19,10 +20,12 @@ Produce a decision-ready specification for demand-template authoring and applica
 
 ## Not yet specified
 
-- Whether absolute hours, proportional allocation, duration plus FTE allocation, or a deliberate combination should be the canonical authoring model.
-- Whether phase weighting is authored independently, derived from hours, or shown only as a derived summary in some effort modes.
-- Whether phases are structural containers, visual labels, scheduling constraints, or all three.
-- How non-phase work periods and booking types map to the same underlying demand model.
+- Whether the resource-first model should replace explicit phase/work-period authoring in the MVP.
+- How phase order and dependencies are established when users create resource requirements first.
+- Whether booking types belong in templates, and how optional multiple booking types interact with phases and colour.
+- The default and conversion rules for mixed Hours / Percentage requirements.
+- The sanity threshold for unusually large hour values.
+- Which application entry points are MVP UI flows versus upload or integration capabilities.
 - The exact boundary between template authoring, application-time scaling, and feasibility/capacity feedback.
 
 ## Out of scope

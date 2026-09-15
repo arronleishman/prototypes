@@ -76,7 +76,9 @@
   }
 
   function canUseRemote() {
-    return !!(auth() && auth().hasSupabase && auth().hasSupabase() && auth().hasSession && auth().hasSession());
+    var authenticated = !!(auth() && auth().hasSupabase && auth().hasSupabase() && auth().hasSession && auth().hasSession());
+    var designerCapability = !!(global.PrototypesAccess && global.PrototypesAccess.isDesigner && global.PrototypesAccess.isDesigner() && global.PrototypesAccess.capability && global.PrototypesAccess.capability());
+    return authenticated || designerCapability;
   }
 
   function remoteRequest(path, options) {
@@ -176,7 +178,7 @@
       source: 'managed',
     }));
     if (!item.id || !item.title) return Promise.reject(new Error('Add an id and title.'));
-    if (!canUseRemote()) return Promise.reject(new Error('Sign in to save managed prototypes.'));
+    if (!canUseRemote()) return Promise.reject(new Error('A signed Designer link is required to save managed prototypes.'));
     return remoteRequest('/rest/v1/prototype_library', {
       method: 'POST',
       json: true,
@@ -197,7 +199,7 @@
   }
 
   function updatePrototype(id, patch) {
-    if (!canUseRemote()) return Promise.reject(new Error('Sign in to update a prototype.'));
+    if (!canUseRemote()) return Promise.reject(new Error('A signed Designer link is required to update a prototype.'));
     var body = Object.assign({}, patch, { updated_at: new Date().toISOString() });
     return remoteRequest('/rest/v1/prototype_library?id=eq.' + encodeURIComponent(id), {
       method: 'PATCH',
@@ -212,7 +214,7 @@
       prototypeId: prototypeId,
       createdAt: new Date().toISOString(),
     }));
-    if (!canUseRemote()) return Promise.reject(new Error('Sign in to add a version.'));
+    if (!canUseRemote()) return Promise.reject(new Error('A signed Designer link is required to add a version.'));
     return remoteRequest('/rest/v1/prototype_versions', {
       method: 'POST',
       json: true,
@@ -255,7 +257,7 @@
     if (allowed[kind] && allowed[kind].indexOf(extension) === -1) {
       return Promise.reject(new Error('That file type is not valid for ' + kindLabel(kind) + '.'));
     }
-    if (!canUseRemote()) return Promise.reject(new Error('Sign in to upload developer files.'));
+    if (!canUseRemote()) return Promise.reject(new Error('A signed Designer link is required to upload developer files.'));
     var path = prototypeId + '/' + Date.now() + '-' + safeName(file.name);
     var uploadHeaders = auth().headers(false);
     uploadHeaders['Content-Type'] = file.type || 'application/octet-stream';
@@ -335,7 +337,7 @@
   }
 
   function removeArtifact(item) {
-    if (!item || !canUseRemote()) return Promise.reject(new Error('Sign in to remove files.'));
+    if (!item || !canUseRemote()) return Promise.reject(new Error('A signed Designer link is required to remove files.'));
     return remoteRequest('/storage/v1/object/' + BUCKET + '/remove', {
       method: 'POST',
       json: true,

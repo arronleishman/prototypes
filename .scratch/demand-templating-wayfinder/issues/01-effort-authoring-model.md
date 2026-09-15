@@ -8,19 +8,21 @@ What should users author for each resource requirement: absolute hours, a propor
 The decision must cover:
 
 - What the Percentage and Hours toggle means.
-  - Current understanding: Keep a mutually exclusive Percentage / Hours toggle. This is a strong direction, but the final interaction has not been resolved.
+  - Current understanding: Use the existing effort input component, default it to Hours, and allow the user to switch the individual resource requirement to Percentage. Mixing modes between requirements should remain possible, although it may not be the normal path.
 - Whether hours are total effort or effort per week.
-  - Not answered yet. The discussions used total examples such as 30 hours for Prep and 70 hours for Review, but did not settle whether the stored value is total effort or a weekly amount.
+  - Strong direction: hours represent total effort across the requirement’s duration. A three-month requirement could contain 40 total hours, while a six-month requirement could contain 120 total hours. The exact data contract is not answered yet.
 - Whether phase proportions are authored first or derived from requirement hours.
-  - Percentage mode should author the phase proportion first. Hours mode should treat hours as authoritative and derive the phase split; for example, 30 hours and 70 hours would derive 30% and 70%.
+  - The latest discussion moves away from authoring phase proportions first. Users should shape resource requirements and timeline blocks first; phase proportions should be derived from the resulting demand shape.
 - How the UI explains nested percentages such as “70% of Prep’s 30%”.
-  - The UI should show the relationship explicitly, for example “70% of Prep’s demand” and “Prep represents 30% of the template”, with a live calculation or summary rather than requiring users to do the maths.
+  - This nested calculation should no longer be the primary authoring model. If phase proportions are shown, they should be presented as derived summary information rather than as the first input.
 - What happens when a user switches effort mode after entering values.
   - Not answered yet. The conversion, rounding, and whether the original value is preserved need a specific decision.
 - How the model supports both tax-style known-hour work and consulting-style long-duration allocations.
-  - Hours are especially useful where teams know a typical effort in advance, such as tax work. Percentages remain useful for longer consulting engagements where users think in terms of allocation over time. A duration-plus-FTE model is also plausible, but has not been selected.
+  - Hours suit high-volume or tax work where users know typical effort. Percentage suits longer consulting work where users think “six months at 30%”. Duration and effort must therefore remain separate. A duration-plus-FTE model remains a possible interpretation, but has not been selected as a separate mode.
 - Which mode is the default.
-  - Not answered yet.
+  - Strong direction: default each new resource requirement to Hours.
 - Whether phase weighting is hidden, shown as derived information, or remains editable in Hours mode.
-  - Not answered yet. The strongest current direction is to show it as derived information when Hours mode is active.
+  - Strong direction: phase weighting is derived from the shape and should not be a primary editable input. Exact display treatment remains open.
+- What validation prevents nonsensical hour values.
+  - A hard-coded sanity cap or warning was suggested, without fetching individual working-hour calendars. The threshold and whether it is a warning or a hard block are not answered yet.
 

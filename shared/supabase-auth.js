@@ -67,6 +67,9 @@
     var session = currentSession();
     var result = { apikey: apiKey() };
     if (session && session.access_token) result.Authorization = 'Bearer ' + session.access_token;
+    if (!session && global.PrototypesAccess && global.PrototypesAccess.capability()) {
+      result.Authorization = 'Bearer ' + global.PrototypesAccess.capability();
+    }
     if (withJson) result['Content-Type'] = 'application/json';
     return result;
   }

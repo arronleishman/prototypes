@@ -66,9 +66,15 @@ alter table feedback
 
 (Also in `supabase-screenshot.sql`.)
 
-### First-party heatmaps & sessions
+### First-party heatmaps, sessions & usability tests
 
-Mocks record clicks, scroll depth, and sessions automatically. Run `supabase-telemetry.sql` once in Supabase so data syncs across reviewers. Insights → Heatmaps / Sessions then show that data (no Clarity required).
+Mocks record clicks, page views, scroll depth, repeated-click signals, and sessions automatically. Run `supabase-telemetry.sql` once in Supabase so data syncs across reviewers. Insights → Heatmaps then shows the interaction data (no Clarity required).
+
+Prototype workspaces also include a **Test builder** tab. Designers using a Designer role link can create an ordered multi-task test with optional selector or URL success signals. Developers can view the builder and results but cannot edit them. When a test is active, the public mock shows a floating usability-test widget; participants can complete, skip, or report a problem without signing in.
+
+Run `supabase-usability-tests.sql` once in Supabase after the telemetry schema. Usability results are visible in Insights → Usability and include completion rate, task drop-off, duration, reported problems, and repeated-click signals. Anonymous participants are identified only by a temporary browser session ID.
+
+For the Kanban board session, open the `practitioner-kanban` workspace → **Test builder** → **Load Kanban session**, then save it. The preset follows `mocks/kanban-demo-scenarios.html`. To make that session available to participants across browsers without author sign-in, run `supabase-kanban-usability-session.sql` after the schema.
 
 ### Export
 
@@ -140,7 +146,7 @@ Publish directory: `.` · No build command.
 ## Share with reviewers vs internal
 
 - **Reviewers:** use **Share** on a hub card (or the mock URL). They get the mock only — can leave feedback, cannot open the hub or view threads.
-- **Your team:** use **Copy hub link** on the hub (includes a secret `?key=`). That unlocks the hub + feedback inboxes.
+- **Your team:** use the internal Designer or Developer role link. The recipient must enter the internal access token; the role link itself does not contain the token.
 - Change `internalAccessKey` in `config.js` anytime to revoke old hub links.
 
 ## Prototype workspaces and developer files
@@ -148,10 +154,11 @@ Publish directory: `.` · No build command.
 - Click a mock card to open its internal **Prototype workspace**. The workspace keeps the mock preview, Insights, Change log, curated Version history, and developer resources together.
 - `Share`, `Open mock`, and `Download` are in the workspace header. The existing direct mock, `feedback.html`, and `changelog.html` URLs continue to work.
 - To add a prototype manually, use **Add prototype** in the hub. Upload the HTML mock, then add Components, Code, Storybook, or Instructions from the workspace tabs.
-- Run `supabase-prototype-library.sql` once in the Supabase SQL editor. In Supabase Auth, enable email/magic-link sign-in, add the approved team members, and disable open sign-ups. The prototype library uses authenticated users and a private `prototype-artifacts` Storage bucket.
+- Run `supabase-prototype-library.sql` once in the Supabase SQL editor. The prototype library uses a private `prototype-artifacts` Storage bucket.
+- Internal sharing is role-based: **Designer** links have full authoring access, while **Developer** links are read-only. The recipient must enter the internal access token; the role in the URL only selects the permission level and is not an access credential.
 - Add `SUPABASE_SERVICE_ROLE_KEY` as a GitHub Actions secret (and optionally `SUPABASE_URL`; the workflow can read the checked-in URL). On pushes that change a file listed as a mock path in `manifest.json`, the Pages workflow records a `Push <short SHA>` entry in Version history using the commit message and changed files. Re-running a workflow does not duplicate a version.
 - Use the workflow’s `sync_all_versions` input for a one-time baseline snapshot of every repository-backed mock after the SQL migration. The **Add version** button remains available for curated milestones that are not tied to a push.
-- The old `internalAccessKey` is still useful as a navigation gate, but it is not a security boundary. Supabase Auth/RLS protects managed metadata and uploaded developer files.
+- The `internalAccessKey` is the password-like navigation gate. It is stored only in session storage after entry and is removed from generated internal URLs.
 
 ## Security migration
 

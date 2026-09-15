@@ -43,7 +43,9 @@
     --surface-container-default: rgba(152, 155, 182, .15);
     --surface-warning: #e27209;
     --surface-success-subtle: #e1faeb;
+    --surface-danger: #a3003c;
     --surface-danger-subtle: #feecf2;
+    --surface-progress-subtle: #e5faff;
     --surface-warning-subtle: #fff0e0;
     --surface-info-subtle: #edf0f8;
 
@@ -58,6 +60,8 @@
     --text-link: #7059e8;
     --text-emphasis: #3d425c;
     --text-success: #078138;
+    --text-success-dark: #07602b;
+    --text-progress-dark: #068aa9;
     --text-danger: #a3003c;
     --text-warning: #b45309;
     --warning: #e27209;
@@ -71,6 +75,8 @@
     --border-emphasis: #d7d8df;
     --border-primary: #4f3fa0;
     --border-success: #078138;
+    --border-success-subtle: #c9efd8;
+    --border-progress-subtle: #c9e6ed;
     /* Sidebar section divider — heavier than --border-subtle by design */
     --border-section: #6c757d;
     --border-radius-default: 4px;
@@ -741,17 +747,37 @@ button { font-family: inherit; }
     color: var(--text-link);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-/* Phase badge sits on the left of the toolbar row. */
+/* Status badge sits on the left of the toolbar row (Figma 4516:57688 and
+   siblings). On Hold is the only solid variant and carries no border in the
+   design — it keeps a transparent one so every variant sits on the same
+   baseline as the icon buttons opposite. */
 .Panel-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .Panel-badge {
-    display: inline-flex; align-items: center;
+    display: inline-flex; align-items: center; gap: 4px;
     height: 30px; padding: 0 var(--padding-xs);
-    border: var(--border-xs) solid var(--border-subtle);
+    border: var(--border-xs) solid transparent;
     border-radius: var(--border-radius-default);
-    background: var(--surface-default);
-    font-size: 12px; font-weight: 700; line-height: normal;
-    color: var(--text-subtle); white-space: nowrap;
-    flex-shrink: 0;
+    font-size: var(--font-size-small); font-weight: 700; line-height: 14px;
+    white-space: nowrap; flex-shrink: 0;
+}
+.Panel-badge--todo {
+    background: var(--surface-subtle-dark);
+    border-color: var(--border-subtle);
+    color: var(--text-accent);
+}
+.Panel-badge--progress {
+    background: var(--surface-progress-subtle);
+    border-color: var(--border-progress-subtle);
+    color: var(--text-progress-dark);
+}
+.Panel-badge--hold {
+    background: var(--surface-danger);
+    color: var(--text-inverse);
+}
+.Panel-badge--done {
+    background: var(--surface-success-subtle);
+    border-color: var(--border-success-subtle);
+    color: var(--text-success-dark);
 }
 .Panel-tools { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
 .Panel-count {
@@ -1417,6 +1443,7 @@ function addDays(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return
 
 var FIRST_MONDAY = snapMonday(new Date(2021, 0, 4));   // w/c 4 Jan 2021 — full year
 var TODAY = addDays(FIRST_MONDAY, 8 * 7 + 1);          // Tue of week 9 (early March)
+var TODAY_WEEK = 8;
 
 var WEEKS = [];
 for (var w = 0; w < WEEK_COUNT; w++) WEEKS.push(addDays(FIRST_MONDAY, w * 7));
@@ -1436,6 +1463,25 @@ var DIMENSIONS = {
 
 var PHASE_ORDER  = ['Preparation', 'First Review', 'Second Review'];
 var PHASE_COLOUR = { 'Preparation': '#2398f2', 'First Review': '#2d7d46', 'Second Review': '#7b3fa0' };
+
+// ── Booking status ─────────────────────────────────────────────────────────
+// The sidebar badge reports the booking's status. To Do / In Progress / Done
+// fall out of where the booking sits against today; On Hold is a deliberate
+// pause, so the sample data names the paused engagements outright.
+var STATUS = {
+    todo:     { label: 'To Do',       cls: 'Panel-badge--todo' },
+    progress: { label: 'In Progress', cls: 'Panel-badge--progress' },
+    hold:     { label: 'On Hold',     cls: 'Panel-badge--hold' },
+    done:     { label: 'Done',        cls: 'Panel-badge--done' }
+};
+var ON_HOLD_CODES = { 'MCR-7823': 1, 'QA-101': 1, 'TP-12': 1, 'HEA-4521': 1 };
+
+function bookingStatus(it) {
+    if (ON_HOLD_CODES[it.code]) return STATUS.hold;
+    if (it.startWeek + it.span <= TODAY_WEEK) return STATUS.done;
+    if (it.startWeek > TODAY_WEEK) return STATUS.todo;
+    return STATUS.progress;
+}
 
 // Customers can glossarize the Other row — "Non-chargeable", "Unavailability"
 // and so on. Whatever it is renamed to, it sorts last rather than into the
@@ -2500,7 +2546,8 @@ function panelHead(lead, all, dash) {
     }
 
     var bar = el('div', 'Panel-toolbar');
-    bar.appendChild(!dash && lead.phase ? el('div', 'Panel-badge', lead.phase) : el('div'));
+    var st = !dash && lead.kind === 'booking' ? bookingStatus(lead) : null;
+    bar.appendChild(st ? el('div', 'Panel-badge ' + st.cls, st.label) : el('div'));
 
     var tools = el('div', 'Panel-tools');
     tools.appendChild(panelBtn('fa-regular fa-clone', { label: 'Clone' }));
@@ -2884,7 +2931,9 @@ render();
 <script src="../shared/access.js"></script>
 <script src="../shared/feedback-store.js"></script>
 <script src="../shared/telemetry-store.js"></script>
-<script src="../shared/telemetry.js" defer></script>
+<script src="../shared/usability-test-store.js?v=2026-09-15-kanban-session"></script>
+<script src="../shared/telemetry.js?v=2026-09-10-heatmap-pages" defer></script>
+<script src="../shared/usability-test.js?v=2026-09-15-widget-row" defer></script>
 <script src="../shared/feedback.js" defer></script>
 </body>
 </html>
