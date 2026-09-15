@@ -557,14 +557,6 @@ a { color: var(--text-link-color); text-decoration: none; }
 .PhaseWeightLock.is-locked { color: var(--text-primary); background: var(--surface-accent); }
 .PhaseTimelineEditor .PhaseWeightLock,
 .PhaseTimelineEditor .Btn-iconOnly { width: 35px; min-width: 35px; }
-.ReviewPhaseWeights {
-  display: flex; flex-wrap: wrap; gap: var(--padding-xs) var(--padding-md);
-  margin-top: var(--padding-sm); color: var(--text-subtle); font-size: var(--font-size-small);
-}
-.ReviewPhaseWeight { display: inline-flex; align-items: center; gap: 6px; }
-.ReviewPhaseWeight-dot {
-  width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%;
-}
 .PhaseTimelineVisual { margin: 0 0 var(--padding-sm); }
 .PhaseTimelineVisual:empty { display: none; }
 .PhaseTimelineVisual-label {
@@ -931,6 +923,46 @@ a { color: var(--text-link-color); text-decoration: none; }
 @media (prefers-reduced-motion: reduce) {
   .GanttConstraintTooltip { transition: none; }
 }
+.GanttLinkPopover {
+  position: fixed; z-index: 1250; min-width: 220px; max-width: 300px;
+  padding: 10px 12px; background: var(--surface-default);
+  border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
+  box-shadow: 0 4px 16px rgba(39, 35, 61, 0.12);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transform: translate(-50%, calc(-100% - 10px));
+  transition: opacity .12s ease;
+}
+.GanttLinkPopover.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
+.GanttLinkPopover-rows { display: flex; flex-direction: column; gap: 6px; }
+.GanttLinkPopover-row { display: flex; align-items: center; gap: 8px; }
+.GanttLinkPopover-row .fa-link { flex: 0 0 auto; width: 14px; text-align: center; color: var(--icon-subtle); font-size: 11px; }
+.GanttLinkPopover-rowText {
+  flex: 1 1 auto; min-width: 0; font-size: var(--font-size-small); color: var(--text-subtle); line-height: 1.4;
+}
+.GanttLinkPopover-rowText strong { color: var(--text-default); font-weight: var(--font-weight-semibold); }
+.GanttLinkPopover-unlink {
+  flex: 0 0 auto; width: 24px; height: 24px; min-height: 24px; font-size: 11px; color: var(--text-subtle);
+}
+.GanttLinkPopover-unlink:hover { color: var(--text-danger); }
+.GanttLinkPopover-arrow {
+  position: absolute; left: 50%; bottom: -6px; width: 10px; height: 10px;
+  background: var(--surface-default); border-right: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
+  transform: translateX(-50%) rotate(45deg);
+}
+#ganttDragLinkOverlay {
+  position: fixed; inset: 0; width: 100%; height: 100%; z-index: 2200;
+  pointer-events: none; overflow: visible; display: none;
+}
+#ganttDragLinkOverlay.is-active { display: block; }
+#ganttDragLinkOverlay path { fill: none; stroke-width: 2; stroke-linecap: round; opacity: .9; }
+.GanttDragLink-badge {
+  position: fixed; z-index: 2201; width: 24px; height: 24px; border-radius: var(--border-radius-circle);
+  display: none; align-items: center; justify-content: center; color: var(--text-inverse);
+  font-size: 11px; box-shadow: 0 2px 6px rgba(39, 35, 61, .3); pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+.GanttDragLink-badge.is-active { display: flex; }
 .ShapeLegend { display: flex; flex-wrap: wrap; gap: 10px 16px; min-height: 18px; }
 .ShapeLegend-item {
   display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-subtle);
@@ -984,12 +1016,7 @@ a { color: var(--text-link-color); text-decoration: none; }
   background: var(--surface-subtle-light);
 }
 .ReviewSection-title { flex: 1 1 auto; font-weight: var(--font-weight-semibold); }
-#reviewSummary > .ReviewSection:first-of-type { padding: var(--padding-md); }
-#reviewSummary > .ReviewSection:first-of-type .ReviewSection-head {
-  padding: 0 0 var(--padding-md);
-  border-bottom: 0;
-  background: transparent;
-}
+.ReviewSection-body { padding: 24px; }
 .ReviewPhase {
   display: grid; grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
   gap: var(--padding-md); padding: var(--padding-sm);
@@ -1019,11 +1046,12 @@ a { color: var(--text-link-color); text-decoration: none; }
   text-align: left; font-weight: var(--font-weight-semibold);
 }
 .ReviewDemandTable th:not(:first-child), .ReviewDemandTable td:not(:first-child) { text-align: right; }
+.ReviewDemandTable th:last-child, .ReviewDemandTable td:last-child { text-align: left; }
 .ReviewDemandTable td {
-  height: 40px; padding: 0 12px; border-bottom: 1px solid var(--border-subtle);
-  color: var(--text-accent); vertical-align: middle;
+  height: 40px; padding: 0 12px; color: var(--text-accent); vertical-align: middle;
 }
-.ReviewDemandTable tr:last-child td { border-bottom: 0; }
+/* Zebra stripes carry the row separation, so no per-row hairline underneath. */
+.ReviewDemandTable tbody tr:nth-child(odd) td { background: var(--surface-subtle-light); }
 .ReviewDemandResource { color: var(--text-emphasis); font-weight: var(--font-weight-semibold); }
 
 .Input[aria-invalid="true"], .Select[aria-invalid="true"] {
@@ -1206,7 +1234,10 @@ a { color: var(--text-link-color); text-decoration: none; }
   color: var(--text-subtle); font-size: 11px; border-bottom: 1px solid var(--border-subtle);
 }
 .MiniGantt-scroll { overflow-x: auto; overflow-y: visible; }
-.MiniGantt-canvas { min-width: 100%; width: max-content; --label-w: 192px; --week-w: 40px; }
+.MiniGantt-canvas { position: relative; min-width: 100%; width: max-content; --label-w: 192px; --week-w: 40px; }
+.MiniGantt-links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.MiniGantt-links path { fill: none; stroke-width: 2; stroke-linecap: round; opacity: .8; }
+.MiniGantt-links circle { opacity: .9; }
 .MiniGantt-months, .MiniGantt-weeks, .MiniGantt-row { display: flex; min-width: 100%; }
 .MiniGantt-corner, .MiniGantt-label {
   position: sticky; left: 0; z-index: 4; flex: 0 0 var(--label-w); width: var(--label-w);
@@ -1267,12 +1298,31 @@ a { color: var(--text-link-color); text-decoration: none; }
   outline: 2px solid var(--border-primary);
   outline-offset: 2px; z-index: 2;
 }
+.MiniGantt-bar.is-link-target {
+  outline: 2px dashed var(--border-primary);
+  outline-offset: 2px; z-index: 3;
+}
 .MiniGantt-bar:active { cursor: grabbing; }
+.MiniGantt-linkAction {
+  position: absolute; top: 50%; right: 4px; z-index: 3;
+  display: none; align-items: center; justify-content: center;
+  width: 20px; height: 20px; padding: 0; transform: translateY(-50%);
+  border: 0; border-radius: var(--border-radius-circle);
+  background: var(--surface-default); color: var(--seg-link-color, var(--text-primary));
+  cursor: pointer; box-shadow: 0 1px 3px rgba(39, 35, 61, .2);
+}
+.MiniGantt-bar:hover .MiniGantt-linkAction,
+.MiniGantt-linkAction.is-linked { display: inline-flex; }
+.MiniGantt-linkAction:hover { color: var(--seg-link-color, var(--text-link-color)); filter: brightness(0.85); }
+.MiniGantt-linkAction:focus-visible { display: inline-flex; outline: 2px solid var(--border-primary); outline-offset: 1px; }
 .MiniGantt-resize {
   position: absolute; top: 0; bottom: 0; width: 8px; cursor: ew-resize;
-  display: flex; align-items: center; justify-content: center;
+  display: none; align-items: center; justify-content: center;
   background: rgba(255,255,255,.75); color: currentColor; font-size: 12px; line-height: 1;
 }
+.MiniGantt-bar:hover .MiniGantt-resize,
+.MiniGantt-bar.is-selected .MiniGantt-resize,
+.MiniGantt-resize:focus-visible { display: flex; }
 .MiniGantt-resize--left { left: 0; }
 .MiniGantt-resize--right { right: 0; }
 .MiniGantt-empty {
@@ -1320,30 +1370,137 @@ a { color: var(--text-link-color); text-decoration: none; }
 .ModalOverlay.is-open { display: flex; }
 .Modal {
   width: min(648px, 100%); max-height: calc(100vh - 2 * var(--padding-lg));
-  display: flex; flex-direction: column; overflow: visible;
+  min-height: 0; display: flex; flex-direction: column; overflow: visible;
   border-radius: var(--border-radius-default); background: var(--surface-default); box-shadow: var(--shadow-footer);
+  position: relative; /* positioning context for the attached side picker below */
 }
+.ResourceModalLayout {
+  display: flex; align-items: stretch; justify-content: center; width: 100%;
+  min-height: 0; max-width: 100%; max-height: calc(100vh - 2 * var(--padding-lg));
+}
+.ResourceModalLayout > .Modal {
+  border-radius: var(--border-radius-default);
+  transition: border-radius .2s ease;
+}
+.ResourceModalLayout.has-open-picker > .Modal {
+  border-top-right-radius: 0; border-bottom-right-radius: 0;
+}
+/* Booking-type / skills pickers overlay the modal as an attached side panel.
+   They're absolutely positioned against the modal's own box (not laid out as a
+   flex sibling) so opening one never widens the modal or re-centers it on screen —
+   it simply appears on top, flush against the modal's right edge. */
+.ResourceBookingTypePicker {
+  position: absolute; top: 0; bottom: 0; left: 100%; z-index: 20;
+  width: 0; min-width: 0;
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--surface-default); border-left: 0 solid var(--border-subtle);
+  border-radius: 0;
+  box-shadow: none;
+  transition: width .2s ease, box-shadow .2s ease, border-left-width .2s ease;
+}
+.ResourceBookingTypePicker:not(.hidden) {
+  /* 358px + Sidebar Shadow, per Figma's "Select skills" panel export */
+  width: min(358px, calc(100vw - 24px));
+  border-left-width: 1px;
+  box-shadow: -6px 0 16px rgba(0, 0, 0, .06);
+}
+.ResourceBookingTypePicker.hidden {
+  display: flex !important; width: 0; border-left-width: 0; box-shadow: none;
+}
+.ResourceBookingTypePicker-header,
+.ResourceBookingTypePicker-footer {
+  display: flex; align-items: center; gap: var(--padding-sm); padding: var(--padding-md);
+}
+.ResourceBookingTypePicker-header { border-bottom: 1px solid var(--border-default); }
+.ResourceBookingTypePicker-header .Btn-iconOnly { flex: 0 0 auto; }
+.ResourceBookingTypePicker-title {
+  flex: 1 1 auto; margin: 0; color: var(--text-default);
+  font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold);
+}
+.ResourceBookingTypePicker-body {
+  display: flex; flex-direction: column; gap: var(--padding-sm);
+  min-height: 0; padding: var(--padding-md); overflow-y: auto;
+}
+.ResourceBookingTypePicker-filter { display: flex; align-items: center; gap: var(--padding-xs); }
+.ResourceBookingTypePicker-filter .Input { flex: 1 1 auto; min-width: 0; }
+.BookingTypePicker-list { display: flex; flex-direction: column; gap: 2px; }
+.BookingTypePicker-option {
+  display: flex; align-items: center; gap: var(--padding-xs); width: 100%;
+  min-height: 35px; padding: 6px 8px; border: 0; border-radius: var(--border-radius-default);
+  background: transparent; color: var(--text-default); text-align: left; cursor: pointer;
+}
+.BookingTypePicker-option:hover,
+.BookingTypePicker-option.is-selected { background: var(--surface-list-item-selected-light); }
+.BookingTypePicker-option input { margin: 0; accent-color: var(--primary); }
+.BookingTypePicker-option-name { flex: 1 1 auto; }
+.BookingTypePicker-count,
+.BookingTypeEmpty { padding: var(--padding-sm) 0; color: var(--text-subtle); font-size: var(--font-size-small); }
+.BookingTypesSection {
+  display: flex; flex: 0 0 auto; flex-direction: column; gap: var(--padding-md);
+}
+.BookingTypesSection-head { display: flex; align-items: center; gap: var(--padding-sm); }
+.BookingTypesSection-title {
+  flex: 1 1 auto; color: var(--text-emphasis); font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-semibold);
+}
+.BookingTypesSection > .Btn { align-self: flex-start; }
+.BookingTypesTable {
+  width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0;
+  background: var(--surface-default); border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default); overflow: hidden;
+}
+.BookingTypesTable th,
+.BookingTypesTable td {
+  height: 35px; padding: 6px 8px; border-bottom: 1px solid var(--border-subtle);
+  text-align: left; font-size: var(--font-size-small);
+}
+.BookingTypesTable th { background: var(--surface-subtle-light); color: var(--text-subtle); font-weight: var(--font-weight-semibold); }
+.BookingTypesTable tr:last-child td { border-bottom: 0; }
+/* Second and third columns (Primary/Requirement Type, then row actions) get a fixed
+   width matching Figma's table proportions; the first (name) column takes the rest. */
+.BookingTypesTable th:nth-child(2),
+.BookingTypesTable td:nth-child(2) { width: 311px; }
+.BookingTypesTable th:nth-child(3),
+.BookingTypesTable td:nth-child(3) { width: 48px; }
+.BookingTypeName { display: inline-flex; align-items: center; gap: 8px; }
+.BookingTypeSwatch { width: 10px; height: 10px; flex: 0 0 10px; border-radius: 2px; }
+.BookingTypeTableActions { text-align: right !important; }
+.BookingTypePrimaryCell { text-align: center !important; }
+.BookingTypePrimaryCell input[type="radio"] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; margin: 0; }
+.ResourceBookingTypePicker-footer { justify-content: flex-end; margin-top: auto; border-top: 1px solid var(--border-default); }
+/* Skills reuse the booking-type picker's aside chrome, filter and option styling —
+   the only new pieces are the collapsible family row and the modal's chip list. */
+.SkillFamily-row { display: flex; align-items: center; gap: var(--padding-xs); min-height: 30px; padding: 4px; }
+.SkillFamily-name { flex: 1 1 auto; color: var(--text-default); font-size: var(--font-size-medium); }
+.BookingTypePicker-option.SkillOption { padding-left: 28px; }
+.Btn--outlinePrimary { border-color: var(--border-primary); color: var(--text-primary); background: var(--surface-default); }
+.Btn--outlinePrimary:hover { background: var(--primary-subtle); }
+.BookingTypesTable th .fa-circle-info { margin-left: 4px; color: var(--icon-subtle); font-size: 12px; cursor: help; }
+.RequirementTypeSelect { width: 100%; max-width: none; }
 .Modal--small { width: min(440px, 100%); }
 .ExitConfirm-copy { margin: 0; color: var(--text-accent); line-height: 1.5; }
 .Modal-header, .Modal-footer { display: flex; align-items: center; gap: var(--padding-sm); padding: var(--padding-md); }
 .Modal-header { border-bottom: 1px solid var(--border-default); }
 .Modal-title { flex: 1 1 auto; margin: 0; font-size: var(--font-size-h2); font-weight: var(--font-weight-regular); }
 .Modal .Modal-header .Btn-iconOnly { width: 28px; height: 28px; min-height: 28px; }
-.Modal-body { display: flex; flex-direction: column; gap: var(--padding-md); padding: var(--padding-md); overflow-y: auto; }
+.Modal-body {
+  display: flex; flex: 1 1 auto; flex-direction: column; gap: var(--padding-md);
+  min-height: 0; padding: var(--padding-md); overflow-x: hidden; overflow-y: auto;
+}
 .Modal-footer { justify-content: space-between; border-top: 1px solid var(--border-default); }
 .Modal-actions { display: flex; gap: var(--padding-sm); margin-left: auto; }
 .ModalFieldRow {
-  display: flex; flex-direction: column; align-items: stretch;
-  gap: 4px; min-height: 0;
+  display: flex; flex: 0 0 auto; flex-direction: column; align-items: stretch;
+  gap: 6px; min-height: 0;
 }
 .ModalFieldRow .Field-label { color: var(--text-emphasis); font-size: 14px; font-weight: var(--font-weight-semibold); }
 .ModalFieldRow .Select { min-height: 35px; }
-.ModalFieldRow .Field-hint { font-size: 14px; }
+.ModalFieldRow .Field-hint { display: block; min-height: 20px; font-size: 14px; line-height: 1.4; }
 .RequiredMark { color: var(--text-danger); }
 .TypeSelectWrap { position: relative; display: flex; align-items: center; }
 .TypeSelectWrap .Select { padding-left: 12px; }
 .Modal .TypeSelectSwatch { display: none; }
-.ModalStack { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ModalStack { display: flex; flex: 0 0 auto; flex-direction: column; gap: 6px; min-width: 0; }
 .ModalNumField { display: flex; align-items: center; gap: 8px; }
 .ModalNumField > .Input { width: 120px; flex: 0 0 120px; }
 .ModalNumField-unit { color: var(--text-subtle); font-size: var(--font-size-small); }
@@ -1361,12 +1518,41 @@ a { color: var(--text-link-color); text-decoration: none; }
 .Modal .DurationControl .BtnGroup > button + button { border-left-color: var(--border-default); }
 .ModalFieldRow#resourceStartRow .ModalNumField > .Input { width: 180px; flex: 0 0 180px; }
 .ModalFieldRow#resourceStartRow .ModalNumField-unit { display: none; }
-#resourceModalOverlay .Modal-body { padding: 16px 24px; }
+/* Figma's field rhythm isn't a single flat gap: Phase/Grade/Engagement role sit
+   8px apart as one group, then Duration/Effort/Start week/Booking Types each start
+   a new 24px-separated block, and Required skills sits 16px under Booking Types
+   (no divider line — see the Figma "Modal" export for node 4505:48130). Model that
+   with margin-top per row instead of a uniform flex gap. */
+#resourceModalOverlay .Modal-body { gap: 0; padding: var(--padding-md); }
+#resourceModalOverlay .Modal-body > * { margin-top: var(--padding-lg); }
+#resourceModalOverlay .Modal-body > :first-child { margin-top: 0; }
+#resourceModalOverlay #resourceGradeRow,
+#resourceModalOverlay .ResourceRoleField { margin-top: var(--padding-xs); }
+#resourceModalOverlay #resourceSkillsSection { margin-top: var(--padding-md); }
 #resourceModalOverlay .Modal-footer .Btn:not(.Btn--primary) {
   border-color: var(--border-primary); color: var(--text-primary); background: var(--surface-default);
 }
 .Modal .DurationControl .BtnGroup > button { min-width: 56px; padding: 0 12px; }
 .Modal .DurationEquivalent { min-height: 0; }
+@media (max-width: 760px) {
+  .ResourceModalLayout { width: min(648px, 100%); }
+  .ResourceModalLayout > .Modal { width: 100%; max-height: none; border-radius: var(--border-radius-default); }
+  .ResourceModalLayout.has-open-picker > .Modal { border-radius: var(--border-radius-default); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+  /* Too narrow to attach a side panel — slide it up as a fixed bottom sheet that
+     sits on top of the modal instead, so the modal itself never resizes. */
+  .ResourceBookingTypePicker {
+    position: fixed; top: auto; bottom: 0; left: 0; right: 0; width: auto;
+    height: 0; max-height: 0; min-height: 0; overflow: hidden; z-index: 1520;
+    border-left: 0; border-top: 0 solid var(--border-default);
+    border-radius: var(--border-radius-default) var(--border-radius-default) 0 0;
+    box-shadow: none; transition: max-height .2s ease, box-shadow .2s ease, border-top-width .2s ease;
+  }
+  .ResourceBookingTypePicker:not(.hidden) {
+    height: auto; max-height: min(420px, 70vh); border-top-width: 1px;
+    box-shadow: 0 -8px 24px rgba(39, 35, 61, .18);
+  }
+  .ResourceBookingTypePicker.hidden { max-height: 0; border-top-width: 0; box-shadow: none; }
+}
 
 .hidden { display: none !important; }
 .screen { display: none; }
@@ -1662,7 +1848,6 @@ a { color: var(--text-link-color); text-decoration: none; }
                 <div class="ShapeTimeline" id="timelineShapeVisual"></div>
               </div>
               <div id="slotEditor" class="Stack"></div>
-              <div id="phaseTimelineEditor" class="PhaseTimelineEditor"></div>
               <div class="SequenceSettings" aria-labelledby="sequenceSettingsTitle">
                 <div class="SequenceSettings-copy">
                   <strong id="sequenceSettingsTitle">Sequencing</strong>
@@ -1721,6 +1906,13 @@ a { color: var(--text-link-color); text-decoration: none; }
 
 <div id="shapeSegPopover" class="ShapeSegPopover" role="tooltip" aria-hidden="true"><div class="ShapeSegPopover-arrow"></div><div class="ShapeSegPopover-content"></div></div>
 <div id="ganttConstraintTooltip" class="GanttConstraintTooltip" role="status" aria-live="polite" aria-hidden="true"></div>
+<div id="ganttLinkPopover" class="GanttLinkPopover" role="tooltip" aria-hidden="true"
+  onmouseenter="cancelGanttLinkPopoverHide()" onmouseleave="scheduleHideGanttLinkPopover()">
+  <div class="GanttLinkPopover-rows"></div>
+  <div class="GanttLinkPopover-arrow"></div>
+</div>
+<svg id="ganttDragLinkOverlay" aria-hidden="true"><path id="ganttDragLinkPath"></path></svg>
+<div id="ganttDragLinkBadge" class="GanttDragLink-badge" aria-hidden="true"><i class="fa-solid fa-link" aria-hidden="true"></i></div>
 <div class="ModalOverlay" id="exitConfirmOverlay" role="presentation" onclick="if(event.target===this)closeExitConfirm()">
   <div class="Modal Modal--small" role="dialog" aria-modal="true" aria-labelledby="exitConfirmTitle">
     <div class="Modal-header">
@@ -1741,6 +1933,7 @@ a { color: var(--text-link-color); text-decoration: none; }
   </div>
 </div>
 <div class="ModalOverlay" id="resourceModalOverlay" role="presentation" onclick="if(event.target===this)closeResourceModal()">
+  <div class="ResourceModalLayout">
   <div class="Modal" role="dialog" aria-modal="true" aria-labelledby="resourceModalTitle">
     <div class="Modal-header">
       <h2 class="Modal-title" id="resourceModalTitle">Add Resource Requirement</h2>
@@ -1749,49 +1942,25 @@ a { color: var(--text-link-color); text-decoration: none; }
       </button>
     </div>
     <div class="Modal-body">
-      <div class="ModalFieldRow">
-        <label class="Field-label" for="resourceTypeSelect"><span id="resourceTypeLabel">Phase</span></label>
+      <div class="ModalFieldRow" id="resourceTypeField">
+        <label class="Field-label" for="resourceTypeSelect"><span id="resourceTypeLabel">Phase</span> <span class="RequiredMark">*</span></label>
         <div class="TypeSelectWrap">
           <span class="TypeSelectSwatch" id="resourceTypeSwatch" aria-hidden="true"></span>
           <select class="Select" id="resourceTypeSelect" onchange="onResourceTypeChange()"></select>
         </div>
         <span class="Field-hint" id="resourceTypeHint">The phase colour is inherited by the timeline segment.</span>
       </div>
-      <div class="ModalFieldRow hidden" id="resourceBookingTypeRow">
-        <label class="Field-label" for="resourceBookingTypeSelect">Booking type <span class="Muted">(optional)</span></label>
-        <div class="TypeSelectWrap">
-          <span class="TypeSelectSwatch" id="resourceBookingTypeSwatch" aria-hidden="true"></span>
-          <select class="Select" id="resourceBookingTypeSelect" onchange="onResourceBookingTypeChange()"></select>
-        </div>
-        <span class="Field-hint">Optional classification for this work. The primary booking type supplies its colour.</span>
-      </div>
-      <div class="ModalFieldRow">
-        <label class="Field-label" for="resourceGradeSelect">Grade</label>
+      <div class="ModalFieldRow" id="resourceGradeRow">
+        <label class="Field-label" for="resourceGradeSelect">Grade <span class="RequiredMark">*</span></label>
         <select class="Select" id="resourceGradeSelect" onchange="syncResourceModalConfirm()"></select>
         <span class="Field-hint">Choose the grade required for this work.</span>
       </div>
-      <div class="ModalFieldRow ResourceRoleField hidden">
-        <label class="Field-label" for="resourceRoleSelect">Project role</label>
+      <div class="ModalFieldRow ResourceRoleField">
+        <label class="Field-label" for="resourceRoleSelect">Engagement role <span class="RequiredMark">*</span></label>
         <select class="Select" id="resourceRoleSelect" onchange="syncResourceModalConfirm()">
-          <option value="">Not set</option>
+          <option value="">Choose role</option>
         </select>
-        <span class="Field-hint">Optional role used when the same resource works across different types of work.</span>
-      </div>
-      <div class="ModalFieldRow">
-        <label class="Field-label" for="resourceWeightInput">Effort</label>
-        <div class="ModalStack">
-          <div class="EffortControl">
-            <input class="Input" id="resourceWeightInput" type="number" min="0" max="9999" step="1" value="40"
-              oninput="resourceModalState.weightTouched = true; syncResourceModalConfirm()">
-            <div class="BtnGroup EffortControl-group" role="group" aria-label="Effort unit">
-              <button type="button" data-effort-unit="percentage" aria-pressed="false"
-                onclick="setResourceEffortUnit('percentage')">Percentage</button>
-              <button type="button" data-effort-unit="hours" class="is-active" aria-pressed="true"
-                onclick="setResourceEffortUnit('hours')">Hours</button>
-            </div>
-          </div>
-          <span class="Field-hint" id="resourceWeightHint">Total effort across this requirement's duration.</span>
-        </div>
+        <span class="Field-hint">The engagement role this requirement will be booked against.</span>
       </div>
       <div class="ModalFieldRow" id="resourceWeeksRow">
         <label class="Field-label" for="resourceWeeksInput">Duration</label>
@@ -1808,6 +1977,22 @@ a { color: var(--text-link-color); text-decoration: none; }
           <span class="Field-hint" id="resourceWeeksHint">Adds a starting block you can reshape on the timeline.</span>
         </div>
       </div>
+      <div class="ModalFieldRow">
+        <label class="Field-label" for="resourceWeightInput">Effort</label>
+        <div class="ModalStack">
+          <div class="EffortControl">
+            <input class="Input" id="resourceWeightInput" type="number" min="0" max="9999" step="1" value="40"
+              oninput="resourceModalState.weightTouched = true; syncResourceModalConfirm()">
+            <div class="BtnGroup EffortControl-group" role="group" aria-label="Effort unit">
+              <button type="button" data-effort-unit="percentage" aria-pressed="false"
+                onclick="setResourceEffortUnit('percentage')">Percentage</button>
+              <button type="button" data-effort-unit="hours" class="is-active" aria-pressed="true"
+                onclick="setResourceEffortUnit('hours')">Hours</button>
+            </div>
+          </div>
+          <span class="Field-hint" id="resourceWeightHint">Total effort for this requirement.</span>
+        </div>
+      </div>
       <div class="ModalFieldRow" id="resourceStartRow">
         <label class="Field-label" for="resourceStartInput">Start week</label>
         <div class="ModalStack">
@@ -1819,6 +2004,24 @@ a { color: var(--text-link-color); text-decoration: none; }
           <span class="Field-hint" id="resourceStartHint">Week 1 is the start of the template.</span>
         </div>
       </div>
+      <div class="BookingTypesSection" id="resourceBookingTypesSection">
+        <div class="BookingTypesSection-head">
+          <span class="BookingTypesSection-title">Booking Types</span>
+        </div>
+        <button class="Btn Btn--sm Btn--outlinePrimary" type="button" onclick="openResourceBookingTypePicker()">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i> Booking Types
+        </button>
+        <div id="resourceBookingTypesTable"></div>
+      </div>
+      <div class="BookingTypesSection" id="resourceSkillsSection">
+        <div class="BookingTypesSection-head">
+          <span class="BookingTypesSection-title">Required skills</span>
+        </div>
+        <button class="Btn Btn--sm Btn--outlinePrimary" type="button" onclick="openResourceSkillsPicker()">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i> Resource Skills
+        </button>
+        <div id="resourceSkillsTable"></div>
+      </div>
     </div>
     <div class="Modal-footer">
       <div class="Modal-actions">
@@ -1826,6 +2029,50 @@ a { color: var(--text-link-color); text-decoration: none; }
         <button class="Btn Btn--primary" id="resourceModalConfirm" type="button" onclick="confirmResourceModal()" disabled>Add</button>
       </div>
     </div>
+    <aside class="ResourceBookingTypePicker hidden" id="resourceBookingTypePicker" aria-labelledby="resourceBookingTypePickerTitle">
+      <div class="ResourceBookingTypePicker-header">
+        <button class="Btn-iconOnly" type="button" aria-label="Close booking type picker" onclick="closeResourceBookingTypePicker()">
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+        </button>
+        <h2 class="ResourceBookingTypePicker-title" id="resourceBookingTypePickerTitle">Select booking types</h2>
+      </div>
+      <div class="ResourceBookingTypePicker-body">
+        <div class="ResourceBookingTypePicker-filter">
+          <input class="Input" id="resourceBookingTypeFilter" type="search" placeholder="Filter…" oninput="filterResourceBookingTypes(this.value)">
+          <button class="Btn-iconOnly" type="button" aria-label="Clear filter" onclick="clearResourceBookingTypeFilter()">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <span class="BookingTypePicker-count" id="resourceBookingTypeCount">0 selected</span>
+        <div class="BookingTypePicker-list" id="resourceBookingTypeOptions"></div>
+      </div>
+      <div class="ResourceBookingTypePicker-footer">
+        <button class="Btn" type="button" onclick="closeResourceBookingTypePicker()">Cancel</button>
+        <button class="Btn Btn--primary" type="button" onclick="confirmResourceBookingTypePicker()">Confirm</button>
+      </div>
+    </aside>
+    <aside class="ResourceBookingTypePicker hidden" id="resourceSkillsPicker" aria-labelledby="resourceSkillsPickerTitle">
+      <div class="ResourceBookingTypePicker-header">
+        <button class="Btn-iconOnly" type="button" aria-label="Close skills picker" onclick="closeResourceSkillsPicker()">
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+        </button>
+        <h2 class="ResourceBookingTypePicker-title" id="resourceSkillsPickerTitle">Select skills</h2>
+      </div>
+      <div class="ResourceBookingTypePicker-body">
+        <div class="ResourceBookingTypePicker-filter">
+          <input class="Input" id="resourceSkillsFilter" type="search" placeholder="Filter…" oninput="filterResourceSkills(this.value)">
+          <button class="Btn-iconOnly" type="button" aria-label="Clear filter" onclick="clearResourceSkillsFilter()">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <span class="BookingTypePicker-count" id="resourceSkillsCount">0 selected</span>
+        <div class="BookingTypePicker-list" id="resourceSkillsOptions"></div>
+      </div>
+      <div class="ResourceBookingTypePicker-footer">
+        <button class="Btn" type="button" onclick="closeResourceSkillsPicker()">Cancel</button>
+        <button class="Btn Btn--primary" type="button" onclick="confirmResourceSkillsPicker()">Confirm</button>
+      </div>
+    </aside>
   </div>
 </div>
 <div class="Toast" id="toast" role="status" aria-live="polite"></div>
@@ -1844,6 +2091,20 @@ const GRADES = [
   'Associate'
 ];
 const ROLES = ['Tax Analyst', 'Senior Tax Analyst', 'Tax Manager', 'Tax Partner'];
+// Skills a resource requirement can be tagged with, grouped into families for the tree picker.
+const SKILL_LIBRARY = [
+  {
+    name: 'Tax compliance',
+    skills: ['Corporate tax return', 'Personal tax return', 'VAT return', 'Payroll tax']
+  },
+  {
+    name: 'Advisory',
+    skills: [
+      'Tax planning', 'Due diligence', 'Transfer pricing', 'R&D tax credits', 'Restructuring advice',
+      'Cross-border tax', 'Wealth planning', 'Trust and estate', 'M&A tax', 'Tax dispute resolution'
+    ]
+  }
+];
 const BUSINESS_UNIT_TREE = [
   { name: 'Audit and Assurance', children: [{ name: 'Audit' }, { name: 'Assurance' }] },
   { name: 'Canada', children: [{ name: 'Canada' }] },
@@ -2491,7 +2752,9 @@ function normaliseResourceRequests(d) {
       role: request.role || '',
       count: Math.max(1, Number(request.count) || 1),
       phase: request.phase || '',
-      bookingType: request.bookingType || '',
+      bookingType: defaultBookingType(request),
+      bookingTypes: normaliseBookingTypes(request),
+      skills: normaliseSkills(request),
       weightPercent: Number.isFinite(Number(request.weightPercent ?? request.effortPercent))
         ? Math.min(100, Math.max(0, Math.round(Number(request.weightPercent ?? request.effortPercent))))
         : null,
@@ -2733,6 +2996,10 @@ function normaliseSequencing(d = state.draft) {
   if (!d.sequencing || typeof d.sequencing !== 'object') d.sequencing = {};
   if (typeof d.sequencing.allowOverlap !== 'boolean') d.sequencing.allowOverlap = true;
   if (!Array.isArray(d.sequencing.typeOrder)) d.sequencing.typeOrder = [];
+  if (!Array.isArray(d.sequencing.phaseLinks)) d.sequencing.phaseLinks = [];
+  d.sequencing.phaseLinks = d.sequencing.phaseLinks.filter(link =>
+    link && link.from && link.to && link.from !== link.to
+  );
   requestItems(d).forEach(request => {
     const type = requestTypeKey(request, d);
     if (type && !d.sequencing.typeOrder.includes(type)) d.sequencing.typeOrder.push(type);
@@ -2761,9 +3028,29 @@ function requestTypeBounds(type, d = state.draft) {
   };
 }
 
+function linkedDependencyWindow(type, d = state.draft) {
+  const links = d?.sequencing?.phaseLinks?.filter(link => link.to === type) || [];
+  const predecessors = links.map(link => ({
+    type: link.from,
+    bounds: requestTypeBounds(link.from, d)
+  })).filter(item => item.bounds);
+  if (!predecessors.length) return null;
+  return {
+    start: Math.max(...predecessors.map(item => item.bounds.end)),
+    previousTypes: predecessors.map(item => item.type)
+  };
+}
+
 function sequencingIssue(d = state.draft) {
   if (!d) return null;
   normaliseSequencing(d);
+  for (const link of d.sequencing.phaseLinks) {
+    const previous = requestTypeBounds(link.from, d);
+    const current = requestTypeBounds(link.to, d);
+    if (previous && current && current.start < previous.end) {
+      return `${link.to} is linked after ${link.from} and cannot start before it finishes.`;
+    }
+  }
   const activeTypes = new Set(requestItems(d).flatMap(request =>
     (request.segments || []).map(segment => segmentTypeName(request, segment, d))
   ).filter(Boolean));
@@ -2792,9 +3079,13 @@ function renderSequencingFeedback() {
 
   document.getElementById('sequenceHelp')?.classList.toggle('is-overlap', allowOverlap);
   const note = document.getElementById('sequenceHelpNote');
-  if (note) note.textContent = allowOverlap
+  const links = state.draft?.sequencing?.phaseLinks || [];
+  const linkSummary = links.length
+    ? ` Linked dependencies: ${links.map(link => `${link.from} → ${link.to}`).join(', ')}.`
+    : '';
+  if (note) note.textContent = (allowOverlap
     ? 'Review stays put and simply overlaps Prep. It can never start before Prep starts.'
-    : 'Review is pushed along so it still starts after Prep finishes. Gaps are used up first.';
+    : 'Review is pushed along so it still starts after Prep finishes. Gaps are used up first.') + linkSummary;
 
   const warning = document.getElementById('sequenceWarning');
   if (!warning) return;
@@ -2854,7 +3145,7 @@ function blankDraft() {
     phasesConfigured: false,
     durationDays: 90,
     durationUnit: 'days',
-    sequencing: { allowOverlap: true, typeOrder: [] },
+    sequencing: { allowOverlap: true, typeOrder: [], phaseLinks: [] },
     _editing: false,
     phases: [],
     items: [],
@@ -3463,6 +3754,15 @@ function ensureShapeSegPopover() {
 }
 
 function shapeSegPopoverHtml(data) {
+  if (data.kind === 'gantt') {
+    return `<div class="ShapeSegPopover-title"><i class="fa-solid fa-grip-lines-vertical" aria-hidden="true"></i><span>${esc(data.name || 'Work segment')}</span></div>
+      <div class="ShapeSegPopover-rows">
+        <div class="ShapeSegPopover-row"><span>Starts</span><strong>Week ${data.startWeek}</strong></div>
+        <div class="ShapeSegPopover-row"><span>Ends</span><strong>Week ${data.endWeek}</strong></div>
+        <div class="ShapeSegPopover-row"><span>Duration</span><strong>${data.duration}w</strong></div>
+        ${data.effort ? `<div class="ShapeSegPopover-row"><span>Effort</span><strong>${esc(data.effort)}</strong></div>` : ''}
+      </div>`;
+  }
   if (data.kind === 'demand') {
     const rows = (data.types || []).map(type =>
       `<div class="ShapeSegPopover-row">
@@ -3564,8 +3864,16 @@ function demandShapeMarkup(d = state.draft, includeScale = true) {
   }
 
   const weeks = Array.from({ length: total }, () => new Map());
+  // Effort committed per week (hours, or percentage demand when hours aren't set),
+  // spread evenly across each request's own working weeks — used to size blocks
+  // by demand rather than by calendar time.
+  const weekEffort = Array.from({ length: total }, () => 0);
   requests.forEach(request => {
-    (request.segments || []).forEach(segment => {
+    const segments = request.segments || [];
+    const durationTotal = segments.reduce((sum, segment) =>
+      sum + Math.max(0, Number(segment.durationWeeks) || 0), 0) || 1;
+    const weeklyRate = requestEffortValue(request) / durationTotal;
+    segments.forEach(segment => {
       const name = segmentTypeName(request, segment, d);
       const color = segmentColor(request, segment, d);
       const start = Math.max(0, Math.round(Number(segment.startWeek) || 0));
@@ -3580,9 +3888,11 @@ function demandShapeMarkup(d = state.draft, includeScale = true) {
             name, color, count: 1, efforts: new Set([requestEffortLabel(request)])
           });
         }
+        weekEffort[week] += weeklyRate;
       }
     });
   });
+  const totalEffort = weekEffort.reduce((sum, value) => sum + value, 0);
 
   // Collapse neighbouring weeks that carry an identical mix so the bar reads as blocks, not 40 slivers.
   const runs = [];
@@ -3595,13 +3905,18 @@ function demandShapeMarkup(d = state.draft, includeScale = true) {
     if (last && last.key === key) {
       last.weeks += 1;
       last.endWeek = index;
+      last.effort += weekEffort[index];
     } else {
-      runs.push({ key, types, weeks: 1, startWeek: index, endWeek: index });
+      runs.push({ key, types, weeks: 1, startWeek: index, endWeek: index, effort: weekEffort[index] });
     }
   });
 
   const bar = runs.map(run => {
-    const width = (run.weeks / total) * 100;
+    // Width reflects each block's share of total effort (hours, or percentage demand
+    // when hours aren't set) rather than its calendar length, so a short but demand-heavy
+    // stretch reads as visually bigger than a long but light one. Falls back to a
+    // calendar-proportional width if no requirement has any effort value set yet.
+    const width = totalEffort > 0 ? (run.effort / totalEffort) * 100 : (run.weeks / total) * 100;
     const count = run.types.length;
     let background = '';
     if (count === 1) {
@@ -3767,6 +4082,9 @@ function setItemDuration(itemId, value) {
   normalisePhaseSegmentPlacement();
   if (isPhaseItem(item)) syncPhaseWeights();
   if (currentWizardPanel() === 'timeline') {
+    // Phase-bound resource segments may have moved with the new phase boundary.
+    // Repaint the Gantt as well as the shape so both views stay in sync.
+    renderResourceGantt('slotEditor');
     renderTimelineScale();
     renderDemandShape('timelineShapeVisual', state.draft, false);
     updateFooterSummary();
@@ -4188,28 +4506,16 @@ function linkSourceLabel(slot) {
 
 function renderTimeline() {
   const intro = document.getElementById('timelineIntro');
-  const phaseEnabled = phasesConfigured();
   if (intro) {
     intro.textContent = 'Add resource requirements, optionally organise them into phases, then shape when each one is needed. The timeline length follows the work you place.';
-  }
-  renderPhaseTimelineEditor();
-  const phaseButton = document.getElementById('addPhaseButton');
-  if (phaseButton) {
-    phaseButton.disabled = !phaseEnabled;
-    phaseButton.title = phaseEnabled
-      ? 'Add an optional phase'
-      : 'Phases are unavailable because this business unit has no phases configured';
-    phaseButton.setAttribute('aria-disabled', String(!phaseEnabled));
   }
   renderResourceGantt('slotEditor');
   renderStepper();
 }
 
 function phaseUtilisation(phase, phaseIndex, d = state.draft) {
-  const phases = effortPhases(d);
   const weeks = Math.max(1, Number(phase.durationWeeks) || 1);
-  const phaseStart = phases.slice(0, phaseIndex).reduce((sum, item) =>
-    sum + Math.max(1, Number(item.durationWeeks) || 1), 0);
+  const phaseStart = phasePlacementStart(phase.name, phaseIndex, d);
   const phaseEnd = phaseStart + weeks;
   const covered = [];
   requestItems(d).forEach(request => (request.segments || []).forEach(segment => {
@@ -4928,8 +5234,11 @@ function validateSharesUI() {
 /* ---------- Resource request modal + mini-Gantt ---------- */
 const resourceModalState = {
   editingId: null, durationUnit: 'weeks', effortUnit: 'hours',
-  startWeek: null, segmentId: null, weightTouched: false, startTouched: false
+  startWeek: null, segmentId: null, weightTouched: false, startTouched: false,
+  bookingTypes: [], skills: []
 };
+const resourceBookingTypePickerState = { query: '', selected: [] };
+const resourceSkillsPickerState = { query: '', selected: [], collapsed: new Set() };
 // The Gantt is week-granular, so other units are conveniences that round to whole weeks.
 const DAYS_PER_WEEK = 7;
 const WEEKS_PER_MONTH = 4;
@@ -5024,8 +5333,8 @@ function syncResourceEffortUnit() {
   if (input) input.max = resourceModalState.effortUnit === 'hours' ? '9999' : '100';
   const hint = document.getElementById('resourceWeightHint');
   if (hint) hint.textContent = resourceModalState.effortUnit === 'hours'
-    ? "Total effort across this requirement's duration."
-    : 'Percentage allocation for this resource requirement. Conversion from Hours is not defined yet.';
+    ? 'Total effort for this requirement.'
+    : 'Capacity share for this requirement.';
 }
 
 function setResourceEffortUnit(unit) {
@@ -5037,19 +5346,25 @@ function setResourceEffortUnit(unit) {
 
 let ganttDragState = null;
 let ganttSelection = null;
+let ganttDependencyDraft = null;
 const ganttHistory = [];
 
 function saveGanttHistory() {
-  ganttHistory.push(JSON.parse(JSON.stringify(requestItems())));
+  ganttHistory.push({
+    resourceRequests: JSON.parse(JSON.stringify(requestItems())),
+    sequencing: JSON.parse(JSON.stringify(state.draft?.sequencing || {}))
+  });
   if (ganttHistory.length > 30) ganttHistory.shift();
 }
 
 function undoGanttChange() {
   const previous = ganttHistory.pop();
   if (!previous || !state.draft) return false;
-  state.draft.resourceRequests = previous;
+  state.draft.resourceRequests = previous.resourceRequests || previous;
+  if (previous.sequencing) state.draft.sequencing = previous.sequencing;
   normaliseResourceRequests(state.draft);
   ganttSelection = null;
+  ganttDependencyDraft = null;
   renderResourceGantt('slotEditor');
   renderStepper();
   toast('Last Gantt change undone');
@@ -5109,13 +5424,12 @@ function requestDotStyle(request, d = state.draft) {
 // Phased requirements use phases already added to the Timeline; booking types
 // remain optional tags in both phased and non-phased templates.
 function resourceTypeOptions(selected = '') {
-  const library = isPhaseWorld()
-    ? Object.fromEntries(effortPhases().filter(phase => phase.name).map(phase => [
-      phase.name, phaseColorByName(phase.name)
-    ]))
-    : BOOKING_TYPE_LIBRARY;
+  // Phases are a fixed named library, just like booking types — pick one to
+  // tag a requirement, no separate "add phase" step required.
+  const phaseWorld = isPhaseWorld();
+  const library = { ...(phaseWorld ? PHASE_LIBRARY : BOOKING_TYPE_LIBRARY) };
   if (selected && !library[selected]) {
-    library[selected] = isPhaseWorld() ? phaseColorByName(selected) : bookingTypeColor(selected);
+    library[selected] = phaseWorld ? phaseColorByName(selected) : bookingTypeColor(selected);
   }
   return Object.entries(library).map(([name, color]) => ({ name, color }));
 }
@@ -5124,6 +5438,39 @@ function bookingTypeOptions(selected = '') {
   const names = Object.keys(BOOKING_TYPE_LIBRARY);
   if (selected && !names.includes(selected)) names.unshift(selected);
   return names.map(name => ({ name, color: bookingTypeColor(name) }));
+}
+
+function normaliseBookingTypes(request) {
+  const raw = Array.isArray(request?.bookingTypes)
+    ? request.bookingTypes
+    : request?.bookingType
+      ? [{ name: request.bookingType, isDefault: true }]
+      : [];
+  const seen = new Set();
+  const values = raw.map(item => typeof item === 'string'
+    ? { name: item, isDefault: false }
+    : { name: item?.name || '', isDefault: !!item?.isDefault }
+  ).filter(item => {
+    if (!item.name || seen.has(item.name)) return false;
+    seen.add(item.name);
+    return true;
+  });
+  if (values.length && !values.some(item => item.isDefault)) values[0].isDefault = true;
+  let foundDefault = false;
+  values.forEach(item => {
+    if (item.isDefault && !foundDefault) foundDefault = true;
+    else if (item.isDefault) item.isDefault = false;
+  });
+  return values;
+}
+
+function requestBookingTypes(request) {
+  return normaliseBookingTypes(request);
+}
+
+function defaultBookingType(request) {
+  return requestBookingTypes(request).find(item => item.isDefault)?.name ||
+    requestBookingTypes(request)[0]?.name || '';
 }
 
 function openResourceModal(editingId = null, startWeek = null, segmentId = null) {
@@ -5136,49 +5483,33 @@ function openResourceModal(editingId = null, startWeek = null, segmentId = null)
   const selectedSegment = editing && segmentId && segmentId !== 'new'
     ? editing.segments?.find(segment => segment.id === segmentId)
     : null;
-  const selectedType = selectedSegment
-    ? segmentTypeName(editing, selectedSegment)
-    : editing ? requestTypeName(editing) : '';
+  const selectedType = selectedSegment?.phase ||
+    (editing && isPhaseWorld() ? editing.phase : '');
   const typeOptions = resourceTypeOptions(selectedType);
+  resourceModalState.bookingTypes = editing ? requestBookingTypes(editing) : [];
+  resourceModalState.skills = editing ? normaliseSkills(editing) : [];
   document.getElementById('resourceModalTitle').textContent =
     editing ? 'Edit Resource Requirement' : 'Add Resource Requirement';
-  const typeLabel = isPhaseWorld() ? 'Phase' : 'Booking type';
-  document.getElementById('resourceTypeRequired')?.classList.toggle('hidden', !isPhaseWorld());
+  const typeLabel = 'Phase';
+  document.getElementById('resourceTypeField')?.classList.toggle('hidden', !isPhaseWorld());
   document.getElementById('resourceTypeLabel').textContent = typeLabel;
-  document.getElementById('resourceTypeHint').textContent = isPhaseWorld()
-    ? typeOptions.length
-      ? 'Only phases added to the Timeline are available here.'
-      : 'Add a phase above before adding a phased resource requirement.'
-    : 'The booking type colour is inherited by the timeline segment.';
+  document.getElementById('resourceTypeHint').textContent =
+    'Optional tag used to organise this requirement on the timeline.';
   document.getElementById('resourceTypeSelect').innerHTML =
-    `<option value="">${isPhaseWorld()
-      ? (typeOptions.length ? `Choose ${typeLabel.toLowerCase()}` : 'No phases added yet')
-      : 'No booking type (optional)'}</option>` +
+    '<option value="">No phase</option>' +
     typeOptions.map(option => `<option value="${esc(option.name)}">${esc(option.name)}</option>`).join('');
   document.getElementById('resourceTypeSelect').value =
     selectedSegment
-      ? segmentTypeName(editing, selectedSegment)
-      : editing ? (isPhaseWorld() ? editing.phase : editing.bookingType) : '';
-  document.getElementById('resourceTypeSelect').disabled = isPhaseWorld() && !typeOptions.length;
-  const bookingTypeRow = document.getElementById('resourceBookingTypeRow');
-  const bookingTypeSelect = document.getElementById('resourceBookingTypeSelect');
-  if (bookingTypeRow && bookingTypeSelect) {
-    const selectedBookingType = selectedSegment?.bookingType ||
-      (editing && !segmentId ? editing.bookingType : '');
-    bookingTypeRow.classList.toggle('hidden', !isPhaseWorld());
-    bookingTypeSelect.innerHTML = '<option value="">Not set</option>' +
-      bookingTypeOptions(selectedBookingType).map(option =>
-        `<option value="${esc(option.name)}">${esc(option.name)}</option>`).join('');
-    bookingTypeSelect.value = selectedBookingType || '';
-    document.getElementById('resourceBookingTypeSwatch').style.background =
-      selectedBookingType ? bookingTypeColor(selectedBookingType) : 'transparent';
-  }
+      ? (selectedSegment?.phase || '')
+      : editing ? (isPhaseWorld() ? editing.phase : '') : '';
+  renderResourceBookingTypes();
+  renderResourceSkillsTable();
   document.getElementById('resourceGradeSelect').innerHTML =
     '<option value="">Choose grade</option>' +
     GRADES.map(grade => `<option value="${esc(grade)}">${esc(grade)}</option>`).join('');
   document.getElementById('resourceGradeSelect').value = editing?.grade || '';
   document.getElementById('resourceRoleSelect').innerHTML =
-    '<option value="">Not set</option>' +
+    '<option value="">Choose role</option>' +
     ROLES.map(role => `<option value="${esc(role)}">${esc(role)}</option>`).join('');
   document.getElementById('resourceRoleSelect').value = editing?.role || '';
 
@@ -5231,10 +5562,10 @@ function openResourceModal(editingId = null, startWeek = null, segmentId = null)
       ? `Starts after the existing work in week ${contentWeeks() + 1}.`
       : 'Week 1 is the start of the template.';
 
-  document.getElementById('resourceModalConfirm').textContent = editing ? 'Save' : 'Add';
+  document.getElementById('resourceModalConfirm').textContent = editing ? 'Update' : 'Add';
   document.getElementById('resourceModalOverlay').classList.add('is-open');
   syncResourceModalConfirm();
-  setTimeout(() => document.getElementById('resourceTypeSelect')?.focus(), 0);
+  setTimeout(() => document.getElementById(isPhaseWorld() ? 'resourceTypeSelect' : 'resourceGradeSelect')?.focus(), 0);
 }
 
 function onResourceTypeChange() {
@@ -5254,10 +5585,310 @@ function onResourceTypeChange() {
   syncResourceModalConfirm();
 }
 
-function onResourceBookingTypeChange() {
-  const type = document.getElementById('resourceBookingTypeSelect')?.value || '';
-  const swatch = document.getElementById('resourceBookingTypeSwatch');
-  if (swatch) swatch.style.background = type ? bookingTypeColor(type) : 'transparent';
+function renderResourceBookingTypes() {
+  const target = document.getElementById('resourceBookingTypesTable');
+  if (!target) return;
+  const values = resourceModalState.bookingTypes || [];
+  if (!values.length) {
+    target.innerHTML = '<div class="BookingTypeEmpty">No booking types selected.</div>';
+    return;
+  }
+  target.innerHTML = `
+    <table class="BookingTypesTable">
+      <thead>
+        <tr>
+          <th>Booking Type</th>
+          <th>Primary
+            <i class="fa-solid fa-circle-info" aria-hidden="true"
+              title="The primary booking type is used to schedule this requirement by default."></i>
+          </th>
+          <th class="BookingTypeTableActions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${values.map(item => `
+          <tr>
+            <td><span class="BookingTypeName"><span class="BookingTypeSwatch" style="background:${bookingTypeColor(item.name)}"></span>${esc(item.name)}</span></td>
+            <td class="BookingTypePrimaryCell">
+              <input type="radio" name="resourceBookingTypePrimary" ${item.isDefault ? 'checked' : ''}
+                aria-label="Set ${esc(item.name)} as the primary booking type"
+                onchange="setResourceBookingTypeDefault('${esc(item.name)}')">
+            </td>
+            <td class="BookingTypeTableActions">
+              <button class="Btn-iconOnly" type="button" title="Remove ${esc(item.name)}"
+                aria-label="Remove ${esc(item.name)}" onclick="removeResourceBookingType('${esc(item.name)}')">
+                <i class="fa-solid fa-trash" aria-hidden="true"></i>
+              </button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+// Keeps the modal's right-edge corners square while either side picker is
+// attached, so the modal + picker read as one contiguous panel (no gap, no
+// corner mismatch at the seam) instead of two separately-rounded boxes.
+function syncResourceModalPickerCorners() {
+  const layout = document.querySelector('.ResourceModalLayout');
+  if (!layout) return;
+  const bookingOpen = !document.getElementById('resourceBookingTypePicker')?.classList.contains('hidden');
+  const skillsOpen = !document.getElementById('resourceSkillsPicker')?.classList.contains('hidden');
+  layout.classList.toggle('has-open-picker', bookingOpen || skillsOpen);
+}
+
+function openResourceBookingTypePicker() {
+  const picker = document.getElementById('resourceBookingTypePicker');
+  if (!picker) return;
+  resourceBookingTypePickerState.query = '';
+  resourceBookingTypePickerState.selected = (resourceModalState.bookingTypes || []).map(item => item.name);
+  document.getElementById('resourceBookingTypeFilter').value = '';
+  picker.classList.remove('hidden');
+  renderResourceBookingTypeOptions();
+  syncResourceModalPickerCorners();
+  setTimeout(() => document.getElementById('resourceBookingTypeFilter')?.focus(), 0);
+}
+
+function closeResourceBookingTypePicker() {
+  document.getElementById('resourceBookingTypePicker')?.classList.add('hidden');
+  syncResourceModalPickerCorners();
+}
+
+function filterResourceBookingTypes(query) {
+  resourceBookingTypePickerState.query = query || '';
+  renderResourceBookingTypeOptions();
+}
+
+function clearResourceBookingTypeFilter() {
+  const input = document.getElementById('resourceBookingTypeFilter');
+  if (input) input.value = '';
+  filterResourceBookingTypes('');
+  input?.focus();
+}
+
+function toggleResourceBookingType(name) {
+  const selected = resourceBookingTypePickerState.selected;
+  const index = selected.indexOf(name);
+  if (index >= 0) selected.splice(index, 1);
+  else selected.push(name);
+  renderResourceBookingTypeOptions();
+}
+
+function renderResourceBookingTypeOptions() {
+  const target = document.getElementById('resourceBookingTypeOptions');
+  const count = document.getElementById('resourceBookingTypeCount');
+  if (!target) return;
+  const query = resourceBookingTypePickerState.query.trim().toLowerCase();
+  const options = bookingTypeOptions().filter(option =>
+    !query || option.name.toLowerCase().includes(query)
+  );
+  if (count) count.textContent = `${resourceBookingTypePickerState.selected.length} selected`;
+  target.innerHTML = options.length
+    ? options.map(option => {
+      const selected = resourceBookingTypePickerState.selected.includes(option.name);
+      return `<button class="BookingTypePicker-option${selected ? ' is-selected' : ''}" type="button"
+        onclick="toggleResourceBookingType('${esc(option.name)}')">
+        <input type="checkbox" tabindex="-1" ${selected ? 'checked' : ''} aria-hidden="true">
+        <span class="BookingTypeSwatch" style="background:${option.color}"></span>
+        <span class="BookingTypePicker-option-name">${esc(option.name)}</span>
+      </button>`;
+    }).join('')
+    : '<div class="BookingTypeEmpty">No booking types match.</div>';
+}
+
+function confirmResourceBookingTypePicker() {
+  const selected = resourceBookingTypePickerState.selected;
+  const previousDefault = defaultBookingType({ bookingTypes: resourceModalState.bookingTypes });
+  resourceModalState.bookingTypes = selected.map(name => ({
+    name,
+    isDefault: name === previousDefault
+  }));
+  if (resourceModalState.bookingTypes.length &&
+    !resourceModalState.bookingTypes.some(item => item.isDefault)) {
+    resourceModalState.bookingTypes[0].isDefault = true;
+  }
+  renderResourceBookingTypes();
+  closeResourceBookingTypePicker();
+}
+
+function setResourceBookingTypeDefault(name) {
+  resourceModalState.bookingTypes = (resourceModalState.bookingTypes || []).map(item => ({
+    ...item,
+    isDefault: item.name === name
+  }));
+  renderResourceBookingTypes();
+}
+
+function removeResourceBookingType(name) {
+  const wasDefault = defaultBookingType({ bookingTypes: resourceModalState.bookingTypes }) === name;
+  resourceModalState.bookingTypes = (resourceModalState.bookingTypes || [])
+    .filter(item => item.name !== name);
+  if (wasDefault && resourceModalState.bookingTypes.length) {
+    resourceModalState.bookingTypes[0].isDefault = true;
+  }
+  renderResourceBookingTypes();
+}
+
+// Skills carry a Required/Recommended requirement type set from this table, so the
+// stored shape is {name, requirementType} — same idea as booking types' {name, isDefault}.
+function normaliseSkills(request) {
+  const raw = Array.isArray(request?.skills) ? request.skills : [];
+  return raw.map(item => typeof item === 'string'
+    ? { name: item, requirementType: 'Recommended' }
+    : { name: item.name, requirementType: item.requirementType === 'Required' ? 'Required' : 'Recommended' });
+}
+
+function renderResourceSkillsTable() {
+  const target = document.getElementById('resourceSkillsTable');
+  if (!target) return;
+  const values = resourceModalState.skills || [];
+  if (!values.length) {
+    target.innerHTML = '<div class="BookingTypeEmpty">No skills selected.</div>';
+    return;
+  }
+  target.innerHTML = `
+    <table class="BookingTypesTable">
+      <thead>
+        <tr>
+          <th>Skills</th>
+          <th>Requirement Type
+            <i class="fa-solid fa-circle-info" aria-hidden="true"
+              title="Required skills must be met. Recommended skills are preferred but not mandatory."></i>
+          </th>
+          <th class="BookingTypeTableActions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${values.map(item => `
+          <tr>
+            <td>${esc(item.name)}</td>
+            <td>
+              <select class="Select RequirementTypeSelect" aria-label="Requirement type for ${esc(item.name)}"
+                onchange="setResourceSkillRequirementType('${esc(item.name)}', this.value)">
+                <option value="Recommended" ${item.requirementType === 'Recommended' ? 'selected' : ''}>Recommended</option>
+                <option value="Required" ${item.requirementType === 'Required' ? 'selected' : ''}>Required</option>
+              </select>
+            </td>
+            <td class="BookingTypeTableActions">
+              <button class="Btn-iconOnly" type="button" title="Remove ${esc(item.name)}"
+                aria-label="Remove ${esc(item.name)}" onclick="removeResourceSkill('${esc(item.name)}')">
+                <i class="fa-solid fa-trash" aria-hidden="true"></i>
+              </button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+function setResourceSkillRequirementType(name, value) {
+  const item = (resourceModalState.skills || []).find(entry => entry.name === name);
+  if (!item) return;
+  item.requirementType = value === 'Required' ? 'Required' : 'Recommended';
+}
+
+function removeResourceSkill(name) {
+  resourceModalState.skills = (resourceModalState.skills || []).filter(item => item.name !== name);
+  renderResourceSkillsTable();
+}
+
+function openResourceSkillsPicker() {
+  const picker = document.getElementById('resourceSkillsPicker');
+  if (!picker) return;
+  resourceSkillsPickerState.query = '';
+  resourceSkillsPickerState.selected = (resourceModalState.skills || []).map(item => item.name);
+  document.getElementById('resourceSkillsFilter').value = '';
+  picker.classList.remove('hidden');
+  renderResourceSkillsOptions();
+  syncResourceModalPickerCorners();
+  setTimeout(() => document.getElementById('resourceSkillsFilter')?.focus(), 0);
+}
+
+function closeResourceSkillsPicker() {
+  document.getElementById('resourceSkillsPicker')?.classList.add('hidden');
+  syncResourceModalPickerCorners();
+}
+
+function filterResourceSkills(query) {
+  resourceSkillsPickerState.query = query || '';
+  renderResourceSkillsOptions();
+}
+
+function clearResourceSkillsFilter() {
+  const input = document.getElementById('resourceSkillsFilter');
+  if (input) input.value = '';
+  filterResourceSkills('');
+  input?.focus();
+}
+
+function toggleResourceSkill(name) {
+  const selected = resourceSkillsPickerState.selected;
+  const index = selected.indexOf(name);
+  if (index >= 0) selected.splice(index, 1);
+  else selected.push(name);
+  renderResourceSkillsOptions();
+}
+
+function toggleSkillFamily(name) {
+  if (resourceSkillsPickerState.collapsed.has(name)) resourceSkillsPickerState.collapsed.delete(name);
+  else resourceSkillsPickerState.collapsed.add(name);
+  renderResourceSkillsOptions();
+}
+
+// Families with no skill matching the filter are dropped entirely; families with
+// at least one match keep only their matching skills, same as the business unit tree.
+function filteredSkillFamilies(query) {
+  return SKILL_LIBRARY.map(family => ({
+    name: family.name,
+    skills: family.skills.filter(skill =>
+      !query || skill.toLowerCase().includes(query) || family.name.toLowerCase().includes(query))
+  })).filter(family => family.skills.length);
+}
+
+function renderResourceSkillsOptions() {
+  const target = document.getElementById('resourceSkillsOptions');
+  const count = document.getElementById('resourceSkillsCount');
+  if (!target) return;
+  const query = resourceSkillsPickerState.query.trim().toLowerCase();
+  const families = filteredSkillFamilies(query);
+  if (count) count.textContent = `${resourceSkillsPickerState.selected.length} selected`;
+  target.innerHTML = families.length
+    ? families.map(family => {
+      // Filtering forces every matching family open so the results are visible,
+      // same behaviour as the business unit tree.
+      const expanded = Boolean(query) || !resourceSkillsPickerState.collapsed.has(family.name);
+      const selectedCount = family.skills.filter(skill => resourceSkillsPickerState.selected.includes(skill)).length;
+      const rows = expanded ? family.skills.map(skill => {
+        const isSelected = resourceSkillsPickerState.selected.includes(skill);
+        return `<button class="BookingTypePicker-option SkillOption${isSelected ? ' is-selected' : ''}" type="button"
+          onclick="toggleResourceSkill('${esc(skill)}')">
+          <input type="checkbox" tabindex="-1" ${isSelected ? 'checked' : ''} aria-hidden="true">
+          <span class="BookingTypePicker-option-name">${esc(skill)}</span>
+        </button>`;
+      }).join('') : '';
+      return `<div class="SkillFamily">
+        <div class="SkillFamily-row">
+          <button class="BusinessUnitTree-chevron" type="button" ${query ? 'disabled' : ''}
+            aria-label="${expanded ? 'Collapse' : 'Expand'} ${esc(family.name)}" onclick="toggleSkillFamily('${esc(family.name)}')">
+            <i class="fa-solid fa-chevron-${expanded ? 'down' : 'right'}" aria-hidden="true"></i>
+          </button>
+          <span class="SkillFamily-name">${esc(family.name)}</span>
+          <span class="BookingTypePicker-count">${selectedCount}/${family.skills.length}</span>
+        </div>
+        ${rows}
+      </div>`;
+    }).join('')
+    : '<div class="BookingTypeEmpty">No skills match.</div>';
+}
+
+function confirmResourceSkillsPicker() {
+  // Keep each already-selected skill's requirement type; only newly-added skills
+  // default to Recommended.
+  const existingByName = new Map((resourceModalState.skills || []).map(item => [item.name, item]));
+  resourceModalState.skills = resourceSkillsPickerState.selected.map(name =>
+    existingByName.get(name) || { name, requirementType: 'Recommended' });
+  renderResourceSkillsTable();
+  closeResourceSkillsPicker();
 }
 
 function closeResourceModal() {
@@ -5267,12 +5898,17 @@ function closeResourceModal() {
   resourceModalState.segmentId = null;
   resourceModalState.weightTouched = false;
   resourceModalState.startTouched = false;
+  resourceModalState.bookingTypes = [];
+  resourceModalState.skills = [];
+  closeResourceBookingTypePicker();
+  closeResourceSkillsPicker();
 }
 
 function syncResourceModalConfirm() {
   syncResourcePlacementBounds();
   const type = document.getElementById('resourceTypeSelect')?.value.trim();
   const grade = document.getElementById('resourceGradeSelect')?.value.trim();
+  const role = document.getElementById('resourceRoleSelect')?.value.trim();
   const weightEl = document.getElementById('resourceWeightInput');
   const swatch = document.getElementById('resourceTypeSwatch');
   if (swatch) swatch.style.background = type
@@ -5300,14 +5936,15 @@ function syncResourceModalConfirm() {
     }
   }
 
-  const typeOk = isPhaseWorld() ? !!type : true;
-  document.getElementById('resourceModalConfirm').disabled = !(typeOk && grade && weeksOk && startOk && weightOk);
-  if (document.getElementById('resourceBookingTypeSelect')) onResourceBookingTypeChange();
+  const typeOk = true;
+  document.getElementById('resourceModalConfirm').disabled = !(typeOk && grade && role && weeksOk && startOk && weightOk);
 }
 
 function confirmResourceModal() {
   const type = document.getElementById('resourceTypeSelect').value.trim();
-  const bookingType = document.getElementById('resourceBookingTypeSelect')?.value.trim() || '';
+  const selectedBookingTypes = (resourceModalState.bookingTypes || []).map(item => ({ ...item }));
+  const bookingType = defaultBookingType({ bookingTypes: selectedBookingTypes });
+  const selectedSkills = (resourceModalState.skills || []).map(item => ({ ...item }));
   const grade = document.getElementById('resourceGradeSelect').value.trim();
   const role = document.getElementById('resourceRoleSelect').value.trim();
   const weeksEl = document.getElementById('resourceWeeksInput');
@@ -5315,18 +5952,18 @@ function confirmResourceModal() {
   let startWeek = Math.max(0, Math.round(Number(document.getElementById('resourceStartInput').value) || 1) - 1);
   const weightPercent = Math.min(100, Math.max(0, Math.round(Number(document.getElementById('resourceWeightInput').value) || 0)));
   const effortValue = Math.max(0, Number(document.getElementById('resourceWeightInput').value) || 0);
-  if ((isPhaseWorld() && !type) || !grade) return;
-  ensureTypeSequence(type);
+  if (!grade || !role) return;
+  ensureTypeSequence(type || bookingType);
   const existing = resourceModalState.editingId ? findRequest(resourceModalState.editingId) : null;
   const placementRequest = existing
     ? { ...existing, segments: existing.segments || [] }
     : {
       phase: isPhaseWorld() ? type : '',
-      bookingType: isPhaseWorld() ? bookingType : type,
+      bookingType,
       segments: []
     };
   if (isPhaseWorld()) placementRequest.phase = type;
-  placementRequest.bookingType = isPhaseWorld() ? bookingType : type;
+  placementRequest.bookingType = bookingType;
   const snapped = snapSegmentPlacement(placementRequest, startWeek, weeks, state.draft);
   if (snapped.startWeek !== startWeek || snapped.durationWeeks !== weeks) {
     startWeek = snapped.startWeek;
@@ -5343,11 +5980,11 @@ function confirmResourceModal() {
     startWeek,
     durationWeeks: weeks,
     phase: isPhaseWorld() ? type : '',
-    bookingType: isPhaseWorld() ? bookingType : type
+    bookingType
   };
   const dependencyRequest = existing || {
     phase: isPhaseWorld() ? type : '',
-    bookingType: isPhaseWorld() ? bookingType : type,
+    bookingType,
     segments: []
   };
   const dependencyIssue = segmentDependencyIssue(dependencyRequest, candidate, state.draft);
@@ -5364,7 +6001,7 @@ function confirmResourceModal() {
       segment.startWeek = startWeek;
       segment.durationWeeks = weeks;
       segment.phase = isPhaseWorld() ? type : '';
-      segment.bookingType = isPhaseWorld() ? bookingType : type;
+      segment.bookingType = bookingType;
       if (resourceModalState.segmentId === 'new') existing.segments.push(segment);
       existing.grade = grade;
       existing.role = role;
@@ -5380,18 +6017,20 @@ function confirmResourceModal() {
     existing.effortUnit = resourceModalState.effortUnit;
     existing.effortValue = effortValue;
     existing.weightPercent = weightPercent;
+    existing.bookingTypes = selectedBookingTypes;
+    existing.skills = selectedSkills;
     if (isPhaseWorld()) {
       existing.phase = type;
       existing.bookingType = bookingType;
     } else {
-      existing.bookingType = type;
+      existing.bookingType = bookingType;
       existing.phase = '';
     }
     // The duration and start fields only own the timeline for single-block work; drawn splits stay as they are.
     if (!weeksEl.disabled) {
       existing.segments = [{ id: existing.segments?.[0]?.id || id('seg'), startWeek, durationWeeks: weeks }];
     }
-    if (previousType !== type) normaliseRequestGroup(previousType);
+    if (previousType !== requestTypeKey(existing)) normaliseRequestGroup(previousType);
     rebalanceRequestWeight(existing.id);
   } else {
     const request = {
@@ -5400,7 +6039,9 @@ function confirmResourceModal() {
       role,
       count: 1,
       phase: isPhaseWorld() ? type : '',
-      bookingType: isPhaseWorld() ? bookingType : type,
+      bookingType,
+      bookingTypes: selectedBookingTypes,
+      skills: selectedSkills,
       weightPercent,
       effortUnit: resourceModalState.effortUnit,
       effortValue,
@@ -5408,7 +6049,7 @@ function confirmResourceModal() {
     };
     state.draft.resourceRequests.push(request);
     if (resourceModalState.weightTouched) rebalanceRequestWeight(request.id);
-    else equaliseRequestGroup(type);
+    else equaliseRequestGroup(requestTypeKey(request));
   }
   closeResourceModal();
   renderResourceGantt('slotEditor');
@@ -5424,6 +6065,227 @@ function removeResourceRequest(requestId) {
   renderResourceGantt('slotEditor');
   updateFooterSummary();
   renderStepper();
+}
+
+function ganttSegmentLinkInfo(request, segment, d = state.draft) {
+  const type = segmentTypeName(request, segment, d);
+  const links = d?.sequencing?.phaseLinks || [];
+  return {
+    type,
+    incoming: links.filter(link => link.to === type).map(link => link.from),
+    outgoing: links.filter(link => link.from === type).map(link => link.to)
+  };
+}
+
+function ganttSegmentLinkTitle(info) {
+  const labels = [];
+  if (info.incoming.length) labels.push(`Starts after ${info.incoming.join(' and ')}`);
+  if (info.outgoing.length) labels.push(`Blocks ${info.outgoing.join(' and ')}`);
+  return labels.join(' · ') || 'Drag onto another segment to link them';
+}
+
+let ganttDependencyDragPoint = null;
+
+// A blank 1x1 drag image, reused across drags to suppress the browser's own
+// ghost snapshot of the button — we already draw our own leash + badge, so
+// showing both would look like two overlapping link icons.
+const GANTT_DRAG_BLANK_IMAGE = document.createElement('canvas');
+GANTT_DRAG_BLANK_IMAGE.width = 1;
+GANTT_DRAG_BLANK_IMAGE.height = 1;
+
+function startGanttDependencyDrag(event, requestId, segmentId) {
+  event.stopPropagation();
+  ganttDependencyDraft = { requestId, segmentId };
+  event.dataTransfer.effectAllowed = 'link';
+  event.dataTransfer.setData('text/plain', `${requestId}:${segmentId}`);
+  event.dataTransfer.setDragImage(GANTT_DRAG_BLANK_IMAGE, 0, 0);
+  const request = findRequest(requestId);
+  const segment = request?.segments?.find(item => item.id === segmentId);
+  const rect = event.currentTarget.getBoundingClientRect();
+  ganttDependencyDragPoint = {
+    x: rect.left + rect.width / 2,
+    y: rect.top + rect.height / 2,
+    color: (request && segment && segmentColor(request, segment)) || 'var(--border-primary)'
+  };
+  const overlay = document.getElementById('ganttDragLinkOverlay');
+  const badge = document.getElementById('ganttDragLinkBadge');
+  if (overlay) overlay.classList.add('is-active');
+  if (badge) {
+    badge.classList.add('is-active');
+    badge.style.background = ganttDependencyDragPoint.color;
+  }
+  updateGanttDependencyDragLine(event);
+}
+
+// Keeps the leash line and badge tracking the cursor for the length of the
+// drag — `drag` fires continuously on the source element while it's held.
+function updateGanttDependencyDragLine(event) {
+  if (!ganttDependencyDragPoint) return;
+  // Some browsers report a spurious (0,0) on the very last drag tick before drop/dragend.
+  if (!event.clientX && !event.clientY) return;
+  const path = document.getElementById('ganttDragLinkPath');
+  const badge = document.getElementById('ganttDragLinkBadge');
+  if (!path || !badge) return;
+  const { x: x1, y: y1, color } = ganttDependencyDragPoint;
+  const x2 = event.clientX;
+  const y2 = event.clientY;
+  const midX = (x1 + x2) / 2;
+  path.setAttribute('d', `M${x1},${y1} C${midX},${y1} ${midX},${y2} ${x2},${y2}`);
+  path.setAttribute('style', `stroke:${color};`);
+  badge.style.left = `${x2}px`;
+  badge.style.top = `${y2}px`;
+}
+
+function hideGanttDependencyDragLine() {
+  ganttDependencyDragPoint = null;
+  document.getElementById('ganttDragLinkOverlay')?.classList.remove('is-active');
+  document.getElementById('ganttDragLinkBadge')?.classList.remove('is-active');
+}
+
+function allowGanttDependencyDrop(event) {
+  if (!ganttDependencyDraft) return;
+  event.preventDefault();
+  event.stopPropagation();
+  event.dataTransfer.dropEffect = 'link';
+  event.currentTarget.classList.add('is-link-target');
+}
+
+function clearGanttDependencyTarget(event) {
+  event.currentTarget.classList.remove('is-link-target');
+}
+
+function dropGanttDependency(event, requestId, segmentId) {
+  if (!ganttDependencyDraft) return;
+  event.preventDefault();
+  event.stopPropagation();
+  event.currentTarget.classList.remove('is-link-target');
+  createGanttDependency(requestId, segmentId);
+}
+
+function endGanttDependencyDrag() {
+  hideGanttDependencyDragLine();
+  if (!ganttDependencyDraft) return;
+  ganttDependencyDraft = null;
+  renderResourceGantt('slotEditor');
+}
+
+let ganttLinkPopoverHideTimer = null;
+
+// Every dependency touching this segment's type, in either direction, deduplicated.
+function ganttLinkRelationships(type, d = state.draft) {
+  const links = d?.sequencing?.phaseLinks || [];
+  const touching = links.filter(link => link.to === type || link.from === type);
+  return touching.filter((link, index) =>
+    touching.findIndex(item => item.from === link.from && item.to === link.to) === index
+  );
+}
+
+function ganttLinkPopoverRowsHtml(relationships) {
+  return relationships.map(link => `
+    <div class="GanttLinkPopover-row">
+      <i class="fa-solid fa-link" aria-hidden="true"></i>
+      <span class="GanttLinkPopover-rowText"><strong>${esc(link.to)}</strong> starts after <strong>${esc(link.from)}</strong></span>
+      <button class="Btn-iconOnly GanttLinkPopover-unlink" type="button" title="Remove this dependency"
+        aria-label="Remove dependency between ${esc(link.from)} and ${esc(link.to)}"
+        onclick="unlinkGanttDependency('${esc(link.from)}','${esc(link.to)}')">
+        <i class="fa-solid fa-link-slash" aria-hidden="true"></i>
+      </button>
+    </div>`).join('');
+}
+
+function showGanttLinkPopover(event, requestId, segmentId) {
+  clearTimeout(ganttLinkPopoverHideTimer);
+  const request = findRequest(requestId);
+  const segment = request?.segments?.find(item => item.id === segmentId);
+  if (!request || !segment) return;
+  const relationships = ganttLinkRelationships(segmentTypeName(request, segment));
+  if (!relationships.length) return;
+  hideShapeSegPopover();
+  const popover = document.getElementById('ganttLinkPopover');
+  if (!popover) return;
+  popover.querySelector('.GanttLinkPopover-rows').innerHTML = ganttLinkPopoverRowsHtml(relationships);
+  popover.classList.add('is-open');
+  popover.setAttribute('aria-hidden', 'false');
+  const rect = event.currentTarget.getBoundingClientRect();
+  popover.style.left = `${rect.left + rect.width / 2}px`;
+  popover.style.top = `${rect.top}px`;
+  popover.style.transform = 'translate(-50%, calc(-100% - 10px))';
+  const arrow = popover.querySelector('.GanttLinkPopover-arrow');
+  if (arrow) arrow.style.display = '';
+  requestAnimationFrame(() => {
+    const popRect = popover.getBoundingClientRect();
+    if (popRect.left < 8) popover.style.left = `${rect.left + rect.width / 2 + (8 - popRect.left)}px`;
+    if (popRect.right > window.innerWidth - 8) {
+      popover.style.left = `${rect.left + rect.width / 2 - (popRect.right - (window.innerWidth - 8))}px`;
+    }
+    if (popover.getBoundingClientRect().top < 8) {
+      popover.style.top = `${rect.bottom + 10}px`;
+      popover.style.transform = 'translate(-50%, 0)';
+      if (arrow) arrow.style.display = 'none';
+    }
+  });
+}
+
+function scheduleHideGanttLinkPopover() {
+  clearTimeout(ganttLinkPopoverHideTimer);
+  ganttLinkPopoverHideTimer = setTimeout(hideGanttLinkPopover, 150);
+}
+
+function cancelGanttLinkPopoverHide() {
+  clearTimeout(ganttLinkPopoverHideTimer);
+}
+
+function hideGanttLinkPopover() {
+  const popover = document.getElementById('ganttLinkPopover');
+  if (!popover) return;
+  popover.classList.remove('is-open');
+  popover.setAttribute('aria-hidden', 'true');
+}
+
+function unlinkGanttDependency(from, to) {
+  normaliseSequencing();
+  const exists = state.draft.sequencing.phaseLinks.some(link => link.from === from && link.to === to);
+  if (!exists) return;
+  saveGanttHistory();
+  state.draft.sequencing.phaseLinks =
+    state.draft.sequencing.phaseLinks.filter(link => !(link.from === from && link.to === to));
+  hideGanttLinkPopover();
+  renderResourceGantt('slotEditor');
+  renderStepper();
+  toast(`${to} is no longer linked after ${from}`);
+}
+
+function createGanttDependency(targetRequestId, targetSegmentId) {
+  const source = ganttDependencyDraft;
+  const sourceRequest = source ? findRequest(source.requestId) : null;
+  const targetRequest = findRequest(targetRequestId);
+  const sourceSegment = sourceRequest?.segments?.find(item => item.id === source.segmentId);
+  const targetSegment = targetRequest?.segments?.find(item => item.id === targetSegmentId);
+  if (!sourceRequest || !targetRequest || !sourceSegment || !targetSegment) return false;
+  const from = segmentTypeName(sourceRequest, sourceSegment);
+  const to = segmentTypeName(targetRequest, targetSegment);
+  if (!from || !to || from === to) {
+    showGanttConstraintTooltip('Choose a segment in a different phase or work type.', document.activeElement);
+    return false;
+  }
+  normaliseSequencing();
+  if (state.draft.sequencing.phaseLinks.some(link => link.from === from && link.to === to)) {
+    ganttDependencyDraft = null;
+    renderResourceGantt('slotEditor');
+    return true;
+  }
+  saveGanttHistory();
+  state.draft.sequencing.phaseLinks =
+    state.draft.sequencing.phaseLinks.filter(link => !(link.from === to && link.to === from));
+  state.draft.sequencing.phaseLinks.push({ from, to });
+  normalisePhaseSegmentPlacement();
+  normaliseLinkedSegmentPlacement();
+  ganttDependencyDraft = null;
+  ganttSelection = { requestId: targetRequestId, segmentId: targetSegmentId };
+  renderResourceGantt('slotEditor');
+  renderStepper();
+  toast(`${to} is now linked after ${from}`);
+  return true;
 }
 
 function miniGanttMarkup(d = state.draft, readOnly = false) {
@@ -5442,7 +6304,7 @@ function miniGanttMarkup(d = state.draft, readOnly = false) {
           <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
         </button>
         <span class="SequenceHelp-pop" id="miniGanttHelpPop" role="tooltip">
-          Double-click an empty week to add work. Drag bars to move them, hold Alt while dragging to duplicate a segment when the placement is valid, drag either edge to resize, and right-click or press Backspace to remove a selected segment. Cmd/Ctrl+Z undoes the last Gantt change.
+          Double-click an empty week to add work. Drag bars to move them, drag the chain icon onto another segment to link them (hover a linked chain icon to view or remove the link), hold Alt while dragging to duplicate a segment when the placement is valid, drag either edge to resize, and right-click or press Backspace to remove a selected segment. Cmd/Ctrl+Z undoes the last Gantt change.
         </span>
       </span>
       <button class="Btn Btn--primary Btn--sm" type="button" onclick="openResourceModal()">
@@ -5460,15 +6322,43 @@ function miniGanttMarkup(d = state.draft, readOnly = false) {
     const metaBits = [requestTypeSummary(request, d), requestEffortLabel(request)];
     if (request.role) metaBits.unshift(request.role);
     if (requestWeeks) metaBits.push(`${requestWeeks}w`);
-    const bars = (request.segments || []).map(segment => `
+    const bars = (request.segments || []).map(segment => {
+      const linkInfo = ganttSegmentLinkInfo(request, segment, d);
+      const linked = linkInfo.incoming.length || linkInfo.outgoing.length;
+      const linkTitle = ganttSegmentLinkTitle(linkInfo);
+      return `
       <div class="MiniGantt-bar${ganttSelection?.requestId === request.id && ganttSelection.segmentId === segment.id ? ' is-selected' : ''}" style="left:calc(${segment.startWeek} * var(--week-w));width:calc(${segment.durationWeeks} * var(--week-w));background:${segmentColor(request, segment, d)};color:var(--text-inverse);"
+        data-request-id="${request.id}" data-segment-id="${segment.id}"
         tabindex="0" role="button" aria-pressed="${ganttSelection?.requestId === request.id && ganttSelection.segmentId === segment.id}"
-        title="${segment.durationWeeks} week${segment.durationWeeks === 1 ? '' : 's'}"
-        ${readOnly ? '' : `onclick="selectGanttSegment(event,'${request.id}','${segment.id}')" onfocus="selectGanttSegment(event,'${request.id}','${segment.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectGanttSegment(event,'${request.id}','${segment.id}')} " onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','move')" ondblclick="event.stopPropagation(); openResourceModal('${request.id}', null, '${segment.id}')" oncontextmenu="deleteGanttSegment(event,'${request.id}','${segment.id}')"`}>
+        aria-label="${esc(`${segmentTypeName(request, segment, d)} · starts week ${Number(segment.startWeek) + 1}, ends week ${Number(segment.startWeek) + Number(segment.durationWeeks)}`)}"
+        data-shape-popover="${encodeURIComponent(JSON.stringify({
+          kind: 'gantt',
+          name: segmentTypeName(request, segment, d),
+          startWeek: Number(segment.startWeek) + 1,
+          endWeek: Number(segment.startWeek) + Number(segment.durationWeeks),
+          duration: Number(segment.durationWeeks),
+          effort: requestEffortLabel(request)
+        }))}"
+        onmouseenter="showShapeSegPopover(event)" onmouseleave="hideShapeSegPopover()"
+        onblur="hideShapeSegPopover()"
+        ${readOnly
+          ? 'onfocus="showShapeSegPopover(event)"'
+          : `onclick="selectGanttSegment(event,'${request.id}','${segment.id}')" onfocus="showShapeSegPopover(event);selectGanttSegment(event,'${request.id}','${segment.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectGanttSegment(event,'${request.id}','${segment.id}')} " onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','move')" ondblclick="event.stopPropagation(); openResourceModal('${request.id}', null, '${segment.id}')" oncontextmenu="deleteGanttSegment(event,'${request.id}','${segment.id}')"`} ${readOnly ? '' : `ondragover="allowGanttDependencyDrop(event)" ondragleave="clearGanttDependencyTarget(event)" ondrop="dropGanttDependency(event,'${request.id}','${segment.id}')"`}>
+        ${readOnly
+          ? `<span class="MiniGantt-linkAction${linked ? ' is-linked' : ''}" style="--seg-link-color:${segmentColor(request, segment, d)};" title="${esc(linkTitle)}" aria-label="${esc(linkTitle)}"><i class="fa-solid fa-link" aria-hidden="true"></i></span>`
+          : `<button class="MiniGantt-linkAction${linked ? ' is-linked' : ''}" type="button" style="--seg-link-color:${segmentColor(request, segment, d)};" title="${esc(linkTitle)}" aria-label="${esc(linkTitle)}"
+              draggable="true" ondragstart="startGanttDependencyDrag(event,'${request.id}','${segment.id}')" ondrag="updateGanttDependencyDragLine(event)" ondragend="endGanttDependencyDrag()"
+              onmousedown="event.stopPropagation()"
+              ${linked
+                ? `onmouseenter="showGanttLinkPopover(event,'${request.id}','${segment.id}')" onmouseleave="scheduleHideGanttLinkPopover()" onfocus="showGanttLinkPopover(event,'${request.id}','${segment.id}')" onblur="scheduleHideGanttLinkPopover()"`
+                : ''}>
+              <i class="fa-solid fa-link" aria-hidden="true"></i>
+            </button>`}
         ${readOnly ? '' : `<span class="MiniGantt-resize MiniGantt-resize--left" style="color:${segmentColor(request, segment, d)};" onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','resize-left')">⋮</span>`}
         <span>${segment.durationWeeks}w</span>
         ${readOnly ? '' : `<span class="MiniGantt-resize MiniGantt-resize--right" style="color:${segmentColor(request, segment, d)};" onmousedown="startGanttDrag(event,'${request.id}','${segment.id}','resize-right')">⋮</span>`}
-      </div>`).join('');
+      </div>`;
+    }).join('');
     return `
       <div class="MiniGantt-row">
         <div class="MiniGantt-label">
@@ -5507,6 +6397,7 @@ function miniGanttMarkup(d = state.draft, readOnly = false) {
           </div>
           ${rows}
           ${addRow}
+          <svg class="MiniGantt-links" aria-hidden="true"></svg>
         </div>
       </div>` : '';
   return `
@@ -5542,9 +6433,11 @@ function sizeMiniGantt(mount) {
 function renderResourceGantt(targetId = 'slotEditor', readOnly = false, d = state.draft) {
   const target = document.getElementById(targetId);
   if (!target) return;
+  hideGanttLinkPopover();
   syncDerivedDuration(d);
   target.innerHTML = miniGanttMarkup(d, readOnly);
   sizeMiniGantt(target);
+  drawGanttLinkConnectors(target, d);
   miniGanttObserver?.observe(target);
   if (targetId === 'reviewGantt') {
     renderDemandShape('reviewShapeVisual', d);
@@ -5555,8 +6448,62 @@ function renderResourceGantt(targetId = 'slotEditor', readOnly = false, d = stat
   if (targetId === 'slotEditor') renderSequencingFeedback();
 }
 
+// Draws a curved connector from the segment that anchors a dependency (the
+// latest-ending segment of the "from" type) to every segment of the linked
+// "to" type, so the relationship created by dragging the chain icon is
+// visible on the Gantt itself, not just implied by the icon state.
+function drawGanttLinkConnectors(mount, d = state.draft) {
+  const canvas = mount?.querySelector?.('.MiniGantt-canvas');
+  const svg = canvas?.querySelector?.('.MiniGantt-links');
+  if (!canvas || !svg) return;
+  const links = d?.sequencing?.phaseLinks || [];
+  if (!links.length) {
+    svg.innerHTML = '';
+    return;
+  }
+  const canvasRect = canvas.getBoundingClientRect();
+  const barsByType = new Map();
+  canvas.querySelectorAll('.MiniGantt-bar').forEach(bar => {
+    const request = findRequest(bar.dataset.requestId);
+    const segment = request?.segments?.find(item => item.id === bar.dataset.segmentId);
+    if (!request || !segment) return;
+    const type = segmentTypeName(request, segment, d);
+    if (!barsByType.has(type)) barsByType.set(type, []);
+    barsByType.get(type).push({ bar, segment });
+  });
+  let markup = '';
+  links.forEach(link => {
+    const fromBars = barsByType.get(link.from) || [];
+    const toBars = barsByType.get(link.to) || [];
+    if (!fromBars.length || !toBars.length) return;
+    const anchor = fromBars.reduce((latest, item) => {
+      const end = Number(item.segment.startWeek) + Number(item.segment.durationWeeks);
+      const latestEnd = latest ? Number(latest.segment.startWeek) + Number(latest.segment.durationWeeks) : -Infinity;
+      return end > latestEnd ? item : latest;
+    }, null);
+    if (!anchor) return;
+    const fromRect = anchor.bar.getBoundingClientRect();
+    const x1 = fromRect.right - canvasRect.left - 14;
+    const y1 = fromRect.top - canvasRect.top + fromRect.height / 2;
+    const color = segmentColor(null, anchor.segment, d) || 'var(--border-primary)';
+    toBars.forEach(item => {
+      const toRect = item.bar.getBoundingClientRect();
+      const x2 = toRect.left - canvasRect.left;
+      const y2 = toRect.top - canvasRect.top + toRect.height / 2;
+      const midX = (x1 + x2) / 2;
+      markup += `<path d="M${x1},${y1} C${midX},${y1} ${midX},${y2} ${x2},${y2}" style="stroke:${esc(color)};" />` +
+        `<circle cx="${x2}" cy="${y2}" r="3.5" style="fill:${esc(color)};" />`;
+    });
+  });
+  svg.innerHTML = markup;
+}
+
 window.addEventListener('resize', () => {
-  ['slotEditor', 'reviewGantt'].forEach(targetId => sizeMiniGantt(document.getElementById(targetId)));
+  ['slotEditor', 'reviewGantt'].forEach(targetId => {
+    const mount = document.getElementById(targetId);
+    sizeMiniGantt(mount);
+    drawGanttLinkConnectors(mount, state.draft);
+  });
 });
 
 function segmentOverlaps(segments, candidate, ignoreId) {
@@ -5565,38 +6512,89 @@ function segmentOverlaps(segments, candidate, ignoreId) {
     candidate.startWeek + candidate.durationWeeks > segment.startWeek);
 }
 
+function phaseSegments(phaseName, d = state.draft) {
+  return requestItems(d).flatMap(request =>
+    (request.segments || []).filter(segment =>
+      segmentTypeName(request, segment, d) === phaseName
+    )
+  );
+}
+
+function phaseSequenceStart(index, d = state.draft) {
+  const items = timelineList(d);
+  let cursor = 0;
+  items.forEach((item, itemIndex) => {
+    if (itemIndex >= index) return;
+    const duration = Math.max(1, Number(item.durationWeeks) || 1);
+    if (isPhaseItem(item) && item.name) {
+      const placed = phaseSegments(item.name, d);
+      const placedStart = placed.length
+        ? Math.min(...placed.map(segment => Math.max(0, Number(segment.startWeek) || 0)))
+        : cursor;
+      cursor = Math.max(cursor, placedStart) + duration;
+    } else {
+      cursor += duration;
+    }
+  });
+  return cursor;
+}
+
+function phasePlacementStart(phaseName, phaseIndex, d = state.draft) {
+  const minimumStart = phaseSequenceStart(
+    timelineList(d).findIndex(item => isPhaseItem(item) && item.name === phaseName),
+    d
+  );
+  const placed = phaseSegments(phaseName, d);
+  if (!placed.length) return minimumStart;
+  const placedStart = Math.min(...placed.map(segment => Math.max(0, Number(segment.startWeek) || 0)));
+  return Math.max(minimumStart, placedStart);
+}
+
+// Phase and booking-type segments share one sequencing model: an implicit
+// order derived from first use (with the overlap toggle), plus any explicit
+// dependency links the user drags between segments. There is no separate
+// phase-list ordering — phases behave like any other tagged work type.
 function dependencyWindowForType(type, d = state.draft) {
   if (!type || !d) return null;
-  if (isPhaseWorld(d)) {
-    const items = timelineList(d);
-    const index = items.findIndex(item => isPhaseItem(item) && item.name === type);
-    if (index === -1) return null;
-    const start = items.slice(0, index).reduce((sum, item) =>
-      sum + Math.max(1, Number(item.durationWeeks) || 1), 0);
-    return {
-      type,
-      start,
-      end: start + Math.max(1, Number(items[index].durationWeeks) || 1),
-      phase: true
-    };
-  }
-
   normaliseSequencing(d);
+  const linked = linkedDependencyWindow(type, d);
+  const phase = isPhaseWorld(d);
+
   const activeTypes = new Set(requestItems(d).flatMap(request =>
     (request.segments || []).map(segment => segmentTypeName(request, segment, d))
   ).filter(Boolean));
   const order = d.sequencing.typeOrder.filter(item => activeTypes.has(item) || item === type);
   const index = order.indexOf(type);
-  if (index <= 0) return { type, start: 0, end: null, phase: false };
+  if (index <= 0) {
+    return {
+      type,
+      start: linked?.start || 0,
+      end: null,
+      phase,
+      linked: Boolean(linked),
+      previousTypes: linked?.previousTypes || []
+    };
+  }
   const previousType = order[index - 1];
   const previous = requestTypeBounds(previousType, d);
-  if (!previous) return { type, start: 0, end: null, phase: false };
+  if (!previous) {
+    return {
+      type,
+      start: linked?.start || 0,
+      end: null,
+      phase,
+      linked: Boolean(linked),
+      previousTypes: linked?.previousTypes || []
+    };
+  }
   return {
     type,
-    start: d.sequencing.allowOverlap ? previous.start : previous.end,
+    start: Math.max(d.sequencing.allowOverlap ? previous.start : previous.end, linked?.start || 0),
     end: null,
-    phase: false,
-    previousType
+    phase,
+    previousType,
+    linked: Boolean(linked),
+    previousTypes: linked?.previousTypes || []
   };
 }
 
@@ -5604,6 +6602,15 @@ function dependencyWindowMessage(window) {
   if (!window) return '';
   if (window.end != null) {
     return `${window.type} can only use weeks ${window.start + 1}-${window.end}.`;
+  }
+  if (window.phase) {
+    if (window.linked && window.previousTypes?.length) {
+      return `${window.type} is linked after ${window.previousTypes.join(' and ')} and must start in week ${window.start + 1} or later.`;
+    }
+    return `${window.type} must start in week ${window.start + 1} or later.`;
+  }
+  if (window.linked && window.previousTypes?.length) {
+    return `${window.type} is linked after ${window.previousTypes.join(' and ')} and must start in week ${window.start + 1} or later.`;
   }
   if (window.previousType) {
     return window.start
@@ -5636,17 +6643,39 @@ function normalisePhaseSegmentPlacement(d = state.draft) {
   requestItems(d).forEach(request => {
     (request.segments || []).forEach(segment => {
       const window = dependencyWindowForType(segmentTypeName(request, segment, d), d);
-      if (!window || window.end == null) return;
-      const availableWeeks = Math.max(1, window.end - window.start);
-      const duration = Math.min(availableWeeks, Math.max(1, Number(segment.durationWeeks) || 1));
-      const start = Math.max(window.start, Math.min(
-        window.end - duration,
+      if (!window) return;
+      segment.startWeek = Math.max(
+        window.start,
         Math.max(0, Number(segment.startWeek) || 0)
-      ));
-      segment.startWeek = start;
-      segment.durationWeeks = duration;
+      );
+      if (window.end != null) {
+        const duration = Math.min(
+          Math.max(1, Number(segment.durationWeeks) || 1),
+          Math.max(1, window.end - window.start)
+        );
+        segment.durationWeeks = duration;
+        segment.startWeek = Math.min(segment.startWeek, window.end - duration);
+      }
     });
   });
+}
+
+function normaliseLinkedSegmentPlacement(d = state.draft) {
+  if (!d) return;
+  normaliseSequencing(d);
+  const links = d.sequencing.phaseLinks;
+  for (let pass = 0; pass <= links.length; pass += 1) {
+    links.forEach(link => {
+      const previous = requestTypeBounds(link.from, d);
+      if (!previous) return;
+      requestItems(d).forEach(request => {
+        (request.segments || []).forEach(segment => {
+          if (segmentTypeName(request, segment, d) !== link.to) return;
+          segment.startWeek = Math.max(Number(segment.startWeek) || 0, previous.end);
+        });
+      });
+    });
+  }
 }
 
 function snapSegmentPlacement(request, startWeek, durationWeeks, d = state.draft) {
@@ -5805,6 +6834,7 @@ function deleteSelectedGanttSegment(source = null) {
 function startGanttDrag(event, requestId, segmentId, type) {
   event.preventDefault();
   event.stopPropagation();
+  if (ganttDependencyDraft) return;
   const request = findRequest(requestId);
   const segment = request?.segments.find(item => item.id === segmentId);
   const track = event.target.closest('.MiniGantt-row')?.querySelector('.MiniGantt-track');
@@ -5892,6 +6922,8 @@ function moveGanttDrag(event) {
   }
   segment.startWeek = next.startWeek;
   segment.durationWeeks = next.durationWeeks;
+  if (isPhaseWorld()) normalisePhaseSegmentPlacement();
+  normaliseLinkedSegmentPlacement();
   drag.lastStart = next.startWeek;
   drag.lastDuration = next.durationWeeks;
   renderResourceGantt('slotEditor');
@@ -6070,23 +7102,8 @@ function totalEffortSummary(d = state.draft) {
   const percentages = requests.filter(request => request.effortUnit === 'percentage').length;
   const parts = [];
   if (hours) parts.push(`${hours}h total`);
-  if (percentages) parts.push(`${percentages} Percentage requirement${percentages === 1 ? '' : 's'}`);
+  if (percentages) parts.push(`${percentages} percentage requirement${percentages === 1 ? '' : 's'}`);
   return parts.join(' · ') || 'Effort not set';
-}
-
-function reviewPhaseWeightsMarkup(d = state.draft) {
-  const phases = effortPhases(d);
-  if (!phases.length || !isPhaseWorld(d)) return '';
-  syncDerivedPhaseWeights(d);
-  return `<div class="ReviewPhaseWeights" aria-label="Phase weighting">
-    ${phases.map((phase, index) => {
-      const usage = phaseUtilisation(phase, index, d);
-      return `<span class="ReviewPhaseWeight">
-        <span class="ReviewPhaseWeight-dot" style="background:${phase.color || 'var(--surface-emphasis)'}" aria-hidden="true"></span>
-        <span>${esc(phase.name || 'Unnamed phase')} · ${phase.weight}% derived · ${usage.weeks}w</span>
-      </span>`;
-    }).join('')}
-  </div>`;
 }
 
 function renderReview() {
@@ -6130,10 +7147,10 @@ function renderReview() {
     <section class="ReviewSection" aria-labelledby="reviewShapeTitle">
       <div class="ReviewSection-head">
         <div class="ReviewSection-title" id="reviewShapeTitle">Demand shape</div>
-        <button class="Btn Btn--sm" type="button" onclick="onStepperClick(${timelineStep})">Edit timeline</button>
       </div>
-      <div class="ShapeTimeline" id="reviewShapeVisual"></div>
-      ${reviewPhaseWeightsMarkup(d)}
+      <div class="ReviewSection-body">
+        <div class="ShapeTimeline" id="reviewShapeVisual"></div>
+      </div>
     </section>
 
     <section class="ReviewSection" aria-labelledby="reviewDemandTitle">
@@ -6317,7 +7334,7 @@ showScreen('catalogue');
 <script src="../shared/access.js"></script>
 <script src="../shared/feedback-store.js"></script>
 <script src="../shared/telemetry-store.js"></script>
-<script src="../shared/usability-test-store.js"></script>
+<script src="../shared/usability-test-store.js?v=2026-09-15-kanban-session"></script>
 <script src="../shared/telemetry.js?v=2026-09-10-heatmap-pages" defer></script>
 <script src="../shared/usability-test.js" defer></script>
 <script src="../shared/feedback.js" defer></script>

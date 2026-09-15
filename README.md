@@ -74,6 +74,8 @@ Prototype workspaces also include a **Test builder** tab. Designers using a Desi
 
 Run `supabase-usability-tests.sql` once in Supabase after the telemetry schema. Usability results are visible in Insights → Usability and include completion rate, task drop-off, duration, reported problems, and repeated-click signals. Anonymous participants are identified only by a temporary browser session ID.
 
+For the Kanban board session, open the `practitioner-kanban` workspace → **Test builder** → **Load Kanban session**, then save it. The preset follows `mocks/kanban-demo-scenarios.html`. To make that session available to participants across browsers without author sign-in, run `supabase-kanban-usability-session.sql` after the schema.
+
 ### Export
 
 On each prototype’s Insights page, use **Export comments** to download a self-contained HTML file (comments + screenshots).
@@ -144,7 +146,7 @@ Publish directory: `.` · No build command.
 ## Share with reviewers vs internal
 
 - **Reviewers:** use **Share** on a hub card (or the mock URL). They get the mock only — can leave feedback, cannot open the hub or view threads.
-- **Your team:** use **Copy hub link** on the hub (includes a secret `?key=`). That unlocks the hub + feedback inboxes.
+- **Your team:** use the internal Designer or Developer role link. The recipient must enter the internal access token; the role link itself does not contain the token.
 - Change `internalAccessKey` in `config.js` anytime to revoke old hub links.
 
 ## Prototype workspaces and developer files

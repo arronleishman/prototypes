@@ -312,7 +312,10 @@
       <div class="card test-builder">
         <div class="section-heading">
           <div><h2>Usability test builder</h2><p>Give reviewers an ordered set of tasks and define how success can be detected.</p></div>
-          <button type="button" class="btn btn-primary" id="newTestBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> New test</button>
+          <div class="form-actions">
+            <button type="button" class="btn" id="loadKanbanTestBtn" hidden><i class="fa-solid fa-list-check" aria-hidden="true"></i> Load Kanban session</button>
+            <button type="button" class="btn btn-primary" id="newTestBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> New test</button>
+          </div>
         </div>
         <div class="test-builder-gate" id="testBuilderGate" hidden>
           <p>Developer access is read-only. Open a Designer link to create and manage usability tests.</p>
@@ -418,7 +421,7 @@
   <script src="shared/access.js?v=2026-09-10-save-password"></script>
   <script src="shared/supabase-auth.js"></script>
   <script src="shared/prototype-library.js"></script>
-  <script src="shared/usability-test-store.js"></script>
+  <script src="shared/usability-test-store.js?v=2026-09-15-kanban-session"></script>
   <script src="shared/feedback-store.js"></script>
   <script>
     (function () {
@@ -588,6 +591,25 @@
         };
       }
 
+      function kanbanSessionPreset() {
+        return {
+          id: '',
+          prototypeId: id,
+          versionId: '',
+          title: 'Kanban board · 22 Sep demo usability session',
+          intro: 'Please work through these Kanban scenarios in order. Think aloud as you decide what to do. We are testing whether status, defer, hold, resume, done, and readiness behaviour is clear — not your performance. The session is based on mocks/kanban-demo-scenarios.html.',
+          status: 'active',
+          tasks: [
+            { id: 's01-start-work', title: 'S01 · Start work', instruction: 'Find Smith Manufacturing Inc. · Preparation in To Do and move it to In Progress. Tell us what you expect to happen to its schedule.', success: { type: 'manual', value: '' }, prompt: 'Was it clear that starting work changes status but does not move the booking?' },
+            { id: 's05-defer', title: 'S05 · Defer scheduled work', instruction: 'Find a scheduled Preparation card in To Do, such as Cascade Timber Works, and defer it to next week. Do not put it On Hold. Explain what should happen to later bookings and the review phase.', success: { type: 'manual', value: '' }, prompt: 'Was the difference between Defer and On Hold clear? Did you expect a warning about review risk?' },
+            { id: 's07-hold', title: 'S07 / S08 · Put work On Hold', instruction: 'Move a piece of work to On Hold because of an external blocker. Enter a reason and unblock date, then review and confirm the impact.', success: { type: 'manual', value: '' }, prompt: 'Did the impact information help you decide what to do next? Who would normally fix the later schedule?' },
+            { id: 's10b-resume', title: 'S10b · Resume early', instruction: 'Resume the held work early. Look at how completed effort and the remaining work are represented, then explain whether the two pieces make sense.', success: { type: 'manual', value: '' }, prompt: 'Was the split between completed work and remaining work understandable?' },
+            { id: 's03-done', title: 'S03 · Complete work', instruction: 'Move a card to Done and choose between completing this week and fully completing the phase. Explain what you think happens to future bookings in each case.', success: { type: 'manual', value: '' }, prompt: 'Which completion option matched your expectation, and what wording would make the difference clearer?' },
+            { id: 's12-s13-ready', title: 'S12 / S13 · Readiness signal', instruction: 'Find the Ready indicator on a Preparation card. Tell us what it means, whether it should affect starting work, and what you would expect after returned work is ready.', success: { type: 'manual', value: '' }, prompt: 'Did the Ready signal look like information or a hard rule? What would you change?' },
+          ],
+        };
+      }
+
       function testTaskMarkup(task, index) {
         var success = task.success || { type: 'manual', value: '' };
         return '<article class="test-task" data-test-task>' +
@@ -635,15 +657,18 @@
         var gate = document.getElementById('testBuilderGate');
         var form = document.getElementById('testBuilderForm');
         var newButton = document.getElementById('newTestBtn');
+        var presetButton = document.getElementById('loadKanbanTestBtn');
         if (!access.isDesigner()) {
           gate.hidden = false;
           form.hidden = true;
           newButton.disabled = true;
+          presetButton.hidden = true;
           return;
         }
         gate.hidden = true;
         form.hidden = false;
         newButton.disabled = false;
+        presetButton.hidden = id !== 'practitioner-kanban';
         var test = editingTest || tests[0] || blankTest();
         document.getElementById('testTitle').value = test.title || '';
         document.getElementById('testIntro').value = test.intro || '';
@@ -831,6 +856,11 @@
         editingTest = blankTest();
         renderTestBuilder();
       });
+      document.getElementById('loadKanbanTestBtn').addEventListener('click', function () {
+        if (!access.isDesigner() || id !== 'practitioner-kanban') return;
+        editingTest = kanbanSessionPreset();
+        renderTestBuilder();
+      });
       document.getElementById('addTestTaskBtn').addEventListener('click', function () {
         if (!access.isDesigner()) return;
         var draft = readBuilderDraft();
@@ -897,7 +927,9 @@
           editingTest = saved;
           renderTestBuilder();
           status = document.getElementById('testBuilderStatus');
-          status.textContent = 'Test saved.';
+          status.textContent = saved.localOnly
+            ? 'Test saved on this browser only. Configure Supabase to share it with participants.'
+            : 'Test saved.';
           status.className = 'test-builder-status is-ok';
         }).catch(function (error) {
           status.textContent = error.message || 'Could not save the test.';

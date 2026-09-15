@@ -160,7 +160,6 @@
   }
 
   function saveTest(prototypeId, entry) {
-    if (!hasAuthRemote()) return Promise.reject(new Error('A signed Designer link is required to save usability tests.'));
     var now = new Date().toISOString();
     var item = normalizeTest(Object.assign({}, entry, {
       id: entry && entry.id ? entry.id : uid('test'),
@@ -172,6 +171,11 @@
     if (!item.tasks.length) return Promise.reject(new Error('Add at least one task.'));
     if (item.tasks.some(function (task) { return !task.instruction.trim(); })) {
       return Promise.reject(new Error('Every task needs an instruction.'));
+    }
+    if (!hasAuthRemote()) {
+      item.localOnly = true;
+      saveLocalTest(item);
+      return Promise.resolve(item);
     }
     var existing = entry && entry.id;
     var path = existing
