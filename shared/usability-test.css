@@ -5,7 +5,7 @@
   --proto-usability-muted: #5c6378;
   --proto-usability-line: #e4e6ee;
   position: fixed;
-  right: 18px;
+  right: 160px;
   bottom: 18px;
   z-index: 2147483000;
   width: min(360px, calc(100vw - 36px));
@@ -126,7 +126,7 @@
 .ProtoUsability-status { min-height: 1.2em; margin: 10px 0 0; color: var(--proto-usability-muted); font-size: .78rem; }
 
 @media (max-width: 520px) {
-  .ProtoUsability { right: 12px; bottom: 12px; width: calc(100vw - 24px); }
+  .ProtoUsability { right: 12px; bottom: 64px; width: calc(100vw - 24px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -42,6 +42,7 @@
   var root = null;
   var card = null;
   var issueForm = null;
+  var STYLE_VERSION = '2026-09-15-widget-row';
 
   function addStylesheet() {
     var script = document.currentScript;
@@ -49,7 +50,7 @@
     if (document.querySelector('link[data-proto-usability-style]')) return;
     var link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = src;
+    link.href = src + (src.indexOf('?') >= 0 ? '&' : '?') + 'v=' + STYLE_VERSION;
     link.setAttribute('data-proto-usability-style', 'true');
     document.head.appendChild(link);
   }
