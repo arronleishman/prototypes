@@ -45,7 +45,7 @@
     --surface-success-subtle: #e1faeb;
     --surface-danger: #a3003c;
     --surface-danger-subtle: #feecf2;
-    --surface-progress-subtle: #e5faff;
+    --surface-active-subtle: #e5faff;
     --surface-warning-subtle: #fff0e0;
     --surface-info-subtle: #edf0f8;
 
@@ -61,7 +61,7 @@
     --text-emphasis: #3d425c;
     --text-success: #078138;
     --text-success-dark: #07602b;
-    --text-progress-dark: #068aa9;
+    --text-active-dark: #068aa9;
     --text-danger: #a3003c;
     --text-warning: #b45309;
     --warning: #e27209;
@@ -76,7 +76,7 @@
     --border-primary: #4f3fa0;
     --border-success: #078138;
     --border-success-subtle: #c9efd8;
-    --border-progress-subtle: #c9e6ed;
+    --border-active-subtle: #c9e6ed;
     /* Sidebar section divider — heavier than --border-subtle by design */
     --border-section: #6c757d;
     --border-radius-default: 4px;
@@ -765,10 +765,10 @@ button { font-family: inherit; }
     border-color: var(--border-subtle);
     color: var(--text-accent);
 }
-.Panel-badge--progress {
-    background: var(--surface-progress-subtle);
-    border-color: var(--border-progress-subtle);
-    color: var(--text-progress-dark);
+.Panel-badge--active {
+    background: var(--surface-active-subtle);
+    border-color: var(--border-active-subtle);
+    color: var(--text-active-dark);
 }
 .Panel-badge--hold {
     background: var(--surface-danger);
@@ -1469,10 +1469,10 @@ var PHASE_COLOUR = { 'Preparation': '#2398f2', 'First Review': '#2d7d46', 'Secon
 // fall out of where the booking sits against today; On Hold is a deliberate
 // pause, so the sample data names the paused engagements outright.
 var STATUS = {
-    todo:     { label: 'To Do',       cls: 'Panel-badge--todo' },
-    progress: { label: 'In Progress', cls: 'Panel-badge--progress' },
-    hold:     { label: 'On Hold',     cls: 'Panel-badge--hold' },
-    done:     { label: 'Done',        cls: 'Panel-badge--done' }
+    todo:   { label: 'To Do',       cls: 'Panel-badge--todo' },
+    active: { label: 'In Progress', cls: 'Panel-badge--active' },
+    hold:   { label: 'On Hold',     cls: 'Panel-badge--hold' },
+    done:   { label: 'Done',        cls: 'Panel-badge--done' }
 };
 var ON_HOLD_CODES = { 'MCR-7823': 1, 'QA-101': 1, 'TP-12': 1, 'HEA-4521': 1 };
 
@@ -1480,7 +1480,7 @@ function bookingStatus(it) {
     if (ON_HOLD_CODES[it.code]) return STATUS.hold;
     if (it.startWeek + it.span <= TODAY_WEEK) return STATUS.done;
     if (it.startWeek > TODAY_WEEK) return STATUS.todo;
-    return STATUS.progress;
+    return STATUS.active;
 }
 
 // Customers can glossarize the Other row — "Non-chargeable", "Unavailability"
