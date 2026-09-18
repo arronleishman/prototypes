@@ -1498,6 +1498,12 @@ function bookingStatus(it) {
 // alphabetical run of roles.
 var OTHER_LABEL = 'Other';
 
+// Leave types offered when the create modal is switched to Unavailability.
+var UNAVAILABILITY_TYPES = [
+    'Annual Leave', 'Public Holiday', 'Sick Leave', 'Study Leave',
+    'Training', 'Parental Leave', 'Other'
+];
+
 // ── Data ───────────────────────────────────────────────────────────────────
 // Engagement spec: [jobName, code, phase, role, bookingType, resourceRequirement,
 //                   startWeek, spanWeeks, hoursPerWeek]
@@ -2736,30 +2742,45 @@ function requirementField(label, value, icon) {
     '</div>';
 }
 
+// Other is the only breakdown row that mixes real bookings with
+// unavailabilities, and a flat row can hold either, so those two ask which was
+// meant. A Tax Partner row cannot hold leave, so it opens straight onto the
+// booking form with no choice to make.
 function openCreateModal(worker, row, weekDate) {
     closeModal();
     var dim = state.breakdown;
     var value = row.isOther || dim === 'none' ? null : row.label;
+    var canChoose = !!row.isOther || dim === 'none';
+    var mode = 'booking';
 
     var layer = el('div', 'Backdrop');
     layer.id = 'modalLayer';
     layer.addEventListener('mousedown', function (e) { if (e.target === layer) closeModal(); });
 
     var m = el('div', 'Modal');
-
     var head = el('div', 'Modal-head');
-    head.innerHTML =
-        '<h2 class="Modal-title">Create a New Booking</h2>' +
-        '<button type="button" class="Modal-x" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>';
-    head.querySelector('.Modal-x').addEventListener('click', closeModal);
-    m.appendChild(head);
-
     var body = el('div', 'Modal-body');
-    var from = pad2(weekDate.getDate()) + '/' + pad2(weekDate.getMonth() + 1) + '/' + String(weekDate.getFullYear()).slice(2) + ' 09:00AM';
+    var foot = el('div', 'Modal-foot');
+    m.appendChild(head);
+    m.appendChild(body);
+    m.appendChild(foot);
 
-    var html = '';
-    html +=
-        '<div class="CreateBooking-stack">' +
+    var from = pad2(weekDate.getDate()) + '/' + pad2(weekDate.getMonth() + 1) + '/' +
+               String(weekDate.getFullYear()).slice(2) + ' 09:00AM';
+
+    function leave() { return mode === 'unavailability'; }
+
+    function modeToggle() {
+        return '<div class="CreateBooking-stack">' +
+            '<div class="BtnGroup" role="group" aria-label="Item type">' +
+                '<button type="button" data-mode="booking"' + (leave() ? '' : ' class="is-active"') + '>Booking</button>' +
+                '<button type="button" data-mode="unavailability"' + (leave() ? ' class="is-active"' : '') + '>Unavailability</button>' +
+            '</div>' +
+        '</div>';
+    }
+
+    function engagementField() {
+        return '<div class="CreateBooking-stack">' +
             '<div class="Modal-fieldLabel">Engagement <span class="Modal-req">*</span></div>' +
             '<div class="CreateBooking-searchWrap">' +
                 '<input type="search" placeholder="Search for Engagement" autocomplete="off" />' +
@@ -2767,22 +2788,31 @@ function openCreateModal(worker, row, weekDate) {
                     '<i class="fa-solid fa-magnifying-glass"></i></button>' +
             '</div>' +
         '</div>';
-
-    if (dim === 'phase' && value) {
-        html +=
-            '<div class="CreateBooking-stack">' +
-                '<h3 class="CreateBooking-sectionTitle">Phase</h3>' +
-                '<div class="PhasePills" role="group" aria-label="Phase">' +
-                PHASE_ORDER.map(function (p) {
-                    return '<button type="button" class="PhasePill' + (p === value ? ' is-selected' : '') + '">' +
-                           '<span class="PhasePill-dot" style="background:' + PHASE_COLOUR[p] + '"></span>' + esc(p) + '</button>';
-                }).join('') +
-                '</div>' +
-            '</div>';
     }
 
-    html +=
-        '<div class="CreateBooking-stack">' +
+    function unavailabilityField() {
+        return '<div class="CreateBooking-stack">' +
+            '<div class="Modal-fieldLabel">Unavailability Type <span class="Modal-req">*</span></div>' +
+            '<select class="CreateBooking-select" aria-label="Unavailability type">' +
+                UNAVAILABILITY_TYPES.map(function (t) { return '<option>' + esc(t) + '</option>'; }).join('') +
+            '</select>' +
+        '</div>';
+    }
+
+    function phaseSection() {
+        return '<div class="CreateBooking-stack">' +
+            '<h3 class="CreateBooking-sectionTitle">Phase</h3>' +
+            '<div class="PhasePills" role="group" aria-label="Phase">' +
+            PHASE_ORDER.map(function (p) {
+                return '<button type="button" class="PhasePill' + (p === value ? ' is-selected' : '') + '">' +
+                       '<span class="PhasePill-dot" style="background:' + PHASE_COLOUR[p] + '"></span>' + esc(p) + '</button>';
+            }).join('') +
+            '</div>' +
+        '</div>';
+    }
+
+    function scheduling() {
+        return '<div class="CreateBooking-stack">' +
             '<h3 class="CreateBooking-sectionTitle">Scheduling Details</h3>' +
             '<div class="CreateBooking-grid2">' +
                 '<div class="CreateBooking-field">' +
@@ -2802,9 +2832,9 @@ function openCreateModal(worker, row, weekDate) {
                 '<div class="CreateBooking-label">Effort <span class="Modal-req">*</span></div>' +
                 '<div class="CreateBooking-effortRow">' +
                     '<div class="CreateBooking-effortInputs">' +
-                        '<div class="CreateBooking-inputGroup"><input type="number" min="0" step="1" value="30" aria-label="Hours" />' +
+                        '<div class="CreateBooking-inputGroup"><input type="number" min="0" step="1" value="' + (leave() ? '7' : '30') + '" aria-label="Hours" />' +
                         '<span class="CreateBooking-unit" aria-hidden="true">h</span></div>' +
-                        '<div class="CreateBooking-inputGroup"><input type="number" min="0" max="45" step="15" value="0" aria-label="Minutes" />' +
+                        '<div class="CreateBooking-inputGroup"><input type="number" min="0" max="45" step="15" value="' + (leave() ? '30' : '0') + '" aria-label="Minutes" />' +
                         '<span class="CreateBooking-unit" aria-hidden="true">m</span></div>' +
                     '</div>' +
                 '</div>' +
@@ -2818,8 +2848,9 @@ function openCreateModal(worker, row, weekDate) {
                 '</div>' +
             '</div>' +
         '</div>';
+    }
 
-    if ((dim === 'role' || dim === 'req') && value) {
+    function requirement() {
         var grade = '', unit = '', location = '', engRole = '';
         if (dim === 'role') {
             engRole = value;
@@ -2827,27 +2858,27 @@ function openCreateModal(worker, row, weekDate) {
             var parts = value.split(' / ');
             grade = parts[0] || ''; unit = parts[1] || ''; location = parts[2] || '';
         }
-        html +=
-            '<div class="CreateBooking-stack">' +
-                '<hr class="CreateBooking-divider" />' +
-                '<h3 class="CreateBooking-sectionTitle">Resource Requirement</h3>' +
-                '<div class="BtnGroup" role="group" aria-label="Requirement type">' +
-                    '<button type="button">Specific</button>' +
-                    '<button type="button" class="is-active">Flexible</button>' +
-                '</div>' +
-                '<div class="CreateBooking-grid2">' +
-                    requirementField('Job Profile', grade, 'fa-solid fa-id-badge') +
-                    requirementField('Engagement Role', engRole, 'fa-solid fa-sitemap') +
-                '</div>' +
-                '<div class="CreateBooking-grid2">' +
-                    requirementField('Location', location, 'fa-solid fa-location-dot') +
-                    requirementField('Business Unit', unit, 'fa-solid fa-building') +
-                '</div>' +
-            '</div>';
+        return '<div class="CreateBooking-stack">' +
+            '<hr class="CreateBooking-divider" />' +
+            '<h3 class="CreateBooking-sectionTitle">Resource Requirement</h3>' +
+            '<div class="BtnGroup" role="group" aria-label="Requirement type">' +
+                '<button type="button">Specific</button>' +
+                '<button type="button" class="is-active">Flexible</button>' +
+            '</div>' +
+            '<div class="CreateBooking-grid2">' +
+                requirementField('Job Profile', grade, 'fa-solid fa-id-badge') +
+                requirementField('Engagement Role', engRole, 'fa-solid fa-sitemap') +
+            '</div>' +
+            '<div class="CreateBooking-grid2">' +
+                requirementField('Location', location, 'fa-solid fa-location-dot') +
+                requirementField('Business Unit', unit, 'fa-solid fa-building') +
+            '</div>' +
+        '</div>';
     }
 
-    html +=
-        '<div class="CreateBooking-stack">' +
+    function traits() {
+        var filled = dim === 'bookingType' && value;
+        return '<div class="CreateBooking-stack">' +
             '<hr class="CreateBooking-divider" />' +
             '<h3 class="CreateBooking-sectionTitle">Booking Traits</h3>' +
             '<button type="button" class="CreateBooking-addTraitBtn">' +
@@ -2861,46 +2892,92 @@ function openCreateModal(worker, row, weekDate) {
                             '<i class="CreateBooking-sortIcon fas fa-sort" aria-hidden="true"></i><span>Primary</span></div></th>' +
                         '<th scope="col" class="is-actions">Remove</th>' +
                     '</tr></thead>' +
-                    (dim === 'bookingType' && value
+                    (filled
                         ? '<tbody><tr><td>' + esc(value) + '</td>' +
                           '<td><i class="fa-solid fa-circle-check" style="color:var(--text-success)" aria-label="Primary"></i></td>' +
                           '<td><button type="button" class="CreateBooking-traitRemove" aria-label="Remove trait">' +
                           '<i class="fa-solid fa-xmark"></i></button></td></tr></tbody>'
                         : '<tbody></tbody>') +
                 '</table>' +
-                (dim === 'bookingType' && value ? '' : '<div class="CreateBooking-traitsEmpty">Nothing to display</div>') +
+                (filled ? '' : '<div class="CreateBooking-traitsEmpty">Nothing to display</div>') +
             '</div>' +
         '</div>';
+    }
 
-    var noteText;
-    if (row.isOther) {
-        noteText = 'Opened from the <strong>' + esc(OTHER_LABEL) + '</strong> row, so no ' +
+    function noteNode() {
+        var text;
+        if (leave()) {
+            text = 'Unavailabilities carry no engagement' +
+                   (dim === 'none' ? '' : ' or ' + esc(DIMENSIONS[dim].label.toLowerCase())) +
+                   ', so only the resource and the week you double-clicked carry over.';
+        } else if (row.isOther) {
+            text = 'Opened from the <strong>' + esc(OTHER_LABEL) + '</strong> row, so no ' +
                    esc(DIMENSIONS[dim].label.toLowerCase()) +
                    ' is inferred — the practitioner picks the value.';
-    } else if (dim === 'none') {
-        noteText = 'No breakdown is active, so nothing beyond the resource and date is pre-filled.';
-    } else {
-        noteText = 'Pre-filled <strong>' + esc(DIMENSIONS[dim].label) + ' = ' + esc(value) + '</strong> from the row you opened, ' +
+        } else if (dim === 'none') {
+            text = 'No breakdown is active, so nothing beyond the resource and date is pre-filled.';
+        } else {
+            text = 'Pre-filled <strong>' + esc(DIMENSIONS[dim].label) + ' = ' + esc(value) + '</strong> from the row you opened, ' +
                    'plus the resource and the week you double-clicked.';
+        }
+        var n = el('div', 'Note');
+        n.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i><span>' + text + '</span>';
+        return n;
     }
-    var note = el('div', 'Note');
-    note.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i><span>' + noteText + '</span>';
 
-    body.innerHTML = html;
-    body.appendChild(note);
-    m.appendChild(body);
+    function paintHead() {
+        head.innerHTML =
+            '<h2 class="Modal-title">Create a New ' + (leave() ? 'Unavailability' : 'Booking') + '</h2>' +
+            '<button type="button" class="Modal-x" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>';
+        head.querySelector('.Modal-x').addEventListener('click', closeModal);
+    }
 
-    var foot = el('div', 'Modal-foot');
-    var more = el('button', 'Btn', 'More Options');
-    var cancel = el('button', 'Btn Btn--secondary', 'Cancel');
-    var create = el('button', 'Btn Btn--primary', 'Save');
-    cancel.addEventListener('click', closeModal);
-    create.addEventListener('click', function () {
-        closeModal();
-        toast('Booking created' + (value ? ' — ' + DIMENSIONS[dim].label + ': ' + value : ''));
-    });
-    foot.appendChild(more); foot.appendChild(cancel); foot.appendChild(create);
-    m.appendChild(foot);
+    function paintBody() {
+        var html = canChoose ? modeToggle() : '';
+        if (leave()) {
+            html += unavailabilityField() + scheduling();
+        } else {
+            html += engagementField();
+            if (dim === 'phase' && value) html += phaseSection();
+            html += scheduling();
+            if ((dim === 'role' || dim === 'req') && value) html += requirement();
+            html += traits();
+        }
+        body.innerHTML = html;
+        body.appendChild(noteNode());
+        body.scrollTop = 0;
+
+        [].forEach.call(body.querySelectorAll('.BtnGroup button[data-mode]'), function (b) {
+            b.addEventListener('click', function () {
+                if (b.getAttribute('data-mode') === mode) return;
+                mode = b.getAttribute('data-mode');
+                paintHead();
+                paintBody();
+                paintFoot();
+            });
+        });
+    }
+
+    function paintFoot() {
+        foot.innerHTML = '';
+        var more = el('button', 'Btn', 'More Options');
+        var cancel = el('button', 'Btn Btn--secondary', 'Cancel');
+        var save = el('button', 'Btn Btn--primary', 'Save');
+        cancel.addEventListener('click', closeModal);
+        save.addEventListener('click', function () {
+            closeModal();
+            toast(leave()
+                ? 'Unavailability created'
+                : 'Booking created' + (value ? ' — ' + DIMENSIONS[dim].label + ': ' + value : ''));
+        });
+        foot.appendChild(more);
+        foot.appendChild(cancel);
+        foot.appendChild(save);
+    }
+
+    paintHead();
+    paintBody();
+    paintFoot();
 
     layer.appendChild(m);
     overlays.appendChild(layer);
