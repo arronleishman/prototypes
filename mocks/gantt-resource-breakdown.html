@@ -1122,6 +1122,52 @@ button.CreateBooking-unit:hover,
     background: var(--primary-emphasis); border-color: var(--primary-emphasis);
 }
 
+/* Date + time picker for the From/To fields. Fixed rather than absolute so the
+   scrolling modal body cannot clip it. */
+.DatePick {
+    position: fixed; z-index: 60;
+    width: 262px; padding: 10px; box-sizing: border-box;
+    background: var(--surface-default);
+    border: var(--border-xs) solid var(--border-default);
+    border-radius: var(--border-radius-default);
+    box-shadow: 0 6px 18px rgba(16, 24, 40, .16);
+    font-family: var(--font-family);
+}
+.DatePick-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.DatePick-title {
+    font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold);
+    color: var(--text-default);
+}
+.DatePick-nav {
+    width: 26px; height: 24px; padding: 0;
+    border: var(--border-xs) solid var(--border-default); border-radius: 3px;
+    background: var(--surface-default); color: var(--text-accent);
+    font-size: 11px; cursor: pointer;
+}
+.DatePick-nav:hover { background: var(--surface-subtle); }
+.DatePick-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.DatePick-dow {
+    padding: 4px 0; text-align: center;
+    font-size: var(--font-size-small); color: var(--text-subtle);
+}
+.DatePick-day {
+    height: 30px; padding: 0; border: none; border-radius: 3px;
+    background: none; cursor: pointer;
+    font-family: var(--font-family); font-size: var(--font-size-medium); color: var(--text-default);
+}
+.DatePick-day:hover { background: var(--surface-subtle); }
+.DatePick-day.is-outside { color: var(--text-subtle); }
+.DatePick-day.is-today { box-shadow: inset 0 0 0 1px var(--border-primary); }
+.DatePick-day.is-selected { background: var(--primary); color: var(--text-inverse); }
+.DatePick-time { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.DatePick-time label { font-size: var(--font-size-small); color: var(--text-accent); }
+.DatePick-time select { flex: 1; min-width: 0; }
+.DatePick-foot {
+    display: flex; justify-content: space-between; gap: 8px;
+    margin-top: 10px; padding-top: 8px;
+    border-top: var(--border-xs) solid var(--border-subtle);
+}
+
 .CreateBooking-results {
     position: absolute; z-index: 5; top: calc(100% + 2px); left: 0; right: 0;
     margin: 0; padding: 4px; list-style: none;
@@ -2686,6 +2732,149 @@ function fmtStamp(d, time) {
     return time + ' ' + pad2(d.getMonth() + 1) + '/' + pad2(d.getDate()) + '/' + String(d.getFullYear()).slice(-2);
 }
 
+// ── Date + time picker ─────────────────────────────────────────────────────
+// The From/To fields read "DD/MM/YY HH:MMAM", so the picker parses and writes
+// that shape rather than relying on a native date control.
+var TIME_SLOTS = (function () {
+    var out = [];
+    for (var m = 7 * 60; m <= 19 * 60; m += 30) {
+        var h = Math.floor(m / 60);
+        out.push(pad2(h % 12 === 0 ? 12 : h % 12) + ':' + pad2(m % 60) + (h < 12 ? 'AM' : 'PM'));
+    }
+    return out;
+})();
+
+function fmtPickerStamp(d, time) {
+    return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' +
+           String(d.getFullYear()).slice(2) + ' ' + time;
+}
+
+function parsePickerStamp(s) {
+    var m = /^(\d{1,2})\/(\d{1,2})\/(\d{2})\s+(\d{1,2}:\d{2}\s?(?:AM|PM))$/i.exec(String(s || '').trim());
+    if (!m) return null;
+    var d = new Date(2000 + (+m[3]), (+m[2]) - 1, +m[1]);
+    if (d.getMonth() !== (+m[2]) - 1 || d.getDate() !== (+m[1])) return null;
+    return { date: d, time: m[4].replace(/\s/g, '').toUpperCase() };
+}
+
+function weekIndexOf(d) {
+    var wi = Math.round((snapMonday(d) - FIRST_MONDAY) / 604800000);
+    return Math.max(0, Math.min(WEEK_COUNT - 1, wi));
+}
+
+function closeDatePicker() {
+    var open = document.getElementById('datePick');
+    if (open) open.remove();
+}
+
+/** Opens the picker over `input`, calling `onPick` once a value is written. */
+function openDatePicker(input, fallbackDate, onPick) {
+    closeDatePicker();
+    var parsed = parsePickerStamp(input.value) ||
+                 { date: new Date(fallbackDate), time: TIME_SLOTS[4] };
+    var sel = parsed.date, time = parsed.time;
+    var view = new Date(sel.getFullYear(), sel.getMonth(), 1);
+
+    var pop = el('div', 'DatePick');
+    pop.id = 'datePick';
+    pop.setAttribute('data-owner', input.getAttribute('data-dt') || '');
+    pop.addEventListener('mousedown', function (e) { e.stopPropagation(); });
+
+    function commitValue() {
+        input.value = fmtPickerStamp(sel, time);
+        if (onPick) onPick();
+    }
+
+    function paint() {
+        pop.innerHTML = '';
+
+        var head = el('div', 'DatePick-head');
+        var prev = el('button', 'DatePick-nav');
+        prev.type = 'button';
+        prev.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+        prev.setAttribute('aria-label', 'Previous month');
+        prev.addEventListener('click', function () { view.setMonth(view.getMonth() - 1); paint(); });
+        var next = el('button', 'DatePick-nav');
+        next.type = 'button';
+        next.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+        next.setAttribute('aria-label', 'Next month');
+        next.addEventListener('click', function () { view.setMonth(view.getMonth() + 1); paint(); });
+        head.appendChild(prev);
+        head.appendChild(el('div', 'DatePick-title',
+            MONTH_NAMES[view.getMonth()] + ' ' + view.getFullYear()));
+        head.appendChild(next);
+        pop.appendChild(head);
+
+        var grid = el('div', 'DatePick-grid');
+        ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].forEach(function (d) {
+            grid.appendChild(el('div', 'DatePick-dow', d));
+        });
+        var first = snapMonday(new Date(view.getFullYear(), view.getMonth(), 1));
+        for (var i = 0; i < 42; i++) {
+            var day = addDays(first, i);
+            var b = el('button', 'DatePick-day' +
+                (day.getMonth() !== view.getMonth() ? ' is-outside' : '') +
+                (day.toDateString() === TODAY.toDateString() ? ' is-today' : '') +
+                (day.toDateString() === sel.toDateString() ? ' is-selected' : ''),
+                String(day.getDate()));
+            b.type = 'button';
+            (function (d) {
+                b.addEventListener('click', function () { sel = d; commitValue(); paint(); });
+            })(day);
+            grid.appendChild(b);
+            if (i >= 34 && addDays(first, i + 1).getMonth() !== view.getMonth()) break;
+        }
+        pop.appendChild(grid);
+
+        var timeRow = el('div', 'DatePick-time');
+        var lab = el('label', null, 'Time');
+        lab.setAttribute('for', 'datePickTime');
+        timeRow.appendChild(lab);
+        var sel2 = el('select', 'CreateBooking-select');
+        sel2.id = 'datePickTime';
+        TIME_SLOTS.forEach(function (t) {
+            var o = el('option', null, t);
+            if (t === time) o.selected = true;
+            sel2.appendChild(o);
+        });
+        sel2.addEventListener('change', function () { time = sel2.value; commitValue(); });
+        timeRow.appendChild(sel2);
+        pop.appendChild(timeRow);
+
+        var foot = el('div', 'DatePick-foot');
+        var today = el('button', 'Btn Btn--secondary', 'Today');
+        today.type = 'button';
+        today.addEventListener('click', function () {
+            sel = new Date(TODAY);
+            view = new Date(sel.getFullYear(), sel.getMonth(), 1);
+            commitValue();
+            paint();
+        });
+        var done = el('button', 'Btn Btn--primary', 'Done');
+        done.type = 'button';
+        done.addEventListener('click', function () { commitValue(); closeDatePicker(); });
+        foot.appendChild(today);
+        foot.appendChild(done);
+        pop.appendChild(foot);
+    }
+
+    paint();
+    (document.getElementById('modalLayer') || overlays).appendChild(pop);
+
+    var r = input.getBoundingClientRect();
+    var h = pop.offsetHeight;
+    pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - pop.offsetWidth - 8)) + 'px';
+    pop.style.top = (r.bottom + 4 + h <= window.innerHeight ? r.bottom + 4
+                                                            : Math.max(8, r.top - h - 4)) + 'px';
+}
+
+document.addEventListener('mousedown', function (e) {
+    var pop = document.getElementById('datePick');
+    if (pop && !pop.contains(e.target) && !(e.target.closest && e.target.closest('[data-dt]'))) {
+        closeDatePicker();
+    }
+});
+
 function initials(name) {
     return name.split(/\s+/).slice(0, 2).map(function (w) { return w[0]; }).join('');
 }
@@ -2945,8 +3134,15 @@ function openCreateModal(worker, row, weekDate) {
     m.appendChild(body);
     m.appendChild(foot);
 
-    var from = pad2(weekDate.getDate()) + '/' + pad2(weekDate.getMonth() + 1) + '/' +
-               String(weekDate.getFullYear()).slice(2) + ' 09:00AM';
+    // Field values live here rather than in the DOM: the body is re-rendered
+    // whenever the engagement or item type changes, which would otherwise throw
+    // away anything already entered.
+    // Dates default to the working week that was double-clicked, Monday morning
+    // to Friday evening, so both required fields start out valid.
+    var fromVal = fmtPickerStamp(weekDate, '09:00AM');
+    var toVal = fmtPickerStamp(addDays(weekDate, 4), '05:30PM');
+    var unavailType = UNAVAILABILITY_TYPES[0];
+    var hoursVal = '30', minsVal = '0';
 
     function leave() { return mode === 'unavailability'; }
 
@@ -3043,7 +3239,9 @@ function openCreateModal(worker, row, weekDate) {
         return '<div class="CreateBooking-stack">' +
             '<div class="Modal-fieldLabel">Unavailability Type <span class="Modal-req">*</span></div>' +
             '<select class="CreateBooking-select" aria-label="Unavailability type">' +
-                UNAVAILABILITY_TYPES.map(function (t) { return '<option>' + esc(t) + '</option>'; }).join('') +
+                UNAVAILABILITY_TYPES.map(function (t) {
+                    return '<option' + (t === unavailType ? ' selected' : '') + '>' + esc(t) + '</option>';
+                }).join('') +
             '</select>' +
         '</div>';
     }
@@ -3078,24 +3276,28 @@ function openCreateModal(worker, row, weekDate) {
             '<div class="CreateBooking-grid2">' +
                 '<div class="CreateBooking-field">' +
                     '<div class="CreateBooking-label">From <span class="Modal-req">*</span></div>' +
-                    '<div class="CreateBooking-inputGroup"><input type="text" value="' + from + '" />' +
-                    '<button type="button" class="CreateBooking-unit" aria-label="Pick from date">' +
-                    '<i class="fa-regular fa-calendar"></i></button></div>' +
+                    '<div class="CreateBooking-inputGroup">' +
+                    '<input type="text" data-dt="from" value="' + esc(fromVal) + '" ' +
+                        'placeholder="Select date and time" autocomplete="off" />' +
+                    '<button type="button" class="CreateBooking-unit" data-dt-open="from" ' +
+                        'aria-label="Pick from date"><i class="fa-regular fa-calendar"></i></button></div>' +
                 '</div>' +
                 '<div class="CreateBooking-field">' +
                     '<div class="CreateBooking-label">To <span class="Modal-req">*</span></div>' +
-                    '<div class="CreateBooking-inputGroup"><input type="text" placeholder="Select date and time" />' +
-                    '<button type="button" class="CreateBooking-unit" aria-label="Pick to date">' +
-                    '<i class="fa-regular fa-calendar"></i></button></div>' +
+                    '<div class="CreateBooking-inputGroup">' +
+                    '<input type="text" data-dt="to" value="' + esc(toVal) + '" ' +
+                        'placeholder="Select date and time" autocomplete="off" />' +
+                    '<button type="button" class="CreateBooking-unit" data-dt-open="to" ' +
+                        'aria-label="Pick to date"><i class="fa-regular fa-calendar"></i></button></div>' +
                 '</div>' +
             '</div>' +
             '<div class="CreateBooking-field">' +
                 '<div class="CreateBooking-label">Effort <span class="Modal-req">*</span></div>' +
                 '<div class="CreateBooking-effortRow">' +
                     '<div class="CreateBooking-effortInputs">' +
-                        '<div class="CreateBooking-inputGroup"><input type="number" min="0" step="1" value="' + (leave() ? '7' : '30') + '" aria-label="Hours" />' +
+                        '<div class="CreateBooking-inputGroup"><input type="number" min="0" step="1" value="' + esc(hoursVal) + '" aria-label="Hours" />' +
                         '<span class="CreateBooking-unit" aria-hidden="true">h</span></div>' +
-                        '<div class="CreateBooking-inputGroup"><input type="number" min="0" max="45" step="15" value="' + (leave() ? '30' : '0') + '" aria-label="Minutes" />' +
+                        '<div class="CreateBooking-inputGroup"><input type="number" min="0" max="45" step="15" value="' + esc(minsVal) + '" aria-label="Minutes" />' +
                         '<span class="CreateBooking-unit" aria-hidden="true">m</span></div>' +
                     '</div>' +
                 '</div>' +
@@ -3209,41 +3411,81 @@ function openCreateModal(worker, row, weekDate) {
         body.scrollTop = 0;
 
         if (!leave()) { wireEngagement(); wirePhase(); }
+        wireFields();
 
         [].forEach.call(body.querySelectorAll('.BtnGroup button[data-mode]'), function (b) {
             b.addEventListener('click', function () {
                 if (b.getAttribute('data-mode') === mode) return;
                 mode = b.getAttribute('data-mode');
+                // A day and a half of leave and a 30-hour booking are different
+                // enough that the effort default should follow the type.
+                hoursVal = leave() ? '7' : '30';
+                minsVal = leave() ? '30' : '0';
                 repaint();
             });
         });
     }
 
+    function wireFields() {
+        [].forEach.call(body.querySelectorAll('[data-dt]'), function (input) {
+            var which = input.getAttribute('data-dt');
+            var seed = which === 'to' ? addDays(weekDate, 4) : weekDate;
+            function sync() {
+                if (which === 'to') toVal = input.value; else fromVal = input.value;
+                paintFoot();
+            }
+            function open() { openDatePicker(input, seed, sync); }
+            input.addEventListener('focus', open);
+            input.addEventListener('mousedown', function (e) { e.stopPropagation(); open(); });
+            // Typing straight into the field stays allowed; revalidate as it changes.
+            input.addEventListener('input', sync);
+
+            var btn = body.querySelector('[data-dt-open="' + which + '"]');
+            if (!btn) return;
+            btn.addEventListener('mousedown', function (e) { e.stopPropagation(); });
+            btn.addEventListener('click', function () {
+                var pop = document.getElementById('datePick');
+                if (pop && pop.getAttribute('data-owner') === which) closeDatePicker();
+                else open();
+            });
+        });
+
+        var hrs = body.querySelector('input[aria-label="Hours"]');
+        if (hrs) hrs.addEventListener('input', function () { hoursVal = hrs.value; });
+        var mins = body.querySelector('input[aria-label="Minutes"]');
+        if (mins) mins.addEventListener('input', function () { minsVal = mins.value; });
+        var type = body.querySelector('.CreateBooking-select');
+        if (type) type.addEventListener('change', function () { unavailType = type.value; });
+    }
+
+    function dateRange() {
+        var f = parsePickerStamp(fromVal), t = parsePickerStamp(toVal);
+        if (!f || !t || t.date < f.date) return null;
+        var start = weekIndexOf(f.date);
+        return { start: start, span: Math.min(weekIndexOf(t.date) - start + 1, WEEK_COUNT - start) };
+    }
+
     function effortHours() {
-        function read(label) {
-            var f = body.querySelector('input[aria-label="' + label + '"]');
-            return f ? parseFloat(f.value) || 0 : 0;
-        }
-        return Math.round((read('Hours') + read('Minutes') / 60) * 100) / 100;
+        return Math.round(((parseFloat(hoursVal) || 0) + (parseFloat(minsVal) || 0) / 60) * 100) / 100;
     }
 
     // Write the booking into the resource so it shows on the Gantt straight
     // away, inferring whatever the row it was opened from already told us.
     function commit() {
-        var wi = Math.max(0, WEEKS.indexOf(weekDate));
-        var typeField = body.querySelector('.CreateBooking-select');
+        var range = dateRange() || { start: Math.max(0, WEEKS.indexOf(weekDate)), span: 1 };
         var hours = effortHours();
+        // Same rule as the sample data: effort is a total, spread over the span.
         var cells = {};
-        cells[wi] = hours;
+        for (var i = 0; i < range.span; i++) cells[range.start + i] = hours / range.span;
         var item = {
             id: 'it-' + (++ITEM_SEQ),
-            job: leave() ? (typeField ? typeField.value : UNAVAILABILITY_TYPES[0]) : engagement.job,
+            job: leave() ? unavailType : engagement.job,
             code: leave() ? '' : engagement.code,
             phase: leave() ? null : phase,
             role: !leave() && dim === 'role' ? value : null,
             bookingType: !leave() && dim === 'bookingType' ? value : null,
             req: !leave() && dim === 'req' ? value : null,
-            startWeek: wi, span: 1, hours: hours, cells: cells,
+            startWeek: range.start, span: range.span, hours: hours, cells: cells,
             kind: leave() ? 'unavailability' : 'booking'
         };
         worker.items.push(item);
@@ -3261,6 +3503,9 @@ function openCreateModal(worker, row, weekDate) {
         if (!leave() && !engagement) {
             save.disabled = true;
             save.title = 'Choose an engagement first';
+        } else if (!dateRange()) {
+            save.disabled = true;
+            save.title = 'Needs a From and To date, with To on or after From';
         }
         cancel.addEventListener('click', closeModal);
         save.addEventListener('click', commit);
