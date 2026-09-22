@@ -2112,17 +2112,24 @@ function buildWorkerRow(worker, index) {
     left.appendChild(el('div', 'Cell-grade', worker.grade));
 
     var expandCell = el('div', 'Cell-expand');
-    if (rows) {
-        var allOpen = rows.every(function (r) { return rowExpanded(worker, r); });
+    // An empty row has nothing to show and never opens, so it is left out of
+    // both the toggle and the reading of whether everything is already open —
+    // otherwise an empty Other row would peg the button to Expand for good.
+    var openable = rows ? rows.filter(function (r) { return r.items.length; }) : [];
+    if (openable.length) {
+        var allOpen = openable.every(function (r) { return rowExpanded(worker, r); });
         var btn = el('button', 'Expander');
         btn.innerHTML = '<i class="far fa-' + (allOpen ? 'minus-square' : 'plus-square') + '"></i>';
         btn.title = allOpen ? 'Collapse all breakdown rows' : 'Expand all breakdown rows';
         btn.addEventListener('click', function (e) {
             e.stopPropagation();
-            rows.forEach(function (r) {
+            openable.forEach(function (r) {
                 if (allOpen) delete state.expandedRows[worker.id + '|' + r.key];
-                else if (r.items.length) openRow(worker, r);
+                else openRow(worker, r);
             });
+            // A highlighted cell in a row we just shut would keep its highlight.
+            if (allOpen && state.selectedCell &&
+                state.selectedCell.indexOf(worker.id + '|') === 0) state.selectedCell = null;
             render();
         });
         expandCell.appendChild(btn);
