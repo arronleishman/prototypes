@@ -1002,22 +1002,39 @@ button { font-family: inherit; }
     overflow: hidden;
 }
 .Modal-head {
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    padding: 1rem 1rem 0.75rem;
+    position: relative;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
+    padding: 1rem 1rem 0;
     border-bottom: var(--border-xs) solid var(--border-default);
     flex-shrink: 0;
 }
 .Modal-title {
-    margin: 0; flex: 1;
+    margin: 0; flex: 1; padding-bottom: 13px;
     font-size: 1.25rem; font-weight: var(--font-weight-regular);
     line-height: 1.5; color: var(--text-default);
 }
+/* Item-type tabs sit on the header's bottom edge, so the active underline
+   replaces that border rather than stacking under it. */
+.ModalTabs { display: flex; gap: 4px; margin-bottom: -1px; padding-right: 32px; }
+.ModalTabs > button {
+    padding: 6px 12px 10px; border: 0; border-bottom: 3px solid transparent;
+    background: none; cursor: pointer;
+    font-family: var(--font-family); font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-regular); line-height: 1.4;
+    color: var(--text-subtle);
+}
+.ModalTabs > button:hover { color: var(--text-default); }
+.ModalTabs > button.is-active {
+    color: var(--text-default); font-weight: var(--font-weight-semibold);
+    border-bottom-color: var(--primary);
+}
 .Modal-x {
+    position: absolute; top: 6px; right: 8px;
     width: 35px; height: 35px; flex-shrink: 0;
     border: 0; border-radius: var(--border-radius-default);
     background: transparent; color: var(--text-accent);
     display: inline-flex; align-items: center; justify-content: center;
-    cursor: pointer; margin: -0.25rem -0.25rem -0.25rem 0.5rem;
+    cursor: pointer;
 }
 .Modal-x:hover { color: var(--text-default); background: var(--surface-subtle-dark); }
 .Modal-body {
@@ -3146,12 +3163,12 @@ function openCreateModal(worker, row, weekDate) {
 
     function leave() { return mode === 'unavailability'; }
 
-    function modeToggle() {
-        return '<div class="CreateBooking-stack">' +
-            '<div class="BtnGroup" role="group" aria-label="Item type">' +
-                '<button type="button" data-mode="booking"' + (leave() ? '' : ' class="is-active"') + '>Booking</button>' +
-                '<button type="button" data-mode="unavailability"' + (leave() ? ' class="is-active"' : '') + '>Unavailability</button>' +
-            '</div>' +
+    function modeTabs() {
+        return '<div class="ModalTabs" role="tablist" aria-label="Item type">' +
+            '<button type="button" role="tab" data-mode="unavailability" aria-selected="' + leave() + '"' +
+                (leave() ? ' class="is-active"' : '') + '>Unavailability</button>' +
+            '<button type="button" role="tab" data-mode="booking" aria-selected="' + !leave() + '"' +
+                (leave() ? '' : ' class="is-active"') + '>Booking</button>' +
         '</div>';
     }
 
@@ -3391,12 +3408,25 @@ function openCreateModal(worker, row, weekDate) {
     function paintHead() {
         head.innerHTML =
             '<h2 class="Modal-title">Create a New ' + (leave() ? 'Unavailability' : 'Booking') + '</h2>' +
+            (canChoose ? modeTabs() : '') +
             '<button type="button" class="Modal-x" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>';
         head.querySelector('.Modal-x').addEventListener('click', closeModal);
+
+        [].forEach.call(head.querySelectorAll('.ModalTabs button[data-mode]'), function (b) {
+            b.addEventListener('click', function () {
+                if (b.getAttribute('data-mode') === mode) return;
+                mode = b.getAttribute('data-mode');
+                // A day and a half of leave and a 30-hour booking are different
+                // enough that the effort default should follow the type.
+                hoursVal = leave() ? '7' : '30';
+                minsVal = leave() ? '30' : '0';
+                repaint();
+            });
+        });
     }
 
     function paintBody() {
-        var html = canChoose ? modeToggle() : '';
+        var html = '';
         if (leave()) {
             html += unavailabilityField() + scheduling();
         } else {
@@ -3412,18 +3442,6 @@ function openCreateModal(worker, row, weekDate) {
 
         if (!leave()) { wireEngagement(); wirePhase(); }
         wireFields();
-
-        [].forEach.call(body.querySelectorAll('.BtnGroup button[data-mode]'), function (b) {
-            b.addEventListener('click', function () {
-                if (b.getAttribute('data-mode') === mode) return;
-                mode = b.getAttribute('data-mode');
-                // A day and a half of leave and a 30-hour booking are different
-                // enough that the effort default should follow the type.
-                hoursVal = leave() ? '7' : '30';
-                minsVal = leave() ? '30' : '0';
-                repaint();
-            });
-        });
     }
 
     function wireFields() {
