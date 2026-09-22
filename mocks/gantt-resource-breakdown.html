@@ -1315,9 +1315,11 @@ button.CreateBooking-unit:hover,
     box-shadow: 0 6px 18px rgba(0,0,0,.24);
 }
 
-/* Bottom-right zoom cluster (visual parity with the product) */
+/* Bottom-right zoom cluster (visual parity with the product). Floats over the
+   Gantt viewport, lifted clear of the shared feedback launcher that every mock
+   pins to the bottom-right corner. */
 .Zoom {
-    position: absolute; right: 14px; bottom: 14px;
+    position: absolute; right: 14px; bottom: 76px;
     display: flex; gap: 4px;
     z-index: 40;
 }
@@ -1410,12 +1412,14 @@ button.CreateBooking-unit:hover,
         <!-- ── Gantt ─────────────────────────────────────────── -->
         <div class="Gantt" id="gantt">
             <div class="Gantt-inner" id="ganttInner"></div>
-            <div class="Zoom">
-                <button><i class="fa-solid fa-minus"></i></button>
-                <button><i class="fa-solid fa-magnifying-glass"></i></button>
-                <button><i class="fa-solid fa-plus"></i></button>
-                <button><i class="fa-solid fa-caret-down"></i></button>
-            </div>
+        </div>
+        <!-- Outside the scroller: inside it, absolute positioning anchors to the
+             52-week canvas rather than the viewport, so it scrolls out of view. -->
+        <div class="Zoom">
+            <button><i class="fa-solid fa-minus"></i></button>
+            <button><i class="fa-solid fa-magnifying-glass"></i></button>
+            <button><i class="fa-solid fa-plus"></i></button>
+            <button><i class="fa-solid fa-caret-down"></i></button>
         </div>
     </div>
 </div>
