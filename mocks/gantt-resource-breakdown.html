@@ -1562,7 +1562,7 @@ var UNAVAILABILITY_TYPES = [
 
 // ── Data ───────────────────────────────────────────────────────────────────
 // Engagement spec: [jobName, code, phase, role, bookingType, resourceRequirement,
-//                   startWeek, spanWeeks, hoursPerWeek]
+//                   startWeek, spanWeeks, totalHours]
 // null on a dimension means "no value" — those items fall into the Other row.
 // Weeks are 0–51 across the 2021 calendar year.
 var DATA = [
@@ -1826,16 +1826,19 @@ DATA.forEach(function (group) {
     group.workers.forEach(function (wk) {
         wk.dept = group.dept;
         wk.items = wk.items.map(function (spec) {
+            // The spec carries the booking's total effort. A week cell reports
+            // what falls in that week, so spread the effort evenly over the
+            // booking's own span — not the span left after the horizon clips it.
+            var perWeek = spec[8] / spec[7];
+            var span = Math.min(spec[7], WEEK_COUNT - spec[6]);
             var cells = {};
-            for (var i = 0; i < spec[7]; i++) {
-                var wi = spec[6] + i;
-                if (wi < WEEK_COUNT) cells[wi] = spec[8];
-            }
+            for (var i = 0; i < span; i++) cells[spec[6] + i] = perWeek;
             return {
                 id: 'it-' + (++ITEM_SEQ),
                 job: spec[0], code: spec[1],
                 phase: spec[2], role: spec[3], bookingType: spec[4], req: spec[5],
-                startWeek: spec[6], span: Math.min(spec[7], WEEK_COUNT - spec[6]),
+                startWeek: spec[6], span: span,
+                hours: spec[8],
                 cells: cells,
                 kind: spec[9] || 'booking'
             };
@@ -2329,15 +2332,17 @@ function buildBars(worker, row, topPad) {
         if (it.kind !== 'unavailability') {
             bar.style.backgroundColor = state.tasksInGrey ? '#9298b4' : (PHASE_COLOUR[it.phase] || '#4f4970');
         }
-        var perWeek = it.cells[it.startWeek] || 0;
+        var total = Math.round((it.hours || 0) * 10) / 10;
+        var perWeek = Math.round((it.cells[it.startWeek] || 0) * 10) / 10;
 
         // Main Gantt task label is "<rounded hours><hour character> <name>".
         var content = el('div', 'Bar-content');
-        content.appendChild(el('span', 'Bar-name', perWeek + 'h ' + it.job));
+        content.appendChild(el('span', 'Bar-name', total + 'h ' + it.job));
         bar.appendChild(content);
         bar.appendChild(el('div', 'Bar-handle'));
 
-        bar.title = it.job + (it.code ? ' (' + it.code + ')' : '') + ' — ' + perWeek + ' h/week';
+        bar.title = it.job + (it.code ? ' (' + it.code + ')' : '') + ' — ' + total + ' h over ' +
+                    it.span + ' week' + (it.span === 1 ? '' : 's') + ' (' + perWeek + ' h/week)';
         bar.addEventListener('click', function (e) {
             e.stopPropagation();
             // On its own a bar is a single-booking selection, which opens the
@@ -2798,8 +2803,7 @@ function scheduleBlock(lead, worker, dash) {
     var start = WEEKS[lead.startWeek];
     var endMonday = WEEKS[Math.min(lead.startWeek + lead.span - 1, WEEKS.length - 1)];
     var end = new Date(endMonday.getFullYear(), endMonday.getMonth(), endMonday.getDate() + 4);
-    var total = 0;
-    Object.keys(lead.cells).forEach(function (k) { total += lead.cells[k]; });
+    var total = lead.hours || 0;
 
     var fields = el('div', 'Panel-fields');
 
@@ -2841,9 +2845,7 @@ function scheduleBlock(lead, worker, dash) {
 }
 
 function phasesSection(lead, worker) {
-    var total = 0;
-    Object.keys(lead.cells).forEach(function (k) { total += lead.cells[k]; });
-
+    var total = lead.hours || 0;
     var table = el('div', 'PhaseTable');
     var head = el('div', 'PhaseTable-row PhaseTable-head');
     head.appendChild(el('div', 'PhaseTable-cell PhaseTable-cell--phase', 'Phase'));
@@ -3230,8 +3232,9 @@ function openCreateModal(worker, row, weekDate) {
     function commit() {
         var wi = Math.max(0, WEEKS.indexOf(weekDate));
         var typeField = body.querySelector('.CreateBooking-select');
+        var hours = effortHours();
         var cells = {};
-        cells[wi] = effortHours();
+        cells[wi] = hours;
         var item = {
             id: 'it-' + (++ITEM_SEQ),
             job: leave() ? (typeField ? typeField.value : UNAVAILABILITY_TYPES[0]) : engagement.job,
@@ -3240,14 +3243,14 @@ function openCreateModal(worker, row, weekDate) {
             role: !leave() && dim === 'role' ? value : null,
             bookingType: !leave() && dim === 'bookingType' ? value : null,
             req: !leave() && dim === 'req' ? value : null,
-            startWeek: wi, span: 1, cells: cells,
+            startWeek: wi, span: 1, hours: hours, cells: cells,
             kind: leave() ? 'unavailability' : 'booking'
         };
         worker.items.push(item);
         closeModal();
         render();
         toast((leave() ? 'Unavailability' : 'Booking') + ' created — ' +
-              item.job + ' · ' + cells[wi] + ' h');
+              item.job + ' · ' + hours + ' h');
     }
 
     function paintFoot() {
