@@ -1122,6 +1122,32 @@ button.CreateBooking-unit:hover,
     background: var(--primary-emphasis); border-color: var(--primary-emphasis);
 }
 
+.CreateBooking-results {
+    position: absolute; z-index: 5; top: calc(100% + 2px); left: 0; right: 0;
+    margin: 0; padding: 4px; list-style: none;
+    max-height: 232px; overflow-y: auto;
+    border: var(--border-xs) solid var(--border-default);
+    border-radius: var(--border-radius-default);
+    background: var(--surface-default);
+    box-shadow: 0 4px 12px rgba(16, 24, 40, .12);
+}
+.CreateBooking-results button {
+    display: flex; align-items: baseline; gap: 8px;
+    width: 100%; padding: 7px 9px; border: none; border-radius: 3px;
+    background: none; cursor: pointer; text-align: left;
+    font-family: var(--font-family); font-size: var(--font-size-medium);
+}
+.CreateBooking-results button:hover,
+.CreateBooking-results button:focus-visible { background: var(--surface-subtle); outline: none; }
+.CreateBooking-resultJob {
+    flex: 1 1 auto; min-width: 0; color: var(--text-default);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.CreateBooking-resultCode { flex-shrink: 0; font-size: var(--font-size-small); color: var(--text-accent); }
+.CreateBooking-resultEmpty { padding: 7px 9px; font-size: var(--font-size-medium); color: var(--text-accent); }
+.CreateBooking-assignedCode { color: var(--text-accent); font-size: var(--font-size-small); }
+.CreateBooking-assigned button.CreateBooking-unit { cursor: pointer; }
+
 .CreateBooking-select {
     width: 100%; height: 35px; box-sizing: border-box;
     border: var(--border-xs) solid var(--border-default);
@@ -1261,6 +1287,10 @@ button.CreateBooking-unit:hover,
 .Btn--secondary:hover { color: var(--text-inverse); background: var(--primary); border-color: var(--primary); }
 .Btn--primary { background: var(--primary); border-color: var(--primary); color: var(--text-inverse); }
 .Btn--primary:hover { background: var(--primary-emphasis); border-color: var(--primary-emphasis); color: var(--text-inverse); }
+.Btn:disabled, .Btn:disabled:hover {
+    opacity: .45; cursor: not-allowed;
+    background: var(--primary); border-color: var(--primary); color: var(--text-inverse);
+}
 
 .Note {
     display: flex; gap: 8px; align-items: flex-start;
@@ -1815,6 +1845,20 @@ DATA.forEach(function (group) {
         WORKERS.push(wk);
     });
 });
+
+// Engagements the create modal can book against — one per code in the sample,
+// named after the first booking seen on it.
+var ENGAGEMENTS = (function () {
+    var seen = {}, list = [];
+    WORKERS.forEach(function (wk) {
+        wk.items.forEach(function (it) {
+            if (!it.code || it.kind === 'unavailability' || seen[it.code]) return;
+            seen[it.code] = true;
+            list.push({ code: it.code, job: it.job });
+        });
+    });
+    return list.sort(function (a, b) { return a.job.localeCompare(b.job); });
+})();
 
 // ── State ──────────────────────────────────────────────────────────────────
 // slimView / grouping / hoursMode start on the user's saved preferences.
@@ -2871,6 +2915,10 @@ function openCreateModal(worker, row, weekDate) {
     var value = row.isOther || dim === 'none' ? null : row.label;
     var canChoose = !!row.isOther || dim === 'none';
     var mode = 'booking';
+    var engagement = null;
+    // Every booking in the data carries a phase; work that is not opened from a
+    // phase row starts where new work starts.
+    var phase = dim === 'phase' && value ? value : PHASE_ORDER[0];
 
     var layer = el('div', 'Backdrop');
     layer.id = 'modalLayer';
@@ -2899,14 +2947,83 @@ function openCreateModal(worker, row, weekDate) {
     }
 
     function engagementField() {
+        if (engagement) {
+            return '<div class="CreateBooking-stack">' +
+                '<div class="Modal-fieldLabel">Engagement <span class="Modal-req">*</span></div>' +
+                '<div class="CreateBooking-assigned">' +
+                    '<span class="CreateBooking-assignedText">' + esc(engagement.job) +
+                        ' <span class="CreateBooking-assignedCode">' + esc(engagement.code) + '</span></span>' +
+                    '<i class="fa-solid fa-circle-check CreateBooking-assignedOk" aria-hidden="true"></i>' +
+                    '<button type="button" class="CreateBooking-unit CreateBooking-unit--icon" data-eng-clear ' +
+                        'aria-label="Clear engagement"><i class="fa-solid fa-xmark"></i></button>' +
+                '</div>' +
+            '</div>';
+        }
         return '<div class="CreateBooking-stack">' +
             '<div class="Modal-fieldLabel">Engagement <span class="Modal-req">*</span></div>' +
             '<div class="CreateBooking-searchWrap">' +
-                '<input type="search" placeholder="Search for Engagement" autocomplete="off" />' +
-                '<button type="button" class="CreateBooking-iconBtn is-emphasis" tabindex="-1" aria-hidden="true">' +
-                    '<i class="fa-solid fa-magnifying-glass"></i></button>' +
+                '<input type="search" data-eng-search placeholder="Search for Engagement" autocomplete="off" ' +
+                    'role="combobox" aria-expanded="false" aria-controls="engResults" />' +
+                '<button type="button" class="CreateBooking-iconBtn is-emphasis" data-eng-open ' +
+                    'aria-label="Show engagements"><i class="fa-solid fa-magnifying-glass"></i></button>' +
+                '<ul class="CreateBooking-results" id="engResults" role="listbox" hidden></ul>' +
             '</div>' +
         '</div>';
+    }
+
+    function wireEngagement() {
+        var clear = body.querySelector('[data-eng-clear]');
+        if (clear) {
+            clear.addEventListener('click', function () {
+                engagement = null;
+                repaint();
+                var again = body.querySelector('[data-eng-search]');
+                if (again) again.focus();
+            });
+            return;
+        }
+        var input = body.querySelector('[data-eng-search]');
+        if (!input) return;
+        var list = body.querySelector('#engResults');
+
+        function close() { list.hidden = true; input.setAttribute('aria-expanded', 'false'); }
+        function open() {
+            var term = input.value.trim().toLowerCase();
+            var hits = ENGAGEMENTS.filter(function (e) {
+                return !term || (e.job + ' ' + e.code).toLowerCase().indexOf(term) > -1;
+            }).slice(0, 10);
+            list.innerHTML = hits.length
+                ? hits.map(function (e) {
+                    return '<li role="option"><button type="button" data-code="' + esc(e.code) + '">' +
+                        '<span class="CreateBooking-resultJob">' + esc(e.job) + '</span>' +
+                        '<span class="CreateBooking-resultCode">' + esc(e.code) + '</span></button></li>';
+                }).join('')
+                : '<li class="CreateBooking-resultEmpty">No engagements match</li>';
+            list.hidden = false;
+            input.setAttribute('aria-expanded', 'true');
+            [].forEach.call(list.querySelectorAll('button[data-code]'), function (b) {
+                // Keep focus on the input so the blur handler cannot close the
+                // list out from under the click.
+                b.addEventListener('mousedown', function (e) { e.preventDefault(); });
+                b.addEventListener('click', function () {
+                    var code = b.getAttribute('data-code');
+                    engagement = ENGAGEMENTS.filter(function (e) { return e.code === code; })[0];
+                    repaint();
+                });
+            });
+        }
+
+        input.addEventListener('focus', open);
+        input.addEventListener('input', open);
+        input.addEventListener('blur', function () { setTimeout(close, 150); });
+        input.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape' || list.hidden) return;
+            e.stopPropagation();
+            close();
+        });
+        body.querySelector('[data-eng-open]').addEventListener('click', function () {
+            if (list.hidden) { input.focus(); open(); } else { close(); }
+        });
     }
 
     function unavailabilityField() {
@@ -2923,11 +3040,23 @@ function openCreateModal(worker, row, weekDate) {
             '<h3 class="CreateBooking-sectionTitle">Phase</h3>' +
             '<div class="PhasePills" role="group" aria-label="Phase">' +
             PHASE_ORDER.map(function (p) {
-                return '<button type="button" class="PhasePill' + (p === value ? ' is-selected' : '') + '">' +
+                return '<button type="button" class="PhasePill' + (p === phase ? ' is-selected' : '') + '"' +
+                       ' data-phase="' + esc(p) + '">' +
                        '<span class="PhasePill-dot" style="background:' + PHASE_COLOUR[p] + '"></span>' + esc(p) + '</button>';
             }).join('') +
             '</div>' +
         '</div>';
+    }
+
+    function wirePhase() {
+        [].forEach.call(body.querySelectorAll('.PhasePill[data-phase]'), function (b) {
+            b.addEventListener('click', function () {
+                phase = b.getAttribute('data-phase');
+                [].forEach.call(body.querySelectorAll('.PhasePill[data-phase]'), function (o) {
+                    o.classList.toggle('is-selected', o === b);
+                });
+            });
+        });
     }
 
     function scheduling() {
@@ -3066,15 +3195,48 @@ function openCreateModal(worker, row, weekDate) {
         body.appendChild(noteNode());
         body.scrollTop = 0;
 
+        if (!leave()) { wireEngagement(); wirePhase(); }
+
         [].forEach.call(body.querySelectorAll('.BtnGroup button[data-mode]'), function (b) {
             b.addEventListener('click', function () {
                 if (b.getAttribute('data-mode') === mode) return;
                 mode = b.getAttribute('data-mode');
-                paintHead();
-                paintBody();
-                paintFoot();
+                repaint();
             });
         });
+    }
+
+    function effortHours() {
+        function read(label) {
+            var f = body.querySelector('input[aria-label="' + label + '"]');
+            return f ? parseFloat(f.value) || 0 : 0;
+        }
+        return Math.round((read('Hours') + read('Minutes') / 60) * 100) / 100;
+    }
+
+    // Write the booking into the resource so it shows on the Gantt straight
+    // away, inferring whatever the row it was opened from already told us.
+    function commit() {
+        var wi = Math.max(0, WEEKS.indexOf(weekDate));
+        var typeField = body.querySelector('.CreateBooking-select');
+        var cells = {};
+        cells[wi] = effortHours();
+        var item = {
+            id: 'it-' + (++ITEM_SEQ),
+            job: leave() ? (typeField ? typeField.value : UNAVAILABILITY_TYPES[0]) : engagement.job,
+            code: leave() ? '' : engagement.code,
+            phase: leave() ? null : phase,
+            role: !leave() && dim === 'role' ? value : null,
+            bookingType: !leave() && dim === 'bookingType' ? value : null,
+            req: !leave() && dim === 'req' ? value : null,
+            startWeek: wi, span: 1, cells: cells,
+            kind: leave() ? 'unavailability' : 'booking'
+        };
+        worker.items.push(item);
+        closeModal();
+        render();
+        toast((leave() ? 'Unavailability' : 'Booking') + ' created — ' +
+              item.job + ' · ' + cells[wi] + ' h');
     }
 
     function paintFoot() {
@@ -3082,21 +3244,20 @@ function openCreateModal(worker, row, weekDate) {
         var more = el('button', 'Btn', 'More Options');
         var cancel = el('button', 'Btn Btn--secondary', 'Cancel');
         var save = el('button', 'Btn Btn--primary', 'Save');
+        if (!leave() && !engagement) {
+            save.disabled = true;
+            save.title = 'Choose an engagement first';
+        }
         cancel.addEventListener('click', closeModal);
-        save.addEventListener('click', function () {
-            closeModal();
-            toast(leave()
-                ? 'Unavailability created'
-                : 'Booking created' + (value ? ' — ' + DIMENSIONS[dim].label + ': ' + value : ''));
-        });
+        save.addEventListener('click', commit);
         foot.appendChild(more);
         foot.appendChild(cancel);
         foot.appendChild(save);
     }
 
-    paintHead();
-    paintBody();
-    paintFoot();
+    function repaint() { paintHead(); paintBody(); paintFoot(); }
+
+    repaint();
 
     layer.appendChild(m);
     overlays.appendChild(layer);
