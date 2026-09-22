@@ -1440,6 +1440,28 @@ var BAR_PITCH = BAR_H + 2;
 var BAR_PAD = 2;
 function barsHeight(count, pad) { return count * BAR_PITCH + (pad == null ? BAR_PAD : pad); }
 
+/**
+ * Bookings that do not overlap in time share a lane, the way the real Gantt
+ * packs them. High-volume compliance work puts a hundred short bookings on one
+ * resource in a quarter; a lane each would make the row unscrollably tall.
+ */
+function packLanes(items) {
+    var laneEnd = [], laneOf = {};
+    items.slice()
+        .sort(function (a, b) { return a.startWeek - b.startWeek || a.span - b.span; })
+        .forEach(function (it) {
+            var end = it.startWeek + it.span - 1;
+            for (var i = 0; i < laneEnd.length; i++) {
+                if (laneEnd[i] < it.startWeek) { laneEnd[i] = end; laneOf[it.id] = i; return; }
+            }
+            laneEnd.push(end);
+            laneOf[it.id] = laneEnd.length - 1;
+        });
+    return { laneOf: laneOf, count: laneEnd.length };
+}
+
+function laneCount(items) { return packLanes(items).count; }
+
 // Settings menu width — submenus dock against its right edge.
 var MENU_W = 275;
 
@@ -1533,12 +1555,108 @@ var DATA = [
         ]},
         { id: 'w-mariana', name: 'Mariana Abramamovh', grade: 'AM', cap: 37.5, items: [
             ['Audit of Angelo SLP 16/17',     'ANSLP1617-238', 'Preparation',   'Tax Senior',            'Audit',             'A3 / Tax Community Clients / London',  0, 6, 10],
-            ['Angelo Co 2017 fieldwork',      'ANCO2017-124',  'Preparation',   'Tax Assistant',         'Audit',             'A2 / Tax Community Clients / London',  5, 5, 20],
+            ['Angelo Co 2017 fieldwork',      'ANCO2017-124',  'Preparation',   'Tax Assistant',         'Audit',             'A2 / Tax Community Clients / London',  5, 3, 20],
             ['Angelo Co 2017 first review',   'ANCO2017-124',  'First Review',  'Tax Manager',           'Audit',             'MAN / Tax Community Clients / London', 10, 5, 10],
-            ['Maritime Consulting Review',    'MCR-7823',      'Second Review', 'Tax Assistant Manager', 'Consulting',        'MAN / Advisory / London',              16, 5, 30],
+            ['Maritime Consulting Review',    'MCR-7823',      'Second Review', 'Tax Assistant Manager', 'Consulting',        'MAN / Advisory / London',              17, 5, 30],
             ['Summer advisory',               'MCR-SUM',       'Preparation',   'Tax Senior',            'Consulting',        'A3 / Tax Community Clients / London',  24, 4, 12],
             ['Autumn fieldwork',              'ANCO-AUT',      'First Review',  'Tax Assistant',         'Audit',             'A2 / Tax Community Clients / London',  34, 5, 18],
-            ['Uncoded prep work',             'ANG-11',        'Preparation',   null,                    null,                null,                                   42, 4, 5]
+            ['Uncoded prep work',             'ANG-11',        'Preparation',   null,                    null,                null,                                   42, 4, 5],
+            ['SA — J Whitfield',              'SA-1041',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  8, 1, 1],
+            ['SA — J Whitfield',              'SA-1041',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  9, 1, 2],
+            ['SA — J Whitfield',              'SA-1041',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 10, 1, 1],
+            ['CT600 — Marlow Joinery',        'CT-2288',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  8, 1, 2],
+            ['CT600 — Marlow Joinery',        'CT-2288',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  9, 1, 2],
+            ['CT600 — Marlow Joinery',        'CT-2288',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 10, 1, 1],
+            ['VAT — Kestrel Foods',           'VAT-3310',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  8, 1, 2],
+            ['VAT — Kestrel Foods',           'VAT-3310',      'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  9, 1, 1],
+            ['VAT — Kestrel Foods',           'VAT-3310',      'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 10, 1, 1],
+            ['P11D — Brightside Care',        'P11D-118',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  8, 1, 1],
+            ['P11D — Brightside Care',        'P11D-118',      'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  9, 1, 2],
+            ['P11D — Brightside Care',        'P11D-118',      'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 10, 1, 1],
+            ['Partnership — Hale & Co',       'PTN-207',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  9, 1, 2],
+            ['Partnership — Hale & Co',       'PTN-207',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  10, 1, 2],
+            ['Partnership — Hale & Co',       'PTN-207',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 11, 1, 1],
+            ['SA — R Ashworth',               'SA-1042',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  9, 1, 2],
+            ['SA — R Ashworth',               'SA-1042',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  10, 1, 1],
+            ['SA — R Ashworth',               'SA-1042',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 11, 1, 1],
+            ['CT600 — Pennine Haulage',       'CT-2289',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  9, 1, 1],
+            ['CT600 — Pennine Haulage',       'CT-2289',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  10, 1, 2],
+            ['CT600 — Pennine Haulage',       'CT-2289',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 11, 1, 1],
+            ['VAT — Oakfield Dental',         'VAT-3311',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  9, 1, 2],
+            ['VAT — Oakfield Dental',         'VAT-3311',      'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  10, 1, 2],
+            ['VAT — Oakfield Dental',         'VAT-3311',      'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 11, 1, 1],
+            ['SA — T Brennan',                'SA-1043',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  10, 1, 2],
+            ['SA — T Brennan',                'SA-1043',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  11, 1, 1],
+            ['SA — T Brennan',                'SA-1043',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 12, 1, 1],
+            ['CT600 — Riverside Motors',      'CT-2290',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  10, 1, 1],
+            ['CT600 — Riverside Motors',      'CT-2290',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  11, 1, 2],
+            ['CT600 — Riverside Motors',      'CT-2290',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 12, 1, 1],
+            ['VAT — Clearwater Plumbing',     'VAT-3312',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  10, 1, 2],
+            ['VAT — Clearwater Plumbing',     'VAT-3312',      'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  11, 1, 2],
+            ['VAT — Clearwater Plumbing',     'VAT-3312',      'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 12, 1, 1],
+            ['SA — M Okafor',                 'SA-1044',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  10, 1, 2],
+            ['SA — M Okafor',                 'SA-1044',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  11, 1, 1],
+            ['SA — M Okafor',                 'SA-1044',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 12, 1, 1],
+            ['CT600 — Aldgate Print',         'CT-2291',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  11, 1, 1],
+            ['CT600 — Aldgate Print',         'CT-2291',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  12, 1, 2],
+            ['CT600 — Aldgate Print',         'CT-2291',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 13, 1, 1],
+            ['VAT — Sunnybank Nursery',       'VAT-3313',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  11, 1, 2],
+            ['VAT — Sunnybank Nursery',       'VAT-3313',      'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  12, 1, 2],
+            ['VAT — Sunnybank Nursery',       'VAT-3313',      'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 13, 1, 1],
+            ['SA — D Villiers',               'SA-1045',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  11, 1, 2],
+            ['SA — D Villiers',               'SA-1045',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  12, 1, 1],
+            ['SA — D Villiers',               'SA-1045',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 13, 1, 1],
+            ['CT600 — Northgate Tyres',       'CT-2292',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  11, 1, 1],
+            ['CT600 — Northgate Tyres',       'CT-2292',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  12, 1, 2],
+            ['CT600 — Northgate Tyres',       'CT-2292',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 13, 1, 1],
+            ['VAT — Peak Fitness',            'VAT-3314',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  12, 1, 2],
+            ['VAT — Peak Fitness',            'VAT-3314',      'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  13, 1, 2],
+            ['VAT — Peak Fitness',            'VAT-3314',      'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 14, 1, 1],
+            ['SA — S Rahman',                 'SA-1046',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  12, 1, 2],
+            ['SA — S Rahman',                 'SA-1046',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  13, 1, 1],
+            ['SA — S Rahman',                 'SA-1046',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 14, 1, 1],
+            ['CT600 — Copperfield Books',     'CT-2293',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  12, 1, 1],
+            ['CT600 — Copperfield Books',     'CT-2293',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  13, 1, 2],
+            ['CT600 — Copperfield Books',     'CT-2293',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 14, 1, 1],
+            ['VAT — Larkhall Farm',           'VAT-3315',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  12, 1, 2],
+            ['VAT — Larkhall Farm',           'VAT-3315',      'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  13, 1, 2],
+            ['VAT — Larkhall Farm',           'VAT-3315',      'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 14, 1, 1],
+            ['SA — E Donnelly',               'SA-1047',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  13, 1, 2],
+            ['SA — E Donnelly',               'SA-1047',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  14, 1, 1],
+            ['SA — E Donnelly',               'SA-1047',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 15, 1, 1],
+            ['CT600 — Bramble Cafe',          'CT-2294',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  13, 1, 1],
+            ['CT600 — Bramble Cafe',          'CT-2294',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  14, 1, 2],
+            ['CT600 — Bramble Cafe',          'CT-2294',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 15, 1, 1],
+            ['VAT — Tidewater Marine',        'VAT-3316',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  13, 1, 2],
+            ['VAT — Tidewater Marine',        'VAT-3316',      'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  14, 1, 2],
+            ['VAT — Tidewater Marine',        'VAT-3316',      'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 15, 1, 1],
+            ['SA — K Nakamura',               'SA-1048',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  13, 1, 2],
+            ['SA — K Nakamura',               'SA-1048',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  14, 1, 1],
+            ['SA — K Nakamura',               'SA-1048',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 15, 1, 1],
+            ['CT600 — Fenwick Electrical',    'CT-2295',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  14, 1, 1],
+            ['CT600 — Fenwick Electrical',    'CT-2295',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  15, 1, 2],
+            ['CT600 — Fenwick Electrical',    'CT-2295',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 16, 1, 1],
+            ['VAT — Harbour View Lets',       'VAT-3317',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  14, 1, 2],
+            ['VAT — Harbour View Lets',       'VAT-3317',      'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  15, 1, 2],
+            ['VAT — Harbour View Lets',       'VAT-3317',      'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 16, 1, 1],
+            ['SA — A Mbeki',                  'SA-1049',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  14, 1, 2],
+            ['SA — A Mbeki',                  'SA-1049',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  15, 1, 1],
+            ['SA — A Mbeki',                  'SA-1049',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 16, 1, 1],
+            ['CT600 — Stonegate Legal',       'CT-2296',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  14, 1, 1],
+            ['CT600 — Stonegate Legal',       'CT-2296',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  15, 1, 2],
+            ['CT600 — Stonegate Legal',       'CT-2296',       'Second Review', 'Tax Manager',           'Tax Compliance',    'MAN / Tax Community Clients / London', 16, 1, 1],
+            ['VAT — Willow Vets',             'VAT-3318',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  15, 1, 2],
+            ['VAT — Willow Vets',             'VAT-3318',      'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  16, 1, 2],
+            ['SA — P Lindqvist',              'SA-1050',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  15, 1, 2],
+            ['SA — P Lindqvist',              'SA-1050',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  16, 1, 1],
+            ['CT600 — Crossley Roofing',      'CT-2297',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  15, 1, 1],
+            ['CT600 — Crossley Roofing',      'CT-2297',       'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  16, 1, 2],
+            ['VAT — Ember Design',            'VAT-3319',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  15, 1, 2],
+            ['VAT — Ember Design',            'VAT-3319',      'First Review',  'Tax Senior',            'Tax Compliance',    'A3 / Tax Community Clients / London',  16, 1, 2],
+            ['SA — L Fontaine',               'SA-1051',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  16, 1, 2],
+            ['CT600 — Granary Bakers',        'CT-2298',       'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  16, 1, 1],
+            ['VAT — Vale Landscaping',        'VAT-3320',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  16, 1, 2],
+            ['P11D — Stonegate Legal',        'P11D-119',      'Preparation',   'Tax Assistant',         'Tax Compliance',    'A2 / Tax Community Clients / London',  16, 1, 2]
         ]},
         { id: 'w-elise', name: 'Elise Fairweather', grade: 'A3', cap: 37.5, items: [
             ['Pension scheme audit',          'PEN-110',       'Preparation',   'Tax Assistant',         'Audit',             'A2 / Tax Community Clients / London',  2, 6, 22],
@@ -1999,7 +2117,7 @@ function buildWorkerRow(worker, index) {
 
     if (!rows) {
         // Breakdown off — flat resource row with individual bookings.
-        var flatH = barsHeight(worker.items.length, BAR_PAD);
+        var flatH = barsHeight(laneCount(worker.items), BAR_PAD);
         var flat = el('div', 'Track-subrow');
         flat.style.height = flatH + 'px';
         flat.style.position = 'relative';
@@ -2016,7 +2134,7 @@ function buildWorkerRow(worker, index) {
     } else {
         rows.forEach(function (r, ri) {
             var open = rowExpanded(worker, r);
-            var itemCount = open ? r.items.length : 0;
+            var itemCount = open ? laneCount(r.items) : 0;
             var h = 24 + (itemCount ? barsHeight(itemCount, BAR_PAD) : 0);
             // The first label absorbs the slim-strip height so it lines up with
             // the timeline's strip + first sub-row and needs no separate spacer.
@@ -2129,8 +2247,9 @@ function gridLines() {
 function buildBars(worker, row, topPad) {
     var pad = topPad == null ? BAR_PAD : topPad;
     var box = el('div', 'Track-bars');
+    var lanes = packLanes(row.items);
     box.style.position = 'relative';
-    box.style.height = barsHeight(row.items.length, pad) + 'px';
+    box.style.height = barsHeight(lanes.count, pad) + 'px';
     box.appendChild(gridLines());
 
     // Same quick-add as the hour cells: double-click the open bars strip
@@ -2143,7 +2262,7 @@ function buildBars(worker, row, topPad) {
         openCreateModal(worker, row, WEEKS[wi]);
     });
 
-    row.items.forEach(function (it, idx) {
+    row.items.forEach(function (it) {
         var selected = isItemSelected(it);
         var bar = el('div', 'Bar'
             + (it.kind === 'unavailability' ? ' Bar--unavailability' : '')
@@ -2151,7 +2270,7 @@ function buildBars(worker, row, topPad) {
             + (state.selection.length && !selected ? ' is-dimmed' : ''));
         bar.style.left = (it.startWeek * WEEK_W + 2) + 'px';
         bar.style.width = (it.span * WEEK_W - 5) + 'px';
-        bar.style.top = (pad + idx * BAR_PITCH) + 'px';
+        bar.style.top = (pad + lanes.laneOf[it.id] * BAR_PITCH) + 'px';
         if (it.kind !== 'unavailability') {
             bar.style.backgroundColor = state.tasksInGrey ? '#9298b4' : (PHASE_COLOUR[it.phase] || '#4f4970');
         }
