@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en-GB" data-prototype-id="job-editor-phase-selector" data-prototype-title="Job editor phase selector">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Job editor phase selector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<style>
+:root {
+    --primary: #4f3fa0;
+    --primary-emphasis: #403577;
+    --primary-subtle: #f0effb;
+    --primary-accent: #dedaf4;
+    --surface-primary: #4f3fa0;
+    --surface-default: #fff;
+    --surface-subtle-light: #f8f8f8;
+    --surface-subtle-dark: #f1f1f4;
+    --surface-list-item-hover: #f1f1f4;
+    --surface-list-item-selected-light: #f0effb;
+    --surface-emphasis: #4c5172;
+    --surface-strong: #3d425c;
+    --surface-success: #078138;
+    --surface-eng-01: #0295b2;
+    --surface-data-primary: #ff8d6c;
+    --surface-data-secondary: #6881c5;
+    --warning: #e27209;
+    --surface-info-subtle: #edf0f8;
+    --surface-primary-subtle: #f0effb;
+    --surface-container-default: rgba(152, 155, 182, 0.15);
+    --text-default: #222430;
+    --text-accent: #4c5172;
+    --text-subtle: #6a708f;
+    --text-primary: #4f3fa0;
+    --text-link-color: #7059e8;
+    --text-disabled: #989bb6;
+    --text-inverse: #fff;
+    --text-danger: #a3003c;
+    --text-info-dark: #293b6b;
+    --icon-subtle: #6a708f;
+    --icon-default: #222430;
+    --border-subtle: #e2e3e9;
+    --border-default: #babfd1;
+    --border-primary: #4f3fa0;
+    --border-primary-subtle: #dedaf4;
+    --surface-danger: #a3003c;
+    --deep-black: #27233d;
+    --neutral-deep-grey-14: #dad8e5;
+    --neutral-grey-d3: #898da4;
+    --font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-size-medium: 0.875rem;
+    --font-size-small: 0.75rem;
+    --font-size-h1: 1.5rem;
+    --font-size-h2: 1.25rem;
+    --font-weight-regular: 400;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --padding-xxs: 0.25rem;
+    --padding-xs: 0.5rem;
+    --padding-sm: 0.75rem;
+    --padding-md: 1rem;
+    --padding-lg: 1.5rem;
+    --border-radius-default: 4px;
+    --border-radius-lg: 8px;
+    --border-radius-circle: 100px;
+    --shadow-footer: 0 -4px 10px rgba(39, 35, 61, 0.08);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-medium);
+    color: var(--text-default);
+    background: var(--surface-subtle-light);
+}
+button, input { font-family: inherit; }
+
+.App { display: flex; min-height: 100vh; }
+.NavBar {
+    width: 48px; flex: 0 0 48px; background-color: var(--deep-black);
+    display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow: clip;
+}
+.NavBar-logoWrapper { height: 42px; margin: 5px 5px 24px; display: flex; align-items: center; justify-content: center; }
+.NavBar-dayshapeIcon { background-color: #fff; border-radius: 2px; height: 38px; width: 38px; object-fit: cover; }
+.NavBar-mainMenuContent { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1 1 auto; }
+.NavBar-li { min-height: 42px; border-left: solid 3px transparent; }
+.NavBar-li:hover, .NavBar-li.is-active { border-left: solid 3px var(--text-inverse); }
+.NavBar-menuLink {
+    height: 40px; padding: 12px 10px; color: var(--text-inverse);
+    display: flex; align-items: center; cursor: pointer; text-decoration: none;
+}
+.NavBar-menuIcon { width: 1.25rem; text-align: center; font-size: 1.1rem; }
+.NavBar-li:hover .NavBar-menuIcon, .NavBar-li.is-active .NavBar-menuIcon { font-weight: 900; }
+.NavBar-hr { border: 0; border-top: solid 1px var(--neutral-grey-d3); margin: 12px 8px; opacity: .6; }
+.NavBar-menuBottom { display: flex; flex-direction: column; align-items: flex-end; padding-bottom: 12px; }
+.NavBar-expandButton {
+    background-color: var(--neutral-deep-grey-14); height: 31px; width: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 5px 0 0 5px; border: 0; cursor: pointer; color: var(--deep-black);
+}
+
+.Main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; background: var(--surface-subtle-light); }
+
+.JobHead { background: var(--surface-default); border-bottom: 1px solid var(--border-subtle); }
+.JobHead-body { padding: 24px 24px 8px; display: flex; flex-direction: column; gap: 12px; }
+.JobHead-titleRow, .JobHead-meta { display: flex; align-items: center; height: 35px; gap: 12px; }
+.JobHead-titleRow { gap: 8px; }
+.JobHead-mark {
+    width: 35px; height: 35px; border-radius: var(--border-radius-circle); flex: 0 0 35px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface-data-secondary); color: var(--text-inverse); font-size: 15px;
+}
+.JobHead-title {
+    margin: 0; flex: 1 1 auto; min-width: 0;
+    font-size: 24px; font-weight: var(--font-weight-regular); line-height: 32px; color: var(--text-default);
+}
+.JobHead-metaLeft, .JobHead-metaRight { display: flex; align-items: center; min-width: 0; height: 35px; }
+.JobHead-metaLeft { gap: 12px; }
+.JobHead-metaRight { margin-left: auto; gap: 16px; flex: 0 0 auto; }
+.MetaText {
+    color: var(--text-subtle); font-size: var(--font-size-medium); line-height: 21px; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.MetaLink {
+    display: inline-flex; align-items: center; gap: 4px;
+    color: var(--text-link-color); text-decoration: none; font-size: var(--font-size-medium);
+}
+.MetaLink:hover { text-decoration: underline; }
+.MetaLink i { font-size: 14px; }
+.MetaDot { color: var(--text-disabled); }
+
+.Pill {
+    display: inline-flex; align-items: center; gap: 6px; height: 35px; padding: 0 12px;
+    border-radius: var(--border-radius-circle); border: 1px solid var(--border-primary-subtle);
+    background: var(--surface-primary-subtle); color: var(--text-primary);
+    font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold); cursor: pointer;
+}
+.Pill i { font-size: 11px; }
+.ChartBtn {
+    width: 60px; height: 35px; flex: 0 0 60px; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: 0; border-radius: var(--border-radius-default); cursor: pointer;
+    background: var(--surface-subtle-dark); color: var(--text-accent);
+}
+.ChartBtn i.fa-chevron-down { font-size: 10px; }
+
+.People { display: flex; align-items: center; gap: 8px; height: 35px; color: var(--text-subtle); font-size: var(--font-size-medium); }
+.AvatarStack { display: flex; align-items: center; }
+.Avatar {
+    width: 35px; height: 35px; border-radius: var(--border-radius-circle);
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--surface-primary); color: var(--text-inverse);
+    font-size: 12px; font-weight: var(--font-weight-bold); border: 2px solid #fff; margin-left: -8px;
+}
+.Avatar:first-child { margin-left: 0; }
+.AvatarAdd {
+    width: 35px; height: 35px; margin-left: 8px; border: 0; border-radius: var(--border-radius-default);
+    background: var(--surface-subtle-dark); color: var(--text-accent); cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.Lock {
+    display: inline-flex; align-items: center; gap: 8px; height: 35px;
+    color: var(--warning); font-size: var(--font-size-medium);
+}
+.Lock i { font-size: 14px; }
+.Lock .Avatar { margin-left: 0; }
+
+.Tabs {
+    display: flex; align-items: flex-end; gap: 24px; height: 48px; padding: 0 24px;
+}
+.Tab {
+    appearance: none; background: none; border: 0; padding: 0 0 12px; cursor: pointer;
+    color: var(--text-accent); font-size: var(--font-size-medium); font-weight: var(--font-weight-regular);
+    line-height: 21px; position: relative;
+}
+.Tab.is-active { color: var(--text-primary); font-weight: var(--font-weight-semibold); }
+.Tab.is-active::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--surface-primary);
+}
+.Tab-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--surface-danger);
+    display: inline-block; margin-left: 6px; vertical-align: 2px;
+}
+
+.Btn {
+    height: 35px; padding: 7px 14px; border-radius: var(--border-radius-default);
+    border: 1px solid var(--border-default); background: var(--surface-default);
+    color: var(--text-default); font-size: var(--font-size-medium); cursor: pointer;
+}
+.Btn--primary { background: var(--surface-primary); border-color: var(--surface-primary); color: var(--text-inverse); }
+.Btn--primary:hover { background: var(--primary-emphasis); }
+.Btn--secondary { background: var(--surface-default); color: var(--text-primary); border-color: var(--border-primary); }
+.Btn--secondary:hover { background: var(--surface-primary-subtle); }
+.Btn:disabled { opacity: .55; cursor: not-allowed; }
+.EditActions { display: none; align-items: center; gap: 8px; }
+.is-editing .EditActions { display: flex; }
+.is-editing #editBtn,
+.is-editing #readOnlyAlert,
+.is-editing #parentView,
+.is-editing #parentViewEmpty,
+.is-editing .only-view { display: none; }
+.only-edit { display: none; }
+.is-editing .only-edit { display: revert; }
+
+.Page { padding: 24px; }
+.Alert {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface-info-subtle); color: var(--text-info-dark);
+    border-radius: var(--border-radius-default); padding: 12px 16px; margin-bottom: 24px;
+}
+.Alert i { color: var(--text-primary); }
+.Alert-text { flex: 1 1 auto; }
+.Alert-close {
+    border: 0; background: transparent; color: var(--icon-subtle); cursor: pointer; width: 28px; height: 28px;
+}
+
+.Columns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; align-items: start; }
+.Stack { display: flex; flex-direction: column; gap: 28px; }
+.SectionTitle { margin: 0 0 10px; font-size: 16px; font-weight: var(--font-weight-semibold); }
+.Card {
+    background: var(--surface-default); border: 1px solid var(--border-subtle);
+    border-radius: var(--border-radius-lg); padding: 20px 24px 22px;
+    display: flex; flex-direction: column; gap: 16px;
+}
+.Split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.FieldLabel { display: block; font-weight: var(--font-weight-semibold); margin-bottom: 6px; }
+.Req { color: var(--text-danger); margin-left: 2px; }
+.Control {
+    display: flex; align-items: center; min-height: 35px; padding: 0 12px;
+    background: var(--surface-subtle-dark); border-radius: var(--border-radius-default);
+    color: var(--text-default); gap: 8px;
+}
+.Control.is-empty { color: var(--text-subtle); }
+.is-editing .Control {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+}
+.is-editing .Control.has-adorn { padding-right: 0; }
+.is-editing .Adorn { margin-right: 0; }
+.FieldLock { display: none; color: var(--icon-subtle); font-size: 12px; }
+.is-editing .FieldLock { display: inline-flex; }
+.Clear {
+    display: none; width: 24px; height: 24px; border: 0; background: transparent;
+    color: var(--icon-subtle); cursor: pointer; flex: 0 0 24px; padding: 0;
+}
+.is-editing .Clear { display: inline-flex; align-items: center; justify-content: center; }
+.is-editing .UrlField {
+    min-height: 35px; background: var(--surface-default);
+    border: 1px solid var(--border-default);
+}
+.Control-text { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.Adorn {
+    width: 35px; height: 35px; margin-right: -12px; flex: 0 0 35px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--surface-emphasis); color: var(--text-inverse); border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0;
+}
+.Check {
+    display: flex; align-items: center; gap: 8px; min-height: 35px; color: var(--text-default);
+}
+.Check input { width: 16px; height: 16px; accent-color: var(--surface-primary); }
+
+.Assoc { position: relative; }
+.Assoc-control {
+    width: 100%; min-height: 64px; padding: 10px 8px 10px 12px;
+    display: flex; align-items: center; gap: 8px; text-align: left;
+    background: var(--surface-subtle-dark); border: 1px solid transparent;
+    border-radius: var(--border-radius-default); cursor: pointer; color: inherit;
+}
+.Assoc-control:hover, .Assoc-control[aria-expanded="true"] {
+    border-color: var(--border-primary); background: var(--surface-default);
+}
+.Assoc-control.is-static { cursor: default; }
+.Assoc-control.is-static:hover { border-color: transparent; background: var(--surface-subtle-dark); }
+.Assoc-control.is-static:hover .Pencil { color: var(--icon-subtle); border-color: var(--border-subtle); }
+.Assoc-value { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+#phaseValue { flex-wrap: nowrap; overflow: hidden; }
+#phaseValue .Tag { flex: 0 0 auto; }
+.Tag--more {
+    background: var(--surface-subtle-dark); border-color: var(--border-subtle); color: var(--text-subtle);
+}
+.Assoc-empty { color: var(--text-subtle); }
+.Tag {
+    display: inline-flex; align-items: center; height: 22px; padding: 0 8px;
+    border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--text-default); font-size: var(--font-size-small);
+    font-weight: var(--font-weight-semibold);
+}
+.Tag[hidden] { display: none !important; }
+.Pencil {
+    width: 35px; height: 35px; flex: 0 0 35px; border-radius: var(--border-radius-default);
+    border: 1px solid var(--border-subtle); background: var(--surface-default); color: var(--icon-subtle);
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.Assoc-control:hover .Pencil { color: var(--text-primary); border-color: var(--border-primary); }
+#phaseTrigger { cursor: default; }
+body:not(.is-editing) #phaseTrigger:hover {
+    border-color: transparent; background: var(--surface-subtle-dark);
+}
+body:not(.is-editing) #phaseTrigger:hover .Pencil {
+    color: var(--icon-subtle); border-color: var(--border-subtle);
+}
+.is-editing #phaseTrigger {
+    background: var(--surface-default); border-color: var(--border-default); cursor: pointer;
+}
+
+.PhasePop {
+    position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; right: 0;
+    background: var(--surface-default); border: 1px solid var(--border-default);
+    border-radius: var(--border-radius-default); box-shadow: 0 8px 24px rgba(34, 36, 48, 0.12);
+}
+.PhasePop-head {
+    padding: 12px 14px 8px; font-weight: var(--font-weight-semibold);
+}
+.PhasePop-list { list-style: none; margin: 0; padding: 0 6px 6px; max-height: 240px; overflow: auto; }
+.PhasePop-list label {
+    display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 8px;
+    border-radius: var(--border-radius-default); cursor: pointer;
+}
+.PhasePop-list label:hover { background: var(--surface-list-item-hover); }
+.PhasePop-list label.is-on { background: var(--surface-list-item-selected-light); }
+.PhasePop-list input { width: 16px; height: 16px; accent-color: var(--surface-primary); flex: 0 0 auto; }
+.Swatch { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+.PhasePop-foot {
+    display: flex; align-items: center; gap: 8px; justify-content: flex-end;
+    padding: 10px 12px; border-top: 1px solid var(--border-subtle);
+}
+.PhasePop-count { margin-right: auto; color: var(--text-subtle); font-size: var(--font-size-small); }
+
+.ModalOverlay {
+    position: fixed; inset: 0; z-index: 1600; display: none; align-items: center; justify-content: center;
+    padding: var(--padding-lg); background: rgba(0, 0, 0, .45);
+}
+.ModalOverlay.is-open { display: flex; }
+.Modal {
+    width: min(648px, 100%); max-height: calc(100vh - 48px);
+    display: flex; flex-direction: column; overflow: hidden;
+    border-radius: var(--border-radius-default); background: var(--surface-default);
+    box-shadow: var(--shadow-footer);
+}
+.Modal-header, .Modal-footer { display: flex; align-items: center; gap: var(--padding-sm); padding: var(--padding-md); }
+.Modal-header { border-bottom: 1px solid var(--border-default); }
+.Modal-title { flex: 1 1 auto; margin: 0; font-size: var(--font-size-h2); font-weight: var(--font-weight-regular); }
+.Modal-body {
+    display: flex; flex: 1 1 auto; flex-direction: column; gap: var(--padding-md);
+    min-height: 0; padding: var(--padding-md); overflow: hidden;
+}
+.Modal-footer { justify-content: space-between; border-top: 1px solid var(--border-default); }
+.Modal-actions { display: flex; gap: var(--padding-sm); margin-left: auto; }
+.Modal-summary { color: var(--text-subtle); font-size: var(--font-size-small); min-width: 0; }
+.Modal-summary.is-warning { color: var(--warning); }
+.Btn-iconOnly {
+    width: 28px; height: 28px; min-height: 28px; padding: 0; border: 0; background: transparent;
+    color: var(--icon-subtle); cursor: pointer; border-radius: var(--border-radius-default);
+}
+.Btn-iconOnly:hover { background: var(--surface-subtle-dark); color: var(--text-default); }
+.Btn--sm { height: 35px; padding: 4px 10px; }
+.PhaseModal-lead { margin: 0; color: var(--text-subtle); font-size: var(--font-size-medium); line-height: 1.4; }
+.PhaseEditor {
+    display: flex; flex-direction: column; min-height: 0;
+    background: var(--surface-default); border: 1px solid var(--border-subtle);
+    border-radius: var(--border-radius-default);
+}
+.PhaseEditor-rows { display: flex; flex-direction: column; max-height: min(320px, 42vh); overflow-y: auto; }
+.PhaseEditor-empty { padding: 12px; color: var(--text-subtle); font-size: var(--font-size-small); }
+.PhaseColHead, .PhaseRow {
+    display: grid; grid-template-columns: minmax(0, 1fr) 156px 35px;
+    align-items: center; column-gap: 16px;
+}
+.PhaseColHead {
+    padding: 10px 12px 0; color: var(--text-subtle);
+    font-size: var(--font-size-small); font-weight: var(--font-weight-semibold);
+}
+.PhaseBlock { border-top: 1px solid var(--border-subtle); }
+.PhaseBlock:first-child { border-top: 0; }
+.PhaseRow .Btn-iconOnly { width: 35px; height: 35px; min-height: 35px; }
+.PhaseBlock.is-dropTarget { box-shadow: inset 0 1px 0 0 var(--border-subtle); }
+.PhaseRow { padding: 8px 12px; }
+.PhaseRow-name { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.PhaseRow-handle {
+    display: inline-flex; align-items: center; justify-content: center;
+    flex: 0 0 20px; width: 20px; height: 20px; padding: 0; border: 0; background: transparent;
+    color: var(--icon-subtle); font-size: 12px; cursor: grab; border-radius: var(--border-radius-default);
+}
+.PhaseRow-handle:hover, .PhaseRow-handle:focus-visible { color: var(--text-accent); }
+.PhaseRow-handle:active { cursor: grabbing; }
+.PhaseRow-order {
+    flex: 0 0 12px; color: var(--text-subtle); font-size: var(--font-size-small);
+    font-weight: var(--font-weight-semibold); text-align: center;
+}
+.Select {
+    appearance: none; width: 100%; height: 35px; min-height: 35px; padding: 0 30px 0 12px;
+    border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
+    background-color: var(--surface-default); color: var(--text-default);
+    font-family: inherit; font-size: var(--font-size-medium); cursor: pointer; outline: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path fill='%236a708f' d='M2 4l4 4 4-4z'/></svg>");
+    background-repeat: no-repeat; background-position: right 10px center;
+}
+.Select:focus { border-color: var(--border-primary); }
+.PhaseRow-name .Select { flex: 1 1 auto; min-width: 0; }
+.PhaseDue {
+    width: 100%; height: 35px; padding: 0 8px;
+    border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--text-default);
+    font-family: inherit; font-size: var(--font-size-medium);
+}
+.PhaseEditor-actions {
+    display: flex; justify-content: flex-start; padding: 12px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.ParentEdit { display: none; }
+.is-editing .ParentEdit { display: block; }
+.ParentCard {
+    display: flex; align-items: center; gap: 12px; min-height: 64px;
+    padding: 8px 8px 8px 12px; background: var(--surface-default);
+    border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
+}
+.ParentCard[hidden], .ParentAdd[hidden], #parentViewEmpty[hidden] { display: none !important; }
+.ParentCard.is-disabled {
+    background: var(--surface-subtle-dark); border-color: transparent; pointer-events: none;
+}
+.ParentCard.is-disabled .IconBtn { cursor: default; }
+.ParentCard.is-disabled .ParentCode { color: var(--text-link-color); }
+.ParentIcon {
+    width: 36px; height: 36px; flex: 0 0 36px; border-radius: var(--border-radius-circle);
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--surface-eng-01); color: var(--text-inverse); font-size: 14px;
+}
+.ParentCopy { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; gap: 2px; }
+.ParentCode { color: var(--text-link-color); font-weight: var(--font-weight-bold); text-decoration: none; line-height: 1.2; }
+.ParentName { color: var(--text-subtle); font-size: var(--font-size-small); line-height: 1.2; }
+.ParentActions { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+.IconBtn {
+    position: relative; width: 35px; height: 35px; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border-subtle); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--icon-subtle); cursor: pointer;
+}
+.IconBtn:hover { color: var(--text-primary); border-color: var(--border-primary); }
+.Tip {
+    display: none; position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: var(--surface-strong); color: var(--text-inverse); font-size: var(--font-size-small);
+    font-weight: var(--font-weight-regular); line-height: 1.2; padding: 4px 8px;
+    border-radius: var(--border-radius-default); white-space: nowrap; z-index: 5;
+}
+.IconBtn:hover .Tip, .IconBtn:focus-visible .Tip { display: block; }
+.ParentAdd {
+    width: 100%; min-height: 64px; border: 1px dashed var(--border-default);
+    border-radius: var(--border-radius-default); background: var(--surface-default);
+    color: var(--text-primary); font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+}
+.ParentAdd:hover { background: var(--surface-primary-subtle); border-color: var(--border-primary); }
+
+@media (max-width: 1100px) {
+    .Columns { grid-template-columns: 1fr; }
+    .JobHead-meta { flex-wrap: wrap; }
+    .MetaText { white-space: normal; }
+}
+</style>
+</head>
+<body>
+<div class="App">
+    <aside class="NavBar">
+        <div class="NavBar-logoWrapper"><img class="NavBar-dayshapeIcon" src="img/dayshapeLogo/dayshape-icon-colour.svg" alt="Dayshape" /></div>
+        <ul class="NavBar-mainMenuContent">
+            <li class="NavBar-li"><a class="NavBar-menuLink" title="Notifications"><i class="NavBar-menuIcon fa-regular fa-bell"></i></a></li>
+            <li class="NavBar-li"><a class="NavBar-menuLink" title="Search"><i class="NavBar-menuIcon fa-solid fa-magnifying-glass"></i></a></li>
+            <li class="NavBar-separator"><hr class="NavBar-hr" /></li>
+            <li class="NavBar-li is-active"><a class="NavBar-menuLink" title="Dashboard"><i class="NavBar-menuIcon fa-solid fa-chart-line"></i></a></li>
+            <li class="NavBar-li"><a class="NavBar-menuLink" title="Schedule"><i class="NavBar-menuIcon fa-regular fa-calendar"></i></a></li>
+            <li class="NavBar-li"><a class="NavBar-menuLink" title="Engagements"><i class="NavBar-menuIcon fa-solid fa-table-cells"></i></a></li>
+            <li class="NavBar-li"><a class="NavBar-menuLink" title="Create"><i class="NavBar-menuIcon fa-solid fa-plus"></i></a></li>
+            <li class="NavBar-li"><a class="NavBar-menuLink" title="Reports"><i class="NavBar-menuIcon fa-regular fa-file-lines"></i></a></li>
+            <li class="NavBar-li"><a class="NavBar-menuLink" title="Configuration"><i class="NavBar-menuIcon fa-solid fa-wrench"></i></a></li>
+            <li class="NavBar-li"><a class="NavBar-menuLink" title="Profile"><i class="NavBar-menuIcon fa-regular fa-user"></i></a></li>
+            <li class="NavBar-separator"><hr class="NavBar-hr" /></li>
+            <li class="NavBar-li"><a class="NavBar-menuLink" title="Help"><i class="NavBar-menuIcon fa-regular fa-circle-question"></i></a></li>
+            <li class="NavBar-li"><a class="NavBar-menuLink" title="Log out"><i class="NavBar-menuIcon fa-solid fa-right-from-bracket"></i></a></li>
+        </ul>
+        <div class="NavBar-menuBottom"><button class="NavBar-expandButton" type="button" title="Expand"><i class="fa-regular fa-circle-right"></i></button></div>
+    </aside>
+
+    <div class="Main">
+        <header class="JobHead">
+            <div class="JobHead-body">
+                <div class="JobHead-titleRow">
+                    <span class="JobHead-mark" aria-hidden="true"><i class="fa-regular fa-file"></i></span>
+                    <h1 class="JobHead-title">Digital strategy of Quantix Systems 25/26</h1>
+                    <button class="Btn Btn--primary" type="button" id="editBtn">Edit</button>
+                    <div class="EditActions" id="editActions">
+                        <button class="Btn" type="button" id="cancelEdit">Cancel</button>
+                        <button class="Btn Btn--primary" type="button" id="saveEdit">Save Changes</button>
+                    </div>
+                </div>
+                <div class="JobHead-meta">
+                    <div class="JobHead-metaLeft">
+                        <button class="Pill" type="button">Draft <i class="fa-solid fa-chevron-down"></i></button>
+                        <button class="ChartBtn" type="button" title="Insights"><i class="fa-solid fa-chart-simple"></i><i class="fa-solid fa-chevron-down"></i></button>
+                        <span class="MetaText">Client name <span class="MetaDot">·</span> <a class="MetaLink" href="#client"><i class="fa-solid fa-link"></i>DSQ-5454</a> <span class="MetaDot">·</span> Last Modified in Finance System: 04:45AM 04/29/2025</span>
+                    </div>
+                    <div class="JobHead-metaRight">
+                        <span class="People">Claimed by
+                            <span class="AvatarStack">
+                                <span class="Avatar" title="SB">SB</span>
+                                <span class="Avatar" title="LU">LU</span>
+                                <span class="Avatar" title="JL">JL</span>
+                            </span>
+                            <button class="AvatarAdd" type="button" title="Add claim"><i class="fa-solid fa-user-plus"></i></button>
+                        </span>
+                        <span class="Lock"><i class="fa-solid fa-lock"></i> Locked by <span class="Avatar" title="SB">SB</span></span>
+                    </div>
+                </div>
+            </div>
+            <nav class="Tabs" aria-label="Engagement">
+                <button class="Tab" type="button">Performance</button>
+                <button class="Tab is-active" type="button">Details<span class="Tab-dot" aria-hidden="true"></span></button>
+                <button class="Tab" type="button">Team</button>
+                <button class="Tab" type="button">Other costs</button>
+                <button class="Tab only-view" type="button" id="tabRates">Rates Override</button>
+                <button class="Tab only-edit" type="button" id="tabPrior">Prior Year</button>
+                <button class="Tab only-edit" type="button" id="tabComments">Comments</button>
+            </nav>
+        </header>
+
+        <div class="Page">
+            <div class="Alert" id="readOnlyAlert">
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                <span class="Alert-text">This information is read-only. Click ‘Edit’ to make changes.</span>
+                <button class="Alert-close" type="button" id="dismissAlert" aria-label="Dismiss"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="Columns">
+                <div class="Stack">
+                    <section>
+                        <h2 class="SectionTitle">General information</h2>
+                        <div class="Card">
+                            <div>
+                                <span class="FieldLabel">Name <span class="Req">*</span></span>
+                                <div class="Control"><i class="fa-solid fa-lock FieldLock" aria-hidden="true"></i><span class="Control-text">Digital strategy of Quantix Systems 25/26</span></div>
+                            </div>
+                            <div>
+                                <span class="FieldLabel">Location <span class="Req">*</span></span>
+                                <div class="Control has-adorn"><span class="Control-text">UK</span><button class="Clear" type="button" aria-label="Clear location"><i class="fa-solid fa-xmark"></i></button><span class="Adorn" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span></div>
+                            </div>
+                            <div>
+                                <span class="FieldLabel">Business Unit</span>
+                                <div class="Control has-adorn"><span class="Control-text">Digital strategy of Quantix Systems 25/26</span><button class="Clear" type="button" aria-label="Clear business unit"><i class="fa-solid fa-xmark"></i></button><span class="Adorn" aria-hidden="true"><i class="fa-regular fa-building"></i></span></div>
+                            </div>
+                            <div>
+                                <span class="FieldLabel">Priority</span>
+                                <div class="Control has-adorn is-empty"><span class="Control-text">Not set</span><button class="Clear" type="button" aria-label="Clear priority"><i class="fa-solid fa-xmark"></i></button><span class="Adorn" aria-hidden="true"><i class="fa-solid fa-angles-up"></i></span></div>
+                            </div>
+                            <div id="parentField">
+                                <span class="FieldLabel">Parent</span>
+                                <div class="ParentCard is-disabled" id="parentView">
+                                    <span class="ParentIcon" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></span>
+                                    <span class="ParentCopy">
+                                        <span class="ParentCode">ANG-1</span>
+                                        <span class="ParentName">Audit of Klein - Jerde Group</span>
+                                    </span>
+                                    <span class="ParentActions">
+                                        <span class="IconBtn" aria-hidden="true"><i class="fa-solid fa-pencil"></i></span>
+                                        <span class="IconBtn" aria-hidden="true"><i class="fa-solid fa-xmark"></i></span>
+                                    </span>
+                                </div>
+                                <div class="Assoc-control is-static" id="parentViewEmpty" hidden>
+                                    <span class="Assoc-value"><span class="Assoc-empty">No parent linked</span></span>
+                                </div>
+                                <div class="ParentEdit" id="parentEdit">
+                                    <div class="ParentCard" id="parentCard">
+                                        <span class="ParentIcon" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></span>
+                                        <span class="ParentCopy">
+                                            <a class="ParentCode" href="#parent">ANG-1</a>
+                                            <span class="ParentName">Audit of Klein - Jerde Group</span>
+                                        </span>
+                                        <span class="ParentActions">
+                                            <button class="IconBtn" type="button" id="parentEditBtn" aria-label="Edit">
+                                                <i class="fa-solid fa-pencil"></i>
+                                                <span class="Tip">Edit</span>
+                                            </button>
+                                            <button class="IconBtn" type="button" id="parentRemove" aria-label="Remove parent"><i class="fa-solid fa-xmark"></i></button>
+                                        </span>
+                                    </div>
+                                    <button class="ParentAdd" type="button" id="parentAdd" hidden>Add parent</button>
+                                </div>
+                            </div>
+                            <div class="Assoc" id="phaseAssoc">
+                                <span class="FieldLabel" id="phaseLabel">Phases</span>
+                                <button class="Assoc-control" type="button" id="phaseTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="phaseModal" aria-labelledby="phaseLabel">
+                                    <span class="Assoc-value" id="phaseValue"><span class="Assoc-empty">No phases associated</span></span>
+                                    <span class="Pencil" aria-hidden="true"><i class="fa-solid fa-pencil"></i></span>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h2 class="SectionTitle">Time frame</h2>
+                        <div class="Card">
+                            <div class="Split">
+                                <div>
+                                    <span class="FieldLabel">Period end date</span>
+                                    <div class="Control is-empty"><span class="Control-text">Not set</span><span class="Adorn" aria-hidden="true"><i class="fa-regular fa-calendar"></i></span></div>
+                                </div>
+                                <div>
+                                    <span class="FieldLabel">Recurring</span>
+                                    <label class="Check"><input type="checkbox" id="recurring" checked disabled /> Yes</label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="Stack">
+                    <section>
+                        <h2 class="SectionTitle">Client details</h2>
+                        <div class="Card">
+                            <div>
+                                <span class="FieldLabel">Client name <span class="Req">*</span></span>
+                                <div class="Control"><i class="fa-solid fa-lock FieldLock" aria-hidden="true"></i><span class="Control-text">MKS</span></div>
+                            </div>
+                            <div>
+                                <span class="FieldLabel">Client Identifier</span>
+                                <div class="Control" id="clientIdentifier"><span class="Control-text only-view"></span><span class="Control-text only-edit">MKS</span></div>
+                            </div>
+                            <div>
+                                <span class="FieldLabel">Client</span>
+                                <div class="Control has-adorn is-empty"><span class="Control-text">Not set</span><span class="Adorn" aria-hidden="true"><i class="fa-regular fa-user"></i></span></div>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h2 class="SectionTitle">Financial details</h2>
+                        <div class="Card">
+                            <div class="Split">
+                                <div>
+                                    <span class="FieldLabel">Currency <span class="Req">*</span></span>
+                                    <div class="Control"><span class="Control-text">GBP</span><i class="fa-solid fa-chevron-down" style="color:var(--icon-subtle);font-size:11px"></i></div>
+                                </div>
+                                <div>
+                                    <span class="FieldLabel">Fee (GBP)</span>
+                                    <div class="Control"><span class="Control-text">20,000</span></div>
+                                </div>
+                            </div>
+                            <div class="Split">
+                                <div>
+                                    <span class="FieldLabel">Billing recovery rate %</span>
+                                    <div class="Control"><span class="Control-text">10</span></div>
+                                </div>
+                                <div>
+                                    <span class="FieldLabel">Rate type</span>
+                                    <div class="Control"><span class="Control-text">GBP</span><i class="fa-solid fa-chevron-down" style="color:var(--icon-subtle);font-size:11px"></i></div>
+                                </div>
+                            </div>
+                            <div class="Split">
+                                <div>
+                                    <span class="FieldLabel">Rates override</span>
+                                    <div class="Control"><span class="Control-text">None</span><i class="fa-solid fa-chevron-down" style="color:var(--icon-subtle);font-size:11px"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="Stack">
+                    <section>
+                        <h2 class="SectionTitle">Personnel</h2>
+                        <div class="Card">
+                            <div>
+                                <span class="FieldLabel">Engagement partner</span>
+                                <div class="Control has-adorn is-empty"><span class="Control-text">Not assigned</span><button class="Clear" type="button" aria-label="Clear"><i class="fa-solid fa-xmark"></i></button><span class="Adorn" aria-hidden="true"><i class="fa-regular fa-user"></i></span></div>
+                            </div>
+                            <div>
+                                <span class="FieldLabel">Alt Engagement Partner</span>
+                                <div class="Control has-adorn is-empty"><span class="Control-text">Not assigned</span><button class="Clear" type="button" aria-label="Clear"><i class="fa-solid fa-xmark"></i></button><span class="Adorn" aria-hidden="true"><i class="fa-regular fa-user"></i></span></div>
+                            </div>
+                            <div>
+                                <span class="FieldLabel">Engagement Manager</span>
+                                <div class="Control has-adorn is-empty"><span class="Control-text">Not assigned</span><button class="Clear" type="button" aria-label="Clear"><i class="fa-solid fa-xmark"></i></button><span class="Adorn" aria-hidden="true"><i class="fa-regular fa-user"></i></span></div>
+                            </div>
+                            <div>
+                                <span class="FieldLabel">Alt Engagement Manager</span>
+                                <div class="Control has-adorn is-empty"><span class="Control-text">Not assigned</span><button class="Clear" type="button" aria-label="Clear"><i class="fa-solid fa-xmark"></i></button><span class="Adorn" aria-hidden="true"><i class="fa-regular fa-user"></i></span></div>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h2 class="SectionTitle">Other</h2>
+                        <div class="Card">
+                            <div class="Split">
+                                <div>
+                                    <span class="FieldLabel">Away job?</span>
+                                    <div class="Control is-empty"><span class="Control-text">Not set</span><i class="fa-solid fa-chevron-down" style="color:var(--icon-subtle);font-size:11px"></i></div>
+                                </div>
+                                <div>
+                                    <span class="FieldLabel">Work is billable?</span>
+                                    <label class="Check"><input type="checkbox" id="billable" checked disabled /> Yes</label>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="FieldLabel">Custom url</span>
+                                <div class="Assoc-control is-static UrlField" style="min-height:48px;">
+                                    <span class="Assoc-value"><span class="Assoc-empty">Not set</span></span>
+                                    <span class="Pencil" aria-hidden="true"><i class="fa-solid fa-pencil"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ModalOverlay" id="phaseModal" role="presentation">
+    <div class="Modal" role="dialog" aria-modal="true" aria-labelledby="phaseModalTitle">
+        <div class="Modal-header">
+            <h2 class="Modal-title" id="phaseModalTitle">Phases for this job</h2>
+            <button class="Btn-iconOnly" type="button" id="phaseModalClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="Modal-body">
+            <p class="PhaseModal-lead">Order is the sequence. Set when each phase is due.</p>
+            <div class="PhaseEditor">
+                <div class="PhaseColHead">
+                    <span>Phase</span>
+                    <span>Due date</span>
+                    <span></span>
+                </div>
+                <div class="PhaseEditor-rows" id="phaseRows"></div>
+                <div class="PhaseEditor-actions">
+                    <button class="Btn Btn--primary Btn--sm" type="button" id="addPhaseBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add Phase</button>
+                </div>
+            </div>
+        </div>
+        <div class="Modal-footer">
+            <span class="Modal-summary" id="phaseModalSummary"></span>
+            <div class="Modal-actions">
+                <button class="Btn Btn--secondary" type="button" id="phaseModalCancel">Cancel</button>
+                <button class="Btn Btn--primary" type="button" id="phaseModalSave">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var PHASE_TYPES = [
+        { id: "preparation", name: "Preparation" },
+        { id: "first-review", name: "First Review" },
+        { id: "second-review", name: "Second Review" },
+        { id: "sign-off", name: "Sign Off" }
+    ];
+    function clonePhases(list) {
+        return list.map(function (phase) {
+            return { id: phase.id, dueDate: phase.dueDate || "" };
+        });
+    }
+    var savedPhases = clonePhases([
+        { id: "preparation", dueDate: "2026-01-31" },
+        { id: "first-review", dueDate: "2026-02-28" },
+        { id: "sign-off", dueDate: "2026-03-31" }
+    ]);
+    var draftPhases = clonePhases(savedPhases);
+    var focusPhaseIndex = -1;
+    var trigger = document.getElementById("phaseTrigger");
+    var value = document.getElementById("phaseValue");
+
+    function phaseType(id) {
+        return PHASE_TYPES.filter(function (item) { return item.id === id; })[0];
+    }
+
+    function renderValue() {
+        value.innerHTML = "";
+        if (!savedPhases.length) {
+            var empty = document.createElement("span");
+            empty.className = "Assoc-empty";
+            empty.textContent = "No phases associated";
+            value.appendChild(empty);
+            return;
+        }
+        savedPhases.forEach(function (item) {
+            var phase = phaseType(item.id);
+            if (!phase) return;
+            var tag = document.createElement("span");
+            tag.className = "Tag";
+            tag.textContent = phase.name;
+            value.appendChild(tag);
+        });
+        fitPhaseTags();
+    }
+
+    function fitPhaseTags() {
+        var tags = Array.prototype.slice.call(value.querySelectorAll(".Tag:not(.Tag--more)"));
+        var more = value.querySelector(".Tag--more");
+        if (more) more.remove();
+        tags.forEach(function (tag) { tag.hidden = false; });
+        if (value.scrollWidth <= value.clientWidth + 1) return;
+        var hiddenNames = [];
+        for (var i = tags.length - 1; i >= 0 && value.scrollWidth > value.clientWidth + 1; i--) {
+            tags[i].hidden = true;
+            hiddenNames.unshift(tags[i].textContent);
+            more = value.querySelector(".Tag--more");
+            if (!more) {
+                more = document.createElement("span");
+                more.className = "Tag Tag--more";
+                value.appendChild(more);
+            }
+            more.textContent = "+" + hiddenNames.length;
+            more.title = hiddenNames.join(", ");
+        }
+    }
+
+    function unusedPhaseTypes(exceptId) {
+        var used = draftPhases.map(function (phase) { return phase.id; });
+        return PHASE_TYPES.filter(function (phase) {
+            return phase.id === exceptId || used.indexOf(phase.id) === -1;
+        });
+    }
+
+    function dateIssue() {
+        for (var i = 1; i < draftPhases.length; i++) {
+            var previous = draftPhases[i - 1];
+            var current = draftPhases[i];
+            if (previous.dueDate && current.dueDate && current.dueDate < previous.dueDate) {
+                return phaseType(current.id).name + " is due before " + phaseType(previous.id).name;
+            }
+        }
+        return "";
+    }
+
+    function updateSummary() {
+        var summary = document.getElementById("phaseModalSummary");
+        var issue = dateIssue();
+        summary.textContent = issue || draftPhases.map(function (item) {
+            return phaseType(item.id).name;
+        }).join(" → ") || "No phases";
+        summary.classList.toggle("is-warning", !!issue);
+    }
+
+    function renderModal() {
+        var rows = document.getElementById("phaseRows");
+        rows.innerHTML = "";
+        if (!draftPhases.length) {
+            var empty = document.createElement("div");
+            empty.className = "PhaseEditor-empty";
+            empty.textContent = "No phases associated";
+            rows.appendChild(empty);
+        }
+        draftPhases.forEach(function (item, index) {
+            var phase = phaseType(item.id);
+            var block = document.createElement("div");
+            block.className = "PhaseBlock";
+            block.addEventListener("dragover", function (event) {
+                event.preventDefault();
+                block.classList.add("is-dropTarget");
+            });
+            block.addEventListener("dragleave", function () { block.classList.remove("is-dropTarget"); });
+            block.addEventListener("drop", function (event) {
+                event.preventDefault();
+                if (dragIndex < 0 || dragIndex === index) return;
+                var moved = draftPhases.splice(dragIndex, 1)[0];
+                draftPhases.splice(index, 0, moved);
+                dragIndex = -1;
+                renderModal();
+            });
+
+            var row = document.createElement("div");
+            row.className = "PhaseRow";
+            var name = document.createElement("div");
+            name.className = "PhaseRow-name";
+            var handle = document.createElement("button");
+            handle.type = "button";
+            handle.className = "PhaseRow-handle";
+            handle.draggable = true;
+            handle.setAttribute("aria-label", "Reorder " + phase.name);
+            handle.innerHTML = '<i class="fa-solid fa-grip-vertical" aria-hidden="true"></i>';
+            handle.addEventListener("dragstart", function (event) {
+                dragIndex = index;
+                if (event.dataTransfer) event.dataTransfer.setData("text/plain", String(index));
+            });
+            handle.addEventListener("dragend", function () { dragIndex = -1; });
+            handle.addEventListener("keydown", function (event) {
+                if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+                event.preventDefault();
+                var next = index + (event.key === "ArrowUp" ? -1 : 1);
+                if (next < 0 || next >= draftPhases.length) return;
+                var moved = draftPhases.splice(index, 1)[0];
+                draftPhases.splice(next, 0, moved);
+                renderModal();
+                var handles = document.querySelectorAll(".PhaseRow-handle");
+                if (handles[next]) handles[next].focus();
+            });
+            var order = document.createElement("span");
+            order.className = "PhaseRow-order";
+            order.textContent = String(index + 1);
+            var select = document.createElement("select");
+            select.className = "Select";
+            select.setAttribute("aria-label", "Phase " + (index + 1));
+            PHASE_TYPES.forEach(function (option) {
+                var taken = option.id !== item.id && draftPhases.some(function (phase) { return phase.id === option.id; });
+                var choice = document.createElement("option");
+                choice.value = option.id;
+                choice.textContent = taken ? option.name + " (in use)" : option.name;
+                choice.disabled = taken;
+                choice.selected = option.id === item.id;
+                select.appendChild(choice);
+            });
+            select.addEventListener("change", function () {
+                item.id = select.value;
+                renderModal();
+            });
+            name.appendChild(handle);
+            name.appendChild(order);
+            name.appendChild(select);
+            var due = document.createElement("input");
+            due.type = "date";
+            due.className = "PhaseDue";
+            due.value = item.dueDate || "";
+            due.setAttribute("aria-label", "Due date for " + phase.name);
+            due.addEventListener("change", function () {
+                item.dueDate = due.value;
+                updateSummary();
+            });
+            var remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "Btn-iconOnly";
+            remove.setAttribute("aria-label", "Remove " + phase.name);
+            remove.innerHTML = '<i class="fa-solid fa-trash" aria-hidden="true"></i>';
+            remove.addEventListener("click", function () {
+                draftPhases = draftPhases.filter(function (entry) { return entry.id !== item.id; });
+                renderModal();
+            });
+            row.appendChild(name);
+            row.appendChild(due);
+            row.appendChild(remove);
+            block.appendChild(row);
+            rows.appendChild(block);
+        });
+        updateSummary();
+        var add = document.getElementById("addPhaseBtn");
+        var canAdd = unusedPhaseTypes().length > 0;
+        add.disabled = !canAdd;
+        add.title = canAdd ? "" : "All phase types are already on this job";
+        if (focusPhaseIndex >= 0) {
+            var selects = rows.querySelectorAll(".Select");
+            if (selects[focusPhaseIndex]) selects[focusPhaseIndex].focus();
+            focusPhaseIndex = -1;
+        }
+    }
+
+    function openPhaseModal() {
+        draftPhases = clonePhases(savedPhases);
+        renderModal();
+        document.getElementById("phaseModal").classList.add("is-open");
+        trigger.setAttribute("aria-expanded", "true");
+    }
+
+    function closePhaseModal() {
+        document.getElementById("phaseModal").classList.remove("is-open");
+        trigger.setAttribute("aria-expanded", "false");
+    }
+
+    trigger.addEventListener("click", function () {
+        if (!document.body.classList.contains("is-editing")) return;
+        openPhaseModal();
+    });
+    document.getElementById("addPhaseBtn").addEventListener("click", function () {
+        var next = unusedPhaseTypes()[0];
+        if (!next) return;
+        draftPhases.push({ id: next.id, dueDate: "" });
+        focusPhaseIndex = draftPhases.length - 1;
+        renderModal();
+    });
+    document.getElementById("phaseModalClose").addEventListener("click", closePhaseModal);
+    document.getElementById("phaseModalCancel").addEventListener("click", closePhaseModal);
+    document.getElementById("phaseModalSave").addEventListener("click", function () {
+        savedPhases = clonePhases(draftPhases);
+        renderValue();
+        closePhaseModal();
+    });
+    document.getElementById("phaseModal").addEventListener("click", function (event) {
+        if (event.target.id === "phaseModal") closePhaseModal();
+    });
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && document.getElementById("phaseModal").classList.contains("is-open")) closePhaseModal();
+    });
+    document.getElementById("dismissAlert").addEventListener("click", function () {
+        document.getElementById("readOnlyAlert").hidden = true;
+    });
+
+    var parentLinked = true;
+    var parentAtEditStart = true;
+    var phasesAtEditStart = clonePhases(savedPhases);
+    var recurring = document.getElementById("recurring");
+    var billable = document.getElementById("billable");
+
+    function renderParent() {
+        document.getElementById("parentCard").hidden = !parentLinked;
+        document.getElementById("parentAdd").hidden = parentLinked;
+        document.getElementById("parentView").hidden = !parentLinked;
+        document.getElementById("parentViewEmpty").hidden = parentLinked;
+    }
+
+    function setEditing(on) {
+        document.body.classList.toggle("is-editing", on);
+        if (on) closePhaseModal();
+        recurring.disabled = !on;
+        billable.disabled = !on;
+        if (on) recurring.checked = false;
+        else {
+            recurring.checked = true;
+            billable.checked = true;
+        }
+        renderParent();
+    }
+
+    document.getElementById("editBtn").addEventListener("click", function () {
+        parentAtEditStart = parentLinked;
+        phasesAtEditStart = clonePhases(savedPhases);
+        parentLinked = true;
+        setEditing(true);
+    });
+    document.getElementById("cancelEdit").addEventListener("click", function () {
+        parentLinked = parentAtEditStart;
+        savedPhases = clonePhases(phasesAtEditStart);
+        renderValue();
+        setEditing(false);
+    });
+    document.getElementById("saveEdit").addEventListener("click", function () {
+        setEditing(false);
+    });
+    document.getElementById("parentRemove").addEventListener("click", function () {
+        parentLinked = false;
+        renderParent();
+    });
+    document.getElementById("parentAdd").addEventListener("click", function () {
+        parentLinked = true;
+        renderParent();
+    });
+    document.querySelectorAll(".Clear").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var control = btn.closest(".Control");
+            var text = control.querySelector(".Control-text");
+            var current = text.textContent.trim();
+            text.textContent = current === "Not assigned" ? "Not assigned" : "Not set";
+            control.classList.add("is-empty");
+        });
+    });
+
+    renderParent();
+    renderValue();
+    window.addEventListener("resize", fitPhaseTags);
+})();
+</script>
+
+<script src="../config.js"></script>
+<script src="../shared/access.js"></script>
+<script src="../shared/feedback-store.js"></script>
+<script src="../shared/telemetry-store.js"></script>
+<script src="../shared/telemetry.js" defer></script>
+<script src="../shared/feedback.js" defer></script>
+</body>
+</html>

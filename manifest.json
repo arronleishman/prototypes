@@ -33,6 +33,14 @@
     ]
   },
   {
+    "id": "job-editor-phase-selector",
+    "title": "Job editor phase selector",
+    "description": "Job editor Details — associate phases on an engagement from the Phases field.",
+    "path": "mocks/job-editor-phase-selector.html",
+    "status": "draft",
+    "updated": "2026-09-28"
+  },
+  {
     "id": "gantt-resource-breakdown",
     "title": "Gantt resource breakdown",
     "description": "Break Gantt resource rows down by Role, Phase, Primary Booking Type or Resource Requirement — aggregated demand, Other row, locked slim availability, quick add and multi-select.",
