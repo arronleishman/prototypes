@@ -851,8 +851,31 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     color: var(--text-primary);
 }
 .PfTeam-headTools .Btn i { font-size: 14px; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; }
-#pfTeamFilterBtn { gap: 3px; }
-#pfTeamFilterBtn i:last-child { width: 7px; font-size: 9px; }
+#pfTeamFilterBtn {
+    width: auto;
+    height: 35px;
+    padding: 0 var(--padding-sm);
+    gap: 8px;
+}
+#pfTeamFilterBtn i,
+#pfTeamFilterBtn i:last-child { width: 14px; height: 14px; font-size: 14px; }
+.PfTeam-typeSearch {
+    position: fixed; width: 260px; padding: 8px; box-sizing: border-box;
+    display: flex; flex-direction: column; gap: 8px;
+    background: var(--surface-default);
+    border: var(--border-xs) solid var(--border-default);
+    border-radius: var(--border-radius-default);
+    box-shadow: 0 2px 4px 2px rgb(0 0 0 / 5%);
+    z-index: 82;
+}
+.PfTeam-typeSearch input {
+    width: 100%; height: 35px; box-sizing: border-box; padding: 0 12px;
+    border: var(--border-xs) solid var(--border-default);
+    border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--text-default);
+    font: inherit; font-size: 14px;
+}
+.PfTeam-typeSearch input::placeholder { color: var(--text-subtle); }
 .PfTeam-search {
     width: 150px; height: 35px; box-sizing: border-box; padding: 0 10px;
     border: var(--border-xs) solid var(--border-default); border-radius: var(--border-radius-default);
@@ -5426,6 +5449,8 @@ const pfTeamState = {
     filterSubmenu: null,
     filterShowSelected: false,
     filterSelections: {},
+    bookingTypeSearch: false,
+    bookingTypeQuery: "",
     menu: null,
     flyout: null
 };
@@ -5522,6 +5547,10 @@ function pfFilterItems(worker) {
     const locationMatch = !locations?.size || [...workerPlaces.locations].some(function (location) { return locations.has(location); });
     const skillMatch = !skills?.size || pfWorkerSkills(worker).some(function (skill) { return skills.has(skill); });
     if (!resourceMatch || !keyPersonnelMatch || !unitMatch || !locationMatch || !skillMatch) return [];
+    const typeQuery = (state.bookingTypeQuery || "").trim().toLowerCase();
+    const workerHaystack = [resourceLabel, worker.name, pfIsUnassigned(worker) ? pfUnassignedLabel(worker) : ""]
+        .filter(Boolean).join(" ").toLowerCase();
+    const workerMatch = !typeQuery || workerHaystack.includes(typeQuery);
     return (worker.items || []).filter(function (it) {
         const bookingTraits = state.filterSelections.bookingTraits;
         const engagementNames = state.filterSelections.namesAndNumbers;
@@ -5529,6 +5558,8 @@ function pfFilterItems(worker) {
         const attributes = state.filterSelections.resourceAttributes;
         const recurrences = state.filterSelections.recurrences;
         const bookingMatch = !bookingTraits?.size || bookingTraits.has(it.bookingType || "Unspecified");
+        const engagementText = [it.job, it.code].filter(Boolean).join(" ").toLowerCase();
+        const typedMatch = workerMatch || (!!typeQuery && engagementText.includes(typeQuery));
         const attributeMatch = !attributes?.size || attributes.has(it.role);
         const recurrence = pfItemRecurrence(it);
         const recurrenceMatch = !recurrences?.size || (recurrence && recurrences.has(recurrence));
@@ -5537,7 +5568,7 @@ function pfFilterItems(worker) {
         const clientMatch = !clients?.size || (client && clients.has(client));
         const searchMatch = !search || [resourceLabel, it.job, it.code, it.role, it.bookingType]
             .filter(Boolean).join(" ").toLowerCase().includes(search);
-        return bookingMatch && engagementMatch && clientMatch && attributeMatch && recurrenceMatch && searchMatch;
+        return bookingMatch && typedMatch && engagementMatch && clientMatch && attributeMatch && recurrenceMatch && searchMatch;
     });
 }
 
@@ -5751,6 +5782,8 @@ function setTeamPivot(pivot) {
 
 function toggleTeamSettings(e) {
     e.stopPropagation();
+    pfTeamState.bookingTypeSearch = false;
+    pfRenderBookingTypeSearch();
     pfTeamState.menu = pfTeamState.menu ? null : "root";
     pfTeamState.flyout = null;
     pfRenderMenu();
@@ -6058,7 +6091,6 @@ function pfBuildHeadCorner() {
     viewBtn.setAttribute("aria-label", "Pivot to " + pivotTo);
     viewBtn.innerHTML = '<i class="fa-solid fa-right-left" aria-hidden="true"></i>';
     viewBtn.addEventListener("click", pivotTeamView);
-    tools.appendChild(viewBtn);
 
     const filterBtn = pfEl("button", "Btn Btn--iconSoft");
     filterBtn.type = "button";
@@ -6069,6 +6101,8 @@ function pfBuildHeadCorner() {
     filterBtn.classList.toggle("is-active", pfTeamState.filterPanel || pfFilterCount() > 0);
     filterBtn.addEventListener("click", function (e) {
         e.stopPropagation();
+        pfTeamState.bookingTypeSearch = false;
+        pfRenderBookingTypeSearch();
         pfTeamState.filterPanel = !pfTeamState.filterPanel;
         pfRenderFilterPanel();
     });
@@ -6082,6 +6116,30 @@ function pfBuildHeadCorner() {
     settingsBtn.innerHTML = '<i class="fa-solid fa-gear" aria-hidden="true"></i>';
     settingsBtn.addEventListener("click", toggleTeamSettings);
     tools.appendChild(settingsBtn);
+    tools.appendChild(viewBtn);
+
+    const typeBtn = pfEl("button", "Btn Btn--iconSoft");
+    typeBtn.type = "button";
+    typeBtn.id = "pfTeamBookingTypeBtn";
+    typeBtn.title = "Search engagements and workers";
+    typeBtn.setAttribute("aria-label", "Search engagements and workers");
+    typeBtn.setAttribute("aria-expanded", String(!!pfTeamState.bookingTypeSearch));
+    typeBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>';
+    const typeQuery = (pfTeamState.bookingTypeQuery || "").trim();
+    typeBtn.classList.toggle("is-active", pfTeamState.bookingTypeSearch || !!typeQuery);
+    typeBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        pfTeamState.bookingTypeSearch = !pfTeamState.bookingTypeSearch;
+        if (pfTeamState.bookingTypeSearch) {
+            pfTeamState.menu = null;
+            pfTeamState.flyout = null;
+            pfRenderMenu();
+        }
+        pfRenderBookingTypeSearch();
+        typeBtn.classList.toggle("is-active", pfTeamState.bookingTypeSearch || !!(pfTeamState.bookingTypeQuery || "").trim());
+        typeBtn.setAttribute("aria-expanded", String(!!pfTeamState.bookingTypeSearch));
+    });
+    tools.appendChild(typeBtn);
 
     corner.appendChild(tools);
 
@@ -6823,8 +6881,51 @@ function renderGantt(options) {
     // Re-anchor open menus after DOM rebuild
     if (pfTeamState.menu) pfRenderMenu();
     if (pfTeamState.filterPanel && !(options && options.preserveFilter)) pfRenderFilterPanel();
+    if (pfTeamState.bookingTypeSearch && !(options && options.preserveBookingSearch)) pfRenderBookingTypeSearch();
     renderPfSelectionPanel();
 }
+
+function pfRenderBookingTypeSearch() {
+    const existing = document.getElementById("pfTeamBookingTypeSearch");
+    if (existing) existing.remove();
+    const typeBtn = document.getElementById("pfTeamBookingTypeBtn");
+    if (typeBtn) {
+        const typeQuery = (pfTeamState.bookingTypeQuery || "").trim();
+        typeBtn.classList.toggle("is-active", pfTeamState.bookingTypeSearch || !!typeQuery);
+        typeBtn.setAttribute("aria-expanded", String(!!pfTeamState.bookingTypeSearch));
+    }
+    if (!pfTeamState.bookingTypeSearch || !typeBtn) return;
+    const panel = document.createElement("div");
+    panel.id = "pfTeamBookingTypeSearch";
+    panel.className = "PfTeam-typeSearch";
+    panel.addEventListener("click", function (e) { e.stopPropagation(); });
+    const search = document.createElement("input");
+    search.type = "search";
+    search.placeholder = "Search engagements and workers";
+    search.setAttribute("aria-label", "Search engagements and workers");
+    search.value = pfTeamState.bookingTypeQuery;
+    search.addEventListener("input", function () {
+        pfTeamState.bookingTypeQuery = search.value;
+        const button = document.getElementById("pfTeamBookingTypeBtn");
+        if (button) button.classList.toggle("is-active", true);
+        renderGantt({ preserveFilter: true, preserveBookingSearch: true });
+    });
+    panel.appendChild(search);
+    document.body.appendChild(panel);
+    const anchor = typeBtn.getBoundingClientRect();
+    panel.style.left = Math.max(8, anchor.right - 260) + "px";
+    panel.style.top = (anchor.bottom + 4) + "px";
+    search.focus();
+    const caret = search.value.length;
+    search.setSelectionRange(caret, caret);
+}
+
+document.addEventListener("click", function (e) {
+    if (!pfTeamState.bookingTypeSearch) return;
+    if (e.target.closest("#pfTeamBookingTypeSearch") || e.target.closest("#pfTeamBookingTypeBtn")) return;
+    pfTeamState.bookingTypeSearch = false;
+    pfRenderBookingTypeSearch();
+});
 
 function pfRenderMenu() {
     const existing = document.getElementById("pfTeamMenuLayer");
