@@ -24,6 +24,7 @@
     --surface-subtle-light: #f8f8f8;
     --surface-subtle-dark: #f1f1f4;
     --surface-list-item-hover: #f1f1f4;
+    --surface-list-item-selected-dark: #4f3fa0;
     --surface-emphasis: #4c5172;
     --surface-strong: #3d425c;
 
@@ -66,6 +67,7 @@
     --icon-accent: #4c5172;
 
     --border-subtle: #e2e3e9;
+    --border-disabled-dark: #e2e3e9;
     --border-default: #babfd1;
     --border-primary: #4f3fa0;
     --border-primary-subtle: #dedaf4;
@@ -849,6 +851,15 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     color: var(--text-primary);
 }
 .PfTeam-headTools .Btn i { font-size: 14px; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; }
+#pfTeamFilterBtn { gap: 3px; }
+#pfTeamFilterBtn i:last-child { width: 7px; font-size: 9px; }
+.PfTeam-search {
+    width: 150px; height: 35px; box-sizing: border-box; padding: 0 10px;
+    border: var(--border-xs) solid var(--border-default); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--text-default); font: inherit; font-size: var(--font-size-small);
+}
+.PfTeam-search::placeholder { color: var(--text-subtle); }
+.PfTeam-search:focus { outline: none; border-color: var(--border-primary); box-shadow: 0 0 0 2px var(--surface-primary-subtle); }
 .PfTeam-skillCount {
     box-sizing: border-box;
     display: inline-flex; align-items: center; justify-content: center;
@@ -1279,6 +1290,103 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .PfTeam-menuCheck input { width: 16px; height: 16px; accent-color: var(--primary); }
 .PfTeam-flyout .PfTeam-menuSegment,
 .PfTeam-flyout .PfTeam-menuCheck { margin-left: 0; margin-right: 0; }
+.PfTeam-filterPanel {
+    position: fixed; width: 320px; height: auto; max-height: calc(100vh - 24px);
+    overflow-x: hidden; overflow-y: auto;
+    padding: 8px 0 0; box-sizing: border-box; background: var(--surface-default);
+    border: var(--border-xs) solid var(--border-default);
+    border-radius: var(--border-radius-default) 0 0 var(--border-radius-default);
+    z-index: 80;
+}
+.PfTeam-filterTop {
+    display: flex; align-items: center; gap: 4px; height: 42px;
+    padding: 8px 12px; box-sizing: border-box; background: var(--surface-default);
+}
+.PfTeam-filterToggle {
+    width: 28px; height: 16px; padding: 0; border-radius: 40px; flex: 0 0 28px;
+    border: var(--border-xs) solid var(--border-default);
+    background: var(--surface-accent); cursor: pointer; position: relative;
+}
+.PfTeam-filterToggle::after {
+    content: ""; position: absolute; top: 1px; left: 2px; width: 12px; height: 12px;
+    border-radius: 50%; background: var(--text-subtle);
+}
+.PfTeam-filterToggle.is-on { background: var(--primary); }
+.PfTeam-filterToggle.is-on::after { left: 13px; background: var(--surface-default); }
+.PfTeam-filterClear {
+    display: flex; justify-content: center; align-items: center; height: 28px;
+    margin-left: auto; padding: 0 8px; border: var(--border-xs) solid var(--border-disabled-dark);
+    border-radius: var(--border-radius-default); background: var(--surface-default);
+    color: var(--text-disabled); font: inherit; font-size: 12px; font-weight: var(--font-weight-regular);
+    cursor: not-allowed;
+}
+.PfTeam-filterClear.is-active { color: var(--text-primary); border-color: var(--border-primary); cursor: pointer; }
+.PfTeam-filterGroup { display: flex; flex-direction: column; align-items: stretch; width: 100%; }
+.PfTeam-filterGroupTitle {
+    display: flex; align-items: center; gap: 4px; width: 100%; min-height: 46px;
+    padding: 16px 12px; box-sizing: border-box; border: 0; border-top: var(--border-xs) solid var(--border-subtle);
+    background: var(--surface-default); color: var(--text-accent); font: inherit;
+    font-size: 14px; font-weight: var(--font-weight-regular);
+    line-height: 20px; text-align: left; text-transform: uppercase; cursor: pointer;
+}
+.PfTeam-filterGroupTitle i {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; color: var(--text-accent); font-size: 12px; line-height: 1;
+}
+.PfTeam-filterOptions { display: flex; flex-direction: column; width: 100%; padding: 0; }
+.PfTeam-filterSubitem {
+    display: flex; align-items: center; width: 100%; height: 30px; padding: 6px 12px;
+    box-sizing: border-box; gap: 4px; border: 0; background: var(--surface-default);
+    color: var(--text-default); font: inherit; font-size: 14px; line-height: 21px; cursor: pointer;
+}
+.PfTeam-filterSubitem i { margin-left: auto; width: 14px; color: var(--icon-subtle); font-size: 12px; }
+.PfTeam-filterSubitem.is-active { background: var(--surface-list-item-selected-dark); color: var(--text-inverse); }
+.PfTeam-filterSubitem.is-active i { color: var(--text-inverse); }
+.PfTeam-filterFlyout {
+    position: fixed; width: 376px; min-height: 500px; padding: 8px 12px;
+    box-sizing: border-box; background: var(--surface-default);
+    border: var(--border-xs) solid var(--border-default); border-left: 0;
+    border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0;
+    box-shadow: 0 2px 4px 2px rgb(0 0 0 / 5%); z-index: 81;
+    display: flex; flex-direction: column; gap: 16px;
+}
+.PfTeam-filterFlyoutSearch { display: flex; width: 100%; height: 35px; }
+.PfTeam-filterFlyoutSearch input {
+    flex: 1 1 auto; min-width: 0; height: 35px; padding: 0 12px; box-sizing: border-box;
+    border: var(--border-xs) solid var(--border-default);
+    border-radius: var(--border-radius-default) 0 0 var(--border-radius-default);
+    background: var(--surface-default); color: var(--text-emphasis); font: inherit; font-size: 14px;
+}
+.PfTeam-filterFlyoutSearch input::placeholder { color: var(--text-emphasis); }
+.PfTeam-filterFlyoutSearch button {
+    width: 35px; height: 35px; padding: 0; border: var(--border-xs) solid var(--border-default); border-left: 0;
+    border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0;
+    background: var(--surface-default); color: var(--icon-subtle); cursor: pointer;
+}
+.PfTeam-filterFlyoutActions { display: flex; justify-content: space-between; height: 24px; }
+.PfTeam-filterFlyoutAction {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; padding: 0; border: var(--border-xs) solid var(--border-disabled-dark);
+    border-radius: var(--border-radius-default); background: var(--surface-default);
+    color: var(--icon-subtle); cursor: pointer;
+}
+.PfTeam-filterFlyoutAction--apply { border-color: var(--border-default); color: var(--icon-accent); }
+.PfTeam-filterEmpty { padding: 4px; color: var(--text-subtle); font-size: 14px; }
+.PfTeam-filterFlyoutValues { display: flex; flex-direction: column; gap: 4px; overflow: auto; flex: 1 1 auto; }
+.PfTeam-filterFlyoutValue {
+    display: flex; align-items: center; gap: 8px; width: 100%; min-height: 30px; padding: 4px;
+    border: 0; background: var(--surface-default); color: var(--text-default);
+    font: inherit; font-size: 14px; line-height: 20px; text-align: left; cursor: pointer;
+}
+.PfTeam-filterFlyoutChevron {
+    width: 16px; height: 16px; padding: 0; border: 0; background: transparent;
+    color: var(--icon-subtle); cursor: pointer; flex: 0 0 16px;
+}
+.PfTeam-filterFlyoutValue input { width: 16px; height: 16px; margin: 0; accent-color: var(--primary); pointer-events: none; }
+.PfTeam-filterFlyoutCount {
+    margin-left: auto; height: 24px; padding: 0 8px; border: var(--border-xs) solid var(--border-default);
+    border-radius: var(--border-radius-default); color: var(--text-accent); font-size: 12px; line-height: 22px;
+}
 .PfTeam-menuItem {
     padding: 8px 33px 8px 24px; font-size: var(--font-size-medium); color: var(--text-default);
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
@@ -2208,7 +2316,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                                         <option value="budget" selected>Budget Approval (28/12/2026)</option>
                                         <option value="prior">Prior Year</option>
                                         <option value="none">None</option>
-                                    </select>
+                        </select>
                                 </div>
                             </div>
                             <span class="Perf-keyItem"><span class="Perf-keySwatch Perf-keySwatch--actuals" aria-hidden="true"></span> Actuals</span>
@@ -2226,36 +2334,36 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                         <div class="Perf-keyEnd">
                             <span class="Perf-currencyPill" id="perfCurrencyPill" title="Display currency"><i class="fa-solid fa-money-bill" aria-hidden="true"></i><span id="perfCurrencyLabel">GBP</span></span>
                             <div class="Perf-keyActions">
-                                <div class="SettingsMenu" id="perfSettings">
+                        <div class="SettingsMenu" id="perfSettings">
                                     <button type="button" class="Btn--iconSoft" onclick="togglePerfSettings(event)" title="Settings" aria-label="Settings" aria-haspopup="true"><i class="fa-solid fa-gear" aria-hidden="true"></i></button>
-                                    <div class="SettingsMenu-panel">
-                                        <div class="SettingsMenu-section">
-                                            <div class="SettingsMenu-title">Data Settings</div>
-                                            <label class="SettingsMenu-check"><input type="checkbox" id="perfShowPredicted" checked onchange="onPerfSettingsChange()" /> Show Predicted</label>
-                                            <label class="SettingsMenu-check"><input type="checkbox" id="perfIncludeUnassigned" checked onchange="onPerfSettingsChange()" /> Include Unassigned Work</label>
-                                            <div class="SettingsMenu-field">
-                                                <label class="SettingsMenu-fieldLabel" for="perfDisplayCurrency">Display Currency</label>
-                                                <select class="Select Select--full" id="perfDisplayCurrency" onchange="onPerfSettingsChange()"><option value="GBP">GBP</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
-                                            </div>
-                                        </div>
-                                        <div class="SettingsMenu-section">
-                                            <div class="SettingsMenu-title">Table Settings</div>
-                                            <label class="SettingsMenu-check"><input type="checkbox" id="perfShowComparatorDiff" checked onchange="onPerfSettingsChange()" /> Show comparator difference</label>
-                                            <label class="SettingsMenu-check"><input type="checkbox" id="perfShowComparatorChange" checked onchange="onPerfSettingsChange()" /> Show comparator change</label>
-                                        </div>
+                            <div class="SettingsMenu-panel">
+                                <div class="SettingsMenu-section">
+                                    <div class="SettingsMenu-title">Data Settings</div>
+                                    <label class="SettingsMenu-check"><input type="checkbox" id="perfShowPredicted" checked onchange="onPerfSettingsChange()" /> Show Predicted</label>
+                                    <label class="SettingsMenu-check"><input type="checkbox" id="perfIncludeUnassigned" checked onchange="onPerfSettingsChange()" /> Include Unassigned Work</label>
+                                    <div class="SettingsMenu-field">
+                                        <label class="SettingsMenu-fieldLabel" for="perfDisplayCurrency">Display Currency</label>
+                                        <select class="Select Select--full" id="perfDisplayCurrency" onchange="onPerfSettingsChange()"><option value="GBP">GBP</option><option value="USD">USD</option><option value="EUR">EUR</option></select>
                                     </div>
                                 </div>
-                                <button type="button" class="Btn--iconSoft" title="Download" aria-label="Download"><i class="fa-solid fa-download" aria-hidden="true"></i></button>
+                                <div class="SettingsMenu-section">
+                                    <div class="SettingsMenu-title">Table Settings</div>
+                                            <label class="SettingsMenu-check"><input type="checkbox" id="perfShowComparatorDiff" checked onchange="onPerfSettingsChange()" /> Show comparator difference</label>
+                                            <label class="SettingsMenu-check"><input type="checkbox" id="perfShowComparatorChange" checked onchange="onPerfSettingsChange()" /> Show comparator change</label>
+                                </div>
                             </div>
                         </div>
+                                <button type="button" class="Btn--iconSoft" title="Download" aria-label="Download"><i class="fa-solid fa-download" aria-hidden="true"></i></button>
                     </div>
+                </div>
+            </div>
 
                     <div class="Perf-tables" id="perfTablesPane">
                         <div class="PerfTableWrap"><table class="PerfTable" id="perfTable"></table></div>
                         <table class="MetricsTable" id="metricsTable"></table>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
             <!-- TEAM TAB — portfolio Gantt prototype (Resource view default + Engagement pivot)
                  Design review: person-first resource Gantt with breakdown + engagement pivot.
@@ -2263,7 +2371,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
             <div id="tab-team" class="tabpane PfTeam">
                 <div class="PfTeam-scroller" id="pfTeamScroller">
                     <div class="PfTeam-inner" id="pfTeamInner"></div>
-                </div>
+                    </div>
                 <div class="PfTeam-bottomControls" aria-label="Gantt navigation">
                     <div class="PfTeam-zoomGroup" role="group" aria-label="Zoom actions">
                         <button type="button" class="Btn--iconSoft" id="pfTeamZoomOut" title="Zoom out" aria-label="Zoom out" onclick="pfSetZoom(pfTeamState.zoom - 0.25)"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
@@ -2443,7 +2551,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                             <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
                         </div>
                     </div>
-                </div>
+            </div>
 
                 <div class="RModal-block">
                     <div class="RModal-tabs" role="tablist" aria-label="Resource type">
@@ -2453,7 +2561,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                     </div>
 
                     <div id="reqtab-specific" class="reqtab" hidden>
-                        <div class="RField">
+                <div class="RField">
                             <label class="RField-label" for="reqWorker">Worker Name <span class="req">*</span></label>
                             <div class="RField-control">
                                 <i class="fa-solid fa-user lead" aria-hidden="true"></i>
@@ -2473,8 +2581,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                                     <option>Emma Johnson</option>
                                 </select>
                                 <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                            </div>
-                        </div>
+                </div>
+                </div>
                         <div class="RSummary" id="reqWorkerSummary" style="display:none">
                             <div><label>Grade</label><div class="val" id="reqwGrade">—</div></div>
                             <div><label>Functional Unit</label><div class="val" id="reqwFu">—</div></div>
@@ -2489,45 +2597,45 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                                 <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
                             </div>
                         </div>
-                    </div>
+            </div>
 
                     <div id="reqtab-flexible" class="reqtab">
-                        <div class="RField">
+                <div class="RField">
                             <label class="RField-label" for="reqRole">Project Role</label>
                             <div class="RField-control">
                                 <i class="fa-solid fa-briefcase lead" aria-hidden="true"></i>
                                 <select id="reqRole" class="RField-select"><option value="">Choose project role</option><option>Engagement Lead</option><option>Reviewer</option><option>Preparer</option><option>Specialist</option></select>
                                 <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
                             </div>
-                        </div>
-                        <div class="RField">
+                </div>
+                <div class="RField">
                             <label class="RField-label" for="reqGrade">Grade <span class="req">*</span></label>
                             <div class="RField-control">
                                 <i class="fa-solid fa-graduation-cap lead" aria-hidden="true"></i>
                                 <select id="reqGrade" class="RField-select"><option value="">Choose grade</option><option>Partner</option><option>Director</option><option>Manager</option><option>Senior Associate</option><option>Associate</option></select>
                                 <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
                             </div>
-                        </div>
-                        <div class="RField">
+                </div>
+                <div class="RField">
                             <label class="RField-label" for="reqFu">Functional Unit</label>
                             <div class="RField-control">
                                 <i class="fa-solid fa-building lead" aria-hidden="true"></i>
                                 <select id="reqFu" class="RField-select"><option value="">Choose functional unit</option><option>Audit</option><option>Tax</option><option>Advisory</option><option>Risk Assurance</option></select>
                                 <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
                             </div>
-                        </div>
-                        <div class="RField">
+                </div>
+                <div class="RField">
                             <label class="RField-label" for="reqGu">Geographical Unit</label>
                             <div class="RField-control">
                                 <i class="fa-solid fa-map lead" aria-hidden="true"></i>
                                 <select id="reqGu" class="RField-select"><option value="">Choose geographical unit</option><option>London</option><option>Manchester</option><option>Edinburgh</option><option>Bristol</option></select>
                                 <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
                             </div>
-                        </div>
-                    </div>
+                </div>
+            </div>
 
                     <div id="reqtab-unassignable" class="reqtab" hidden>
-                        <div class="RField">
+                <div class="RField">
                             <label class="RField-label" for="reqUnGrade">Grade <span class="req">*</span></label>
                             <div class="RField-control">
                                 <i class="fa-solid fa-graduation-cap lead" aria-hidden="true"></i>
@@ -2543,8 +2651,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                                 <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
                             </div>
                         </div>
-                    </div>
                 </div>
+            </div>
 
                 <div class="RModal-block RModal-block--traits" id="reqSkills">
                     <h4 class="RModal-sectionTitle">Required Skills</h4>
@@ -5311,6 +5419,13 @@ const pfTeamState = {
     selectedItemId: null,
     selectedItemIds: [],
     lastBarSelection: null,
+    teamSearch: "",
+    teamFilters: { resource: new Set(), booking: new Set(), engagement: new Set() },
+    filterPanel: false,
+    filterOpenGroups: new Set(["resource"]),
+    filterSubmenu: null,
+    filterShowSelected: false,
+    filterSelections: {},
     menu: null,
     flyout: null
 };
@@ -5330,6 +5445,199 @@ function pfUnassignedLabel(worker) {
 }
 
 function pfBreakdownOn() { return pfTeamState.breakdown !== "none"; }
+
+function pfReqParts(req) {
+    const parts = String(req || "").split("/").map(function (part) { return part.trim(); });
+    return { grade: parts[0] || "", unit: parts[1] || "", location: parts[2] || "" };
+}
+
+function pfWorkerUnits(worker) {
+    const units = new Set();
+    const locations = new Set();
+    (worker.items || []).forEach(function (item) {
+        const parts = pfReqParts(item.req);
+        if (parts.unit) units.add(parts.unit);
+        if (parts.location) locations.add(parts.location);
+    });
+    if (worker.fu) units.add(worker.fu);
+    if (worker.gu) locations.add(worker.gu);
+    return { units: units, locations: locations };
+}
+
+const PF_SKILLS_BY_GRADE = {
+    PTR: ["Financial reporting", "IFRS"],
+    DIR: ["Review", "IFRS"],
+    SRM: ["Controls", "SOX"],
+    MAN: ["Audit delivery", "Substantive testing"],
+    SA: ["Substantive testing"],
+    A2: ["Inventory", "Substantive testing"],
+    A1: ["Inventory"],
+    AM: ["Pensions"]
+};
+
+function pfWorkerSkills(worker) {
+    return PF_SKILLS_BY_GRADE[worker.grade] || [];
+}
+
+function pfItemClient(item) {
+    const parts = String(item && item.job || "").split(" — ");
+    return parts.length > 1 ? parts[parts.length - 1] : "";
+}
+
+function pfItemRecurrence(item) {
+    if (!item || item.kind === "unavailability") return "";
+    return (item.span || 0) >= 5 ? "Weekly" : "One-off";
+}
+
+function pfFilterCount() {
+    return Object.values(pfTeamState.filterSelections).reduce(function (count, values) {
+        return count + (values && values.size ? values.size : 0);
+    }, 0);
+}
+
+function pfSyncFilterChrome() {
+    const count = pfFilterCount();
+    const clear = document.querySelector("#pfTeamFilterPanel .PfTeam-filterClear");
+    if (clear) {
+        clear.disabled = !count;
+        clear.classList.toggle("is-active", !!count);
+    }
+    const toggle = document.querySelector("#pfTeamFilterPanel .PfTeam-filterToggle");
+    if (toggle) toggle.classList.toggle("is-on", !!pfTeamState.filterShowSelected);
+}
+
+function pfFilterItems(worker) {
+    const state = pfTeamState;
+    const search = state.teamSearch.trim().toLowerCase();
+    const resourceLabel = pfIsUnassigned(worker) ? "Unassigned" : (worker.name || "");
+    const grades = state.filterSelections.grades;
+    const keyPersonnel = state.filterSelections.keyPersonnel;
+    const businessUnits = state.filterSelections.businessUnits;
+    const locations = state.filterSelections.locations;
+    const workerPlaces = pfWorkerUnits(worker);
+    const resourceMatch = !grades?.size || grades.has(worker.grade);
+    const keyPersonnelMatch = !keyPersonnel?.size || keyPersonnel.has(resourceLabel);
+    const skills = state.filterSelections.skills;
+    const unitMatch = !businessUnits?.size || [...workerPlaces.units].some(function (unit) { return businessUnits.has(unit); });
+    const locationMatch = !locations?.size || [...workerPlaces.locations].some(function (location) { return locations.has(location); });
+    const skillMatch = !skills?.size || pfWorkerSkills(worker).some(function (skill) { return skills.has(skill); });
+    if (!resourceMatch || !keyPersonnelMatch || !unitMatch || !locationMatch || !skillMatch) return [];
+    return (worker.items || []).filter(function (it) {
+        const bookingTraits = state.filterSelections.bookingTraits;
+        const engagementNames = state.filterSelections.namesAndNumbers;
+        const clients = state.filterSelections.clients;
+        const attributes = state.filterSelections.resourceAttributes;
+        const recurrences = state.filterSelections.recurrences;
+        const bookingMatch = !bookingTraits?.size || bookingTraits.has(it.bookingType || "Unspecified");
+        const attributeMatch = !attributes?.size || attributes.has(it.role);
+        const recurrence = pfItemRecurrence(it);
+        const recurrenceMatch = !recurrences?.size || (recurrence && recurrences.has(recurrence));
+        const engagementMatch = !engagementNames?.size || engagementNames.has(it.job || it.code || "Unspecified");
+        const client = pfItemClient(it);
+        const clientMatch = !clients?.size || (client && clients.has(client));
+        const searchMatch = !search || [resourceLabel, it.job, it.code, it.role, it.bookingType]
+            .filter(Boolean).join(" ").toLowerCase().includes(search);
+        return bookingMatch && engagementMatch && clientMatch && attributeMatch && recurrenceMatch && searchMatch;
+    });
+}
+
+function pfVisibleWorkers() {
+    return pfTeamWorkers.map(function (worker) {
+        const items = pfFilterItems(worker);
+        return items.length ? Object.assign({}, worker, { items: items }) : null;
+    }).filter(Boolean);
+}
+
+function pfFilterOptions() {
+    const resources = new Set();
+    const bookings = new Set();
+    const engagements = new Set();
+    pfTeamWorkers.forEach(function (worker) {
+        resources.add(pfIsUnassigned(worker) ? "Unassigned" : worker.name);
+        (worker.items || []).forEach(function (it) {
+            bookings.add(it.bookingType || "Unspecified");
+            if (it.job) engagements.add(it.job);
+        });
+    });
+    return {
+        resource: [...resources].filter(Boolean).sort(),
+        booking: [...bookings].filter(Boolean).sort(),
+        engagement: [...engagements].filter(Boolean).sort()
+    };
+}
+
+const PF_FILTER_SUBITEMS = {
+    resource: [
+        ["businessUnits", "Business Units"],
+        ["grades", "Grades"],
+        ["locations", "Locations"],
+        ["resourceAttributes", "Resource Attributes"],
+        ["skills", "Skills"]
+    ],
+    booking: [
+        ["bookingTraits", "Booking Traits"],
+        ["recurrences", "Recurrences"]
+    ],
+    engagement: [
+        ["keyPersonnel", "Key Personnel"],
+        ["namesAndNumbers", "Names and Engagement Numbers"],
+        ["clients", "Clients"]
+    ]
+};
+
+const PF_LOCATION_REGIONS = {
+    London: "Europe",
+    Manchester: "Europe",
+    Edinburgh: "Europe",
+    Oxford: "Europe",
+    Berlin: "Europe",
+    "New York": "Americas"
+};
+
+function pfFlexibleFilterOptions(key) {
+    const values = new Set();
+    if (key === "grades") {
+        pfTeamWorkers.forEach(function (worker) { if (worker.grade) values.add(worker.grade); });
+    } else if (key === "businessUnits" || key === "locations") {
+        pfTeamWorkers.forEach(function (worker) {
+            const places = pfWorkerUnits(worker);
+            (key === "businessUnits" ? places.units : places.locations).forEach(function (value) { values.add(value); });
+        });
+    } else if (key === "resourceAttributes") {
+        pfTeamWorkers.forEach(function (worker) {
+            (worker.items || []).forEach(function (item) { if (item.role) values.add(item.role); });
+        });
+    } else if (key === "skills") {
+        pfTeamWorkers.forEach(function (worker) {
+            pfWorkerSkills(worker).forEach(function (skill) { values.add(skill); });
+        });
+    } else if (key === "recurrences") {
+        pfTeamWorkers.forEach(function (worker) {
+            (worker.items || []).forEach(function (item) {
+                const recurrence = pfItemRecurrence(item);
+                if (recurrence) values.add(recurrence);
+            });
+        });
+    } else if (key === "keyPersonnel") {
+        pfTeamWorkers.forEach(function (worker) { values.add(pfIsUnassigned(worker) ? "Unassigned" : worker.name); });
+    } else if (key === "bookingTraits") {
+        pfTeamWorkers.forEach(function (worker) {
+            (worker.items || []).forEach(function (item) { if (item.bookingType) values.add(item.bookingType); });
+        });
+    } else if (key === "namesAndNumbers") {
+        pfTeamWorkers.forEach(function (worker) {
+            (worker.items || []).forEach(function (item) { if (item.job || item.code) values.add(item.job || item.code); });
+        });
+    } else if (key === "clients") {
+        pfTeamWorkers.forEach(function (worker) {
+            (worker.items || []).forEach(function (item) {
+                const client = pfItemClient(item);
+                if (client) values.add(client);
+            });
+        });
+    }
+    return [...values].filter(Boolean).sort();
+}
 
 function pfEl(tag, cls, text) {
     const n = document.createElement(tag);
@@ -5491,6 +5799,245 @@ function pfToggleZoomOptions(event) {
     wrap.appendChild(options);
 }
 
+function pfRenderFilterPanel() {
+    const existing = document.getElementById("pfTeamFilterPanel");
+    if (existing) existing.remove();
+    const existingFlyout = document.getElementById("pfTeamFilterFlyout");
+    if (existingFlyout) existingFlyout.remove();
+    const filterBtn = document.getElementById("pfTeamFilterBtn");
+    if (!pfTeamState.filterPanel || !filterBtn) return;
+    const panel = document.createElement("div");
+    panel.id = "pfTeamFilterPanel";
+    panel.className = "PfTeam-filterPanel";
+    panel.setAttribute("role", "menu");
+    panel.setAttribute("tabindex", "-1");
+    panel.addEventListener("click", function (e) { e.stopPropagation(); });
+    const filterCount = pfFilterCount();
+    const top = document.createElement("div");
+    top.className = "PfTeam-filterTop";
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "PfTeam-filterToggle" + (pfTeamState.filterShowSelected ? " is-on" : "");
+    toggle.setAttribute("aria-pressed", String(!!pfTeamState.filterShowSelected));
+    toggle.setAttribute("aria-label", "Show selected filter values");
+    toggle.addEventListener("click", function () {
+        pfTeamState.filterShowSelected = !pfTeamState.filterShowSelected;
+        pfRenderFilterPanel();
+    });
+    const clear = document.createElement("button");
+    clear.type = "button";
+    clear.className = "PfTeam-filterClear" + (filterCount ? " is-active" : "");
+    clear.textContent = "Clear all";
+    clear.disabled = !filterCount;
+    clear.hidden = false;
+    clear.addEventListener("click", function () {
+        Object.values(pfTeamState.teamFilters).forEach(function (values) { values.clear(); });
+        pfTeamState.filterSelections = {};
+        pfTeamState.filterSubmenu = null;
+        renderGantt();
+    });
+    top.appendChild(toggle);
+    top.appendChild(clear);
+    panel.appendChild(top);
+    [
+        ["resource", "Resource Filters"],
+        ["booking", "Booking Filters"],
+        ["engagement", "Engagement Filters"]
+    ].forEach(function (group) {
+        const section = document.createElement("section");
+        const isOpen = pfTeamState.filterOpenGroups.has(group[0]);
+        section.className = "PfTeam-filterGroup" + (isOpen ? " is-open" : "");
+        const heading = document.createElement("button");
+        heading.type = "button";
+        heading.className = "PfTeam-filterGroupTitle";
+        heading.setAttribute("aria-expanded", String(isOpen));
+        heading.setAttribute("aria-controls", "pfTeamFilterOptions-" + group[0]);
+        heading.innerHTML = '<i class="fa-solid fa-chevron-' + (isOpen ? "down" : "right") + '" aria-hidden="true"></i><span>' + group[1] + "</span>";
+        heading.addEventListener("click", function () {
+            if (pfTeamState.filterOpenGroups.has(group[0])) pfTeamState.filterOpenGroups.delete(group[0]);
+            else pfTeamState.filterOpenGroups.add(group[0]);
+            pfRenderFilterPanel();
+        });
+        section.appendChild(heading);
+        if (isOpen) {
+            const subitems = document.createElement("div");
+            subitems.className = "PfTeam-filterOptions";
+            (PF_FILTER_SUBITEMS[group[0]] || []).forEach(function (entry) {
+                const item = document.createElement("button");
+                item.type = "button";
+                item.className = "PfTeam-filterSubitem" + (pfTeamState.filterSubmenu === entry[0] ? " is-active" : "");
+                item.innerHTML = "<span>" + entry[1] + '</span><i class="fa-solid fa-angle-right" aria-hidden="true"></i>';
+                item.addEventListener("click", function () {
+                    pfTeamState.filterSubmenu = entry[0];
+                    pfRenderFilterPanel();
+                });
+                subitems.appendChild(item);
+            });
+            section.appendChild(subitems);
+        }
+        panel.appendChild(section);
+    });
+    document.body.appendChild(panel);
+    const anchor = filterBtn.getBoundingClientRect();
+    panel.style.left = Math.max(8, anchor.left) + "px";
+    panel.style.top = (anchor.bottom + 4) + "px";
+    panel.style.maxHeight = Math.max(180, window.innerHeight - anchor.bottom - 8) + "px";
+    if (pfTeamState.filterSubmenu) pfRenderFilterFlyout(panel, anchor);
+}
+
+function pfRenderFilterFlyout(panel, anchor) {
+    const key = pfTeamState.filterSubmenu;
+    const values = pfFlexibleFilterOptions(key);
+    const flyout = document.createElement("div");
+    flyout.id = "pfTeamFilterFlyout";
+    flyout.className = "PfTeam-filterFlyout";
+    flyout.addEventListener("click", function (e) { e.stopPropagation(); });
+    const searchWrap = document.createElement("div");
+    searchWrap.className = "PfTeam-filterFlyoutSearch";
+    const search = document.createElement("input");
+    search.type = "search";
+    search.placeholder = "Filter";
+    search.setAttribute("aria-label", "Filter values");
+    const clearSearch = document.createElement("button");
+    clearSearch.type = "button";
+    clearSearch.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+    clearSearch.setAttribute("aria-label", "Clear value search");
+    clearSearch.addEventListener("click", function () { search.value = ""; search.dispatchEvent(new Event("input")); });
+    searchWrap.appendChild(search);
+    searchWrap.appendChild(clearSearch);
+    flyout.appendChild(searchWrap);
+    const actions = document.createElement("div");
+    actions.className = "PfTeam-filterFlyoutActions";
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "PfTeam-filterFlyoutAction";
+    cancel.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+    const snapshot = new Set(pfTeamState.filterSelections[key] || []);
+    const selected = new Set(snapshot);
+    function writeSelection() {
+        if (selected.size) pfTeamState.filterSelections[key] = selected;
+        else delete pfTeamState.filterSelections[key];
+    }
+    cancel.setAttribute("aria-label", "Cancel filter selection");
+    cancel.addEventListener("click", function () {
+        if (snapshot.size) pfTeamState.filterSelections[key] = new Set(snapshot);
+        else delete pfTeamState.filterSelections[key];
+        pfTeamState.filterSubmenu = null;
+        renderGantt();
+    });
+    const apply = document.createElement("button");
+    apply.type = "button";
+    apply.className = "PfTeam-filterFlyoutAction PfTeam-filterFlyoutAction--apply";
+    apply.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i>';
+    apply.setAttribute("aria-label", "Apply filter selection");
+    apply.addEventListener("click", function () {
+        writeSelection();
+        pfTeamState.filterSubmenu = null;
+        renderGantt();
+    });
+    actions.appendChild(cancel);
+    actions.appendChild(apply);
+    flyout.appendChild(actions);
+    const valuesWrap = document.createElement("div");
+    valuesWrap.className = "PfTeam-filterFlyoutValues";
+    const expanded = new Set();
+    function valueTree() {
+        if (key !== "locations") {
+            return values.map(function (value) { return { label: value, value: value }; });
+        }
+        const groups = {};
+        values.forEach(function (value) {
+            const region = PF_LOCATION_REGIONS[value] || "Other";
+            if (!groups[region]) groups[region] = [];
+            groups[region].push(value);
+        });
+        return Object.keys(groups).sort().map(function (region) {
+            return {
+                label: region,
+                children: groups[region].sort().map(function (value) { return { label: value, value: value }; })
+            };
+        });
+    }
+    function renderValues(query) {
+        valuesWrap.innerHTML = "";
+        function shown(node) {
+            const childHits = (node.children || []).filter(shown);
+            const selfMatch = !query || node.label.toLowerCase().includes(query);
+            if (node.children && node.children.length) {
+                if (pfTeamState.filterShowSelected) return childHits.length > 0;
+                return selfMatch || childHits.length > 0;
+            }
+            if (pfTeamState.filterShowSelected && !selected.has(node.value)) return false;
+            return selfMatch;
+        }
+        function appendNode(node, depth) {
+            if (!shown(node)) return;
+            const row = document.createElement("div");
+            row.className = "PfTeam-filterFlyoutValue";
+            row.style.paddingLeft = (4 + depth * 18) + "px";
+            const children = node.children || [];
+            if (children.length) {
+                const open = expanded.has(node.label) || !!query || pfTeamState.filterShowSelected;
+                const chevron = document.createElement("button");
+                chevron.type = "button";
+                chevron.className = "PfTeam-filterFlyoutChevron";
+                chevron.innerHTML = '<i class="fa-solid fa-chevron-' + (open ? "down" : "right") + '" aria-hidden="true"></i>';
+                chevron.setAttribute("aria-label", (open ? "Collapse " : "Expand ") + node.label);
+                chevron.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    if (expanded.has(node.label)) expanded.delete(node.label);
+                    else expanded.add(node.label);
+                    renderValues(query);
+                });
+                row.appendChild(chevron);
+            }
+            const box = document.createElement("input");
+            box.type = "checkbox";
+            box.tabIndex = -1;
+            const picked = children.length
+                ? children.filter(function (child) { return selected.has(child.value); }).length
+                : (selected.has(node.value) ? 1 : 0);
+            const total = children.length || 1;
+            box.checked = picked === total;
+            box.indeterminate = picked > 0 && picked < total;
+            row.appendChild(box);
+            row.appendChild(pfEl("span", "", node.label));
+            if (children.length) {
+                const badge = pfEl("span", "PfTeam-filterFlyoutCount", picked + "/" + children.length);
+                row.appendChild(badge);
+            }
+            row.addEventListener("click", function () {
+                const turnOn = children.length ? picked < total : !selected.has(node.value);
+                const leaves = children.length ? children : [node];
+                leaves.forEach(function (leaf) {
+                    if (turnOn) selected.add(leaf.value);
+                    else selected.delete(leaf.value);
+                });
+                writeSelection();
+                pfSyncFilterChrome();
+                renderGantt({ preserveFilter: true });
+                renderValues(query);
+            });
+            valuesWrap.appendChild(row);
+            if (children.length && (expanded.has(node.label) || query)) {
+                children.forEach(function (child) { appendNode(child, depth + 1); });
+            }
+        }
+        valueTree().forEach(function (node) { appendNode(node, 0); });
+        if (!valuesWrap.childElementCount) valuesWrap.appendChild(pfEl("div", "PfTeam-filterEmpty", "No values"));
+    }
+    search.addEventListener("input", function () { renderValues(search.value.trim().toLowerCase()); });
+    renderValues("");
+    flyout.appendChild(valuesWrap);
+    document.body.appendChild(flyout);
+    const panelBox = panel.getBoundingClientRect();
+    flyout.style.left = (panelBox.right - 1) + "px";
+    flyout.style.top = panelBox.top + "px";
+    flyout.style.maxHeight = Math.max(240, window.innerHeight - panelBox.top - 8) + "px";
+    const flyoutHeight = flyout.getBoundingClientRect().height;
+    if (flyoutHeight > panelBox.height) panel.style.height = flyoutHeight + "px";
+}
+
 function pfBuildHeadCorner() {
     const corner = pfEl("div", "PfTeam-headCorner");
     const tools = pfEl("div", "PfTeam-headTools");
@@ -5518,9 +6065,14 @@ function pfBuildHeadCorner() {
     filterBtn.id = "pfTeamFilterBtn";
     filterBtn.title = "Filter";
     filterBtn.setAttribute("aria-label", "Filter");
-    filterBtn.innerHTML = '<i class="fa-solid fa-filter" aria-hidden="true"></i>';
+    filterBtn.innerHTML = '<i class="fa-solid fa-filter" aria-hidden="true"></i><i class="fa-solid fa-caret-down" aria-hidden="true"></i>';
+    filterBtn.classList.toggle("is-active", pfTeamState.filterPanel || pfFilterCount() > 0);
+    filterBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        pfTeamState.filterPanel = !pfTeamState.filterPanel;
+        pfRenderFilterPanel();
+    });
     tools.appendChild(filterBtn);
-
     const settingsBtn = pfEl("button", "Btn Btn--iconSoft");
     settingsBtn.type = "button";
     settingsBtn.id = "pfTeamSettingsBtn";
@@ -5656,7 +6208,7 @@ function pfBuildWorkerRow(worker, index) {
         btn.addEventListener("click", function (e) {
             e.stopPropagation();
             rows.forEach(function (r) { pfTeamState.expandedRows[worker.id + "|" + r.key] = !allOpen; });
-            renderGantt();
+    renderGantt();
         });
         expandCell.appendChild(btn);
     }
@@ -6172,7 +6724,7 @@ function pfBuildTodayMarker() {
 
 function pfEngagementGroups() {
     const map = {};
-    pfTeamWorkers.forEach(function (wk) {
+    pfVisibleWorkers().forEach(function (wk) {
         wk.items.forEach(function (it) {
             if (it.kind === "unavailability" || !it.job) return;
             if (!map[it.job]) map[it.job] = [];
@@ -6189,7 +6741,7 @@ function pfEngagementGroups() {
     });
 }
 
-function renderGantt() {
+function renderGantt(options) {
     const inner = document.getElementById("pfTeamInner");
     const host = document.getElementById("pfTeamScroller");
     if (!inner || !host) return;
@@ -6246,8 +6798,9 @@ function renderGantt() {
             }
         });
     } else {
-        const assigned = pfTeamWorkers.filter(function (wk) { return !pfIsUnassigned(wk); });
-        const unassigned = pfTeamWorkers.filter(function (wk) { return pfIsUnassigned(wk); });
+        const visibleWorkers = pfVisibleWorkers();
+        const assigned = visibleWorkers.filter(function (wk) { return !pfIsUnassigned(wk); });
+        const unassigned = visibleWorkers.filter(function (wk) { return pfIsUnassigned(wk); });
 
         inner.appendChild(pfBuildGroupRow("Assigned", "__assigned"));
         if (!pfTeamState.collapsedEngagements.__assigned) {
@@ -6269,6 +6822,7 @@ function renderGantt() {
     host.scrollTop = scrollTop;
     // Re-anchor open menus after DOM rebuild
     if (pfTeamState.menu) pfRenderMenu();
+    if (pfTeamState.filterPanel && !(options && options.preserveFilter)) pfRenderFilterPanel();
     renderPfSelectionPanel();
 }
 
