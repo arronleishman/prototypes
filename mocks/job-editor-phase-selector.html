@@ -336,7 +336,7 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
 }
 .ModalOverlay.is-open { display: flex; }
 .Modal {
-    width: min(760px, 100%); max-height: calc(100vh - 48px);
+    width: min(560px, 100%); max-height: calc(100vh - 48px);
     display: flex; flex-direction: column; overflow: hidden;
     border-radius: var(--border-radius-default); background: var(--surface-default);
     box-shadow: var(--shadow-footer);
@@ -358,7 +358,6 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
 }
 .Btn-iconOnly:hover { background: var(--surface-subtle-dark); color: var(--text-default); }
 .Btn--sm { height: 35px; padding: 4px 10px; }
-.PhaseModal-lead { display: none; }
 .PhaseEditor {
     display: flex; flex-direction: column; min-height: 0;
     background: var(--surface-default); border: 1px solid var(--border-subtle);
@@ -366,20 +365,22 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
 }
 .PhaseEditor-rows { display: flex; flex-direction: column; max-height: min(320px, 42vh); overflow-y: auto; }
 .PhaseEditor-empty { padding: 12px; color: var(--text-subtle); font-size: var(--font-size-small); }
-.PhaseColHead, .PhaseRow {
-    display: grid; grid-template-columns: minmax(140px, 1fr) minmax(160px, 1.15fr) 132px 35px;
-    align-items: center; column-gap: 12px;
-}
-.PhaseColHead {
-    padding: 8px 12px; color: var(--text-subtle);
-    font-size: var(--font-size-small); font-weight: var(--font-weight-semibold);
-    border-bottom: 1px solid var(--border-subtle);
+.PhaseRow {
+    display: grid; grid-template-columns: 20px minmax(0, 1fr) 35px;
+    align-items: center; column-gap: 12px; padding: 8px 12px;
 }
 .PhaseBlock { border-top: 1px solid var(--border-subtle); }
 .PhaseBlock:first-child { border-top: 0; }
+.PhaseBlock.is-dropTarget { box-shadow: inset 0 1px 0 0 var(--border-subtle); }
 .PhaseRow .Btn-iconOnly { width: 35px; height: 35px; min-height: 35px; }
-.PhaseRow { padding: 8px 12px; }
 .PhaseRow-name { display: flex; align-items: center; min-width: 0; }
+.PhaseRow-handle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; padding: 0; border: 0; background: transparent;
+    color: var(--icon-subtle); font-size: 12px; cursor: grab; border-radius: var(--border-radius-default);
+}
+.PhaseRow-handle:hover, .PhaseRow-handle:focus-visible { color: var(--text-accent); }
+.PhaseRow-handle:active { cursor: grabbing; }
 .Select {
     appearance: none; width: 100%; height: 35px; min-height: 35px; padding: 0 30px 0 12px;
     border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
@@ -389,30 +390,7 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
     background-repeat: no-repeat; background-position: right 10px center;
 }
 .Select:focus { border-color: var(--border-primary); }
-.PhaseRow-name .Select, .PhaseStarts-trigger { flex: 1 1 auto; min-width: 0; }
-button.Select { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
-button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
-.PhaseDue {
-    width: 100%; height: 35px; padding: 0 8px;
-    border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
-    background: var(--surface-default); color: var(--text-default);
-    font-family: inherit; font-size: var(--font-size-medium);
-}
-.PhaseStarts-menu {
-    position: fixed; z-index: 6; display: flex; flex-direction: column; gap: 2px;
-    max-height: 180px; overflow: auto; padding: 6px; background: var(--surface-default);
-    border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
-    box-shadow: 0 8px 24px rgba(34, 36, 48, 0.12);
-}
-.PhaseStarts-menu[hidden] { display: none !important; }
-.PhaseStarts-option {
-    display: flex; align-items: center; gap: 8px; min-height: 35px; padding: 0 8px;
-    border-radius: var(--border-radius-default); cursor: pointer;
-}
-.PhaseStarts-option:hover { background: var(--surface-list-item-hover); }
-.PhaseStarts-option.is-disabled { color: var(--text-disabled); cursor: not-allowed; }
-.PhaseStarts-option.is-disabled:hover { background: transparent; }
-.PhaseStarts-option input { accent-color: var(--surface-primary); }
+.PhaseRow-name .Select { flex: 1 1 auto; min-width: 0; }
 .PhaseEditor-actions {
     display: flex; justify-content: flex-start; padding: 12px;
     border-top: 1px solid var(--border-subtle);
@@ -595,13 +573,6 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
                                     <button class="ParentAdd" type="button" id="parentAdd" hidden>Add parent</button>
                                 </div>
                             </div>
-                            <div class="Assoc" id="phaseAssoc">
-                                <span class="FieldLabel" id="phaseLabel">Phases</span>
-                                <button class="Assoc-control" type="button" id="phaseTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="phaseModal" aria-labelledby="phaseLabel">
-                                    <span class="Assoc-value" id="phaseValue"><span class="Assoc-empty">No phases associated</span></span>
-                                    <span class="Pencil" aria-hidden="true"><i class="fa-solid fa-pencil"></i></span>
-                                </button>
-                            </div>
                         </div>
                     </section>
                     <section>
@@ -616,6 +587,17 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
                                     <span class="FieldLabel">Recurring</span>
                                     <label class="Check"><input type="checkbox" id="recurring" checked disabled /> Yes</label>
                                 </div>
+                            </div>
+                            <div class="Assoc" id="phaseAssoc">
+                                <span class="FieldLabel" id="phaseLabel">Phases</span>
+                                <button class="Assoc-control" type="button" id="phaseTrigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="phaseModal" aria-labelledby="phaseLabel">
+                                    <span class="Assoc-value" id="phaseValue"><span class="Assoc-empty">No phases associated</span></span>
+                                    <span class="Pencil" aria-hidden="true"><i class="fa-solid fa-pencil"></i></span>
+                                </button>
+                            </div>
+                            <div>
+                                <span class="FieldLabel">Overlap</span>
+                                <label class="Check"><input type="checkbox" id="allowOverlap" checked disabled /> Allow phases to overlap</label>
                             </div>
                         </div>
                     </section>
@@ -730,12 +712,6 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
         </div>
         <div class="Modal-body">
             <div class="PhaseEditor">
-                <div class="PhaseColHead">
-                    <span>Phase</span>
-                    <span>Starts after</span>
-                    <span>Due date</span>
-                    <span></span>
-                </div>
                 <div class="PhaseEditor-rows" id="phaseRows"></div>
                 <div class="PhaseEditor-actions">
                     <button class="Btn Btn--primary Btn--sm" type="button" id="addPhaseBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add Phase</button>
@@ -764,18 +740,19 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
         return list.map(function (phase) {
             return {
                 id: phase.id,
-                dueDate: phase.dueDate || "",
+                spanEnd: phase.spanEnd || "",
                 predecessors: (phase.predecessors || []).slice()
             };
         });
     }
     var savedPhases = clonePhases([
-        { id: "preparation", dueDate: "2026-01-31", predecessors: [] },
-        { id: "first-review", dueDate: "2026-02-28", predecessors: ["preparation"] },
-        { id: "sign-off", dueDate: "2026-03-31", predecessors: ["preparation", "first-review"] }
+        { id: "preparation", spanEnd: "2026-10-19", predecessors: [] },
+        { id: "first-review", spanEnd: "2026-10-12", predecessors: ["preparation"] },
+        { id: "sign-off", spanEnd: "2026-10-26", predecessors: ["first-review"] }
     ]);
     var draftPhases = clonePhases(savedPhases);
     var focusPhaseIndex = -1;
+    var dragIndex = -1;
     var trigger = document.getElementById("phaseTrigger");
     var value = document.getElementById("phaseValue");
 
@@ -831,48 +808,18 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
         });
     }
 
-    function reaches(fromId, targetId) {
-        var seen = {};
-        var stack = [fromId];
-        while (stack.length) {
-            var id = stack.pop();
-            if (seen[id]) continue;
-            seen[id] = true;
-            var phase = draftPhases.filter(function (item) { return item.id === id; })[0];
-            if (!phase) continue;
-            for (var i = 0; i < phase.predecessors.length; i++) {
-                var next = phase.predecessors[i];
-                if (next === targetId) return true;
-                stack.push(next);
-            }
-        }
-        return false;
+    function syncPredecessors() {
+        draftPhases.forEach(function (phase, index) {
+            phase.predecessors = index ? [draftPhases[index - 1].id] : [];
+        });
     }
 
-    function wouldCycle(phaseId, predecessorId) {
-        return phaseId === predecessorId || reaches(predecessorId, phaseId);
-    }
-
-    function startsAfterLabel(ids) {
-        var names = ids.map(function (id) {
-            var phase = phaseType(id);
-            return phase ? phase.name : "";
-        }).filter(Boolean);
-        if (!names.length) return "None";
-        if (names.length === 1) return names[0];
-        if (names.length === 2) return names[0] + " and " + names[1];
-        return names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
-    }
-
-    function dateIssue() {
-        for (var i = 0; i < draftPhases.length; i++) {
-            var current = draftPhases[i];
-            if (!current.dueDate) continue;
-            for (var j = 0; j < current.predecessors.length; j++) {
-                var previous = draftPhases.filter(function (item) { return item.id === current.predecessors[j]; })[0];
-                if (previous && previous.dueDate && current.dueDate < previous.dueDate) {
-                    return phaseType(current.id).name + " is due before " + phaseType(previous.id).name;
-                }
+    function overtakeIssue() {
+        for (var i = 1; i < draftPhases.length; i++) {
+            var earlier = draftPhases[i - 1];
+            var later = draftPhases[i];
+            if (earlier.spanEnd && later.spanEnd && earlier.spanEnd > later.spanEnd) {
+                return phaseType(earlier.id).name + " runs past " + phaseType(later.id).name + ". Flagged, not blocked.";
             }
         }
         return "";
@@ -880,14 +827,10 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
 
     function updateSummary() {
         var summary = document.getElementById("phaseModalSummary");
-        var issue = dateIssue();
+        var issue = overtakeIssue();
         var count = draftPhases.length;
         summary.textContent = issue || (count ? count + (count === 1 ? " phase" : " phases") : "No phases");
         summary.classList.toggle("is-warning", !!issue);
-    }
-
-    function closeStartMenus() {
-        document.querySelectorAll(".PhaseStarts-menu").forEach(function (menu) { menu.hidden = true; });
     }
 
     function renderModal() {
@@ -903,9 +846,46 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
             var phase = phaseType(item.id);
             var block = document.createElement("div");
             block.className = "PhaseBlock";
+            block.addEventListener("dragover", function (event) {
+                event.preventDefault();
+                block.classList.add("is-dropTarget");
+            });
+            block.addEventListener("dragleave", function () { block.classList.remove("is-dropTarget"); });
+            block.addEventListener("drop", function (event) {
+                event.preventDefault();
+                if (dragIndex < 0 || dragIndex === index) return;
+                var moved = draftPhases.splice(dragIndex, 1)[0];
+                draftPhases.splice(index, 0, moved);
+                dragIndex = -1;
+                syncPredecessors();
+                renderModal();
+            });
 
             var row = document.createElement("div");
             row.className = "PhaseRow";
+            var handle = document.createElement("button");
+            handle.type = "button";
+            handle.className = "PhaseRow-handle";
+            handle.draggable = true;
+            handle.setAttribute("aria-label", "Reorder " + phase.name);
+            handle.innerHTML = '<i class="fa-solid fa-grip-vertical" aria-hidden="true"></i>';
+            handle.addEventListener("dragstart", function (event) {
+                dragIndex = index;
+                if (event.dataTransfer) event.dataTransfer.setData("text/plain", String(index));
+            });
+            handle.addEventListener("dragend", function () { dragIndex = -1; });
+            handle.addEventListener("keydown", function (event) {
+                if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+                event.preventDefault();
+                var next = index + (event.key === "ArrowUp" ? -1 : 1);
+                if (next < 0 || next >= draftPhases.length) return;
+                var moved = draftPhases.splice(index, 1)[0];
+                draftPhases.splice(next, 0, moved);
+                syncPredecessors();
+                renderModal();
+                var handles = document.querySelectorAll(".PhaseRow-handle");
+                if (handles[next]) handles[next].focus();
+            });
             var name = document.createElement("div");
             name.className = "PhaseRow-name";
             var select = document.createElement("select");
@@ -921,27 +901,11 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
                 select.appendChild(choice);
             });
             select.addEventListener("change", function () {
-                var previousId = item.id;
                 item.id = select.value;
-                draftPhases.forEach(function (entry) {
-                    entry.predecessors = entry.predecessors.map(function (id) {
-                        return id === previousId ? item.id : id;
-                    }).filter(function (id, position, list) {
-                        return id !== entry.id && list.indexOf(id) === position;
-                    });
-                });
+                syncPredecessors();
                 renderModal();
             });
             name.appendChild(select);
-            var due = document.createElement("input");
-            due.type = "date";
-            due.className = "PhaseDue";
-            due.value = item.dueDate || "";
-            due.setAttribute("aria-label", "Due date for " + phase.name);
-            due.addEventListener("change", function () {
-                item.dueDate = due.value;
-                updateSummary();
-            });
             var remove = document.createElement("button");
             remove.type = "button";
             remove.className = "Btn-iconOnly";
@@ -949,74 +913,13 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
             remove.innerHTML = '<i class="fa-solid fa-trash" aria-hidden="true"></i>';
             remove.addEventListener("click", function () {
                 draftPhases = draftPhases.filter(function (entry) { return entry.id !== item.id; });
-                draftPhases.forEach(function (entry) {
-                    entry.predecessors = entry.predecessors.filter(function (id) { return id !== item.id; });
-                });
+                syncPredecessors();
                 renderModal();
             });
+            row.appendChild(handle);
             row.appendChild(name);
-            var others = draftPhases.filter(function (entry) { return entry.id !== item.id; });
-            var trigger = document.createElement("button");
-            trigger.type = "button";
-            trigger.className = "Select PhaseStarts-trigger";
-            var startsLabel = startsAfterLabel(item.predecessors);
-            trigger.textContent = startsLabel;
-            trigger.title = startsLabel;
-            trigger.disabled = !others.length;
-            trigger.setAttribute("aria-label", "Phases " + phase.name + " starts after");
-            var menu = document.createElement("div");
-            menu.className = "PhaseStarts-menu";
-            menu.hidden = true;
-            others.forEach(function (other) {
-                var option = document.createElement("label");
-                option.className = "PhaseStarts-option";
-                var input = document.createElement("input");
-                input.type = "checkbox";
-                input.checked = item.predecessors.indexOf(other.id) !== -1;
-                var blocked = !input.checked && wouldCycle(item.id, other.id);
-                input.disabled = blocked;
-                if (blocked) option.classList.add("is-disabled");
-                option.title = blocked ? "That would create a loop" : "";
-                input.addEventListener("change", function () {
-                    if (input.checked && wouldCycle(item.id, other.id)) {
-                        input.checked = false;
-                        return;
-                    }
-                    if (input.checked) item.predecessors.push(other.id);
-                    else item.predecessors = item.predecessors.filter(function (id) { return id !== other.id; });
-                    trigger.textContent = startsAfterLabel(item.predecessors);
-                    trigger.title = trigger.textContent;
-                    updateSummary();
-                    menu.querySelectorAll("input").forEach(function (box) {
-                        if (box === input || box.checked) return;
-                        var loops = wouldCycle(item.id, box.value);
-                        box.disabled = loops;
-                        box.parentElement.classList.toggle("is-disabled", loops);
-                        box.parentElement.title = loops ? "That would create a loop" : "";
-                    });
-                });
-                input.value = other.id;
-                var text = document.createElement("span");
-                text.textContent = phaseType(other.id).name;
-                option.appendChild(input);
-                option.appendChild(text);
-                menu.appendChild(option);
-            });
-            trigger.addEventListener("click", function () {
-                var opening = menu.hidden;
-                closeStartMenus();
-                if (!opening) return;
-                var rect = trigger.getBoundingClientRect();
-                menu.style.top = (rect.bottom + 4) + "px";
-                menu.style.left = rect.left + "px";
-                menu.style.width = rect.width + "px";
-                menu.hidden = false;
-            });
-            row.appendChild(trigger);
-            row.appendChild(due);
             row.appendChild(remove);
             block.appendChild(row);
-            block.appendChild(menu);
             rows.appendChild(block);
         });
         updateSummary();
@@ -1050,13 +953,15 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
     document.getElementById("addPhaseBtn").addEventListener("click", function () {
         var next = unusedPhaseTypes()[0];
         if (!next) return;
-        draftPhases.push({ id: next.id, dueDate: "", predecessors: [] });
+        draftPhases.push({ id: next.id, spanEnd: "", predecessors: [] });
+        syncPredecessors();
         focusPhaseIndex = draftPhases.length - 1;
         renderModal();
     });
     document.getElementById("phaseModalClose").addEventListener("click", closePhaseModal);
     document.getElementById("phaseModalCancel").addEventListener("click", closePhaseModal);
     document.getElementById("phaseModalSave").addEventListener("click", function () {
+        syncPredecessors();
         savedPhases = clonePhases(draftPhases);
         renderValue();
         closePhaseModal();
@@ -1064,15 +969,8 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
     document.getElementById("phaseModal").addEventListener("click", function (event) {
         if (event.target.id === "phaseModal") closePhaseModal();
     });
-    document.getElementById("phaseRows").addEventListener("scroll", closeStartMenus);
     document.addEventListener("keydown", function (event) {
-        if (event.key !== "Escape" || !document.getElementById("phaseModal").classList.contains("is-open")) return;
-        var openMenu = document.querySelector(".PhaseStarts-menu:not([hidden])");
-        if (openMenu) closeStartMenus();
-        else closePhaseModal();
-    });
-    document.addEventListener("click", function (event) {
-        if (!event.target.closest(".PhaseStarts-menu") && !event.target.closest(".PhaseStarts-trigger")) closeStartMenus();
+        if (event.key === "Escape" && document.getElementById("phaseModal").classList.contains("is-open")) closePhaseModal();
     });
     document.getElementById("dismissAlert").addEventListener("click", function () {
         document.getElementById("readOnlyAlert").hidden = true;
@@ -1081,8 +979,10 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
     var parentLinked = true;
     var parentAtEditStart = true;
     var phasesAtEditStart = clonePhases(savedPhases);
+    var overlapAtEditStart = true;
     var recurring = document.getElementById("recurring");
     var billable = document.getElementById("billable");
+    var allowOverlap = document.getElementById("allowOverlap");
 
     function renderParent() {
         document.getElementById("parentCard").hidden = !parentLinked;
@@ -1096,6 +996,7 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
         if (on) closePhaseModal();
         recurring.disabled = !on;
         billable.disabled = !on;
+        allowOverlap.disabled = !on;
         if (on) recurring.checked = false;
         else {
             recurring.checked = true;
@@ -1107,12 +1008,14 @@ button.Select:disabled { color: var(--text-disabled); cursor: not-allowed; }
     document.getElementById("editBtn").addEventListener("click", function () {
         parentAtEditStart = parentLinked;
         phasesAtEditStart = clonePhases(savedPhases);
+        overlapAtEditStart = allowOverlap.checked;
         parentLinked = true;
         setEditing(true);
     });
     document.getElementById("cancelEdit").addEventListener("click", function () {
         parentLinked = parentAtEditStart;
         savedPhases = clonePhases(phasesAtEditStart);
+        allowOverlap.checked = overlapAtEditStart;
         renderValue();
         setEditing(false);
     });
