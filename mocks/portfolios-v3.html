@@ -802,80 +802,51 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-headCorner {
     position: sticky; left: 0; z-index: 4;
     width: var(--pf-team-left-w); flex: 0 0 var(--pf-team-left-w);
-    background: var(--surface-header);
-    border-right: var(--border-xs) solid var(--border-subtle);
-    display: flex; flex-direction: column; justify-content: flex-start;
+    background: var(--surface-default);
+    display: flex; flex-direction: column; justify-content: flex-end;
     box-sizing: border-box;
 }
 .PfTeam-headTools {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px var(--padding-lg);
-    min-height: 51px;
-    box-sizing: border-box;
-    flex: 1 1 auto;
+    display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start;
+    padding: 5px 5.5px; gap: 5px; box-sizing: border-box;
+    width: 100%; height: 71px; flex: none;
     background: var(--surface-default);
+    border-right: 1px solid var(--border-subtle);
 }
-.PfTeam-headTools .Btn {
-    flex: 0 0 auto;
-    min-height: 35px;
-    height: 35px;
-    padding: 0 var(--padding-sm);
-    font-weight: var(--font-weight-regular);
-    gap: 8px;
+.PfTeam-headToolsRow {
+    display: flex; flex-direction: row; align-items: center; gap: 5px;
+    width: 100%; height: 28px;
 }
-.PfTeam-headTools .Btn--secondary {
-    color: var(--text-primary);
-    border-color: var(--border-primary);
-    background: var(--surface-default);
+.PfTeam-searchGroup {
+    display: flex; align-items: center; flex: 1 1 auto; min-width: 0; height: 28px;
 }
-.PfTeam-headTools .Btn--secondary:hover:not(:disabled) {
-    background: var(--surface-primary-subtle);
-    color: var(--primary-emphasis);
+.PfTeam-toolBtn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+    height: 28px; padding: 0 8px; box-sizing: border-box; flex: 0 0 auto;
+    border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--icon-accent);
+    font: inherit; cursor: pointer;
 }
-.PfTeam-headTools .Btn--iconSoft {
-    width: 35px;
-    height: 35px;
-    padding: 0;
-    justify-content: center;
-    color: var(--primary);
-    background: var(--surface-container-default);
-    border: 1px solid var(--border-subtle);
+.PfTeam-toolBtn i { font-size: 14px; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; color: var(--icon-accent); }
+.PfTeam-toolBtn:hover { background: var(--surface-subtle-light); }
+.PfTeam-toolBtn.is-active { border-color: var(--border-primary); }
+.PfTeam-toolBtn--filter { width: 48px; border-radius: 4px 0 0 4px; }
+.PfTeam-toolBtn--clear {
+    width: 30px; border-radius: 0 4px 4px 0; border-left: 0; color: var(--icon-disabled);
 }
-.PfTeam-headTools .Btn--iconSoft:hover {
-    background: var(--surface-accent);
-    color: var(--primary-emphasis);
-}
-.PfTeam-headTools .Btn--iconSoft.is-active {
-    background: var(--surface-primary-subtle);
-    border-color: var(--border-primary);
-    color: var(--text-primary);
-}
-.PfTeam-headTools .Btn i { font-size: 14px; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; }
-#pfTeamFilterBtn {
-    width: auto;
-    height: 35px;
-    padding: 0 var(--padding-sm);
-    gap: 8px;
-}
-#pfTeamFilterBtn i,
-#pfTeamFilterBtn i:last-child { width: 14px; height: 14px; font-size: 14px; }
-.PfTeam-typeSearch {
-    position: fixed; width: 260px; padding: 8px; box-sizing: border-box;
-    display: flex; flex-direction: column; gap: 8px;
-    background: var(--surface-default);
-    border: var(--border-xs) solid var(--border-default);
-    border-radius: var(--border-radius-default);
-    box-shadow: 0 2px 4px 2px rgb(0 0 0 / 5%);
-    z-index: 82;
-}
-.PfTeam-typeSearch input {
-    width: 100%; height: 35px; box-sizing: border-box; padding: 0 12px;
-    border: var(--border-xs) solid var(--border-default);
-    border-radius: var(--border-radius-default);
+.PfTeam-toolBtn--clear i { width: 10px; height: 10px; font-size: 10px; color: var(--icon-disabled); }
+.PfTeam-toolBtn--settings { width: 48px; }
+.PfTeam-toolBtn--view { width: 30px; }
+.PfTeam-searchField {
+    flex: 1 1 auto; min-width: 0; height: 28px; margin: 0; padding: 3.5px 12px; box-sizing: border-box;
+    border-width: 1px 1px 1px 0; border-style: solid; border-color: #ced4da; border-radius: 0;
     background: var(--surface-default); color: var(--text-default);
-    font: inherit; font-size: 14px;
+    font-family: var(--font-family); font-size: 14px; font-weight: 400; line-height: 19px;
 }
-.PfTeam-typeSearch input::placeholder { color: var(--text-subtle); }
+.PfTeam-searchField::placeholder { color: #767676; }
+.PfTeam-searchField:focus { outline: none; }
+.PfTeam-searchField::-webkit-search-cancel-button,
+.PfTeam-searchField::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
 .PfTeam-search {
     width: 150px; height: 35px; box-sizing: border-box; padding: 0 10px;
     border: var(--border-xs) solid var(--border-default); border-radius: var(--border-radius-default);
@@ -2522,6 +2493,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <button class="Btn Btn--outline" id="modalClearBtn" onclick="clearAllFilters()" disabled><i class="fa-solid fa-rotate-left"></i> Clear filters</button>
             </div>
             <div class="Modal-footerActions" id="modalFooterFilterActions">
+                <button class="Btn Btn--secondary" id="backToPortfolioBtn" type="button" onclick="returnToPortfolioView()" hidden>Go back to portfolio</button>
                 <span class="BtnTooltipWrap" id="viewResultsBtnWrap">
                     <button class="Btn Btn--primary" id="viewResultsBtn" onclick="viewFilterResults()" disabled>Select Engagements</button>
                 </span>
@@ -2543,13 +2515,30 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                     <button type="button" class="DynamicFilterConfirm-close" aria-label="Cancel" onclick="closeDynamicFilterConfirm({ clearSelection: true })"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <div class="DynamicFilterConfirm-body">
-                    <p class="DynamicFilterConfirm-copy">You’ve selected all matching engagements. A dynamic filter keeps adding or removing engagements as they match your filters — so the list stays current on its own.</p>
+                    <p class="DynamicFilterConfirm-copy">You’ve selected all matching engagements. A dynamic filter adds engagements that match your filters and fall within the start and end dates. Engagements outside that date range won’t be added automatically.</p>
                     <p class="DynamicFilterConfirm-hint">Or add only the engagements you see now, as a fixed list.</p>
                 </div>
                 <div class="DynamicFilterConfirm-footer">
                     <button type="button" class="Btn Btn--outline" onclick="closeDynamicFilterConfirm({ clearSelection: true })">Cancel</button>
                     <button type="button" class="Btn Btn--secondary" onclick="confirmAddAsStaticSelection()">Just add these</button>
                     <button type="button" class="Btn Btn--primary" onclick="confirmAddAsDynamicFilter()">Add as dynamic filter</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="DynamicFilterConfirm" id="discardPortfolioConfirm" role="dialog" aria-modal="true" aria-labelledby="discardPortfolioConfirmTitle" hidden>
+            <div class="DynamicFilterConfirm-panel">
+                <div class="DynamicFilterConfirm-header">
+                    <h3 class="DynamicFilterConfirm-title" id="discardPortfolioConfirmTitle">Discard this portfolio?</h3>
+                    <button type="button" class="DynamicFilterConfirm-close" aria-label="Keep editing" onclick="closeDiscardPortfolioConfirm()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                </div>
+                <div class="DynamicFilterConfirm-body">
+                    <p class="DynamicFilterConfirm-copy" id="discardPortfolioConfirmCopy">You’ve started building this portfolio. If you close now, that work won’t be saved.</p>
+                    <p class="DynamicFilterConfirm-hint" id="discardPortfolioConfirmHint">You can keep editing and create it when you’re ready.</p>
+                </div>
+                <div class="DynamicFilterConfirm-footer">
+                    <button type="button" class="Btn Btn--outline" onclick="closeDiscardPortfolioConfirm()">Keep editing</button>
+                    <button type="button" class="Btn Btn--primary" id="discardPortfolioConfirmBtn" onclick="confirmDiscardPortfolio()">Discard</button>
                 </div>
             </div>
         </div>
@@ -3742,7 +3731,7 @@ function ruleFilterEntries(sel, dateLabel) {
         label: filterShortLabel(FILTER_DEF[p] ? FILTER_DEF[p].label : p),
         values: [...sel[p]]
     }));
-    if (dateLabel) entries.push({ label: "Dates", values: [dateLabel] });
+    if (dateLabel) entries.push({ label: "Date range", values: [dateLabel] });
     return entries;
 }
 function rulePlainEnglish(entries) {
@@ -3967,9 +3956,9 @@ function onFilterSearch(v) { modalState.filterSearch = v; renderFilterList(); up
 
 function dateTimeCardHtml() {
     return `<div class="FilterCard FilterCard--date" data-prop="__date">
-        <div class="FilterCard-header FilterCard-header--dark"><span class="FilterCard-title">Dates</span></div>
+        <div class="FilterCard-header FilterCard-header--dark"><span class="FilterCard-title">Date range</span></div>
         <div class="FilterCard-body">
-            <div class="FilterCard-desc">Engagements are included if they overlap this date range.</div>
+            <div class="FilterCard-desc">The start and end dates determine which engagements are automatically included when using a dynamic filter. Engagements that fall outside this date range won’t be added automatically.</div>
             <div class="FilterCard-field">
                 <label class="FilterCard-fieldLabel">Start date</label>
                 <div class="FilterCard-dateInput">06/01/2026 <i class="fa-regular fa-calendar" style="margin-left:auto;color:var(--icon-subtle)"></i></div>
@@ -4221,6 +4210,14 @@ function onPortfolioNameKeydown(e) {
     }
 }
 
+function returnToPortfolioView() {
+    if (!effectiveMembershipSize()) return;
+    modalState.resultsTab = "portfolio";
+    showModalStep("results");
+    switchResultsTab("portfolio");
+    updateMembershipUI();
+    updateModalPrimary();
+}
 function viewFilterResults() {
     // Select Engagements is a non-destructive preview — no portfolio name required here.
     snapshotAppliedFilters();
@@ -4644,6 +4641,11 @@ function updateMembershipUI() {
     const portfolioCount = document.getElementById("portfolioTabCount");
     if (searchCount && modalState.applied) searchCount.textContent = `(${filteredEngagements().length})`;
     if (portfolioCount) portfolioCount.textContent = `(${n})`;
+    const back = document.getElementById("backToPortfolioBtn");
+    if (back) {
+        back.hidden = n === 0;
+        back.textContent = "Go back to portfolio (" + n + ")";
+    }
 }
 
 function clearAllFilters() {
@@ -4811,14 +4813,56 @@ function openEditModal(name) {
 function modalSubmit() {
     const mode = modalMode;
     const name = portfolioNameValue();
-    closeCreateModal();
+    closeCreateModal({ force: true });
     if (mode === "create") {
         openPortfolio(name); // creating takes you straight onto the new portfolio's page
     } else if (document.getElementById("view-detail").classList.contains("is-active")) {
         document.getElementById("detailTitle").textContent = name; // reflect any rename
     }
 }
-function closeCreateModal() {
+function portfolioHasProgress() {
+    if (!modalState.baseline) return false;
+    if (modalSignature() !== modalState.baseline) return true;
+    if (editRuleDirty()) return true;
+    if (modalState.tableSel.size > 0) return true;
+    if (modalState.editingRuleId) return false;
+    return Object.keys(modalState.valueSel).some(p => modalState.valueSel[p] && modalState.valueSel[p].size > 0);
+}
+function openDiscardPortfolioConfirm() {
+    const editing = modalMode === "edit";
+    const title = document.getElementById("discardPortfolioConfirmTitle");
+    const copy = document.getElementById("discardPortfolioConfirmCopy");
+    const hint = document.getElementById("discardPortfolioConfirmHint");
+    const action = document.getElementById("discardPortfolioConfirmBtn");
+    if (title) title.textContent = editing ? "Discard your changes?" : "Discard this portfolio?";
+    if (copy) copy.textContent = editing
+        ? "You’ve made changes to this portfolio. If you close now, those changes won’t be saved."
+        : "You’ve started building this portfolio. If you close now, that work won’t be saved.";
+    if (hint) hint.textContent = editing
+        ? "You can keep editing and update it when you’re ready."
+        : "You can keep editing and create it when you’re ready.";
+    if (action) action.textContent = editing ? "Discard changes" : "Discard";
+    const el = document.getElementById("discardPortfolioConfirm");
+    if (!el) return;
+    el.hidden = false;
+    el.classList.add("is-open");
+}
+function closeDiscardPortfolioConfirm() {
+    const el = document.getElementById("discardPortfolioConfirm");
+    if (!el) return;
+    el.classList.remove("is-open");
+    el.hidden = true;
+}
+function confirmDiscardPortfolio() {
+    closeCreateModal({ force: true });
+}
+function closeCreateModal(opts) {
+    const force = !!(opts && opts.force === true);
+    if (!force && portfolioHasProgress()) {
+        openDiscardPortfolioConfirm();
+        return;
+    }
+    closeDiscardPortfolioConfirm();
     closeDynamicFilterConfirm();
     document.getElementById("createModal").classList.remove("is-open");
 }
@@ -5782,8 +5826,6 @@ function setTeamPivot(pivot) {
 
 function toggleTeamSettings(e) {
     e.stopPropagation();
-    pfTeamState.bookingTypeSearch = false;
-    pfRenderBookingTypeSearch();
     pfTeamState.menu = pfTeamState.menu ? null : "root";
     pfTeamState.flyout = null;
     pfRenderMenu();
@@ -6074,25 +6116,10 @@ function pfRenderFilterFlyout(panel, anchor) {
 function pfBuildHeadCorner() {
     const corner = pfEl("div", "PfTeam-headCorner");
     const tools = pfEl("div", "PfTeam-headTools");
+    const row = pfEl("div", "PfTeam-headToolsRow");
+    const group = pfEl("div", "PfTeam-searchGroup");
 
-    const addBtn = pfEl("button", "Btn Btn--secondary");
-    addBtn.type = "button";
-    addBtn.id = "pfTeamAddResourceBtn";
-    addBtn.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i><span>Resource</span>';
-    addBtn.title = "Add Resource Requirement";
-    addBtn.addEventListener("click", function (e) { e.stopPropagation(); openReqModal(); });
-    tools.appendChild(addBtn);
-
-    const viewBtn = pfEl("button", "Btn Btn--iconSoft");
-    viewBtn.type = "button";
-    viewBtn.id = "pfTeamViewBtn";
-    const pivotTo = pfTeamState.pivot === "engagement" ? "Resource view" : "Engagement view";
-    viewBtn.title = "Pivot to " + pivotTo;
-    viewBtn.setAttribute("aria-label", "Pivot to " + pivotTo);
-    viewBtn.innerHTML = '<i class="fa-solid fa-right-left" aria-hidden="true"></i>';
-    viewBtn.addEventListener("click", pivotTeamView);
-
-    const filterBtn = pfEl("button", "Btn Btn--iconSoft");
+    const filterBtn = pfEl("button", "PfTeam-toolBtn PfTeam-toolBtn--filter");
     filterBtn.type = "button";
     filterBtn.id = "pfTeamFilterBtn";
     filterBtn.title = "Filter";
@@ -6101,48 +6128,70 @@ function pfBuildHeadCorner() {
     filterBtn.classList.toggle("is-active", pfTeamState.filterPanel || pfFilterCount() > 0);
     filterBtn.addEventListener("click", function (e) {
         e.stopPropagation();
-        pfTeamState.bookingTypeSearch = false;
-        pfRenderBookingTypeSearch();
         pfTeamState.filterPanel = !pfTeamState.filterPanel;
         pfRenderFilterPanel();
     });
-    tools.appendChild(filterBtn);
-    const settingsBtn = pfEl("button", "Btn Btn--iconSoft");
+    group.appendChild(filterBtn);
+
+    const search = document.createElement("input");
+    search.type = "search";
+    search.id = "pfTeamSearchInput";
+    search.className = "PfTeam-searchField";
+    search.placeholder = "Search engagements and workers";
+    search.setAttribute("aria-label", "Search engagements and workers");
+    search.value = pfTeamState.bookingTypeQuery || "";
+    search.addEventListener("input", function () {
+        const caret = search.selectionStart;
+        pfTeamState.bookingTypeQuery = search.value;
+        renderGantt({ preserveFilter: true, preserveBookingSearch: true });
+        const next = document.getElementById("pfTeamSearchInput");
+        if (next) {
+            next.focus();
+            const pos = Math.min(caret == null ? next.value.length : caret, next.value.length);
+            next.setSelectionRange(pos, pos);
+        }
+    });
+    group.appendChild(search);
+
+    const clearBtn = pfEl("button", "PfTeam-toolBtn PfTeam-toolBtn--clear");
+    clearBtn.type = "button";
+    clearBtn.id = "pfTeamSearchClear";
+    clearBtn.title = "Clear search";
+    clearBtn.setAttribute("aria-label", "Clear search");
+    clearBtn.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+    clearBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (!pfTeamState.bookingTypeQuery) return;
+        pfTeamState.bookingTypeQuery = "";
+        renderGantt({ preserveFilter: true, preserveBookingSearch: true });
+        const next = document.getElementById("pfTeamSearchInput");
+        if (next) next.focus();
+    });
+    group.appendChild(clearBtn);
+    row.appendChild(group);
+
+    const settingsBtn = pfEl("button", "PfTeam-toolBtn PfTeam-toolBtn--settings");
     settingsBtn.type = "button";
     settingsBtn.id = "pfTeamSettingsBtn";
     settingsBtn.title = "Settings";
     settingsBtn.setAttribute("aria-haspopup", "true");
     settingsBtn.setAttribute("aria-label", "Gantt settings");
-    settingsBtn.innerHTML = '<i class="fa-solid fa-gear" aria-hidden="true"></i>';
+    settingsBtn.innerHTML = '<i class="fa-solid fa-gear" aria-hidden="true"></i><i class="fa-solid fa-caret-down" aria-hidden="true"></i>';
     settingsBtn.addEventListener("click", toggleTeamSettings);
-    tools.appendChild(settingsBtn);
-    tools.appendChild(viewBtn);
+    row.appendChild(settingsBtn);
 
-    const typeBtn = pfEl("button", "Btn Btn--iconSoft");
-    typeBtn.type = "button";
-    typeBtn.id = "pfTeamBookingTypeBtn";
-    typeBtn.title = "Search engagements and workers";
-    typeBtn.setAttribute("aria-label", "Search engagements and workers");
-    typeBtn.setAttribute("aria-expanded", String(!!pfTeamState.bookingTypeSearch));
-    typeBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>';
-    const typeQuery = (pfTeamState.bookingTypeQuery || "").trim();
-    typeBtn.classList.toggle("is-active", pfTeamState.bookingTypeSearch || !!typeQuery);
-    typeBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        pfTeamState.bookingTypeSearch = !pfTeamState.bookingTypeSearch;
-        if (pfTeamState.bookingTypeSearch) {
-            pfTeamState.menu = null;
-            pfTeamState.flyout = null;
-            pfRenderMenu();
-        }
-        pfRenderBookingTypeSearch();
-        typeBtn.classList.toggle("is-active", pfTeamState.bookingTypeSearch || !!(pfTeamState.bookingTypeQuery || "").trim());
-        typeBtn.setAttribute("aria-expanded", String(!!pfTeamState.bookingTypeSearch));
-    });
-    tools.appendChild(typeBtn);
+    const viewBtn = pfEl("button", "PfTeam-toolBtn PfTeam-toolBtn--view");
+    viewBtn.type = "button";
+    viewBtn.id = "pfTeamViewBtn";
+    const pivotTo = pfTeamState.pivot === "engagement" ? "Resource view" : "Engagement view";
+    viewBtn.title = "Pivot to " + pivotTo;
+    viewBtn.setAttribute("aria-label", "Pivot to " + pivotTo);
+    viewBtn.innerHTML = '<i class="fa-solid fa-right-left" aria-hidden="true"></i>';
+    viewBtn.addEventListener("click", pivotTeamView);
+    row.appendChild(viewBtn);
+    tools.appendChild(row);
 
     corner.appendChild(tools);
-
     return corner;
 }
 
@@ -6881,51 +6930,8 @@ function renderGantt(options) {
     // Re-anchor open menus after DOM rebuild
     if (pfTeamState.menu) pfRenderMenu();
     if (pfTeamState.filterPanel && !(options && options.preserveFilter)) pfRenderFilterPanel();
-    if (pfTeamState.bookingTypeSearch && !(options && options.preserveBookingSearch)) pfRenderBookingTypeSearch();
     renderPfSelectionPanel();
 }
-
-function pfRenderBookingTypeSearch() {
-    const existing = document.getElementById("pfTeamBookingTypeSearch");
-    if (existing) existing.remove();
-    const typeBtn = document.getElementById("pfTeamBookingTypeBtn");
-    if (typeBtn) {
-        const typeQuery = (pfTeamState.bookingTypeQuery || "").trim();
-        typeBtn.classList.toggle("is-active", pfTeamState.bookingTypeSearch || !!typeQuery);
-        typeBtn.setAttribute("aria-expanded", String(!!pfTeamState.bookingTypeSearch));
-    }
-    if (!pfTeamState.bookingTypeSearch || !typeBtn) return;
-    const panel = document.createElement("div");
-    panel.id = "pfTeamBookingTypeSearch";
-    panel.className = "PfTeam-typeSearch";
-    panel.addEventListener("click", function (e) { e.stopPropagation(); });
-    const search = document.createElement("input");
-    search.type = "search";
-    search.placeholder = "Search engagements and workers";
-    search.setAttribute("aria-label", "Search engagements and workers");
-    search.value = pfTeamState.bookingTypeQuery;
-    search.addEventListener("input", function () {
-        pfTeamState.bookingTypeQuery = search.value;
-        const button = document.getElementById("pfTeamBookingTypeBtn");
-        if (button) button.classList.toggle("is-active", true);
-        renderGantt({ preserveFilter: true, preserveBookingSearch: true });
-    });
-    panel.appendChild(search);
-    document.body.appendChild(panel);
-    const anchor = typeBtn.getBoundingClientRect();
-    panel.style.left = Math.max(8, anchor.right - 260) + "px";
-    panel.style.top = (anchor.bottom + 4) + "px";
-    search.focus();
-    const caret = search.value.length;
-    search.setSelectionRange(caret, caret);
-}
-
-document.addEventListener("click", function (e) {
-    if (!pfTeamState.bookingTypeSearch) return;
-    if (e.target.closest("#pfTeamBookingTypeSearch") || e.target.closest("#pfTeamBookingTypeBtn")) return;
-    pfTeamState.bookingTypeSearch = false;
-    pfRenderBookingTypeSearch();
-});
 
 function pfRenderMenu() {
     const existing = document.getElementById("pfTeamMenuLayer");
