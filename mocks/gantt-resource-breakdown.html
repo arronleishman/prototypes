@@ -119,10 +119,13 @@
     --rail-w: 48px;
     --col-select-w: 48px;
     --col-name-w: 195px;
-    --col-grade-w: 69px;
-    --col-expand-w: 25px;
-    --col-dim-w: 150px;
-    --left-w: 440px;
+    --col-grade-w: 0px;
+    --col-expand-w: 0px;
+    --col-dim-w: 0px;
+    --col-eng-w: 0px;
+    --col-hours-w: 0px;
+    --left-base: 195px;
+    --left-w: var(--left-base);
     --week-w: 112.6px;
     --sub-row-h: 24px;
     --group-h: 27px;
@@ -188,6 +191,18 @@ button { font-family: inherit; }
 
 /* ── Main column ───────────────────────────────────────────── */
 .Main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* Resolved here, not on :root. A calc defined on :root is computed with the
+   root column widths (both 0) and then inherited as a fixed length, so the
+   extra columns spilled over the timeline. */
+.App {
+    --left-w: calc(var(--col-name-w) + var(--col-grade-w) + var(--col-expand-w) + var(--col-dim-w) + var(--col-eng-w) + var(--col-hours-w));
+}
+.App.is-grade { --col-grade-w: 69px; }
+.App.is-breakdown { --col-expand-w: 25px; --col-dim-w: 150px; }
+/* No breakdown means no expand or label column. Hand that width to the
+   name so the toolbar and resource panel stay as wide as they were. */
+.App:not(.is-breakdown) { --col-name-w: 370px; }
 
 /* ── Action Bar (Figma 3096:208853) ────────────────────────── */
 .Toolbar {
@@ -396,6 +411,7 @@ button { font-family: inherit; }
 .Cell-name span {
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.Name-text { flex: 1 1 auto; min-width: 0; }
 .Cell-name .fa-link { font-size: 11px; color: var(--text-label); flex: 0 0 auto; }
 
 .Cell-grade {
@@ -406,10 +422,26 @@ button { font-family: inherit; }
     font-size: var(--font-size-label);
     color: var(--text-label);
 }
+/* Total Engagement Hours — same kind of column as grade: one figure on the
+   resource band, not repeated down the breakdown rows. */
+.App.is-eng-hours { --col-eng-w: 56px; }
+.Cell-eng {
+    width: var(--col-eng-w); flex: 0 0 var(--col-eng-w);
+    /* Stretches to the full resource row so the divider runs top to bottom;
+       the figure stays in the first sub-row band, level with the grade. */
+    align-self: stretch;
+    line-height: var(--sub-row-h);
+    padding-left: 5px;
+    border-left: var(--border-xs) solid var(--border-subtle);
+    display: block; white-space: nowrap;
+    font-size: var(--font-size-label);
+    color: var(--text-label);
+    font-variant-numeric: tabular-nums;
+    overflow: hidden;
+}
 .Cell-expand {
     width: var(--col-expand-w); flex: 0 0 var(--col-expand-w);
     height: var(--sub-row-h);
-    border-right: var(--border-xs) solid var(--border-subtle);
     display: flex; align-items: center; justify-content: center;
 }
 .Expander {
@@ -455,6 +487,25 @@ button { font-family: inherit; }
     color: var(--text-default);
     font-weight: 600;
 }
+
+/* Total Phase Hours. One figure per breakdown bucket. */
+.App.is-phase-hours { --col-hours-w: 58px; }
+.Cell-hours {
+    width: var(--col-hours-w); flex: 0 0 var(--col-hours-w);
+    display: flex; flex-direction: column;
+    border-left: var(--border-xs) solid var(--border-subtle);
+    font-variant-numeric: tabular-nums;
+}
+.Hours {
+    height: var(--sub-row-h);
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: 0 8px;
+    border-bottom: var(--border-xs) solid var(--border-subtle);
+    font-size: 12px; font-weight: 500; line-height: 1;
+    color: var(--text-subtle);
+}
+.Hours:last-child { border-bottom: 0; }
+.Hours.is-zero { color: var(--text-disabled); font-weight: 400; }
 
 /* Timeline cells */
 .Track-weeks { display: flex; flex-direction: column; }
@@ -613,6 +664,30 @@ button { font-family: inherit; }
 }
 .Menu-item:hover, .Menu-item.is-open { background: var(--surface-list-item-hover); }
 .Menu-item.is-static { cursor: default; }
+.Menu-item.is-disabled,
+.Menu-item.is-disabled:hover {
+    color: var(--text-disabled);
+    background: transparent;
+    cursor: not-allowed;
+}
+.Menu-item.is-disabled i.fa-check { color: var(--text-disabled); }
+.Menu-item.is-disabled[data-tip] { position: relative; }
+.Menu-item.is-disabled[data-tip]::after {
+    content: attr(data-tip);
+    display: none;
+    position: absolute;
+    left: 8px; right: 8px; bottom: calc(100% + 6px);
+    z-index: 3;
+    padding: 6px 8px;
+    border-radius: 3px;
+    background: var(--surface-emphasis);
+    color: var(--text-inverse);
+    font-size: 12px; font-weight: 400; line-height: 1.35;
+    white-space: normal; text-align: left;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(16, 24, 40, .16);
+}
+.Menu-item.is-disabled[data-tip]:hover::after { display: block; }
 /* The submenu chevron is part of the hover / open state only. */
 .Menu-item i.fa-chevron-left {
     font-size: 10px; color: var(--text-default); opacity: 0;
@@ -652,6 +727,10 @@ button { font-family: inherit; }
     text-transform: uppercase;
     line-height: normal;
 }
+.Flyout--columns { width: 260px; padding: 8px 0 10px; gap: 2px; }
+.Flyout--columns .Flyout-title { padding: 10px 16px 4px; }
+.Flyout--columns .Flyout-title:first-child { padding-top: 4px; }
+.Flyout--columns .Menu-item { padding: 7px 16px; }
 .Radio {
     display: flex; align-items: center; gap: 8px;
     font-size: var(--font-size-medium);
@@ -1940,6 +2019,9 @@ var state = {
     grouping: 'day',
     hoursMode: 'consumed',
     tasksInGrey: false,
+    showEngagementHours: true, // Resource Data → Total Engagement Hours
+    showPhaseHours: true,      // Resource Data → Total Phase Hours (needs a breakdown)
+    showGrade: true,           // Resource Data → Grade Code
     expandedRows: {},          // "workerId|rowKey" -> true
     collapsedDepts: {},
     selectedCell: null,        // "workerId|rowKey|week" — hour-cell highlight only
@@ -2036,6 +2118,20 @@ function cellItems(row, week) {
 }
 function fmtHours(h) { return h ? (Math.round(h * 10) / 10) + ' h' : '0'; }
 
+function totalHours(items) {
+    var total = 0;
+    items.forEach(function (it) { total += it.hours || 0; });
+    return Math.round(total * 10) / 10;
+}
+function fmtTotal(h) {
+    var n = Math.round((h || 0) * 10) / 10;
+    return (n % 1 ? n.toFixed(1) : String(n)) + 'h';
+}
+function fmtEng(h) {
+    var n = Math.round((h || 0) * 10) / 10;
+    return n % 1 ? n.toFixed(1) : String(n);
+}
+
 function weekConsumed(worker, week) {
     var total = 0;
     worker.items.forEach(function (it) { total += it.cells[week] || 0; });
@@ -2067,6 +2163,11 @@ var ganttInner = document.getElementById('ganttInner');
 var overlays = document.getElementById('overlays');
 
 function render() {
+    var app = document.querySelector('.App');
+    app.classList.toggle('is-eng-hours', state.showEngagementHours);
+    app.classList.toggle('is-phase-hours', state.showPhaseHours && breakdownOn());
+    app.classList.toggle('is-grade', state.showGrade);
+    app.classList.toggle('is-breakdown', breakdownOn());
     var scrollLeft = document.getElementById('gantt').scrollLeft;
     ganttInner.innerHTML = '';
     ganttInner.appendChild(buildHeader());
@@ -2175,12 +2276,18 @@ function buildWorkerRow(worker, index) {
 
     var name = el('div', 'Cell-name');
     if (worker.link) name.innerHTML = '<i class="fa-solid fa-link"></i>';
-    var nameSpan = el('span', null, worker.name);
+    var nameSpan = el('span', 'Name-text', worker.name);
     name.appendChild(nameSpan);
     left.appendChild(name);
 
-    left.appendChild(el('div', 'Cell-grade', worker.grade));
+    if (state.showGrade) left.appendChild(el('div', 'Cell-grade', worker.grade));
+    if (state.showEngagementHours) {
+        var eng = el('div', 'Cell-eng', fmtEng(totalHours(worker.items)));
+        eng.title = 'Total engagement hours';
+        left.appendChild(eng);
+    }
 
+    if (rows) {
     var expandCell = el('div', 'Cell-expand');
     // An empty row has nothing to show and never opens, so it is left out of
     // both the toggle and the reading of whether everything is already open —
@@ -2208,6 +2315,7 @@ function buildWorkerRow(worker, index) {
 
     var dims = el('div', 'Cell-dims');
     left.appendChild(dims);
+    }
 
     // ── Timeline ──────────────────────────────────────────────────────────
     var track = el('div', 'Row-track');
@@ -2248,10 +2356,6 @@ function buildWorkerRow(worker, index) {
         bars.style.inset = '0';
         flat.appendChild(bars);
         weeksCol.appendChild(flat);
-        var flatLbl = el('div', 'DimLabel', '');
-        flatLbl.style.height = (flatH + slimCap) + 'px';
-        if (slimCap) flatLbl.style.paddingTop = (2 + slimCap) + 'px';
-        dims.appendChild(flatLbl);
     } else {
         rows.forEach(function (r, ri) {
             var open = rowExpanded(worker, r);
@@ -2305,11 +2409,36 @@ function buildWorkerRow(worker, index) {
             }
             weeksCol.appendChild(sub);
         });
+
+        if (state.showPhaseHours) left.appendChild(buildHourColumn(worker, rows, slimCap));
     }
 
     row.appendChild(left);
     row.appendChild(track);
     return row;
+}
+
+// One subtotal per breakdown bucket, the same height as that bucket's label
+// so an expanded row keeps its figure on the aggregate band.
+function buildHourColumn(worker, rows, slimCap) {
+    var col = el('div', 'Cell-hours');
+    rows.forEach(function (r, ri) {
+        var open = rowExpanded(worker, r);
+        var itemCount = open ? laneCount(r.items) : 0;
+        var h = 24 + (itemCount ? barsHeight(itemCount, BAR_PAD) : 0);
+        var cap = ri === 0 ? slimCap : 0;
+        var total = totalHours(r.items);
+        var cell = el('div', 'Hours' + (total ? '' : ' is-zero'), fmtTotal(total));
+        cell.style.height = (h + cap) + 'px';
+        if (cap) cell.style.paddingTop = (2 + cap) + 'px';
+        if (h > 24) {
+            cell.style.alignItems = 'flex-start';
+            cell.style.paddingTop = ((cap ? 2 + cap : 2) + 4) + 'px';
+        }
+        cell.title = r.label + ' — ' + fmtTotal(total);
+        col.appendChild(cell);
+    });
+    return col;
 }
 
 function buildCell(worker, row, wi, weekDate) {
@@ -2489,7 +2618,9 @@ function renderMenu() {
     // ── Row Layout ────────────────────────────────────────────────────
     var rowLayout = el('div', 'Menu-group');
     rowLayout.appendChild(menuSection('Row Layout', ['Business Unit', 'Location', 'Job Profile']));
-    rowLayout.appendChild(staticItem('Resource Data'));
+    var rd = submenuItem('Resource Data', 'resourceData');
+    rd.title = 'Add/remove resource data columns on Gantt';
+    rowLayout.appendChild(rd);
     rowLayout.appendChild(staticItem('Resource Sorting'));
 
     var bd = null;
@@ -2540,6 +2671,7 @@ function renderMenu() {
     layer.appendChild(menu);
 
     var flyout = null, flyoutAnchor = null;
+    if (state.flyout === 'resourceData' && rd) { flyout = resourceDataFlyout(); flyoutAnchor = rd; }
     if (state.flyout === 'breakdown' && bd) { flyout = breakdownFlyout(); flyoutAnchor = bd; }
     if (state.flyout === 'availability') { flyout = availabilityFlyout(); flyoutAnchor = av; }
     if (flyout) layer.appendChild(flyout);
@@ -2579,6 +2711,54 @@ function placeFlyout(f, menu, anchorEl) {
     var a = anchorEl.getBoundingClientRect();
     f.style.left = (parseFloat(menu.style.left) + MENU_W - 1) + 'px';
     f.style.top = Math.max(8, Math.min(a.top, window.innerHeight - f.offsetHeight - 8)) + 'px';
+}
+
+// Resource Data columns. Engagement hours and phase hours are separate:
+// the first is the resource rollup, the second is one figure per breakdown row.
+function resourceDataFlyout() {
+    var f = el('div', 'Flyout Flyout--columns');
+    f.addEventListener('click', function (e) { e.stopPropagation(); });
+    f.appendChild(el('div', 'Flyout-title', 'Resource Data'));
+    f.appendChild(columnRow('Name', true));
+    f.appendChild(columnRow('Grade Code', state.showGrade, function () {
+        state.showGrade = !state.showGrade;
+        renderMenu();
+        render();
+    }));
+    [
+        ['Grade Name', false],
+        ['Business Unit', true],
+        ['Location', false],
+        ['Employment Start Date', false]
+    ].forEach(function (col) { f.appendChild(columnRow(col[0], col[1])); });
+
+    f.appendChild(el('div', 'Flyout-title', 'Booking Data'));
+    f.appendChild(columnRow('Total Engagement Hours', state.showEngagementHours, function () {
+        state.showEngagementHours = !state.showEngagementHours;
+        renderMenu();
+        render();
+    }));
+
+    var phaseOff = !breakdownOn();
+    var phase = columnRow('Total Phase Hours', state.showPhaseHours, function () {
+        state.showPhaseHours = !state.showPhaseHours;
+        renderMenu();
+        render();
+    }, phaseOff);
+    if (phaseOff) {
+        var why = 'Not available while resource breakdown is None. Turn on a breakdown to show the total for each row.';
+        phase.title = why;
+        phase.setAttribute('data-tip', why);
+    }
+    f.appendChild(phase);
+    return f;
+}
+
+function columnRow(label, on, toggle, disabled) {
+    var n = el('div', 'Menu-item' + (!toggle || disabled ? ' is-static' : '') + (disabled ? ' is-disabled' : ''));
+    n.innerHTML = '<span>' + esc(label) + '</span>' + (on ? '<i class="fa-solid fa-check"></i>' : '');
+    if (toggle && !disabled) n.addEventListener('click', toggle);
+    return n;
 }
 
 // Single-select, one dimension at a time (DEVO-29670).
