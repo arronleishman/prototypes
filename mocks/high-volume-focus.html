@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="en-GB" data-prototype-id="high-volume-focus" data-prototype-title="High Volume focus — decisions and roadmap">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>High Volume focus — decisions and roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --primary: #4f3fa0;
+  --primary-emphasis: #403577;
+  --primary-subtle: #f0effb;
+  --primary-accent: #dedaf4;
+  --surface-primary: #4f3fa0;
+  --surface-default: #fff;
+  --surface-subtle-light: #f8f8f8;
+  --surface-subtle-dark: #f1f1f4;
+  --surface-list-item-hover: #f1f1f4;
+  --surface-list-item-selected-light: #f0effb;
+  --surface-emphasis: #4c5172;
+  --surface-success: #078138;
+  --surface-success-subtle: #e1faeb;
+  --surface-danger: #a3003c;
+  --surface-danger-subtle: #feecf2;
+  --surface-warning: #fff0e0;
+  --surface-eng-01: #0295b2;
+  --surface-info-subtle: #edf0f8;
+  --text-default: #222430;
+  --text-accent: #4c5172;
+  --text-subtle: #6a708f;
+  --text-primary: #4f3fa0;
+  --text-inverse: #fff;
+  --text-success: #078138;
+  --text-danger: #a3003c;
+  --text-warning: #b65800;
+  --text-disabled: #989bb6;
+  --border-subtle: #e2e3e9;
+  --border-default: #babfd1;
+  --border-primary: #4f3fa0;
+  --border-warning: #fba645;
+  --border-danger: #a3003c;
+  --border-success: #078138;
+  --deep-black: #27233d;
+  --font-family: "Open Sans", sans-serif;
+  --font-size-small: 12px;
+  --font-size-medium: 14px;
+  --border-radius-default: 4px;
+  --padding-sm: 8px;
+  --padding-md: 16px;
+  --padding-lg: 24px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size-medium);
+  color: var(--text-default);
+  background: var(--surface-subtle-light);
+  line-height: 1.45;
+}
+button, input, select { font-family: inherit; font-size: inherit; }
+a { color: var(--text-primary); }
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  background: var(--deep-black);
+  color: var(--text-inverse);
+}
+.app-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.app-mark {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--border-radius-default);
+  background: var(--surface-primary);
+}
+.app-header-meta { color: var(--border-default); font-size: var(--font-size-small); }
+.app-shell { min-height: calc(100vh - 52px); display: grid; grid-template-columns: 228px minmax(0, 1fr); }
+.app-nav {
+  position: sticky;
+  top: 52px;
+  align-self: start;
+  height: calc(100vh - 52px);
+  padding: 16px 10px;
+  background: var(--surface-default);
+  border-right: 1px solid var(--border-subtle);
+}
+.app-nav-label {
+  margin: 16px 0 4px;
+  padding: 0 10px;
+  color: var(--text-subtle);
+  font-size: var(--font-size-small);
+}
+.app-nav-label:first-child { margin-top: 0; }
+.app-nav button {
+  position: relative;
+  width: 100%;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--border-radius-default);
+  background: transparent;
+  color: var(--text-accent);
+  text-align: left;
+  cursor: pointer;
+}
+.app-nav button:hover { background: var(--surface-list-item-hover); }
+.app-nav button[aria-current="page"] {
+  background: var(--surface-list-item-selected-light);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.app-nav button[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 6px;
+  bottom: 6px;
+  width: 4px;
+  background: var(--surface-primary);
+}
+.nav-icon { width: 18px; text-align: center; font-weight: 700; }
+.app-main { min-width: 0; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 24px 28px 80px; }
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.view-header .lede { margin-bottom: 0; }
+.kicker {
+  margin: 0 0 6px;
+  color: var(--text-subtle);
+  font-size: var(--font-size-small);
+  font-weight: 600;
+}
+h1 { margin: 0 0 8px; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+h2 { margin: 0 0 8px; font-size: 20px; font-weight: 700; }
+h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; }
+p { margin: 0 0 10px; }
+.lede { max-width: 68ch; color: var(--text-accent); margin-bottom: 16px; }
+.jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 28px;
+}
+.jump a {
+  text-decoration: none;
+  color: var(--text-accent);
+  background: var(--surface-default);
+  border: 1px solid var(--border-default);
+  border-radius: var(--border-radius-default);
+  padding: 7px 12px;
+  min-height: 35px;
+  display: inline-flex;
+  align-items: center;
+}
+.jump a:hover { background: var(--surface-list-item-hover); }
+section { margin: 0 0 28px; }
+section[hidden] { display: none; }
+.panel {
+  background: var(--surface-default);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+  padding: var(--padding-lg);
+}
+.panel + .panel { margin-top: 12px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 860px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+.muted { color: var(--text-subtle); font-size: var(--font-size-small); }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: 99px;
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  background: var(--surface-subtle-dark);
+  color: var(--text-accent);
+  margin: 0 6px 6px 0;
+}
+.tag.is-now { background: var(--primary-subtle); color: var(--text-primary); }
+.tag.is-ok { background: var(--surface-success-subtle); color: var(--text-success); }
+.tag.is-warn { background: var(--surface-warning); color: var(--text-warning); }
+.tag.is-risk { background: var(--surface-danger-subtle); color: var(--text-danger); }
+.tag.is-info { background: var(--surface-info-subtle); color: var(--text-accent); }
+ul.clean { margin: 8px 0 0; padding-left: 18px; }
+ul.clean li { margin: 0 0 6px; }
+.quote {
+  margin: 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--primary-accent);
+}
+.quote p { margin: 0 0 8px; }
+.quote footer { color: var(--text-subtle); font-size: var(--font-size-small); }
+.Btn {
+  min-height: 35px;
+  padding: 7px 14px;
+  border-radius: var(--border-radius-default);
+  border: 1px solid var(--border-default);
+  background: var(--surface-default);
+  color: var(--text-accent);
+  cursor: pointer;
+}
+.Btn:hover { background: var(--surface-list-item-hover); }
+.Btn--primary {
+  background: var(--surface-primary);
+  border-color: var(--surface-primary);
+  color: var(--text-inverse);
+}
+.Btn--primary:hover { background: var(--primary-emphasis); }
+.Btn--secondary {
+  background: var(--surface-default);
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+}
+.BtnGroup { display: inline-flex; border: 1px solid var(--surface-emphasis); border-radius: var(--border-radius-default); overflow: hidden; }
+.BtnGroup > button {
+  min-height: 35px;
+  padding: 7px 12px;
+  border: 0;
+  border-right: 1px solid var(--surface-emphasis);
+  background: var(--surface-default);
+  color: var(--text-accent);
+  cursor: pointer;
+}
+.BtnGroup > button:last-child { border-right: 0; }
+.BtnGroup > button[aria-pressed="true"] {
+  background: var(--surface-emphasis);
+  color: var(--text-inverse);
+}
+.row-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: var(--font-size-small); color: var(--text-subtle); }
+.field input, .field select {
+  min-height: 35px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--border-radius-default);
+  padding: 6px 10px;
+  color: var(--text-default);
+  background: var(--surface-default);
+  width: 120px;
+}
+.result {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--surface-subtle-light);
+  border-radius: var(--border-radius-default);
+  border: 1px solid var(--border-subtle);
+}
+.result strong { display: block; margin-bottom: 2px; }
+.board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+@media (max-width: 860px) { .board { grid-template-columns: 1fr 1fr; } }
+.col {
+  background: var(--surface-subtle-light);
+  border-radius: var(--border-radius-default);
+  min-height: 120px;
+  padding: 8px;
+}
+.col h3 { font-size: var(--font-size-small); color: var(--text-subtle); font-weight: 600; }
+.card {
+  background: var(--surface-default);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+  padding: 8px 10px;
+  margin-top: 8px;
+}
+.card .meta { color: var(--text-subtle); font-size: var(--font-size-small); }
+.card.is-warn { box-shadow: inset 3px 0 0 var(--border-warning); }
+.card.is-bad { box-shadow: inset 3px 0 0 var(--border-danger); }
+.card.is-ok { box-shadow: inset 3px 0 0 var(--border-success); }
+.weekhead {
+  display: grid;
+  grid-template-columns: 88px repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+  color: var(--text-subtle);
+  font-size: var(--font-size-small);
+}
+.lane { display: grid; grid-template-columns: 88px repeat(4, 1fr); gap: 4px; margin-bottom: 4px; align-items: center; }
+.lane span { font-size: var(--font-size-small); color: var(--text-accent); }
+.bar {
+  height: 28px;
+  border-radius: var(--border-radius-default);
+  background: var(--surface-eng-01);
+  color: var(--text-inverse);
+  font-size: var(--font-size-small);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  grid-column: span 1;
+}
+.bar.is-review { background: var(--surface-emphasis); }
+.bar.is-sign { background: var(--text-warning); }
+.bar.is-warn { outline: 2px solid var(--border-warning); }
+.bar.is-bad { outline: 2px solid var(--border-danger); }
+.gantt {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-small);
+}
+.gantt th, .gantt td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.gantt th { color: var(--text-subtle); font-weight: 600; }
+.gantt tr:nth-child(odd) td { background: var(--surface-subtle-light); }
+.gantt tr.is-child td:first-child { padding-left: 28px; color: var(--text-accent); }
+.gantt td.num, .gantt th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.timeline { display: grid; gap: 0; }
+.release {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+.release:first-child { border-top: 0; padding-top: 0; }
+.release time { font-weight: 700; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin-bottom: 12px; }
+.filters .field input { width: 220px; }
+.filters .field select { width: auto; min-width: 200px; }
+.q-group { margin-top: 18px; }
+.q {
+  padding: 10px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+.q p { margin: 4px 0 0; }
+.concept-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.note {
+  background: var(--surface-warning);
+  border-radius: var(--border-radius-default);
+  padding: 10px 12px;
+  color: var(--text-default);
+  margin: 0 0 12px;
+}
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.decision-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  min-height: 600px;
+  background: var(--surface-default);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+  overflow: hidden;
+}
+.decision-workspace { min-width: 0; overflow-x: auto; }
+.decision-toolbar {
+  min-width: 760px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.decision-toolbar p { margin: 0; color: var(--text-subtle); font-size: var(--font-size-small); }
+.decision-gantt { min-width: 760px; }
+.decision-head,
+.decision-row {
+  display: grid;
+  grid-template-columns: 210px repeat(8, minmax(58px, 1fr));
+}
+.decision-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 48px;
+  background: var(--surface-subtle-dark);
+  color: var(--text-subtle);
+  font-size: var(--font-size-small);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.decision-head > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid var(--border-subtle);
+}
+.decision-head > div:first-child { justify-content: flex-start; padding-left: 12px; border-left: 0; }
+.decision-row {
+  position: relative;
+  min-height: 60px;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+}
+.decision-row:hover { background: var(--surface-list-item-hover); }
+.decision-row.is-selected { background: var(--surface-list-item-selected-light); }
+.decision-label {
+  grid-column: 1;
+  grid-row: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px 12px;
+  border-right: 1px solid var(--border-subtle);
+}
+.decision-label strong { font-size: 13px; }
+.decision-label span { color: var(--text-subtle); font-size: var(--font-size-small); }
+.decision-grid {
+  grid-column: 2 / 10;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+}
+.decision-grid i { border-right: 1px solid var(--border-subtle); }
+.decision-bar {
+  z-index: 1;
+  align-self: center;
+  height: 28px;
+  margin: 0 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 9px;
+  border: 0;
+  border-radius: var(--border-radius-default);
+  overflow: hidden;
+  color: var(--text-inverse);
+  background: var(--surface-primary);
+  white-space: nowrap;
+  cursor: pointer;
+  grid-row: 1;
+}
+.decision-bar.is-validate { background: var(--surface-eng-01); }
+.decision-bar.is-parked { background: var(--surface-emphasis); }
+.decision-bar.is-risk { background: var(--surface-danger); }
+.decision-bar.is-estimate { outline: 2px dashed var(--border-default); outline-offset: -3px; }
+.decision-deadline {
+  z-index: 2;
+  align-self: center;
+  justify-self: end;
+  width: 2px;
+  height: 44px;
+  background: var(--surface-danger);
+  grid-row: 1;
+}
+.decision-deadline::after {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 8px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--surface-danger);
+}
+.decision-sidebar {
+  border-left: 1px solid var(--border-subtle);
+  background: var(--surface-default);
+}
+.decision-sidebar header {
+  padding: 18px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.decision-sidebar-body { padding: 18px; }
+.detail-section { padding: 14px 0; border-top: 1px solid var(--border-subtle); }
+.detail-section:first-child { padding-top: 0; border-top: 0; }
+.detail-section h3 { font-size: var(--font-size-small); color: var(--text-subtle); }
+.detail-section p:last-child { margin-bottom: 0; }
+.todo-list { list-style: none; margin: 8px 0 0; padding: 0; }
+.todo-list li { position: relative; margin: 0 0 8px; padding-left: 24px; }
+.todo-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--border-default);
+  border-radius: 2px;
+  background: var(--surface-default);
+}
+.decision-legend { display: flex; flex-wrap: wrap; gap: 10px; }
+.legend-key { display: inline-flex; align-items: center; gap: 5px; color: var(--text-subtle); font-size: var(--font-size-small); }
+.legend-swatch { width: 16px; height: 8px; border-radius: 2px; background: var(--surface-primary); }
+.legend-swatch.is-validate { background: var(--surface-eng-01); }
+.legend-swatch.is-risk { background: var(--surface-danger); }
+.legend-swatch.is-estimate { background: var(--surface-emphasis); outline: 1px dashed var(--border-default); }
+.next-steps { display: grid; gap: 8px; margin: 0 0 20px; }
+.next-step {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  min-height: 64px;
+  padding: 12px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+  background: var(--surface-default);
+  color: var(--text-default);
+  text-align: left;
+  cursor: pointer;
+}
+.next-step:hover { background: var(--surface-list-item-hover); }
+.next-step strong { display: block; }
+.next-step > span:last-child > span { display: block; color: var(--text-subtle); font-size: var(--font-size-small); }
+.step-num {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--primary-subtle);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+.focus-list { display: grid; gap: 0; }
+.focus-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+.focus-row:first-child { border-top: 0; }
+.focus-row p { margin: 2px 0 0; color: var(--text-accent); }
+.decision-group {
+  padding: 8px 12px;
+  background: var(--surface-subtle-dark);
+  color: var(--text-subtle);
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.decision-head > div.is-guess { color: var(--text-disabled); }
+#decision-question { font-size: 15px; }
+.agenda-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.agenda-card {
+  background: var(--surface-default);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+  overflow: hidden;
+}
+.agenda-card.is-primary { grid-column: 1 / -1; }
+.agenda-card header { padding: 18px 20px; border-bottom: 1px solid var(--border-subtle); }
+.agenda-card header p { margin: 0; color: var(--text-subtle); font-size: var(--font-size-small); }
+.agenda-items { padding: 0 20px; }
+.agenda-item {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+.agenda-item:first-child { border-top: 0; }
+.agenda-time { color: var(--text-primary); font-weight: 700; font-variant-numeric: tabular-nums; }
+.agenda-item p { margin: 3px 0 0; color: var(--text-accent); }
+.agenda-footer { padding: 14px 20px; background: var(--surface-subtle-light); border-top: 1px solid var(--border-subtle); }
+.agenda-prep {
+  margin-top: 16px;
+  padding: 18px 20px;
+  background: var(--surface-default);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+}
+@media (max-width: 980px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .app-nav {
+    position: sticky;
+    top: 52px;
+    z-index: 15;
+    height: auto;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 8px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .app-nav-label { display: none; }
+  .app-nav button { width: auto; white-space: nowrap; }
+  .app-nav button[aria-current="page"]::before { display: none; }
+  .decision-layout { grid-template-columns: 1fr; }
+  .decision-sidebar { border-left: 0; border-top: 1px solid var(--border-subtle); }
+  .agenda-grid { grid-template-columns: 1fr; }
+  .agenda-card.is-primary { grid-column: auto; }
+  .focus-row { grid-template-columns: 28px minmax(0, 1fr); }
+  .focus-row .Btn { grid-column: 2; }
+}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="app-brand"><span class="app-mark">H</span><span>High Volume</span></div>
+  <div class="app-header-meta">Prepared from the 30 September session</div>
+</header>
+<div class="app-shell">
+  <nav class="app-nav" aria-label="High Volume">
+    <p class="app-nav-label">Start</p>
+    <button type="button" data-view="direction" aria-current="page">Start here</button>
+    <button type="button" data-view="line">November release</button>
+    <p class="app-nav-label">Decide</p>
+    <button type="button" data-view="concepts">Try an idea</button>
+    <button type="button" data-view="decisions">Decision dates</button>
+    <button type="button" data-view="agenda">Meetings</button>
+    <p class="app-nav-label">Look up</p>
+    <button type="button" data-view="roadmap">Later releases</button>
+    <button type="button" data-view="questions">Questions</button>
+  </nav>
+  <main class="app-main">
+  <div class="wrap">
+
+  <section id="direction">
+    <div class="view-header">
+      <div>
+        <p class="kicker">For the next working session</p>
+        <h1>Start here</h1>
+        <p class="lede">Steven asked design to pull the 30 September session apart and say which questions we can answer before the next meeting. Portfolio polish can finish. It is not the outcome of the week.</p>
+      </div>
+    </div>
+    <div class="next-steps">
+      <button type="button" class="next-step" data-go-view="line"><span class="step-num">1</span><span><strong>See what November includes</strong><span>Portfolio ships on 6 November. Kanban is for a lower environment. Gantt totals do not start.</span></span></button>
+      <button type="button" class="next-step" data-go-view="concepts" data-open-concept="sequence"><span class="step-num">2</span><span><strong>Try one idea</strong><span>Each situation is something the room disagreed about. Change it, then read what would happen.</span></span></button>
+      <button type="button" class="next-step" data-go-view="agenda"><span class="step-num">3</span><span><strong>Use the meeting plan</strong><span>Three meetings, in the order the decisions depend on each other. The first one needs to happen before 9 October.</span></span></button>
+    </div>
+    <div class="grid-2">
+      <article class="panel">
+        <h3>What Steven asked for</h3>
+        <div class="quote">
+          <p>Mine the session for where design can help answer the questions, and share that so the work can move onto the pressing things.</p>
+          <footer>Steven Cote, 2 October</footer>
+        </div>
+        <ul class="clean">
+          <li>Show total hours on each breakdown row, using the setting that already exists.</li>
+          <li>Put scheduling at the top of the Kanban sidebar, then show that direction to Callum.</li>
+          <li>Start complete and on hold from the hours already on the booking.</li>
+          <li>Let an engagement allow overlap even when nobody used a template.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3>Do these before the first meeting</h3>
+        <div class="focus-list">
+          <div class="focus-row"><span class="step-num">1</span><div><strong>Phase order</strong><p>One sequence people can reorder. Overlap is allowed. Going past the next phase is flagged.</p></div><button type="button" class="Btn" data-go-view="concepts" data-open-concept="sequence">Try it</button></div>
+          <div class="focus-row"><span class="step-num">2</span><div><strong>Mark done</strong><p>Ask about the whole phase only when another booking exists. A long booking gets shorter.</p></div><button type="button" class="Btn" data-go-view="concepts" data-open-concept="done">Try it</button></div>
+          <div class="focus-row"><span class="step-num">3</span><div><strong>Work that runs past this week</strong><p>Show the booking in every week it covers, with a way to tuck the long ones away.</p></div><button type="button" class="Btn" data-go-view="concepts" data-open-concept="span">Try it</button></div>
+          <div class="focus-row"><span class="step-num">4</span><div><strong>Ready does not mean the column</strong><p>If review can overlap prep, the card cannot say review is not allowed to start.</p></div><button type="button" class="Btn" data-go-view="decisions" data-open-decision="readiness">Open it</button></div>
+          <div class="focus-row"><span class="step-num">5</span><div><strong>Someone else’s next phase</strong><p>Unassigned work follows. Assigned work is either flagged or moved, and the person is told.</p></div><button type="button" class="Btn" data-go-view="concepts" data-open-concept="shunt">Try it</button></div>
+        </div>
+        <p class="muted">Pools and templates need a customer conversation before we draw a screen. They are on the third meeting, not this week’s build.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="line">
+    <div class="view-header"><div><p class="kicker">6 November 2026</p><h1>What this release includes</h1><p class="lede">Two things leave in November. Portfolio views go to customers. The practitioner board goes to a lower environment so people can try it. The totals on the Gantt wait.</p></div><button type="button" class="Btn Btn--secondary" data-go-view="decisions">See when we decide</button></div>
+    <p class="muted">From the 30 Sep session. 26.6 ships on 6 November 2026. Portfolio scope is meant to lock at the end of the current sprint. Kanban’s next sprint inside this release is tidy-up and exploratory testing, not a new concept.</p>
+    <div class="grid-3">
+      <article class="panel">
+        <span class="tag is-ok">Ships 6 Nov</span>
+        <h3>Portfolio views</h3>
+        <p>In the release. The full feature list is not locked until the end of this sprint. The descope candidate, if the sprint will not land everything, is jumping from the portfolio Gantt into an engagement view. Team, Performance, and managing the portfolio are the parts the room wants nailed.</p>
+        <p class="muted">Gantt aggregation does not start in 26.6. Tickets are refined. There is no capacity. Whether 27.1 can start it depends on how long portfolio mop-up is allowed to run. A new graduate joins mid-October and does not unlock this release.</p>
+      </article>
+      <article class="panel">
+        <span class="tag is-warn">Lower environments</span>
+        <h3>Practitioner Kanban</h3>
+        <p>A board will exist for 26.6. It is not a production launch. Known limits are acceptable if they are named. SignalR from Gantt back to Kanban, and Kanban to Kanban, can be one of those limits. The bar Boney set is a stable object model, not a finished feature list.</p>
+        <p class="muted">Play it internally as well as with customers. Azets / Blake is the only formal hand-up so far, and their tax data may not be rich enough. A demo environment is a separate decision with the people who demo, and only if the slice represents the story.</p>
+      </article>
+      <article class="panel">
+        <span class="tag is-risk">Not this release</span>
+        <h3>January is still open</h3>
+        <p>Steven does not see a production Kanban launch in 27.1. Boney would not commit either, because the release contents depend on decisions that are not made. The drive is to close one blocker at a time, not to pick a date and stretch the scope to meet it.</p>
+        <p class="muted">An unintegrated Kanban is still a step on from the Gantt for this work. It does not remove the rekeying pain. Integration is a later release, and it needs the integrations team, not this squad alone.</p>
+      </article>
+    </div>
+    <div class="grid-2" style="margin-top:12px">
+      <article class="panel">
+        <h3>Settled enough to keep building</h3>
+        <ul class="clean">
+          <li>A card is a booking. The board is a week.</li>
+          <li>Start, complete, defer to next week, and on hold are the moves.</li>
+          <li>Defer moves the booking. On hold is different: when it unblocks, what was actually done, and the remainder is split.</li>
+          <li>A different actual effort updates that booking. Capacity for this week is the point of doing it immediately.</li>
+          <li>Whole-phase complete removes future bookings on that phase. One booking does not ask the question.</li>
+          <li>Overlap between phases is allowed. Overtake is signalled. Nothing is hard-blocked in this cut, so customers can tell us if they wanted the stop.</li>
+          <li>Readiness is not the column name. A job-level yes/no feeds the first phase. Later phases follow the sequence. That rule is the known weak spot.</li>
+          <li>Not every practitioner sees every unassigned booking. For 26.6 that gate is a pool-eligible marker. It is a short-term mechanism, and Boney does not want it to become the real model.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3>Still open</h3>
+        <ul class="clean">
+          <li>Workflow as the thing that moves Kanban status. The boolean is the fallback. Workflow can sit on top later. Calum still needs a session, with real use cases, before that is designed.</li>
+          <li>What a pool is. US pool work and UK mixed pool-and-advisory are different. Prep can be pooled when sign-off is not. “The pool” is the wrong noun.</li>
+          <li>Automatic allocation, a utilisation buffer under a full week, and advise filling people to the ceiling.</li>
+          <li>A practitioner move that also moves a colleague’s diary.</li>
+          <li>Kanban moves that raise suggestions. For this work the room wants practitioner-led changes. Other service lines may want the opposite.</li>
+          <li>A stored completion date on the phase. Derive it from the last booking.</li>
+          <li>One Gantt row per booking, or a new hours setting.</li>
+          <li>Putting phase dates in Details as the long-term home. Near term they can live in Timeframe. The Gantt is where dates want to be seen.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section id="concepts">
+    <div class="view-header"><div><p class="kicker">Seven situations from the session</p><h1>Try an idea</h1><p class="lede">Pick a situation, change it, and read the line underneath. That line is what the product would do.</p></div></div>
+    <div class="concept-nav" role="tablist" aria-label="Concepts">
+      <button type="button" class="Btn Btn--primary" data-concept="done">Mark done</button>
+      <button type="button" class="Btn" data-concept="span">Longer than a week</button>
+      <button type="button" class="Btn" data-concept="sequence">Overlap and overtake</button>
+      <button type="button" class="Btn" data-concept="hold">Defer or on hold</button>
+      <button type="button" class="Btn" data-concept="shunt">Follow-on work</button>
+      <button type="button" class="Btn" data-concept="hours">Total hours</button>
+      <button type="button" class="Btn" data-concept="pool">Who sees pooled work</button>
+    </div>
+
+    <article class="panel" id="concept-done">
+      <span class="tag is-now">Design can prototype</span>
+      <h3>Mark done</h3>
+      <p>Boney: if there is only one booking, do not ask whether the phase is finished. A long booking is shortened at the end, not deleted as if later bookings existed. Steven, 2 Oct: the hours already on the booking are the starting value.</p>
+      <div class="row-actions">
+        <div class="BtnGroup" role="group" aria-label="Booking shape">
+          <button type="button" data-shape="single" aria-pressed="true">One booking this week</button>
+          <button type="button" data-shape="multi" aria-pressed="false">Two bookings, same phase</button>
+          <button type="button" data-shape="long" aria-pressed="false">One booking across four weeks</button>
+        </div>
+      </div>
+      <div class="row-actions">
+        <label class="field">Actual hours
+          <input id="actual-hours" type="number" min="0" step="0.5" value="5" />
+        </label>
+        <div class="BtnGroup" id="phase-choice" role="group" aria-label="What was completed" hidden>
+          <button type="button" data-scope="booking" aria-pressed="true">This booking</button>
+          <button type="button" data-scope="phase" aria-pressed="false">Whole phase</button>
+        </div>
+        <button type="button" class="Btn Btn--primary" id="mark-done">Mark done</button>
+        <button type="button" class="Btn" id="reset-done">Reset</button>
+      </div>
+      <div id="done-board"></div>
+      <div class="result" id="done-result"><strong>Not marked yet.</strong> The question about the phase stays hidden until there are two bookings.</div>
+    </article>
+
+    <article class="panel" id="concept-span" hidden>
+      <span class="tag is-now">Room agreed the direction</span>
+      <h3>A booking that spans more than one week</h3>
+      <p>Today the Kanban shows that card only in the week it ends, so a four-week booking sits in one column and then vanishes from the weeks you are actually in. The room agreed it should appear in every week it covers, with a quieter group for work that runs past this week so the column does not fill with the same card.</p>
+      <div class="row-actions">
+        <div class="BtnGroup" role="group" aria-label="How a long booking is shown">
+          <button type="button" data-span="end" aria-pressed="true">Only the week it ends</button>
+          <button type="button" data-span="all" aria-pressed="false">Every week it spans</button>
+        </div>
+        <button type="button" class="Btn" id="toggle-collapse" hidden>Collapse longer work</button>
+      </div>
+      <div class="board" id="span-board"></div>
+      <div class="result" id="span-result"></div>
+    </article>
+
+    <article class="panel" id="concept-sequence" hidden>
+      <span class="tag is-now">Agreed: warn, do not stop</span>
+      <h3>Overlap is allowed. Overtake is flagged.</h3>
+      <p>Steven replayed this as the working model: phases may overlap, and the product tells you that. If prep runs past the end of review, Boney wants that called out as a serious problem. Steve Mayo’s cut for 26.6 is a signal, not a block, until customers ask for the stop. A simple numbered list cannot express parallel phases. Boney’s first UI is a draggable order, with parallel only if a real case shows up. The predecessor multi-select can stay in the data model and out of the first screen.</p>
+      <div class="row-actions">
+        <button type="button" class="Btn Btn--primary" id="push-prep">Push prep one week</button>
+        <button type="button" class="Btn" id="reset-seq">Reset</button>
+      </div>
+      <div class="weekhead"><span></span><span>5 Oct</span><span>12 Oct</span><span>19 Oct</span><span>26 Oct</span></div>
+      <div id="seq-lanes"></div>
+      <div class="result" id="seq-result"></div>
+    </article>
+
+    <article class="panel" id="concept-hold" hidden>
+      <span class="tag is-now">Two different moves</span>
+      <h3>Defer is not on hold</h3>
+      <p>Defer is the quick kick to next week. Customers asked for that as its own action. On hold means the work is blocked: when you expect it to unblock, and how much of this week you already did. The remainder is what moves. The deadline consequence still needs a design; the session’s demo of the split also regressed on one future booking.</p>
+      <div class="row-actions">
+        <button type="button" class="Btn Btn--primary" id="do-defer">Defer Project Alpha</button>
+        <label class="field">Hours already done
+          <input id="hold-actual" type="number" min="0" step="0.5" value="5" />
+        </label>
+        <button type="button" class="Btn Btn--secondary" id="do-hold">Put Thanos on hold</button>
+        <button type="button" class="Btn" id="reset-hold">Reset</button>
+      </div>
+      <div class="grid-2" id="hold-board"></div>
+      <div class="result" id="hold-result"><strong>Nothing moved.</strong> On hold starts from the 5 hours already on the booking.</div>
+    </article>
+
+    <article class="panel" id="concept-shunt" hidden>
+      <span class="tag is-warn">Not agreed</span>
+      <h3>What happens to the next phase</h3>
+      <p>If review is still unassigned, Steven expects it to follow prep so it is not left in a week nobody will pick up. If Happy is already booked to review, moving her week because Jose slipped feels intrusive, and leaving her in the past is also wrong. Boney’s answer was that it depends, and that a portfolio could be configured from “do not move” through to “move and reassign”. The prototype should show the flag and the move. It should not pretend one of them won.</p>
+      <div class="row-actions">
+        <div class="BtnGroup" role="group" aria-label="Who has the review">
+          <button type="button" data-reviewer="pool" aria-pressed="true">Review is unassigned</button>
+          <button type="button" data-reviewer="happy" aria-pressed="false">Review is with Happy</button>
+        </div>
+        <div class="BtnGroup" id="shunt-policy" role="group" aria-label="If review is already assigned" hidden>
+          <button type="button" data-policy="flag" aria-pressed="true">Flag only</button>
+          <button type="button" data-policy="move" aria-pressed="false">Move it and tell her</button>
+        </div>
+        <button type="button" class="Btn Btn--primary" id="push-shunt">Jose pushes prep a week</button>
+        <button type="button" class="Btn" id="reset-shunt">Reset</button>
+      </div>
+      <div class="board" id="shunt-board"></div>
+      <div class="result" id="shunt-result"></div>
+    </article>
+
+    <article class="panel" id="concept-hours" hidden>
+      <span class="tag is-ok">Steven, 2 Oct — specify this</span>
+      <h3>Total hours on each breakdown row</h3>
+      <p>Same setting the Gantt already has. With breakdown on, Ashlyn is named once. Prep and review each carry their own total. The hours repeat. The name does not. Per-bucket roll-up of what sits inside the bar stays in the tooltip. This is the aggregation slice that can be written up for Steve Mayo without waiting for the aggregation build to start.</p>
+      <div class="row-actions">
+        <div class="BtnGroup" role="group" aria-label="Total hours column">
+          <button type="button" data-hours="on" aria-pressed="true">Total hours on</button>
+          <button type="button" data-hours="off" aria-pressed="false">Total hours off</button>
+        </div>
+      </div>
+      <table class="gantt" id="hours-table">
+        <thead>
+          <tr>
+            <th>Resource</th>
+            <th>5 Oct</th>
+            <th class="num hours-col">Total hours</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ashlyn Cole</td>
+            <td>Prep and review</td>
+            <td class="num hours-col">80</td>
+          </tr>
+          <tr class="is-child">
+            <td>Prep</td>
+            <td>40h scheduled</td>
+            <td class="num hours-col">40</td>
+          </tr>
+          <tr class="is-child">
+            <td>Review</td>
+            <td>40h scheduled</td>
+            <td class="num hours-col">40</td>
+          </tr>
+          <tr>
+            <td>Jack McLean</td>
+            <td>Prep and review</td>
+            <td class="num hours-col">80</td>
+          </tr>
+          <tr class="is-child">
+            <td>Prep</td>
+            <td>40h scheduled</td>
+            <td class="num hours-col">40</td>
+          </tr>
+          <tr class="is-child">
+            <td>Review</td>
+            <td>40h scheduled</td>
+            <td class="num hours-col">40</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="muted" style="margin-top:8px">Tooltip, not a column: Prep on this portfolio is 80h across Ashlyn and Jack. A row for every booking was looked at and set aside.</p>
+    </article>
+
+    <article class="panel" id="concept-pool" hidden>
+      <span class="tag is-warn">26.6 is the left-hand version only</span>
+      <h3>Pooled work is not “everything unassigned”</h3>
+      <p>The current build shows every unassigned booking to anyone marked pool-eligible. That stops partners grabbing the shelf, which is the 26.6 need. It is not a definition of a pool. Boney separated two questions: am I allowed to take pooled work at all, and which pooled work do I see? Firms already have several pools, often by phase. A list of 600 cards is not a queue. The right-hand sketch is a stimulus for the next customer drop-in, not a design to build.</p>
+      <div class="row-actions">
+        <div class="BtnGroup" role="group" aria-label="Pool list">
+          <button type="button" data-pool="all" aria-pressed="true">26.6: all unassigned</button>
+          <button type="button" data-pool="ruled" aria-pressed="false">Later: a named pool, top of the list</button>
+        </div>
+      </div>
+      <div id="pool-list"></div>
+    </article>
+  </section>
+
+  <section id="decisions" hidden>
+    <div class="view-header">
+      <div>
+        <p class="kicker">Click a row to see the question and the preparation</p>
+        <h1>When we need to decide</h1>
+        <p class="lede">The coloured bar is the time left to prepare. The date on the row is the last useful day to choose. January and February are a planning guess, not agreed release dates.</p>
+      </div>
+      <button type="button" class="Btn Btn--secondary" data-go-view="questions">Questions for the next meeting</button>
+    </div>
+    <div class="decision-layout">
+      <div class="decision-workspace">
+        <div class="decision-toolbar">
+          <div class="decision-legend" aria-label="Decision status legend">
+            <span class="legend-key"><span class="legend-swatch"></span>Needs a decision</span>
+            <span class="legend-key"><span class="legend-swatch is-validate"></span>Check a proposal</span>
+            <span class="legend-key"><span class="legend-swatch is-risk"></span>Blocks a release</span>
+            <span class="legend-key"><span class="legend-swatch is-estimate"></span>Date is a guess</span>
+          </div>
+          <p>2 Oct · 26.6 on 6 Nov</p>
+        </div>
+        <div class="decision-gantt" id="decision-gantt">
+          <div class="decision-head">
+            <div>Decision</div>
+            <div>2 Oct</div>
+            <div>9 Oct</div>
+            <div>16 Oct</div>
+            <div>23 Oct</div>
+            <div>30 Oct</div>
+            <div>6 Nov</div>
+            <div class="is-guess">Jan</div>
+            <div class="is-guess">Feb</div>
+          </div>
+          <div id="decision-rows"></div>
+        </div>
+      </div>
+      <aside class="decision-sidebar" aria-live="polite">
+        <header>
+          <span class="tag is-now" id="decision-status">Decide next</span>
+          <h2 id="decision-title">Phase order and overlap</h2>
+          <p class="muted" id="decision-deadline-copy">Decision needed by 9 Oct 2026</p>
+        </header>
+        <div class="decision-sidebar-body">
+          <div class="detail-section">
+            <h3>Decision to make</h3>
+            <p id="decision-question"></p>
+          </div>
+          <div class="detail-section">
+            <h3>Why by then</h3>
+            <p id="decision-why"></p>
+          </div>
+          <div class="detail-section">
+            <h3>People needed</h3>
+            <p id="decision-people"></p>
+          </div>
+          <div class="detail-section">
+            <h3>Evidence to bring</h3>
+            <p id="decision-evidence"></p>
+          </div>
+          <div class="detail-section">
+            <h3>To do before the decision</h3>
+            <ul class="todo-list" id="decision-todos"></ul>
+          </div>
+          <div class="detail-section">
+            <h3>Wayfinder</h3>
+            <a id="decision-ticket" href="#">Open the decision notes</a>
+          </div>
+          <div class="detail-section">
+            <h3>If it slips</h3>
+            <p id="decision-impact"></p>
+          </div>
+          <button type="button" class="Btn Btn--primary" id="open-related-concept">Open related concept</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="agenda" hidden>
+    <div class="view-header">
+      <div>
+        <p class="kicker">Recommended cadence · decide in dependency order</p>
+        <h1>Three meetings</h1>
+        <p class="lede">Do not try to settle all 11 rows in one meeting. The first call closes the model decisions that unblock the rest; the second validates behaviour and release readiness; the third sets the post-26.6 boundary.</p>
+      </div>
+      <button type="button" class="Btn Btn--secondary" data-go-view="decisions">Open decision Gantt</button>
+    </div>
+    <div class="agenda-grid">
+      <article class="agenda-card is-primary">
+        <header>
+          <span class="tag is-now">Call 1 · book before 9 Oct</span>
+          <h2>Foundation decisions</h2>
+          <p>90 minutes · Steven Cote, Arron, Steve Mayo, Boney; Callum for the Gantt items</p>
+        </header>
+        <div class="agenda-items">
+          <div class="agenda-item"><div class="agenda-time">00–05</div><div><h3>Frame the outcome</h3><p>Leave with written decisions, owners and parked questions. This is not a general progress update.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">05–30</div><div><h3>Phase order and overlap</h3><p>Choose single sequence or predecessor graph. Then settle whether parallel phases are in the first cut. Continue the focused grilling map after this call.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">30–45</div><div><h3>Complete and actual effort</h3><p>Agree the single-booking, several-booking and long-booking outcomes. Confirm capacity and future-booking changes.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">45–55</div><div><h3>Breakdown total hours</h3><p>Approve the existing-setting, one-name, per-breakdown-row treatment or state the exact correction.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">55–70</div><div><h3>Lock portfolio 26.6 scope</h3><p>Keep or disable the engagement pivot. Protect Team, Performance and portfolio management.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">70–85</div><div><h3>Bookings longer than a week</h3><p>Choose every covered week and the collapsed treatment; state whether it is required for 26.6.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">85–90</div><div><h3>Read back decisions</h3><p>Name owners, unanswered branches and the prototype or evidence due for Call 2.</p></div></div>
+        </div>
+        <div class="agenda-footer"><strong>Required output:</strong> four decision records, one explicit portfolio scope cut, and a bounded validation list for the next call.</div>
+      </article>
+
+      <article class="agenda-card">
+        <header>
+          <span class="tag is-info">Call 2 · before 30 Oct</span>
+          <h2>Behaviour and 26.6 readiness</h2>
+          <p>75 minutes · add an RM or engagement manager and the enablement owner</p>
+        </header>
+        <div class="agenda-items">
+          <div class="agenda-item"><div class="agenda-time">00–15</div><div><h3>Readiness language</h3><p>Choose copy for predecessor open, in progress, overdue and complete.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">15–40</div><div><h3>Assigned follow-on work</h3><p>Flag or move; compare practitioner, RM, assigned and unassigned cases.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">40–60</div><div><h3>Kanban test cohort</h3><p>Name environments, data owner, test task, feedback form and debrief.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">60–75</div><div><h3>26.6 readiness readback</h3><p>List known limitations and verify they do not disguise an unsettled model.</p></div></div>
+        </div>
+        <div class="agenda-footer"><strong>Required output:</strong> validated interaction rules and a test plan with names and dates.</div>
+      </article>
+
+      <article class="agenda-card">
+        <header>
+          <span class="tag is-warn">Call 3 · before 27.1 planning</span>
+          <h2>Capacity and next release boundary</h2>
+          <p>60 minutes · product, engineering, scheduling and US RM expertise</p>
+        </header>
+        <div class="agenda-items">
+          <div class="agenda-item"><div class="agenda-time">00–15</div><div><h3>Portfolio mop-up stop line</h3><p>Separate defects from enhancements and release capacity to aggregation.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">15–35</div><div><h3>Define a pool</h3><p>Separate permission, work rules, people rules and suitability.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">35–55</div><div><h3>Choose the template framing</h3><p>Settle hours versus proportions, optional phases and what Apply creates.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">55–60</div><div><h3>Set the next frontier</h3><p>Only create follow-on tickets made sharp by these decisions.</p></div></div>
+        </div>
+        <div class="agenda-footer"><strong>Required output:</strong> a credible 27.1/27.2 boundary, not a production promise.</div>
+      </article>
+    </div>
+    <div class="agenda-prep">
+      <h2>Preparation rule for every call</h2>
+      <ul class="clean">
+        <li>The owner circulates the decision question, recommendation and evidence 24 hours before the call.</li>
+        <li>Facts are checked before the call; meeting time is for product choices, not searching the transcript.</li>
+        <li>Every topic ends as decided, explicitly deferred with owner and date, or ruled out of scope.</li>
+        <li>The answer is recorded on its wayfinder ticket and linked from the relevant map.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <div class="view-header"><div><p class="kicker">A planning sequence, not a committed ship plan</p><h1>Later releases</h1><p class="lede">6 November is the date from the session. The later Fridays are eight weeks apart so the work has an order. They were not agreed as release dates.</p></div><button type="button" class="Btn Btn--secondary" data-go-view="decisions">See when we decide</button></div>
+    <article class="panel timeline">
+      <div class="release">
+        <div>
+          <time datetime="2026-10-02">Now – mid Oct</time>
+          <p class="muted">This sprint</p>
+        </div>
+        <div>
+          <span class="tag is-now">Design</span>
+          <h3>Decision pack, not padding</h3>
+          <p>Share this board. Specify total hours on breakdown rows for Steve Mayo. Walk Callum through the sidebar. Keep the complete modal prefilled. Portfolio close warning, sticky headers, and the pencil save/cancel can finish, and they are not the week’s outcome. End of sprint: lock what is in portfolio for 26.6, including whether the engagement-view pivot drops.</p>
+        </div>
+      </div>
+      <div class="release">
+        <div>
+          <time datetime="2026-11-06">6 Nov 2026</time>
+          <p class="muted">26.6 · confirmed</p>
+        </div>
+        <div>
+          <span class="tag is-ok">Release</span>
+          <h3>Portfolio in production. Kanban in lower environments.</h3>
+          <p>Portfolio: management, Team, Performance. Engagement pivot only if it still fits. Kanban: week board, the four moves, prefilled effort, phase-complete only when there are future bookings, job-level readiness, overlap with a flag, pool-eligible as a temporary gate. Name the missing SignalR directions. Internal players plus a very small customer set, with a debrief rather than an open inbox. Gantt aggregation does not start. Tech author walkthrough of portfolio with Sarah, and someone from the value side once Steven confirms who already has the portfolio-versus-job-group table.</p>
+        </div>
+      </div>
+      <div class="release">
+        <div>
+          <time datetime="2027-01-01">1 Jan 2027</time>
+          <p class="muted">27.1 · estimated</p>
+        </div>
+        <div>
+          <span class="tag is-warn">Only if decisions land</span>
+          <h3>Not a production Kanban launch</h3>
+          <p>A credible 27.1 is portfolio fixes that are actually broken, then a stop, so Gantt aggregation can start. Kanban stays in lower environments with the five prototypes above if they have been chosen: phase order on the engagement, smarter complete, long bookings across weeks, readiness copy that allows overlap, and a visible choice for follow-on work. A production bet waits until those are no longer hypothetical. The graduate adds capacity after this, not inside it.</p>
+        </div>
+      </div>
+      <div class="release">
+        <div>
+          <time datetime="2027-02-26">26 Feb 2027</time>
+          <p class="muted">27.2 · estimated</p>
+        </div>
+        <div>
+          <span class="tag is-info">If 27.1 started the work</span>
+          <h3>Aggregation visible. Pool model drafted.</h3>
+          <p>Customer-visible total hours and breakdown if aggregation started. Pool discovery from the drop-in turned into a permission plus a rule for which work, including phase-level pools. Overlap configurable on the engagement when there is no template. Template authoring only if hours-versus-proportion, optional phases, and apply-from-deadline have an owner. Otherwise templating slips rather than shipping a model the 26 Aug session already found confusing.</p>
+        </div>
+      </div>
+      <div class="release">
+        <div>
+          <time datetime="2027-04-23">23 Apr 2027</time>
+          <p class="muted">27.3 · estimated</p>
+        </div>
+        <div>
+          <span class="tag is-info">After use cases exist</span>
+          <h3>Delay impact, reviewer view, workflow</h3>
+          <p>The moment of pushing a week shows the deadline and the colleague. Reviewers can see ready work versus work at risk without opening every card, likely as a portfolio of engagements they review. Workflow enters only after Calum’s session: what a job workflow is for, what a booking workflow is for, and whether Kanban progress is a second axis from draft and confirmed. Performance of a heavier workflow needs a check before it is the design.</p>
+        </div>
+      </div>
+      <div class="release">
+        <div>
+          <time datetime="2027-06-18">18 Jun 2027</time>
+          <p class="muted">27.4 · estimated</p>
+        </div>
+        <div>
+          <span class="tag">Strategic, not a patch</span>
+          <h3>Integration and automatic allocation</h3>
+          <p>Completion can be signalled from Dayshape or from the tax workflow tool. Forecast hours still originate in Dayshape for almost every tool except XCM, and that conversation is not ready. Pool allocation that hands someone a week of suitable work, with room left for review notes, is the advise-shaped idea to take to scheduling. A team Kanban for an engagement manager sits with portfolio. Other service lines that want every Kanban move to become a suggestion get an explicit no, or a separate permission, rather than inheriting the high-volume rule.</p>
+        </div>
+      </div>
+    </article>
+    <article class="panel" style="margin-top:12px">
+      <h3>Operating picture to keep stable across those releases</h3>
+      <div class="grid-2">
+        <div>
+          <p><strong>Portfolio</strong> is operational responsibility. It can cut across job groups, years, clients, and offices. <strong>Job group</strong> stays the financial source of truth. They are used together. Steven has already walked Sarah through that. Confirm the table is the one she has before the value team writes the guidance.</p>
+          <p><strong>Week blocks</strong> are the stance for high-volume compliance. <strong>Longer blocks</strong> are the stance for advisory and for returns that genuinely run for months. The product survives the other patterns. It should say which one it recommends.</p>
+        </div>
+        <div>
+          <p><strong>Practitioner-led</strong> for work that just has to flow. Resource managers watch capacity, they do not approve every kick to next week. Suggestions stay for the changes that need that control. GT’s use of suggestions for everything was called out the same morning as a warning, not a pattern to copy.</p>
+          <p><strong>Best-practice guidance</strong> is a workstream of its own: when to use suggestions, when scheduling is centralised, when a portfolio is the right object. Melissa and Ainsley are the faster route to US resource-management practice than five more customer sessions.</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section id="questions">
+    <div class="view-header"><div><p class="kicker">Still unanswered</p><h1>Questions</h1><p class="lede">This starts with the questions for the next meeting. Change the filter to see the November release, the January boundary, or everything from the earlier templating and portfolio conversations.</p></div><button type="button" class="Btn Btn--secondary" data-go-view="decisions">Back to the dates</button></div>
+    <div class="filters">
+      <label class="field">Source
+        <select id="filter-source">
+          <option value="all">All conversations</option>
+          <option value="focus">30 Sep focus session</option>
+          <option value="review">2 Oct review</option>
+          <option value="template">Templating, 26 Aug and after</option>
+          <option value="portfolio">Portfolio UAT</option>
+        </select>
+      </label>
+      <label class="field">When it matters
+        <select id="filter-when">
+          <option value="all">Any time</option>
+          <option value="now" selected>Next meeting</option>
+          <option value="266">November release</option>
+          <option value="271">Before January</option>
+          <option value="later">Later</option>
+        </select>
+      </label>
+      <label class="field">Search
+        <input id="filter-q" type="search" placeholder="Filter questions" />
+      </label>
+    </div>
+    <p class="muted" id="q-count"></p>
+    <div id="q-list"></div>
+  </section>
+</div>
+  </main>
+</div>
+
+<script>
+(function () {
+  const weeks = ["5 Oct", "12 Oct", "19 Oct", "26 Oct"];
+  const views = ["direction", "line", "concepts", "decisions", "agenda", "roadmap", "questions"];
+
+  function showView(view) {
+    views.forEach((id) => {
+      document.getElementById(id).hidden = id !== view;
+    });
+    document.querySelectorAll("[data-view]").forEach((button) => {
+      if (button.dataset.view === view) button.setAttribute("aria-current", "page");
+      else button.removeAttribute("aria-current");
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  document.querySelectorAll("[data-view], [data-go-view]").forEach((button) => {
+    button.addEventListener("click", () => {
+      showView(button.dataset.view || button.dataset.goView);
+      if (button.dataset.openConcept) {
+        const conceptButton = document.querySelector('[data-concept="' + button.dataset.openConcept + '"]');
+        if (conceptButton) conceptButton.click();
+      }
+      if (button.dataset.openDecision) selectDecision(button.dataset.openDecision);
+    });
+  });
+
+  const decisions = [
+    {
+      id: "phase-order",
+      title: "Phase order and overlap",
+      stream: "Kanban foundation",
+      start: 1, span: 2, due: 2, status: "decide", deadline: "9 Oct 2026",
+      question: "Use a draggable phase order for the first cut, allow overlap, and flag overtake without blocking it. Confirm whether parallel phases stay out until a real case requires them.",
+      why: "Readiness, completion and follow-on movement all depend on this model. It is the first object-model decision Boney said must be stable before customer feedback is useful.",
+      people: "Arron, Steven Cote, Steve Mayo and Boney. Callum should review the scheduling implication.",
+      evidence: "The overlap/overtake concept, one compliance sequence and one genuine parallel-phase example if the team believes it belongs in the first cut.",
+      impact: "Later Kanban behaviour will be built around a sequence the team may replace, invalidating customer feedback and creating rework.",
+      concept: "sequence"
+    },
+    {
+      id: "complete",
+      title: "Complete and actual effort",
+      stream: "Kanban interaction",
+      start: 1, span: 2, due: 2, status: "decide", deadline: "9 Oct 2026",
+      question: "Ask ‘this booking or the whole phase?’ only when future bookings exist. Confirm that one long booking is shortened and that actual effort always starts from the booking value.",
+      why: "This is a common move in the 26.6 lower-environment flow and Steven explicitly asked design to fix the re-entry burden.",
+      people: "Arron, Steve Mayo and Steven Cote.",
+      evidence: "Single booking, several bookings and one long booking run through the Mark done prototype.",
+      impact: "Practitioners see unnecessary choices or remove future work accidentally; capacity is wrong after completion.",
+      concept: "done"
+    },
+    {
+      id: "long-bookings",
+      title: "Bookings longer than a week",
+      stream: "Kanban visibility",
+      start: 1, span: 3, due: 3, status: "decide", deadline: "16 Oct 2026",
+      question: "Show a spanning booking in every covered week and agree the collapsible grouping for long-running work.",
+      why: "The current end-week-only behaviour makes the weekly board misleading. This needs to be known before the final 26.6 tidy-up sprint.",
+      people: "Arron, Steve Mayo and one advisory user as a check against the compliance default.",
+      evidence: "A four-week advisory booking beside the week-block compliance recommendation.",
+      impact: "Advisory work is invisible in the weeks it is happening, and the board appears to lose in-progress work.",
+      concept: "span"
+    },
+    {
+      id: "readiness",
+      title: "Readiness language",
+      stream: "Kanban foundation",
+      start: 2, span: 3, due: 4, status: "validate", deadline: "23 Oct 2026",
+      question: "Replace the misleading ‘Not ready’ message for a later phase when overlap is allowed. Decide what the practitioner sees while prep remains open.",
+      why: "The lower-environment build can keep the job boolean and phase sequence, but the UI must not claim review cannot start when the model allows it.",
+      people: "Arron, Steven Cote, Steve Mayo and Boney.",
+      evidence: "Copy options on a review card while prep is open, in progress and overdue.",
+      impact: "The board contradicts its own scheduling model and feedback will focus on wording rather than the underlying behaviour.",
+      concept: "sequence"
+    },
+    {
+      id: "shunting",
+      title: "Assigned follow-on work",
+      stream: "Kanban behaviour",
+      start: 2, span: 4, due: 5, status: "validate", deadline: "30 Oct 2026",
+      question: "When Jose pushes prep, either flag Happy’s review or move it and tell her. Confirm whether the rule differs for unassigned work, practitioners and resource managers.",
+      why: "Unassigned work following is relatively safe. Moving another person’s diary is the unresolved behaviour with the largest trust cost.",
+      people: "Arron, Steven Cote, Boney, Callum and an RM or engagement manager.",
+      evidence: "Both paths in the Follow-on work concept, including the deadline consequence before confirmation.",
+      impact: "The system either leaves impossible work in the past or changes a colleague’s schedule without an agreed permission model.",
+      concept: "shunt"
+    },
+    {
+      id: "portfolio-scope",
+      title: "Lock portfolio 26.6 scope",
+      stream: "Release gate",
+      start: 1, span: 3, due: 3, status: "risk", deadline: "End of current sprint",
+      question: "Confirm whether the portfolio-Gantt pivot into an engagement ships, or is removed so Team, Performance and portfolio management land cleanly.",
+      why: "The 30 September call said this choice is made at the end of the sprint, not at release cut.",
+      people: "Matt Jenkins, Steven Cote, Steve Mayo and Arron.",
+      evidence: "Remaining engineering work, UAT severity and the cost of carrying the pivot versus disabling it.",
+      impact: "The team discovers the descope too late and risks the parts already judged essential for 26.6.",
+      concept: ""
+    },
+    {
+      id: "test-cohort",
+      title: "Choose Kanban test cohort",
+      stream: "Release gate",
+      start: 2, span: 4, due: 5, status: "risk", deadline: "30 Oct 2026",
+      question: "Name the internal users and at most two customer environments. Confirm whether Blake has enough tax data and whether a generic demo environment is useful.",
+      why: "Configuration and data setup are more than a feature flag. The cohort must be ready before the 6 November lower-environment release.",
+      people: "Steven Cote, Matt Jenkins, Evans Bridgeford and the internal enablement/demo owners.",
+      evidence: "Data readiness, relationship strength, the intended feedback task and a booked debrief.",
+      impact: "26.6 technically contains a board but nobody can give meaningful feedback on it.",
+      concept: "pool"
+    },
+    {
+      id: "aggregation",
+      title: "Specify breakdown total hours",
+      stream: "Gantt aggregation",
+      start: 1, span: 3, due: 3, status: "decide", deadline: "16 Oct 2026",
+      question: "Reuse the existing total-hours setting, show totals on each breakdown row, avoid repeating the person, and leave bucket roll-ups in the tooltip.",
+      why: "Steven said this is small enough to turn into requirements now even though aggregation engineering has not started.",
+      people: "Arron, Steven Cote, Steve Mayo and Callum for Gantt consistency.",
+      evidence: "The Total hours concept with one person and four breakdown rows.",
+      impact: "Aggregation starts later without a refined presentation requirement and repeats the same design discussion.",
+      concept: "hours"
+    },
+    {
+      id: "portfolio-stop",
+      title: "Set portfolio mop-up stop line",
+      stream: "27.1 gate",
+      start: 6, span: 2, due: 7, status: "risk", estimate: true, deadline: "Before 27.1 planning",
+      question: "Decide which portfolio defects must be fixed after 26.6 and the point at which the team stops polishing so Gantt aggregation can start.",
+      why: "The call could not say whether aggregation begins in 27.1 because portfolio mop-up has no stop line.",
+      people: "Steven Cote, Matt Jenkins, Steve Mayo and Arron.",
+      evidence: "Production defects separated from unfamiliarity and optional UAT enhancements.",
+      impact: "Portfolio work expands release by release and aggregation remains refined but unstarted.",
+      concept: ""
+    },
+    {
+      id: "pool-model",
+      title: "Define a pool",
+      stream: "Post-26.6 discovery",
+      start: 6, span: 3, due: 8, status: "validate", estimate: true, deadline: "Before 27.2 scope",
+      question: "Separate permission to take pooled work from the rule that selects which work someone sees. Decide whether a pool is a shared configuration, two matched rule sets or an extension of portfolios.",
+      why: "The 26.6 pool-eligible trait is an intentional temporary gate and cannot safely become the product model.",
+      people: "Steven Cote, Boney, Matt Jenkins, scheduling, Melissa and Ainsley.",
+      evidence: "US pool-only and UK mixed-work operating models, phase-level eligibility and the top-20 queue stimulus.",
+      impact: "Runtime traits and ‘all unassigned work’ become permanent behaviour, producing hundreds of irrelevant cards.",
+      concept: "pool"
+    },
+    {
+      id: "template-model",
+      title: "Choose template model",
+      stream: "Post-26.6 discovery",
+      start: 7, span: 2, due: 8, status: "decide", estimate: true, deadline: "Before 27.2 scope",
+      question: "Choose hours, proportions or the hybrid baseline-hours model; confirm optional phases; and define what Apply creates when working backwards from a deadline.",
+      why: "Steven called templating the biggest unresolved item. Design cannot converge on a screen while those three domain choices remain open.",
+      people: "Steven Cote, Arron, Boney, Steve Mayo and an engineering owner for application capabilities.",
+      evidence: "One phased and one non-phase example from creation through apply, with a different target size.",
+      impact: "The team polishes a template UI whose stored model or application behaviour is later replaced.",
+      concept: ""
+    }
+  ];
+
+  const decisionMeta = {
+    "phase-order": {
+      ticket: "../.scratch/high-volume-phase-order/issues/01-first-cut-phase-order-shape.md",
+      todos: [
+        "Choose single sequence or predecessor graph.",
+        "Bring one linear compliance sequence and one credible parallel-phase case.",
+        "Confirm whether parallel phases are first cut or deferred.",
+        "Record the answer on the focused phase-order map."
+      ]
+    },
+    "complete": {
+      ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/01-complete-and-actual-effort.md",
+      todos: [
+        "Run single, multiple and long booking shapes.",
+        "Confirm actual effort and this week's capacity change.",
+        "Define remove versus truncate for future work.",
+        "Bring a case with time already logged."
+      ]
+    },
+    "long-bookings": {
+      ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/02-bookings-longer-than-a-week.md",
+      todos: [
+        "Compare end-week-only and every-covered-week treatments.",
+        "Test the collapsed longer-work group.",
+        "Bring one compliance and one advisory booking.",
+        "Decide whether this is required for 26.6."
+      ]
+    },
+    "readiness": {
+      ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/03-readiness-language.md",
+      todos: [
+        "Write copy for predecessor not started, in progress, overdue and complete.",
+        "Keep readiness separate from Kanban status.",
+        "Test labels on the card and sidebar.",
+        "Validate after phase-order behaviour is settled."
+      ]
+    },
+    "shunting": {
+      ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/04-assigned-follow-on-work.md",
+      todos: [
+        "Run flag-only and move-and-notify paths.",
+        "Bring assigned, unassigned and pooled examples.",
+        "Show the deadline and colleague impact before confirmation.",
+        "Get an RM or engagement-manager response."
+      ]
+    },
+    "portfolio-scope": {
+      ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/05-lock-portfolio-26-6-scope.md",
+      todos: [
+        "Bring remaining engineering effort.",
+        "Separate must-fix defects from optional UAT improvements.",
+        "Show the path with and without the engagement pivot.",
+        "Record the descope before release cut."
+      ]
+    },
+    "test-cohort": {
+      ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/06-choose-kanban-test-cohort.md",
+      todos: [
+        "Confirm Blake data readiness with Evans Bridgeford.",
+        "Name internal practitioners and managers.",
+        "Choose customer and generic-demo environments.",
+        "Book setup, test task, feedback form and debrief."
+      ]
+    },
+    "aggregation": {
+      ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/07-specify-breakdown-total-hours.md",
+      todos: [
+        "Use the existing total-hours switch.",
+        "Show one person with four breakdown rows.",
+        "Separate visible row totals from tooltip roll-ups.",
+        "Review with Steve Mayo and Callum."
+      ]
+    },
+    "portfolio-stop": {
+      ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/08-set-portfolio-mop-up-stop-line.md",
+      todos: [
+        "List production defects, mock-only defects and optional requests separately.",
+        "Size the must-fix items.",
+        "Name the first aggregation slice ready to start.",
+        "Agree who can veto work crossing the stop line."
+      ]
+    },
+    "pool-model": {
+      ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/09-define-a-pool.md",
+      todos: [
+        "Bring US pool-only and UK mixed-work models.",
+        "Show phase-level eligibility.",
+        "Compare all unassigned with a named top-20 queue.",
+        "Separate permission, affiliation and suitability."
+      ]
+    },
+    "template-model": {
+      ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/10-choose-template-model.md",
+      todos: [
+        "Bring one phased and one non-phase engagement.",
+        "Apply the same template to a differently sized target.",
+        "Confirm whether Apply creates requirements, bookings or both.",
+        "Identify backend capability and ownership."
+      ]
+    }
+  };
+
+  function renderDecisionRows() {
+    const dueName = ["", "2 Oct", "9 Oct", "16 Oct", "23 Oct", "30 Oct", "6 Nov", "January", "February"];
+    const groups = [
+      { name: "Needed by 16 October", items: decisions.filter((item) => item.due <= 3) },
+      { name: "Needed before 6 November", items: decisions.filter((item) => item.due > 3 && item.due <= 5) },
+      { name: "After this release", items: decisions.filter((item) => item.due > 5) }
+    ];
+    const rows = document.getElementById("decision-rows");
+    rows.innerHTML = groups.map((group) =>
+      '<div class="decision-group">' + group.name + '</div>' +
+      group.items.map((item) => {
+        const barClass = item.status === "validate" ? " is-validate" : item.status === "risk" ? " is-risk" : "";
+        const span = item.due - item.start + 1;
+        return '<div class="decision-row' + (item.id === "phase-order" ? " is-selected" : "") + '" data-decision-id="' + item.id + '" tabindex="0">' +
+          '<div class="decision-label"><strong>' + item.title + '</strong><span>Needed by ' + dueName[item.due] + '</span></div>' +
+          '<div class="decision-grid">' + "<i></i>".repeat(8) + '</div>' +
+          '<button type="button" class="decision-bar' + barClass + (item.estimate ? " is-estimate" : "") + '" style="grid-column:' + (item.start + 1) + ' / span ' + span + '">' + dueName[item.due] + '</button>' +
+        '</div>';
+      }).join("")
+    ).join("");
+
+    document.querySelectorAll("[data-decision-id]").forEach((row) => {
+      const select = () => selectDecision(row.dataset.decisionId);
+      row.addEventListener("click", select);
+      row.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          select();
+        }
+      });
+    });
+  }
+
+  let selectedDecision = decisions[0];
+  function selectDecision(id) {
+    selectedDecision = decisions.find((item) => item.id === id) || decisions[0];
+    document.querySelectorAll("[data-decision-id]").forEach((row) => {
+      row.classList.toggle("is-selected", row.dataset.decisionId === selectedDecision.id);
+    });
+    const status = document.getElementById("decision-status");
+    status.className = "tag " + (selectedDecision.status === "risk" ? "is-risk" : selectedDecision.status === "validate" ? "is-info" : "is-now");
+    status.textContent = selectedDecision.status === "risk" ? "Blocks a release" : selectedDecision.status === "validate" ? "Check a proposal" : "Needs a decision";
+    document.getElementById("decision-title").textContent = selectedDecision.title;
+    document.getElementById("decision-deadline-copy").textContent = "Decision needed by " + selectedDecision.deadline + (selectedDecision.estimate ? " · estimated cadence" : "");
+    document.getElementById("decision-question").textContent = selectedDecision.question;
+    document.getElementById("decision-why").textContent = selectedDecision.why;
+    document.getElementById("decision-people").textContent = selectedDecision.people;
+    document.getElementById("decision-evidence").textContent = selectedDecision.evidence;
+    document.getElementById("decision-impact").textContent = selectedDecision.impact;
+    const meta = decisionMeta[selectedDecision.id];
+    document.getElementById("decision-todos").innerHTML = meta.todos.map((todo) => "<li>" + todo + "</li>").join("");
+    document.getElementById("decision-ticket").href = meta.ticket;
+    document.getElementById("open-related-concept").hidden = !selectedDecision.concept;
+  }
+
+  document.getElementById("open-related-concept").addEventListener("click", () => {
+    if (!selectedDecision.concept) return;
+    showView("concepts");
+    const conceptButton = document.querySelector('[data-concept="' + selectedDecision.concept + '"]');
+    if (conceptButton) conceptButton.click();
+  });
+
+  renderDecisionRows();
+  selectDecision(decisions[0].id);
+  showView("direction");
+
+  function press(group, attr, value) {
+    group.querySelectorAll("button").forEach((btn) => {
+      btn.setAttribute("aria-pressed", btn.getAttribute(attr) === value ? "true" : "false");
+    });
+  }
+
+  const conceptButtons = document.querySelectorAll("[data-concept]");
+  conceptButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      conceptButtons.forEach((b) => {
+        b.classList.toggle("Btn--primary", b === btn);
+      });
+      document.querySelectorAll("[id^='concept-']").forEach((panel) => {
+        panel.hidden = panel.id !== "concept-" + btn.dataset.concept;
+      });
+    });
+  });
+
+  const done = {
+    shape: "single",
+    scope: "booking",
+    marked: false
+  };
+
+  function plannedHours() {
+    if (done.shape === "long") return 16;
+    return 5;
+  }
+
+  function renderDone() {
+    const board = document.getElementById("done-board");
+    const actual = Number(document.getElementById("actual-hours").value);
+    const choice = document.getElementById("phase-choice");
+    choice.hidden = done.shape !== "multi";
+    const cards = [];
+    if (done.shape === "single") {
+      cards.push({ week: "This week", title: "Project Alpha · Prep", hours: done.marked ? actual : 5, state: done.marked ? "Done" : "To do" });
+    } else if (done.shape === "multi") {
+      const thisDone = done.marked;
+      const futureGone = done.marked && done.scope === "phase";
+      cards.push({ week: "This week", title: "Thanos · Prep", hours: thisDone ? actual : 5, state: thisDone ? "Done" : "To do" });
+      if (!futureGone) cards.push({ week: "Next week", title: "Thanos · Prep", hours: 5, state: "Scheduled" });
+    } else {
+      cards.push({ week: done.marked ? "This week only" : "28 Sep – 23 Oct", title: "Advisory review", hours: done.marked ? actual : 16, state: done.marked ? "Shortened to this week" : "In progress" });
+    }
+    board.innerHTML = '<div class="board">' + cards.map((c) =>
+      '<div class="col"><h3>' + c.week + '</h3><div class="card ' + (c.state === "Done" || c.state.indexOf("Shortened") === 0 ? "is-ok" : "") + '"><strong>' + c.title + '</strong><div class="meta">' + c.hours + 'h · ' + c.state + '</div></div></div>'
+    ).join("") + "</div>";
+
+    const result = document.getElementById("done-result");
+    if (!done.marked) {
+      result.innerHTML = "<strong>Not marked yet.</strong> Planned effort is " + plannedHours() + "h and that is what the field starts at." +
+        (done.shape === "multi" ? " Two bookings exist, so the phase question is on." : " One booking, so the phase question stays off.");
+      return;
+    }
+    const freed = Math.max(plannedHours() - actual, 0);
+    let line = actual + "h recorded. " + freed + "h comes back as capacity this week.";
+    if (done.shape === "multi" && done.scope === "booking") line += " Next week’s prep booking stays.";
+    if (done.shape === "multi" && done.scope === "phase") line += " Future prep bookings on this phase are removed.";
+    if (done.shape === "long") line += " The booking’s end moves to this week. There were no later cards to delete.";
+    if (done.shape === "single") line += " The single booking is updated. Nothing else is asked.";
+    result.innerHTML = "<strong>Marked done.</strong> " + line;
+  }
+
+  document.querySelectorAll("[data-shape]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      done.shape = btn.dataset.shape;
+      done.marked = false;
+      press(btn.parentElement, "data-shape", done.shape);
+      document.getElementById("actual-hours").value = plannedHours();
+      renderDone();
+    });
+  });
+  document.querySelectorAll("[data-scope]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      done.scope = btn.dataset.scope;
+      press(btn.parentElement, "data-scope", done.scope);
+      renderDone();
+    });
+  });
+  document.getElementById("mark-done").addEventListener("click", () => { done.marked = true; renderDone(); });
+  document.getElementById("reset-done").addEventListener("click", () => { done.marked = false; document.getElementById("actual-hours").value = plannedHours(); renderDone(); });
+  document.getElementById("actual-hours").addEventListener("input", renderDone);
+  renderDone();
+
+  const span = { mode: "end", collapsed: false };
+  function renderSpan() {
+    document.getElementById("toggle-collapse").hidden = span.mode !== "all";
+    const board = document.getElementById("span-board");
+    const cols = weeks.map((w, i) => {
+      const inSpan = span.mode === "all" || i === 3;
+      let body = "";
+      if (inSpan && span.mode === "all" && span.collapsed) {
+        body = '<div class="card"><strong>1 longer engagement</strong><div class="meta">Collapsed · advisory review runs across these weeks</div></div>';
+      } else if (inSpan) {
+        body = '<div class="card"><strong>Advisory review</strong><div class="meta">16h · ends 26 Oct</div></div>';
+      }
+      return '<div class="col"><h3>' + w + '</h3>' + body + '</div>';
+    }).join("");
+    board.innerHTML = cols;
+    document.getElementById("span-result").innerHTML = span.mode === "end"
+      ? "<strong>Current behaviour.</strong> The card is missing from 5 Oct, 12 Oct and 19 Oct, which is the week you are actually working."
+      : "<strong>Agreed direction.</strong> The same booking is visible every week it covers." + (span.collapsed ? " Longer work is one quiet row, not four identical cards." : " Collapse is there for a column that would otherwise fill up.");
+  }
+  document.querySelectorAll("[data-span]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      span.mode = btn.dataset.span;
+      if (span.mode === "end") span.collapsed = false;
+      press(btn.parentElement, "data-span", span.mode);
+      renderSpan();
+    });
+  });
+  document.getElementById("toggle-collapse").addEventListener("click", () => {
+    span.collapsed = !span.collapsed;
+    document.getElementById("toggle-collapse").textContent = span.collapsed ? "Show the booking" : "Collapse longer work";
+    renderSpan();
+  });
+  renderSpan();
+
+  const seq = { prep: 0 };
+  function renderSeq() {
+    const prepStart = seq.prep;
+    const prepEnd = prepStart + 2;
+    const reviewStart = 2;
+    const reviewEnd = 3;
+    const signStart = 3;
+    const overtake = prepEnd > reviewEnd;
+    const overlap = prepStart < reviewEnd && reviewStart < prepEnd;
+    const host = document.getElementById("seq-lanes");
+    function lane(label, start, spanWeeks, cls) {
+      const cells = [0, 1, 2, 3].map((i) => {
+        if (i === start) {
+          const flag = cls === "" && overtake ? " is-bad" : cls === "" && overlap ? " is-warn" : "";
+          return '<div class="bar ' + cls + flag + '" style="grid-column:' + (start + 2) + ' / span ' + spanWeeks + '">' + label + '</div>';
+        }
+        return "";
+      }).join("");
+      return '<div class="lane"><span>' + label + '</span>' + cells + '</div>';
+    }
+    host.innerHTML = lane("Prep", prepStart, 2, "") + lane("Review", reviewStart, 1, "is-review") + lane("Sign-off", signStart, 1, "is-sign");
+    const result = document.getElementById("seq-result");
+    if (overtake) {
+      result.innerHTML = "<strong>Overtake.</strong> Prep now finishes after review. This is flagged as a problem. The move is still allowed. Happy is not blocked from the board, and Jose is not blocked from the push. Ping-pong back into prep after review is a known case this rule does not solve.";
+    } else if (overlap) {
+      result.innerHTML = "<strong>Overlap.</strong> Prep and review share a week. That is allowed. The signal says review is underway while prep is still open. It does not say review cannot start.";
+    } else {
+      result.innerHTML = "<strong>In order.</strong> Prep finishes as review starts. No signal.";
+    }
+  }
+  document.getElementById("push-prep").addEventListener("click", () => { if (seq.prep < 2) seq.prep += 1; renderSeq(); });
+  document.getElementById("reset-seq").addEventListener("click", () => { seq.prep = 0; renderSeq(); });
+  renderSeq();
+
+  const hold = { alphaWeek: 0, thanos: null };
+  function renderHold() {
+    const actual = Number(document.getElementById("hold-actual").value);
+    const remaining = Math.max(5 - actual, 0);
+    const alpha = hold.alphaWeek === 0 ? "This week · 4h · To do" : "Next week · 4h · Deferred";
+    let thanos = "Next week · 5h · To do";
+    if (hold.thanos) thanos = "This week · " + actual + "h kept · On hold. " + remaining + "h moved to the unblock week.";
+    document.getElementById("hold-board").innerHTML =
+      '<div class="card"><strong>Project Alpha</strong><div class="meta">' + alpha + '</div><div class="meta">Defer does not ask why, and it does not split the booking.</div></div>' +
+      '<div class="card ' + (hold.thanos ? "is-warn" : "") + '"><strong>Thanos · Prep</strong><div class="meta">' + thanos + '</div><div class="meta">On hold asks for the unblock point and the hours already done.</div></div>';
+    const result = document.getElementById("hold-result");
+    if (!hold.thanos && hold.alphaWeek === 0) {
+      result.innerHTML = "<strong>Nothing moved.</strong> On hold starts from the 5 hours already on the booking.";
+    } else if (hold.thanos) {
+      result.innerHTML = "<strong>On hold.</strong> " + actual + "h stays on this week’s forecast. " + remaining + "h is the remainder pushed out. The missing piece is the sentence about the delivery date and the reviewer, which the session wanted in this moment and did not have a finished UI for.";
+    } else {
+      result.innerHTML = "<strong>Deferred.</strong> Alpha is on next week’s board and on next week in the Gantt. No split, no reason.";
+    }
+  }
+  document.getElementById("do-defer").addEventListener("click", () => { hold.alphaWeek = 1; renderHold(); });
+  document.getElementById("do-hold").addEventListener("click", () => { hold.thanos = true; renderHold(); });
+  document.getElementById("reset-hold").addEventListener("click", () => { hold.alphaWeek = 0; hold.thanos = null; document.getElementById("hold-actual").value = 5; renderHold(); });
+  document.getElementById("hold-actual").addEventListener("input", renderHold);
+  renderHold();
+
+  const shunt = { reviewer: "pool", policy: "flag", pushes: 0 };
+  function renderShunt() {
+    document.getElementById("shunt-policy").hidden = shunt.reviewer !== "happy";
+    const prepWeek = Math.min(shunt.pushes, 3);
+    let reviewWeek = 1;
+    let reviewNote = "Unassigned · follows prep";
+    let reviewClass = "";
+    if (shunt.reviewer === "pool") {
+      reviewWeek = Math.min(prepWeek + 1, 3);
+      reviewNote = prepWeek === 0 ? "Unassigned · sitting after prep" : "Unassigned · moved so it is not left behind";
+      reviewClass = "is-ok";
+    } else if (shunt.policy === "move") {
+      reviewWeek = Math.min(prepWeek + 1, 3);
+      reviewNote = shunt.pushes ? "Happy · moved, and she is told" : "Happy · will move if prep slips";
+      reviewClass = shunt.pushes ? "is-warn" : "";
+    } else {
+      reviewWeek = 1;
+      const leftBehind = prepWeek > reviewWeek;
+      const sharing = shunt.pushes > 0 && prepWeek === reviewWeek;
+      reviewNote = leftBehind ? "Happy · still in the old week" : sharing ? "Happy · same week as prep" : "Happy · booked";
+      reviewClass = leftBehind ? "is-bad" : sharing ? "is-warn" : "";
+    }
+    const cols = weeks.map((w, i) => {
+      let inner = "";
+      if (i === prepWeek) inner += '<div class="card"><strong>Prep · Jose</strong><div class="meta">' + (shunt.pushes ? "Pushed" : "This is the plan") + '</div></div>';
+      if (i === reviewWeek) inner += '<div class="card ' + reviewClass + '"><strong>Review</strong><div class="meta">' + reviewNote + '</div></div>';
+      return '<div class="col"><h3>' + w + '</h3>' + inner + '</div>';
+    }).join("");
+    document.getElementById("shunt-board").innerHTML = cols;
+    let summary = "Prep is in " + weeks[prepWeek] + ". Review is in " + weeks[reviewWeek] + ".";
+    if (shunt.reviewer === "pool" && shunt.pushes) summary += " Nobody was displaced. The unassigned review followed.";
+    if (shunt.reviewer === "happy" && shunt.policy === "flag" && prepWeek === reviewWeek) summary += " Happy’s week did not change. Prep now overlaps her review. That is allowed, and it should be visible before Jose confirms.";
+    if (shunt.reviewer === "happy" && shunt.policy === "flag" && prepWeek > reviewWeek) summary += " Happy’s week did not change. Her review is now earlier than the prep, which cannot start. Jose should have seen that before he confirmed. An RM may still need to act.";
+    if (shunt.reviewer === "happy" && shunt.policy === "move" && shunt.pushes) summary += " Happy’s booking moved because Jose slipped. That is Steven’s current lean for small pre-scheduled work, and it is the option Boney wants to be configurable rather than universal. Reassigning her work to someone else is a further step, not this one.";
+    const lead = shunt.pushes === 0 ? "Starting plan." : "After " + shunt.pushes + " push" + (shunt.pushes === 1 ? "" : "es") + ".";
+    document.getElementById("shunt-result").innerHTML = "<strong>" + lead + "</strong> " + summary;
+  }
+  document.querySelectorAll("[data-reviewer]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      shunt.reviewer = btn.dataset.reviewer;
+      shunt.pushes = 0;
+      press(btn.parentElement, "data-reviewer", shunt.reviewer);
+      renderShunt();
+    });
+  });
+  document.querySelectorAll("[data-policy]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      shunt.policy = btn.dataset.policy;
+      press(btn.parentElement, "data-policy", shunt.policy);
+      renderShunt();
+    });
+  });
+  document.getElementById("push-shunt").addEventListener("click", () => { shunt.pushes += 1; renderShunt(); });
+  document.getElementById("reset-shunt").addEventListener("click", () => { shunt.pushes = 0; renderShunt(); });
+  renderShunt();
+
+  document.querySelectorAll("[data-hours]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      press(btn.parentElement, "data-hours", btn.dataset.hours);
+      document.querySelectorAll(".hours-col").forEach((cell) => {
+        cell.hidden = btn.dataset.hours === "off";
+      });
+    });
+  });
+
+  function renderPool(mode) {
+    const host = document.getElementById("pool-list");
+    if (mode === "all") {
+      host.innerHTML = '<div class="result"><strong>600 unassigned bookings this week.</strong> Anyone with the pool-eligible marker sees the lot, inside the units they can already see. Suitability is not applied. There is no named pool, and sign-off work is mixed in with two-hour prep. This is the 26.6 slice, and the trait is doing a permission’s job.</div>';
+      return;
+    }
+    host.innerHTML = '<div class="result"><strong>Pacific Northwest 1040s · prep only · 20 shown.</strong> A rule picked the work: business unit, return type, under a few hours, prep phase. Sign-off never entered the list. The person sees the top of that list, not 600 rows. Widening past their own office is a second step for crunch, not the default. Taking something off the shelf, or putting a named return back on it, still needs an explicit override. Who is allowed to take pooled work is a permission. Which shelf they see is not that permission.</div>' +
+      ["Walker 1040 · Prep · 2h", "Nguyen 1040 · Prep · 1.5h", "Okoye 1040 · Prep · 2h"].map((t) => '<div class="card"><strong>' + t + '</strong><div class="meta">Suitable · not assigned</div></div>').join("");
+  }
+  document.querySelectorAll("[data-pool]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      press(btn.parentElement, "data-pool", btn.dataset.pool);
+      renderPool(btn.dataset.pool);
+    });
+  });
+  renderPool("all");
+
+  const questions = [
+    ["26.6 scope", "focus", "266", "Is the portfolio engagement-view pivot in 26.6, or is it the thing we drop at the end of this sprint so Team, Performance, and portfolio management land cleanly?"],
+    ["26.6 scope", "focus", "266", "Which Kanban gaps are acceptable known limits in a lower environment, and which would make the object model look finished when it is not?"],
+    ["26.6 scope", "focus", "266", "Who plays with Kanban first: named internal people, Blake / Azets, a generic demo, or more than one of those, and what are they told it is not?"],
+    ["26.6 scope", "focus", "266", "Does Blake have enough tax work in Dayshape for a usability session to mean anything, and what does Evans Bridgeford say?"],
+    ["26.6 scope", "focus", "266", "Is a demo environment appropriate in 26.6, and who decides it represents the product well enough to show?"],
+    ["26.6 scope", "focus", "now", "Who from the value team joins Matt’s portfolio walkthrough with Sarah, and does Sarah already have Steven’s portfolio-versus-job-group table?"],
+    ["26.6 scope", "focus", "266", "What must be configured, beyond a feature flag, before one customer environment can run Kanban, and who does that work?"],
+    ["26.6 scope", "focus", "later", "How long is portfolio mop-up allowed to run after 26.6 before Gantt aggregation is allowed to start?"],
+    ["26.6 scope", "focus", "271", "What is the smallest 27.1 Kanban increment that is worth a lower environment, if production launch is explicitly not the goal?"],
+    ["Kanban behaviour", "focus", "now", "When a phase has one booking, what exactly is written back: actual hours, a shortened end, both, and is the booking removed from later weeks?"],
+    ["Kanban behaviour", "focus", "now", "When a phase has several bookings and the person completes only this one, do the later bookings keep their hours even if this week used less than planned?"],
+    ["Kanban behaviour", "focus", "now", "Whole-phase complete deletes future bookings. Does it also truncate a single booking that has already started, and what happens to time already logged?"],
+    ["Kanban behaviour", "focus", "266", "On hold splits the remainder into the unblock week. Why did a booking that already sat in the future fail to split, and is the split always whole weeks?"],
+    ["Kanban behaviour", "focus", "now", "What one or two sentences does on hold show about a missed delivery date and pressure on the next person, before they confirm?"],
+    ["Kanban behaviour", "focus", "266", "Defer and on hold can both move work a week. What makes a practitioner pick one, and do we need that distinction in the lower-environment build?"],
+    ["Kanban behaviour", "focus", "now", "A long booking is shown only in its end week. Is every spanned week in 26.6, or is the collapsible group allowed to follow in 27.1?"],
+    ["Kanban behaviour", "focus", "271", "Inside In progress and To do, what is the group label for work that runs past this week, and does it collapse by default?"],
+    ["Kanban behaviour", "focus", "266", "Adding a card from the board creates a booking. Which spans are in the first cut: this week, next week, and a custom range, or fewer?"],
+    ["Kanban behaviour", "review", "now", "The complete and on-hold hours start from the booking. Is that true for a phase-complete that covers several bookings with different efforts?"],
+    ["Kanban behaviour", "review", "now", "Does the Kanban sidebar keep scheduling at the top and tuck tags, warnings, and phase progress into sections Callum would recognise on the Gantt?"],
+    ["Kanban behaviour", "review", "271", "If this sidebar is the more modern one, which parts should the Gantt sidebar adopt, and which parts must stay as they are for scheduling?"],
+    ["Sequencing", "focus", "now", "Is the first phase UI a draggable order, with parallel phases left out until a customer case needs them?"],
+    ["Sequencing", "focus", "271", "If two phases genuinely run side by side, is that a visual pair in the list, a shared bucket, or a predecessor link we do not show yet?"],
+    ["Sequencing", "focus", "271", "Some engagements have phases and no sequence. Is that an explicit choice, or do we always store an order and treat it as soft?"],
+    ["Sequencing", "focus", "now", "Overlap is allowed and overtake is flagged. What is the exact condition for each, in weeks, when bookings are the only dates we have?"],
+    ["Sequencing", "focus", "later", "Ping-pong is real: review sends a small fix back to prep after review has started. Does the sequence model allow that, or is it a new booking on the earlier phase?"],
+    ["Sequencing", "focus", "271", "Are phase start and end stored even when the UI does not ask for them, and is a per-phase due date optional because the engagement due date is the one people mean?"],
+    ["Sequencing", "focus", "266", "For the lower environment, do phase order and dates live in the Timeframe section, and is the strip above the Gantt explicitly later?"],
+    ["Sequencing", "focus", "271", "Completion of a phase is derived from the last booking. What do we show when that booking is shortened, deleted, or still in the future?"],
+    ["Sequencing", "review", "now", "Where does “allow overlap” live on an engagement that has no template?"],
+    ["Sequencing", "template", "271", "How should sequential work, overlap, and shunting be represented in template authoring, and where does allow-overlap sit in that flow?"],
+    ["Sequencing", "template", "271", "How is phase order established when someone creates resource requirements first: creation order, a workflow, or links on the timeline?"],
+    ["Readiness and workflow", "focus", "now", "Job-level ready plus “later phases wait until the previous phase is done” marks review not ready while prep is open. If overlap is normal, what should review show instead?"],
+    ["Readiness and workflow", "focus", "271", "Is readiness a property of the booking, driven by workflow, or is the job boolean plus sequence enough until a customer asks for the other behaviour?"],
+    ["Readiness and workflow", "focus", "271", "Boney’s tactical idea was a flag on the phase: cannot start until the previous phase is complete. Is that the escape hatch, and who sets it?"],
+    ["Readiness and workflow", "focus", "later", "Can a workflow set the ready custom field, and do we hide that field so people are not editing the mechanism by hand?"],
+    ["Readiness and workflow", "focus", "later", "What is a job workflow for, and what is a booking workflow for, once Kanban progress exists? Draft-to-confirmed and to-do-to-done may be two axes or one flow."],
+    ["Readiness and workflow", "focus", "later", "If they are two axes, how does someone who expects a single flow from draft to done avoid thinking the product is broken?"],
+    ["Readiness and workflow", "focus", "later", "Which Kanban and readiness facts need to be available to the workflow editor so derived states are possible without a new phase workflow?"],
+    ["Readiness and workflow", "focus", "later", "Does a heavier workflow, with more actions, slow the environment enough that we should not hang readiness off it? What is the test?"],
+    ["Readiness and workflow", "focus", "later", "Three integration shapes need a decision tree: updates only in the tax tool, updates in Dayshape that flow back, and no tax tool at all. What does each one do to the board?"],
+    ["Readiness and workflow", "focus", "later", "A ready signal months before the booking: does anything move on the board, or is that an RM signal to pull the work forward?"],
+    ["Readiness and workflow", "focus", "271", "We will not rebuild a tax workflow engine inside Dayshape. Which states, if any, still belong on the job or the booking for RM reporting?"],
+    ["Follow-on work", "focus", "271", "When prep slips and review is unassigned, does review always move to stay after prep, including across a pool?"],
+    ["Follow-on work", "focus", "271", "When review is already assigned to someone else, does a practitioner push flag it, move it, or ask? Does an RM pushing the same booking do something stronger?"],
+    ["Follow-on work", "focus", "later", "Can follow-on work be reassigned, not only moved, and is that a portfolio setting, a template setting, or a solve rather than an instant rule?"],
+    ["Follow-on work", "focus", "271", "Repeated slips pile every phase into the deadline week. Is there any shunt rule that resists that, or is the only defence the warning at the moment of the push?"],
+    ["Follow-on work", "focus", "later", "How does the reviewer see at-risk prep without opening every card: on their own board, or on a portfolio of engagements they review?"],
+    ["Follow-on work", "focus", "later", "Should a practitioner be able to push a week on the Kanban and be unable to drag that same booking on the Gantt?"],
+    ["Follow-on work", "focus", "later", "For which service lines must a Kanban move raise a suggestion instead of editing the booking, and how do we stop high-volume work generating thousands of them?"],
+    ["Follow-on work", "focus", "later", "If work is not ready the week before it starts, do we ever push it on automatically, or is that out of the product?"],
+    ["Pools", "focus", "266", "For 26.6, is the pool-eligible marker an accepted temporary permission, with the debt written down so it does not become the design?"],
+    ["Pools", "focus", "271", "What is the permission to take pooled work, separate from which pool someone belongs to?"],
+    ["Pools", "focus", "271", "Is a pool a saved population of work and people, an extension of portfolio, or two rule sets matched together?"],
+    ["Pools", "focus", "271", "Portfolios are personal, even if the link can be saved by someone else. Is that acceptable as the home of a pool the whole team depends on?"],
+    ["Pools", "focus", "271", "Can one engagement have pooled prep and named review or sign-off, and where is that stored?"],
+    ["Pools", "focus", "later", "Customers already use hour thresholds and client complexity to decide what hits the shelf. Can our current job filters express that, or is it a new configuration?"],
+    ["Pools", "focus", "later", "Who maintains pool membership if it is an explicit list of people, and how do we avoid that becoming a weekly admin task?"],
+    ["Pools", "focus", "later", "Suitability can filter what a person sees. How do we still let a finished office help another office in crunch without showing them every shelf by default?"],
+    ["Pools", "focus", "later", "Is the default a capped list, and what are the top 20 ordered by?"],
+    ["Pools", "focus", "later", "Can a manager pull one engagement out of a pool, or drop one in, without rewriting the rule?"],
+    ["Pools", "focus", "later", "Is automatic allocation a property of the whole pool, or of a subset such as anything under an hour?"],
+    ["Pools", "focus", "later", "Advise fills people up. High-volume work needs slack for slippage and review notes. Can the ceiling sit below a full week, and is that the same control as today?"],
+    ["Pools", "focus", "later", "A week of allocated work is a different product from handing someone the next return the moment they finish. Which one are we recommending, and for whom?"],
+    ["Pools", "focus", "later", "US pool staff and UK staff who mix pool compliance with advisory do not want the same board. Do we document two operating models before we draw one UI?"],
+    ["Pools", "focus", "later", "Is an autonomous agent that assigns a defined shelf a later experiment, or a distraction from defining the shelf?"],
+    ["Gantt aggregation", "review", "now", "Is the column label Total hours, and is the old total-engagement-hours control the only switch?"],
+    ["Gantt aggregation", "review", "now", "When four phase rows sit under one person, how are the repeated hour values aligned so the row still reads as one person?"],
+    ["Gantt aggregation", "review", "now", "Which totals stay in the tooltip, and which totals are always on the row?"],
+    ["Gantt aggregation", "focus", "later", "If aggregation can show a long phase as one bar, does that change the recommendation to book compliance in weeks?"],
+    ["Gantt aggregation", "focus", "271", "What is the first aggregation increment that is worth starting, once portfolio mop-up has a stop line?"],
+    ["Gantt aggregation", "review", "later", "Is there any small-engagement case where one row per booking is worth the misalignment, or is that closed?"],
+    ["Customers and guidance", "focus", "266", "What does the feedback form need to ask so a weekly debrief is about the task, not a transcript we cannot interpret?"],
+    ["Customers and guidance", "focus", "later", "Which scenarios get a written operating model first: centralised scheduling, suggestions, portfolio versus job group, and high-volume Kanban?"],
+    ["Customers and guidance", "focus", "later", "RSM US is choosing a suggestions pattern as they onboard tax. Do we lead that, or arrive after it is installed?"],
+    ["Customers and guidance", "focus", "later", "What would we borrow from the other product’s pool, portfolio, and auto-allocation, and what do we refuse?"],
+    ["Customers and guidance", "focus", "271", "Which of Melissa and Ainsley’s US practices can stand in for another customer round on pools and practitioner-led edits?"],
+    ["Portfolio views", "portfolio", "266", "Is the loss of dynamic membership after save a production defect in Glaikit, or only the local mock? The mock itself is settled: membership is not persisted there."],
+    ["Portfolio views", "portfolio", "266", "What is the relationship between Add to portfolio and Save: does Add stage membership while Save persists the definition?"],
+    ["Portfolio views", "portfolio", "266", "What opens when someone clicks a portfolio: the list, the editor, or Performance or Team? What do Search results and the menu do?"],
+    ["Portfolio views", "portfolio", "266", "Are dynamic matches and manual additions one list or two inspectable groups?"],
+    ["Portfolio views", "portfolio", "271", "Which totals are always on the portfolio roll-up, and how does someone expand to the engagement?"],
+    ["Portfolio views", "portfolio", "271", "Which Performance affordances are in this scope, including a marker that an engagement sits in a related group?"],
+    ["Portfolio views", "portfolio", "266", "Does deleting a portfolio always ask, and is that the same confirm as other destructive actions?"],
+    ["Portfolio views", "review", "266", "Sticky table headers may not be a switch on the shared table. If they change every table, do we still want them on portfolio?"],
+    ["Portfolio views", "review", "266", "Closing the portfolio editor with an unsaved add warns that the add will be discarded. Is that confirm only when membership changed?"],
+    ["Templates", "template", "271", "Is a template proportional, a typical job in hours, or both, with scale-or-keep-baseline chosen when it is applied?"],
+    ["Templates", "template", "271", "If it is proportional, what quantity is on screen while someone edits it?"],
+    ["Templates", "template", "271", "Can a template be marked as not scalable, and what happens when the engagement total differs?"],
+    ["Templates", "template", "271", "Are hours stored on the template, taken from a sample engagement, or entered only at apply time?"],
+    ["Templates", "template", "271", "How does scaling round fractional hours, days, or weeks?"],
+    ["Templates", "template", "271", "Does scaling apply equally to phases, requirements, buffers, and gaps?"],
+    ["Templates", "template", "271", "Can someone override one requirement after scaling without changing the others?"],
+    ["Templates", "template", "271", "Are hours the authoring value, with percentages as supporting detail?"],
+    ["Templates", "template", "271", "When the engagement is a different size from the baseline, is the default to scale or to keep the baseline?"],
+    ["Templates", "template", "later", "Should historical actuals replace baseline hours and keep the same proportions?"],
+    ["Templates", "template", "271", "Are phases optional inside one template, or is a phase world still a separate mode?"],
+    ["Templates", "template", "271", "Can one template contain phased and unphased requirements?"],
+    ["Templates", "template", "271", "Is “No phase” a real bucket, or only an empty state?"],
+    ["Templates", "template", "271", "Does picking a phase classify the requirement, or does it also constrain the dates?"],
+    ["Templates", "template", "271", "Are phase durations stored, or derived from the requirements on them?"],
+    ["Templates", "template", "271", "Is phase weighting a share of the timeline, a share of the effort, or both?"],
+    ["Templates", "template", "271", "Can someone edit the phase percentage, or is it only derived?"],
+    ["Templates", "template", "271", "Are empty phases allowed on a saved template?"],
+    ["Templates", "template", "271", "What happens if a requirement extends outside its phase?"],
+    ["Templates", "template", "271", "Can phases inside a template overlap?"],
+    ["Templates", "template", "later", "Are buffers in the first template cut?"],
+    ["Templates", "template", "271", "Are phase milestones required to apply a template, or is the engagement deadline enough?"],
+    ["Templates", "template", "271", "Is a resource requirement reusable demand, or a future booking?"],
+    ["Templates", "template", "271", "Can one requirement have several segments across phases?"],
+    ["Templates", "template", "271", "Can one segment change phase or booking type?"],
+    ["Templates", "template", "271", "Does a count mean several identical resources, or one requirement with a quantity?"],
+    ["Templates", "template", "271", "Are project roles required, optional, or derived from grade?"],
+    ["Templates", "template", "later", "Are skills in scope when creating a template?"],
+    ["Templates", "template", "271", "Should the same grade and role merge automatically?"],
+    ["Templates", "template", "271", "How do two requirements with the same grade and different phases appear?"],
+    ["Templates", "template", "271", "Does effort mean percentage, hours, or either?"],
+    ["Templates", "template", "271", "If both are allowed, can one phase mix them?"],
+    ["Templates", "template", "271", "What does the hours option calculate against?"],
+    ["Templates", "template", "271", "Do resource percentages need to total 100% within the phase, the booking type, or the whole template?"],
+    ["Templates", "template", "271", "What role do booking types play, and how do several optional booking types interact with phases and colour?"],
+    ["Templates", "template", "271", "Is there a simple warning for an unusually large hour value that does not depend on a live working-time calendar?"],
+    ["Templates", "template", "271", "Does Details only hold identity and scope, with no template-structure switch?"],
+    ["Templates", "template", "271", "Does configuration profile replace business unit as the scope field?"],
+    ["Templates", "template", "271", "Can someone add a phase before any resource requirement?"],
+    ["Templates", "template", "271", "Are phases optional unless configuration says they are required?"],
+    ["Templates", "template", "271", "Is add-requirement disabled until a phase exists, when phases are required?"],
+    ["Templates", "template", "271", "Does clicking a phase preselect it when adding a requirement?"],
+    ["Templates", "template", "271", "Do the phase and resource timelines share one time axis?"],
+    ["Templates", "template", "271", "Can phase duration be edited on the shape itself?"],
+    ["Templates", "template", "271", "What happens to requirements when a phase moves or resizes?"],
+    ["Templates", "template", "271", "Are gaps real objects, or just empty time?"],
+    ["Templates", "template", "271", "Is reorder by dragging phases, by editing dates, or both?"],
+    ["Templates", "template", "271", "What guidance does the first cut need so proportional scaling is understandable?"],
+    ["Templates", "template", "271", "Where is apply offered: creating an engagement, the editor, the demand panel, or all three?"],
+    ["Templates", "template", "271", "Are total hours typed, supplied by an integration, or both?"],
+    ["Templates", "template", "271", "Is the deadline always required?"],
+    ["Templates", "template", "271", "Does apply work backwards from one deadline, or from phase milestones?"],
+    ["Templates", "template", "271", "Can the calculated start move?"],
+    ["Templates", "template", "271", "Can phase starts and ends change before apply?"],
+    ["Templates", "template", "271", "If a phase moves in the preview, do its requirements move with it?"],
+    ["Templates", "template", "271", "Can individual requirements be resized in the preview?"],
+    ["Templates", "template", "271", "Is the preview live, or only after continue?"],
+    ["Templates", "template", "271", "Does apply create requirements, bookings, or both?"],
+    ["Templates", "template", "271", "Are created bookings unassigned?"],
+    ["Templates", "template", "later", "Can people be picked during apply, or is allocation later?"],
+    ["Templates", "template", "271", "What happens when the template cannot fit before the deadline?"],
+    ["Templates", "template", "271", "Can a template be applied twice to the same engagement?"],
+    ["Templates", "template", "later", "What happens when a newer template version exists after the engagement was created?"],
+    ["Templates", "template", "271", "Does the engagement keep the template id and version?"],
+    ["Templates", "template", "later", "Is automatic template selection configured in Dayshape, middleware, workflow, or the integration?"],
+    ["Templates", "template", "later", "Which fields can a matching rule see?"],
+    ["Templates", "template", "271", "For the first high-volume use, is API apply more important than doing it by hand in the UI?"],
+    ["Templates", "template", "later", "Is bulk upload in the first release?"],
+    ["Templates", "template", "271", "How are permissions and configuration-profile visibility enforced?"],
+    ["Templates", "template", "271", "Can people apply only published templates?"],
+    ["Templates", "template", "later", "Can a template be archived without changing engagements already created from it?"],
+    ["Templates", "template", "later", "How are versions named and chosen by an API or workflow?"],
+    ["Templates", "template", "later", "What happens when a template changes after it has been used?"],
+    ["Templates", "template", "later", "What audit is required?"],
+    ["Templates", "template", "271", "Which of manual create, manual apply, API apply, workflow apply, and bulk upload must the first release include, and which need a designed UI?"],
+    ["Templates", "template", "271", "May the first release create unassigned demand only?"],
+    ["Templates", "template", "later", "Is automatic resource suggestion out of the first cut?"],
+    ["Templates", "template", "later", "Are skills, buffers, phase milestones, and configuration rules first-cut or follow-up?"],
+    ["Templates", "template", "271", "Which template behaviours in the current mock are illustrative and must not be promised?"],
+    ["Templates", "review", "271", "Steven has no recommended path through templating yet. Which of the questions above, if answered, would let him point design at a single screen?"]
+  ];
+
+  const whenLabel = { now: "Next session", 266: "26.6", 271: "Before 27.1", later: "Later" };
+  const sourceLabel = { focus: "30 Sep focus", review: "2 Oct review", template: "Templating", portfolio: "Portfolio UAT" };
+
+  function renderQuestions() {
+    const source = document.getElementById("filter-source").value;
+    const when = document.getElementById("filter-when").value;
+    const q = document.getElementById("filter-q").value.trim().toLowerCase();
+    const rows = questions.filter((item) => {
+      if (source !== "all" && item[1] !== source) return false;
+      if (when !== "all" && item[2] !== when) return false;
+      if (q && (item[0] + " " + item[3]).toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    });
+    document.getElementById("q-count").textContent = rows.length + " of " + questions.length + " open questions";
+    const groups = [];
+    rows.forEach((item) => {
+      let group = groups.find((g) => g.name === item[0]);
+      if (!group) {
+        group = { name: item[0], items: [] };
+        groups.push(group);
+      }
+      group.items.push(item);
+    });
+    document.getElementById("q-list").innerHTML = groups.map((group) =>
+      '<div class="q-group"><h3>' + group.name + '</h3>' + group.items.map((item) =>
+        '<article class="q"><span class="tag">' + sourceLabel[item[1]] + '</span><span class="tag is-info">' + whenLabel[item[2]] + '</span><p>' + item[3] + '</p></article>'
+      ).join("") + '</div>'
+    ).join("") || '<p>Nothing matches.</p>';
+  }
+  document.getElementById("filter-source").addEventListener("change", renderQuestions);
+  document.getElementById("filter-when").addEventListener("change", renderQuestions);
+  document.getElementById("filter-q").addEventListener("input", renderQuestions);
+  renderQuestions();
+})();
+</script>
+<script src="../config.js"></script>
+<script src="../shared/access.js"></script>
+<script src="../shared/feedback-store.js"></script>
+<script src="../shared/telemetry-store.js"></script>
+<script src="../shared/telemetry.js" defer></script>
+<script src="../shared/feedback.js" defer></script>
+</body>
+</html>

@@ -1998,8 +1998,28 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .Modal-resultsTableWrap td.col-avatar { overflow: visible; min-width: 88px; }
 .Modal-resultsTableWrap .ReportResults-table tbody tr[data-code] { cursor: pointer; }
 .Modal-resultsTableWrap .ReportResults-table tbody tr.is-deselected td { color: #bcbcbc; }
-.Modal-resultsTableWrap .col-check { width: 48px; text-align: center; padding-left: 14px; padding-right: 8px; }
+.Modal-resultsTableWrap .col-check { width: 48px; text-align: center; padding-left: 14px; padding-right: 8px; overflow: visible; }
+.Modal-resultsTableWrap .ReportResults-table thead th.col-check { overflow: visible; z-index: 4; }
+.Modal-resultsTableWrap .ReportResults-table thead th.col-check:has(.TableSelect-menu:not([hidden])) { z-index: 6; }
 .Modal-resultsTableWrap input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; margin: 0; }
+.TableSelect { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.TableSelect-menu {
+    position: fixed; z-index: 30; min-width: 248px; margin: 0; padding: 4px 0;
+    background: var(--surface-default); border: 1px solid var(--border-subtle);
+    border-radius: var(--border-radius-default); box-shadow: 0 2px 4px 2px rgb(178 178 178 / 30%);
+}
+.TableSelect-menu[hidden] { display: none !important; }
+.TableSelect-menu::before, .TableSelect-menu::after {
+    content: ""; position: absolute; left: 16px; border: 6px solid transparent;
+}
+.TableSelect-menu::before { top: -7px; border-bottom-color: var(--border-subtle); border-top: 0; }
+.TableSelect-menu::after { top: -6px; border-bottom-color: var(--surface-default); border-top: 0; }
+.TableSelect-item {
+    display: block; width: 100%; margin: 0; padding: 8px 14px; border: 0; background: transparent;
+    font-family: var(--font-family); font-size: var(--font-size-medium); line-height: 21px;
+    color: var(--text-default); text-align: left; cursor: pointer; white-space: nowrap;
+}
+.TableSelect-item:hover, .TableSelect-item:focus { background: var(--surface-primary); color: var(--text-inverse); outline: none; }
 .Modal-resultsTableWrap .in-membership { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: var(--border-radius-circle); background: var(--surface-primary-subtle); color: var(--text-primary); font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold); vertical-align: middle; }
 
 /* Filter value rows inside FilterCard */
@@ -2460,6 +2480,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                         <thead id="modalResultsHead"></thead>
                         <tbody id="modalResultsBody"></tbody>
                     </table>
+                    <div id="modalResultsPager"></div>
                     <div class="PfView" id="modalPortfolioView" hidden></div>
                 </div>
                 </div>
@@ -3455,6 +3476,7 @@ const modalState = {
     editRuleIncluded: null,  // Set of engagement codes kept in portfolio while editing a filter set
     expandedRuleId: null,    // deprecated — inline expand replaced by editRule step
     tableSel: new Set(),
+    resultsPage: 1,
     lastSelectedCode: null,
     declinedDynamicForResults: false, // unused path reserved; Cancel clears selection instead
     valueSearch: {},
@@ -4222,6 +4244,7 @@ function viewFilterResults() {
     // Select Engagements is a non-destructive preview — no portfolio name required here.
     snapshotAppliedFilters();
     modalState.tableSel.clear();
+    modalState.resultsPage = 1;
     modalState.declinedDynamicForResults = false;
     modalState.resultsTab = "search";
     showModalStep("results");
@@ -4389,6 +4412,110 @@ function portfolioEmptyState() {
         sub: "Select engagements from Search Results and add them to your portfolio."
     };
 }
+const RESULTS_ROWS_PER_PAGE = 5;
+function engagementCountLabel(n) {
+    return n === 1 ? "1 engagement" : n + " engagements";
+}
+function resultsPageCount(rowCount) {
+    return Math.max(1, Math.ceil(rowCount / RESULTS_ROWS_PER_PAGE));
+}
+function resultsPageRows(rows) {
+    const pages = resultsPageCount(rows.length);
+    if (modalState.resultsPage > pages) modalState.resultsPage = pages;
+    if (modalState.resultsPage < 1) modalState.resultsPage = 1;
+    const start = (modalState.resultsPage - 1) * RESULTS_ROWS_PER_PAGE;
+    return rows.slice(start, start + RESULTS_ROWS_PER_PAGE);
+}
+function goToResultsPage(page) {
+    const pages = resultsPageCount(filteredEngagements().length);
+    if (page < 1 || page > pages || page === modalState.resultsPage) return;
+    modalState.resultsPage = page;
+    closeResultsSelectMenu();
+    renderResultsTable();
+}
+function resultsPaginationFooterHtml(rowCount) {
+    const pages = resultsPageCount(rowCount);
+    if (rowCount <= RESULTS_ROWS_PER_PAGE) return "";
+    const current = modalState.resultsPage;
+    const start = ((current - 1) * RESULTS_ROWS_PER_PAGE) + 1;
+    const end = Math.min(rowCount, current * RESULTS_ROWS_PER_PAGE);
+    const nums = pageNumberButtons(current, pages);
+    const first = nums[0];
+    const last = nums[nums.length - 1];
+    const internal = pages > 2 ? nums.slice(1, nums.length - 1) : [];
+    const showLead = !nearStartOfRange(current) && pages > MAX_PAGE_NUMBERS;
+    const showTrail = !nearEndOfRange(current, pages) || (current === MAX_PAGE_NUMBERS - 1 && pages > MAX_PAGE_NUMBERS);
+    const pageBtn = (n) => `<li class="PaginationControls-listItem"><button type="button" class="Btn btn btn-outline-primary PaginationControls-button${n === current ? " active" : ""}" title="Go to page ${n}" aria-label="Go to page ${n}"${n === current ? ' aria-pressed="true"' : ""} onclick="goToResultsPage(${n})">${n}</button></li>`;
+    const ellipsis = `<li class="PaginationControls-listItem"><div class="PaginationControls-ellipsis">...</div></li>`;
+    return `<div class="GenericTable-footer mt-3">
+        <span class="GenericTable-rowSummary">Showing ${start}-${end} of ${rowCount}</span>
+        <nav aria-label="Pagination Controls">
+            <ul class="pagination">
+                <li class="PaginationControls-listItem"><button type="button" class="Btn btn btn-outline-primary PaginationControls-button" title="Go to previous page" aria-label="Go to previous page"${current <= 1 ? " disabled" : ""} onclick="goToResultsPage(${current - 1})">&lt;</button></li>
+                ${pageBtn(first)}
+                ${showLead ? ellipsis : ""}
+                ${internal.map(pageBtn).join("")}
+                ${showTrail ? ellipsis : ""}
+                ${pages > 1 ? pageBtn(last) : ""}
+                <li class="PaginationControls-listItem"><button type="button" class="Btn btn btn-outline-primary PaginationControls-button" title="Go to next page" aria-label="Go to next page"${current >= pages ? " disabled" : ""} onclick="goToResultsPage(${current + 1})">&gt;</button></li>
+            </ul>
+        </nav>
+    </div>`;
+}
+function resultsSelectMenuHtml(pageCount, total) {
+    if (total <= RESULTS_ROWS_PER_PAGE) return "";
+    return `<div class="TableSelect-menu" id="resultsSelectMenu" role="menu" hidden>
+        <button type="button" class="TableSelect-item" role="menuitem" onclick="selectResultsOnPage()">Select ${engagementCountLabel(pageCount)} on this page</button>
+        <button type="button" class="TableSelect-item" role="menuitem" onclick="selectAllResultRows()">Select all ${engagementCountLabel(total)}</button>
+        <div class="RowMenu-divider"></div>
+        <button type="button" class="TableSelect-item" role="menuitem" onclick="deselectAllResultRows()">Deselect all</button>
+    </div>`;
+}
+function closeResultsSelectMenu() {
+    const menu = document.getElementById("resultsSelectMenu");
+    if (menu) menu.hidden = true;
+}
+function openResultsSelectMenu() {
+    const menu = document.getElementById("resultsSelectMenu");
+    const box = document.getElementById("modalToggleAll");
+    if (!menu || !box) return;
+    const rect = box.getBoundingClientRect();
+    menu.hidden = false;
+    menu.style.left = Math.max(8, rect.left - 10) + "px";
+    menu.style.top = (rect.bottom + 8) + "px";
+}
+function onResultsSelectAllClick(e) {
+    e.stopPropagation();
+    const rows = filteredEngagements();
+    if (rows.length <= RESULTS_ROWS_PER_PAGE) {
+        toggleAllResultRows(e.target.checked);
+        return;
+    }
+    e.preventDefault();
+    const menu = document.getElementById("resultsSelectMenu");
+    if (menu && !menu.hidden) closeResultsSelectMenu();
+    else openResultsSelectMenu();
+}
+function selectResultsOnPage() {
+    resultsPageRows(filteredEngagements()).forEach(e => modalState.tableSel.add(e.code));
+    closeResultsSelectMenu();
+    renderResultsTable();
+    updateModalPrimary();
+}
+function selectAllResultRows() {
+    closeResultsSelectMenu();
+    toggleAllResultRows(true);
+}
+function deselectAllResultRows() {
+    closeResultsSelectMenu();
+    toggleAllResultRows(false);
+}
+document.addEventListener("click", function (e) {
+    const menu = document.getElementById("resultsSelectMenu");
+    if (!menu || menu.hidden) return;
+    if (e.target.closest("#resultsSelectMenu") || e.target.id === "modalToggleAll") return;
+    closeResultsSelectMenu();
+});
 function renderResultsTable() {
     const isSearch = modalState.resultsTab === "search";
     const table = document.getElementById("modalResultsTable");
@@ -4405,6 +4532,8 @@ function renderResultsTable() {
         emptyEl.hidden = true;
         wrap.classList.remove("is-empty");
         pfView.hidden = false;
+        const pager = document.getElementById("modalResultsPager");
+        if (pager) pager.innerHTML = "";
         renderPortfolioView();
         updateResultsActionButtons();
         return;
@@ -4413,33 +4542,42 @@ function renderResultsTable() {
     pfView.hidden = true;
     table.hidden = false;
     const rows = filteredEngagements();
+    const pageRows = resultsPageRows(rows);
+    const paginated = rows.length > RESULTS_ROWS_PER_PAGE;
     document.getElementById("modalResultsHead").innerHTML = `<tr>
-        <th class="col-check"><input type="checkbox" id="modalToggleAll" onchange="toggleAllResultRows(this.checked)" title="Select all rows" /></th>
+        <th class="col-check"><div class="TableSelect"><input type="checkbox" id="modalToggleAll" title="${paginated ? "Choose which engagements to select" : "Select all rows"}" onclick="onResultsSelectAllClick(event)" />${resultsSelectMenuHtml(pageRows.length, rows.length)}</div></th>
         ${JOB_LISTING_COLUMNS.map(c => `<th>${htmlEsc(c.label)}</th>`).join("")}
     </tr>`;
+    const pager = document.getElementById("modalResultsPager");
     if (!rows.length) {
         wrap.classList.add("is-empty");
         const state = searchResultsEmptyState();
         emptyEl.innerHTML = blankSlateHtml(state);
         emptyEl.hidden = false;
         document.getElementById("modalResultsBody").innerHTML = "";
+        if (pager) pager.innerHTML = "";
     } else {
         wrap.classList.remove("is-empty");
         emptyEl.hidden = true;
-        document.getElementById("modalResultsBody").innerHTML = rows.map(e => {
+        document.getElementById("modalResultsBody").innerHTML = pageRows.map(e => {
             const checked = modalState.tableSel.has(e.code);
             return `<tr data-code="${e.code}">
                 <td class="col-check"><input type="checkbox" data-code="${e.code}" ${checked ? "checked" : ""} /></td>
                 ${JOB_LISTING_COLUMNS.map(c => `<td>${cellHtml(e, c)}</td>`).join("")}
             </tr>`;
         }).join("");
+        if (pager) pager.innerHTML = resultsPaginationFooterHtml(rows.length);
     }
     const total = rows.length;
     const selected = modalState.tableSel.size;
     if (!(total > 0 && selected === total)) modalState.declinedDynamicForResults = false;
     document.getElementById("resultsSelectionText").textContent = `${selected} of ${total} selected`;
     const toggleAll = document.getElementById("modalToggleAll");
-    if (toggleAll) toggleAll.checked = rows.length > 0 && selected === rows.length;
+    if (toggleAll) {
+        const selectedOnPage = pageRows.filter(e => modalState.tableSel.has(e.code)).length;
+        toggleAll.checked = pageRows.length > 0 && selectedOnPage === pageRows.length;
+        toggleAll.indeterminate = selectedOnPage > 0 && selectedOnPage < pageRows.length;
+    }
     document.getElementById("addToPortfolioBtn").disabled = !selected;
     updateResultsActionButtons();
 }
@@ -4741,6 +4879,7 @@ function resetModalState(preselectCodes, applied) {
     modalState.editRuleIncluded = null;
     modalState.expandedRuleId = null;
     modalState.tableSel = new Set();
+    modalState.resultsPage = 1;
     modalState.lastSelectedCode = null;
     modalState.declinedDynamicForResults = false;
     modalState.valueSearch = {};

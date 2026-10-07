@@ -55,5 +55,13 @@
     "path": "mocks/portfolios-v3.html",
     "status": "in-development",
     "updated": "2026-10-06"
+  },
+  {
+    "id": "high-volume-focus",
+    "title": "High Volume focus — decisions and roadmap",
+    "description": "What design can answer from the 30 Sep focus session and the 2 Oct review: clickable concepts, a release line from 26.6, and the open questions still sitting across Kanban, templating, and portfolio.",
+    "path": "mocks/high-volume-focus.html",
+    "status": "draft",
+    "updated": "2026-10-05"
   }
 ]

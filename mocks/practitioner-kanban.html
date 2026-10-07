@@ -1806,6 +1806,37 @@ body.is-card-dragging * {
   flex-shrink: 0; width: 10px; height: 10px; line-height: 0;
   cursor: help; position: relative;
 }
+.PhaseWarnDot-tip {
+  display: none;
+  position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  background: var(--text-default); color: var(--text-inverse);
+  font-family: var(--font-family); font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-extra-small); line-height: 14px;
+  padding: 4px 8px; border-radius: var(--border-radius-default); white-space: nowrap;
+  pointer-events: none; z-index: 30;
+}
+.PhaseWarnDot-tip::after {
+  content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+  border: 4px solid transparent; border-bottom-color: var(--text-default);
+}
+.PhaseWarnDot:hover .PhaseWarnDot-tip,
+.PhaseWarnDot:focus-visible .PhaseWarnDot-tip { display: block; }
+.badge.has-tip { position: relative; cursor: help; }
+.badge-tip {
+  display: none;
+  position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  background: var(--text-default); color: var(--text-inverse);
+  font-family: var(--font-family); font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-extra-small); line-height: 14px;
+  padding: 4px 8px; border-radius: var(--border-radius-default); white-space: nowrap;
+  pointer-events: none; z-index: 30;
+}
+.badge-tip::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 4px solid transparent; border-top-color: var(--text-default);
+}
+.badge.has-tip:hover .badge-tip,
+.badge.has-tip:focus-visible .badge-tip { display: block; }
 .hours {
   display: inline-flex; align-items: center; gap: 4px;
   font-size: 11px; color: #6a708f; font-weight: 400; line-height: normal;
@@ -2239,7 +2270,7 @@ body.is-card-dragging * {
 }
 .kbd-hint { font-size: 11px; color: var(--text-subtle); }
 
-/* ---- Kanban Sidepanel / Drawer — High Volume 3772:206655 ---- */
+/* ---- Kanban Sidepanel / Drawer — High Volume 4753:87893 ---- */
 .Drawer-backdrop {
   position: fixed; inset: 0; background: var(--surface-overlay, rgba(0,0,0,.5));
   z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .2s ease;
@@ -2257,7 +2288,6 @@ body.is-card-dragging * {
   flex: 1 1 auto;
   overflow-y: auto;
   min-height: 0;
-  /* Reserve scrollbar space so expanding content doesn't shrink the layout */
   scrollbar-gutter: stable;
   scrollbar-width: thin;
 }
@@ -2269,25 +2299,58 @@ body.is-card-dragging * {
 }
 .Drawer-header {
   position: sticky; top: 0; background: var(--surface-default); z-index: 5;
-  padding: var(--padding-md); display: flex; flex-direction: column; gap: var(--padding-xs);
+  padding: var(--padding-md); display: flex; flex-direction: column; gap: 12px;
   border-bottom: var(--border-xs) solid var(--border-subtle);
 }
+.Drawer-headerTop {
+  display: flex; align-items: flex-start; gap: 12px; width: 100%;
+}
+.Drawer-headerMain { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.Drawer-traitRow {
+  display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;
+  min-width: 0; max-width: 100%; overflow: hidden;
+}
+.Drawer-traitRow .badge.tax:not(.card-overflow) {
+  flex: 0 0 auto;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.Drawer-traitRow .card-overflow {
+  flex: 0 0 auto;
+  cursor: help;
+}
+.Drawer-traitRow .tax.is-overflow-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+}
 .Drawer-titleRow { display: flex; gap: 12px; align-items: flex-start; width: 100%; }
-.Drawer-titleBlock { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.Drawer-titleBlock { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .Drawer-jobLink {
-  display: inline-block; max-width: 100%;
-  align-self: flex-start;
-  width: fit-content;
+  max-width: 100%;
   margin: 0; padding: 0; border: none; background: none;
   font-family: var(--font-family);
   font-size: 18px; font-weight: var(--font-weight-bold);
-  line-height: normal; color: var(--text-primary);
+  line-height: 25px; color: var(--text-default);
   text-decoration: none;
   cursor: pointer; text-align: left;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
 }
 .Drawer-jobLink:hover {
-  color: var(--primary-emphasis);
+  color: var(--text-primary);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -2296,7 +2359,7 @@ body.is-card-dragging * {
 }
 .Drawer-title {
   margin: 0; font-size: 18px; font-weight: var(--font-weight-bold);
-  color: var(--text-emphasis); line-height: normal; overflow: hidden; text-overflow: ellipsis;
+  color: var(--text-default); line-height: 25px; overflow: hidden; text-overflow: ellipsis;
 }
 .Drawer-company {
   margin: 0; font-size: var(--font-size-medium); font-weight: var(--font-weight-regular);
@@ -2311,26 +2374,24 @@ body.is-card-dragging * {
 }
 .Drawer-close:hover { background: var(--surface-container-default); }
 .Drawer-headerBadges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.Drawer-headerBadges .badge {
-  min-height: 32px;
-  height: 32px;
-  padding: 0 10px;
-  font-size: 14px;
-  line-height: 1;
-  box-sizing: border-box;
-}
 .Drawer-priorityCorner {
   position: absolute; left: 4px; top: 4px; width: 11px; height: 12px; z-index: 3; pointer-events: none;
 }
 .Drawer-section {
   border-top: var(--border-xs) solid var(--border-subtle);
-  padding: var(--padding-md);
-  display: flex; flex-direction: column; gap: var(--padding-md);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 12px;
   background: var(--surface-default);
 }
 .Drawer-section h3 {
   margin: 0; font-size: 18px; font-weight: var(--font-weight-semibold); color: var(--text-default);
-  line-height: normal;
+  line-height: 25px;
+}
+.Drawer-section--details {
+  gap: 8px;
+}
+.Drawer-section--details h3 {
+  color: var(--text-emphasis);
 }
 .Drawer-sectionHeading {
   display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;
@@ -2362,7 +2423,121 @@ body.is-card-dragging * {
   overflow: visible;
 }
 .Drawer-animPanelInner { overflow: hidden; min-height: 0; }
-.Drawer-milestones[data-timeline-collapsed="true"] .is-timelineExtra { display: none; }
+
+/* Details list — Figma 4753:98791 */
+.Drawer-detailsList {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: var(--border-xs) solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+  overflow: hidden;
+  background: var(--surface-default);
+}
+.Drawer-detailRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 50px;
+  min-height: 50px;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  border-bottom: var(--border-xs) solid var(--border-subtle);
+}
+.Drawer-detailRow:last-child {
+  border-bottom: none;
+}
+.Drawer-detailLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 150px;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: var(--font-weight-regular);
+  color: var(--text-subtle);
+  line-height: normal;
+  min-width: 0;
+}
+.Drawer-detailLabel i {
+  width: 14px;
+  height: 14px;
+  text-align: center;
+  color: var(--icon-subtle);
+  flex-shrink: 0;
+  font-size: 12px;
+  line-height: 14px;
+}
+.Drawer-detailValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-default);
+  line-height: normal;
+}
+.Drawer-detailValue.is-warn {
+  color: #e27209;
+  font-weight: var(--font-weight-semibold);
+}
+.Drawer-detailValue.is-danger {
+  color: var(--text-danger);
+  font-weight: var(--font-weight-semibold);
+}
+.Drawer-detailAssignee {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.Drawer-detailAssigneeName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-emphasis);
+}
+.Drawer-detailBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 4px;
+  box-sizing: border-box;
+  border-radius: var(--border-radius-default);
+  border: var(--border-xs) solid var(--border-subtle);
+  background: var(--surface-default);
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  line-height: 14px;
+  color: var(--text-subtle);
+  white-space: nowrap;
+}
+.Drawer-detailBadge--warn {
+  background: #fff0e0;
+  border-color: #ffd9ad;
+  color: #804003;
+}
+.Drawer-detailBadge--success {
+  background: #e1faeb;
+  border-color: #c9efd8;
+  color: #07602b;
+}
+.Drawer-detailBadge--danger {
+  background: var(--surface-danger-subtle);
+  border-color: var(--border-danger-subtle);
+  color: var(--text-danger);
+}
+.Drawer-detailBadge--warning {
+  background: var(--surface-warning);
+  border-color: var(--border-warning-subtle);
+  color: var(--text-warning);
+}
+
 .Drawer-timelineToggle {
   align-self: flex-start;
   margin-top: 4px;
@@ -2370,7 +2545,7 @@ body.is-card-dragging * {
   background: none;
   padding: 0;
   cursor: pointer;
-  color: #4f3fa0;
+  color: var(--text-primary);
   font-size: 13px;
   font-weight: 600;
   line-height: 20px;
@@ -2527,8 +2702,197 @@ body.is-card-dragging * {
   background: #f1f1f4; border-radius: 3px; padding: 1px 6px; line-height: 16px;
 }
 
-/* Milestones — Figma MilestoneSection (1074:11833) */
-.Drawer-milestones { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+/* Milestones — Figma 4753:87970 */
+.Drawer-milestones {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  position: relative;
+  padding-left: 0;
+}
+.Drawer-milestones::before {
+  content: '';
+  position: absolute;
+  left: 23px; /* center of 24px icon in 12px padded head */
+  top: 28px;
+  bottom: 28px;
+  width: 1px;
+  background: var(--border-subtle);
+  pointer-events: none;
+  z-index: 0;
+}
+.Drawer-msGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+.Drawer-msHead {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 53px;
+  padding: 12px;
+  background: var(--surface-subtle-light);
+  border: var(--border-xs) solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+button.Drawer-msHead {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  cursor: pointer;
+}
+.Drawer-msHead:hover {
+  background: #eef0f4;
+}
+.Drawer-msHead:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(79, 63, 160, 0.35);
+}
+.Drawer-msHead.is-active .Drawer-msTitle {
+  color: var(--text-warning);
+}
+.Drawer-msHead .MilestoneIcon i {
+  transition: transform 0.15s ease;
+  display: inline-block;
+}
+.Drawer-msHead[aria-expanded="true"] .MilestoneIcon i {
+  transform: rotate(90deg);
+}
+.Drawer-msBookingsPanel .Drawer-msBookings {
+  margin-top: 0;
+}
+.Drawer-msHead .MilestoneIcon,
+.Drawer-msHead .MilestoneIconTip,
+.Drawer-msDeadline .MilestoneIcon {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  background-clip: padding-box;
+}
+.Drawer-msTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-default);
+  line-height: 21px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.Drawer-msDate {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-regular);
+  color: var(--text-subtle);
+  line-height: 16px;
+  white-space: nowrap;
+}
+.Drawer-msDate i {
+  color: var(--icon-subtle);
+  font-size: 12px;
+}
+.Drawer-msBookings {
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 24px);
+  margin: 8px 0 0 24px;
+  padding: 0;
+  background: var(--surface-default);
+}
+.Drawer-msBooking {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 100px 49px;
+  align-items: center;
+  min-height: 48px;
+  padding: 0;
+  box-sizing: border-box;
+  border-bottom: var(--border-xs) solid var(--border-subtle);
+}
+.Drawer-msBooking:last-child {
+  border-bottom: none;
+}
+.Drawer-msBookingEffort {
+  margin: 0;
+  padding: 0 8px 0 12px;
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-default);
+  line-height: 16px;
+  white-space: nowrap;
+}
+.Drawer-msBookingDate {
+  margin: 0;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: var(--font-weight-regular);
+  color: var(--text-subtle);
+  line-height: 15px;
+  white-space: nowrap;
+}
+.Drawer-msBookingDate.is-warn {
+  color: var(--text-warning);
+  font-weight: var(--font-weight-semibold);
+}
+.Drawer-msBookingDate.is-danger {
+  color: var(--text-danger);
+  font-weight: var(--font-weight-semibold);
+}
+.Drawer-msBookingStatus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 8px;
+}
+.Drawer-msBookingAvatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px 0 0;
+}
+.Drawer-msDeadline {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 53px;
+  padding: 12px;
+  background: var(--surface-subtle-light);
+  border: var(--border-xs) solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+  position: relative;
+  z-index: 1;
+}
+.Drawer-msDeadlineTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-default);
+  line-height: 21px;
+}
+.MilestoneIcon--active {
+  background: #e27209;
+  color: #fff;
+}
+
+/* Legacy milestone classes kept for nested booking panels */
 .Drawer-milestoneGroup { display: flex; flex-direction: column; gap: 8px; width: 100%; }
 .Drawer-milestoneStack {
   width: 100%; background: #f8f8f8; border: 1px solid #e2e3e9; border-radius: 4px;
@@ -2702,26 +3066,55 @@ body.is-card-dragging * {
 .Drawer-footer:empty,
 .Drawer-footer[hidden] { display: none; }
 
-/* Jira-like status transition menu */
+/* Status menu trigger — badge chip styling (matches Drawer-detailBadge / Badge--md) */
 .StatusMenu { position: relative; display: inline-flex; }
 .StatusMenu-trigger {
-  display: inline-flex; align-items: center; gap: 8px;
-  height: 32px; padding: 0 10px 0 12px; border: none; border-radius: 3px;
-  cursor: pointer; font-size: 14px; font-weight: 600; line-height: 1;
-  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-sizing: border-box;
+  min-height: 22px;
+  height: auto;
+  padding: 4px 8px;
+  border: var(--border-xs) solid transparent;
+  border-radius: var(--border-radius-default);
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  line-height: 14px;
+  white-space: nowrap;
 }
-.StatusMenu-trigger .fa-chevron-down { font-size: 11px; opacity: 0.9; }
+.StatusMenu-trigger .fa-chevron-down {
+  font-size: 9px;
+  opacity: 0.85;
+  margin-left: 2px;
+}
 .StatusMenu-trigger--to-do {
-  background: #6a708f;
-  color: #fff;
+  background: var(--surface-default);
+  border-color: var(--border-subtle);
+  color: var(--text-subtle);
 }
-.StatusMenu-trigger--to-do .fa-chevron-down { color: #fff; opacity: 0.9; }
-.StatusMenu-trigger--in-progress { background: #0295b2; }
-.StatusMenu-trigger--blocked { background: var(--surface-danger); }
-.StatusMenu-trigger--done { background: #078138; }
-.StatusMenu-trigger:hover { filter: brightness(0.95); }
+.StatusMenu-trigger--in-progress {
+  background: #e8f7fa;
+  border-color: #9ad5e2;
+  color: #0295b2;
+}
+.StatusMenu-trigger--blocked {
+  background: var(--surface-danger-subtle);
+  border-color: var(--border-danger-subtle);
+  color: var(--text-danger);
+}
+.StatusMenu-trigger--done {
+  background: #e1faeb;
+  border-color: #c9efd8;
+  color: #07602b;
+}
+.StatusMenu-trigger:hover { filter: brightness(0.98); }
 .StatusMenu-trigger:focus-visible {
-  outline: 0; box-shadow: 0 0 0 0.2rem rgba(79, 63, 160, 0.35);
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(79, 63, 160, 0.35);
 }
 .StatusMenu-panel {
   position: absolute; top: calc(100% + 6px); left: 0; z-index: 30;
@@ -3918,7 +4311,7 @@ body.overlay-open { overflow: hidden; }
 <div class="Toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-const ALL_COLUMNS = [{"id":"to-do","title":"To Do","color":"#6a708f","tasks":[{"id":"t-smith-client","company":"Smith Manufacturing Inc.","engagementType":"1120 - Corporate Return","workPhase":"Preparation","deadline":"Jun 13","taxTypes":["1120 Corporate"],"isReady":true,"bookings":[{"week":"2026-06-08","plannedHours":3.5,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"phase"},{"id":"t-todo-overdue","company":"Cascade Timber Works","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jun 5","status":"overdue","isReady":true,"bookings":[{"week":"2026-06-08","plannedHours":4,"effortLogged":0,"completed":false},{"week":"2026-06-15","plannedHours":3,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"phase","taxTypes":["1120 Corporate"]},{"id":"t1","company":"Aurelius Digital Systems","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jun 13","isPriority":true,"status":"due-soon","isReady":true,"bookings":[{"week":"2026-06-08","plannedHours":5,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"job"},{"id":"t2","company":"BluePeak Software Solutions","engagementType":"1120 - Corporate Return","workPhase":"First Review","estimatedHours":4,"deadline":"Jun 27","clientInfoReceived":false,"bookings":[{"week":"2026-06-08","plannedHours":4,"effortLogged":0,"completed":false},{"week":"2026-06-22","plannedHours":4,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"phase"},{"id":"t3","company":"NebulaCore Cloud Services","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":6,"deadline":"Jun 20","isPriority":true,"status":"due-soon","bookings":[{"week":"2026-06-08","plannedHours":6,"effortLogged":0,"completed":false},{"week":"2026-06-15","plannedHours":4,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"phase"},{"id":"t9","company":"LumenEdge Cybersecurity","engagementType":"1120 - Corporate Return","workPhase":"Second Review","estimatedHours":3,"deadline":"Jun 25","complexity":3,"isPriority":true,"cardType":"phase"},{"id":"t10","company":"HyperVantage Analytics","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jun 28","complexity":4,"chargeable":false,"cardType":"job"},{"id":"t11","company":"CircuitWave Microtech","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jun 30","complexity":2,"cardType":"phase"},{"id":"t12","company":"VectorForge AI Labs","engagementType":"1120 - Corporate Return","workPhase":"First Review","estimatedHours":6,"deadline":"Jul 2","complexity":5,"cardType":"phase"},{"id":"t13","company":"SapphireLink Networks","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jun 27","complexity":3,"cardType":"phase"},{"id":"t14","company":"Pinnacle Process Consulting","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jun 30","complexity":4,"isPriority":true,"cardType":"job"},{"id":"t15","company":"Northbridge Financial Audit","engagementType":"1065 - Partnership Return","workPhase":"First Review","estimatedHours":3,"deadline":"Jul 5","complexity":2,"chargeable":false,"cardType":"phase"},{"id":"t16","company":"Optima Workforce Management","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jun 29","complexity":1,"cardType":"phase"},{"id":"t17","company":"Regency Compliance Partners","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jul 3","complexity":3,"cardType":"phase"},{"id":"t18","company":"TerraNovus Environmental Consulting","engagementType":"1120 - Corporate Return","workPhase":"Second Review","estimatedHours":3,"deadline":"Jun 26","complexity":4,"cardType":"phase"},{"id":"t19","company":"Evercrest Project Services","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jul 1","complexity":2,"cardType":"phase"},{"id":"t20","company":"IronVale Industrial Works","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":6,"deadline":"Jul 4","complexity":5,"cardType":"phase"},{"id":"t21","company":"Silverline Precision Tools","engagementType":"1040 - Individual Return","workPhase":"First Review","estimatedHours":2,"deadline":"Jun 17","complexity":1,"status":"due-soon","cardType":"phase"},{"id":"t22","company":"Magnus Materials Group","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jul 6","complexity":4,"cardType":"phase"},{"id":"t23","company":"Orion Aerotech Components","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":8,"deadline":"Jul 8","complexity":5,"isPriority":true,"cardType":"phase"},{"id":"t24","company":"Vertex Robotics Manufacturing","engagementType":"1120 - Corporate Return","workPhase":"First Review","estimatedHours":4,"deadline":"Jun 23","complexity":3,"cardType":"phase"},{"id":"t25","company":"DeltaForge Heavy Machinery","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":6,"deadline":"Jul 7","complexity":4,"cardType":"phase"},{"id":"t26","company":"Sterling Harbor Capital","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jul 10","complexity":2,"cardType":"phase"},{"id":"t27","company":"MarbleBank Commercial Lending","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":6,"deadline":"Jul 9","complexity":5,"cardType":"job"},{"id":"t28","company":"UnityTrust Insurance Group","engagementType":"1120 - Corporate Return","workPhase":"Second Review","estimatedHours":3,"deadline":"Jun 21","complexity":1,"cardType":"phase"},{"id":"t29","company":"BrightHarbor Home Goods","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jul 11","complexity":2,"cardType":"phase"},{"id":"t30","company":"Nordwick Apparel Co.","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jul 12","complexity":3,"cardType":"phase"},{"id":"t31","company":"PrimeEdge Tech Solutions","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"complexity":3,"cardType":"job"},{"id":"t32","company":"Quantum Dynamics Inc.","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":5,"complexity":4,"cardType":"phase"},{"id":"t33","company":"Stellar Manufacturing LLC","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":6,"complexity":2,"cardType":"phase"}]},{"id":"in-progress","title":"In Progress","color":"#0295b2","tasks":[{"id":"t4","company":"Smith Manufacturing Inc.","previousPhaseWorkers":[{"id":"w-sc","initials":"SC","name":"Sarah Chen","effort":4},{"id":"w-al","initials":"AL","name":"You","effort":2}],"engagementType":"1120 - Corporate Return","workPhase":"Second Review","estimatedHours":6,"deadline":"Jun 17","chargeable":true,"returnedReason":"Review Comments \u2022 Update Schedule (A) calculations. Missing depreciation details.","taxTypes":["1120"],"phaseHistory":{"preparation":3,"firstReview":3},"bookings":[{"week":"2026-06-01","plannedHours":3,"effortLogged":3,"completed":true},{"week":"2026-06-08","plannedHours":3,"effortLogged":0,"completed":false}],"phaseStatus":"in-progress","cardType":"phase"},{"id":"t5","company":"Sunrise Ventures","engagementType":"1040 - Individual Return","workPhase":"Second Review","status":"due-soon","estimatedHours":4,"deadline":"Jun 14","chargeable":true,"phaseHistory":{"preparation":0,"firstReview":2},"bookings":[{"week":"2026-06-08","plannedHours":3,"effortLogged":1,"completed":false},{"week":"2026-06-22","plannedHours":2,"effortLogged":0,"completed":false}],"phaseStatus":"in-progress","cardType":"job"},{"id":"t-prev-phase-demo","company":"Harlow & Partners LLP","engagementType":"1065 - Partnership Return","workPhase":"First Review","estimatedHours":4,"deadline":"Jun 24","chargeable":true,"taxTypes":["1065"],"assignedTo":{"initials":"SC","name":"Sarah Chen"},"bookings":[{"week":"2026-06-15","plannedHours":4,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"phase"},{"id":"t-wc-metro","company":"Metro Services Group","engagementType":"1040 - Individual Return","workPhase":"First Review","estimatedHours":2.5,"deadline":"Jun 20","status":"due-soon","isReady":true,"bookings":[{"week":"2026-06-01","plannedHours":2.5,"effortLogged":0,"completed":false}],"phaseStatus":"in-progress","cardType":"phase","taxTypes":["1040 Individual"],"prevPhaseWarn":true},{"id":"t-wc-harlow-prep","company":"Harlow & Partners LLP","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":3,"deadline":"Jun 27","isReady":true,"bookings":[{"week":"2026-06-01","plannedHours":3,"effortLogged":1.5,"completed":false}],"phaseStatus":"in-progress","cardType":"phase","taxTypes":["1065 Partnership"]},{"id":"t-wc-eng-1","company":"Aurelius Digital Systems","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":8,"deadline":"Jun 20","chargeable":true,"taxTypes":["1120 Corporate"],"bookings":[{"week":"2026-06-01","plannedHours":5,"effortLogged":2,"completed":false}],"phaseStatus":"in-progress","cardType":"job"},{"id":"t-wc-eng-2","company":"BluePeak Software Solutions","engagementType":"1120 - Corporate Return","workPhase":"First Review","estimatedHours":5,"deadline":"Jun 27","status":"due-soon","chargeable":true,"taxTypes":["1120 Corporate"],"bookings":[{"week":"2026-06-01","plannedHours":4,"effortLogged":1,"completed":false}],"phaseStatus":"in-progress","cardType":"job"},{"id":"t-wc-phase-1","company":"Northbridge Financial Audit","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":6,"deadline":"Jul 5","chargeable":true,"taxTypes":["1065"],"bookings":[{"week":"2026-06-01","plannedHours":6,"effortLogged":3,"completed":false}],"phaseStatus":"in-progress","cardType":"phase"},{"id":"t-wc-phase-2","company":"NebulaCore Cloud Services","engagementType":"1120 - Corporate Return","workPhase":"First Review","estimatedHours":4,"deadline":"Jun 20","isPriority":true,"chargeable":true,"taxTypes":["1120 Corporate"],"bookings":[{"week":"2026-06-01","plannedHours":3.5,"effortLogged":0,"completed":false}],"phaseStatus":"in-progress","cardType":"phase"},{"id":"t-wc-phase-3","company":"Magnus Materials Group","engagementType":"1120 - Corporate Return","workPhase":"Second Review","estimatedHours":3,"deadline":"Jul 6","chargeable":true,"assignedTo":{"initials":"AL","name":"You"},"bookings":[{"week":"2026-06-01","plannedHours":4,"effortLogged":4,"completed":true}],"phaseStatus":"in-progress","cardType":"phase"},{"id":"t-wc-eng-3","company":"Sterling Harbor Capital","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":7,"deadline":"Jul 10","chargeable":true,"taxTypes":["1065"],"bookings":[{"week":"2026-06-01","plannedHours":8,"effortLogged":5,"completed":false}],"phaseStatus":"in-progress","cardType":"job"},{"id":"t31","company":"Annual Leave","engagementType":"Time Off","workPhase":"Personal Leave","estimatedHours":3,"deadline":"Jun 30","chargeable":false,"complexity":1,"cardType":"job"},{"id":"t32","company":"Professional Development","engagementType":"Training","workPhase":"CPE Credits","estimatedHours":2,"deadline":"Jul 1","chargeable":false,"complexity":1,"cardType":"phase"}]},{"id":"blocked","title":"On Hold","color":"#b02a37","tasks":[{"id":"t6","company":"Mountain Peak Co.","engagementType":"1065 - Partnership Return","workPhase":"Preparation","deadline":"Jun 25","complexity":4,"isPriority":true,"blockingReason":{"category":"Waiting for client information","details":"Missing K-1 schedules"},"cardType":"job","expectedEndDate":"2026-06-22","onHoldSinceWeek":"2026-06-08","bookings":[{"week":"2026-06-22","plannedHours":4,"effortLogged":0,"completed":false}]}]},{"id":"done","title":"Done","color":"#078138","tasks":[{"id":"t7","company":"Riverside Holdings","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jun 8","complexity":3,"timeSpent":3.5,"cardType":"job","completionDate":"2026-06-10","weekCompleteOnly":true,"bookings":[{"week":"2026-06-08","plannedHours":3,"effortLogged":3,"completed":true}],"phaseStatus":"in-progress"},{"id":"t8","company":"Metro Services Inc","engagementType":"1040 - Individual Return","workPhase":"First Review","estimatedHours":2,"deadline":"Jun 7","complexity":2,"timeSpent":2,"cardType":"phase","completionDate":"2026-06-10","weekCompleteOnly":true,"bookings":[{"week":"2026-06-08","plannedHours":3,"effortLogged":3,"completed":true}],"phaseStatus":"in-progress"}]}];
+const ALL_COLUMNS = [{"id":"to-do","title":"To Do","color":"#6a708f","tasks":[{"id":"t-smith-client","company":"Smith Manufacturing Inc.","engagementType":"1120 - Corporate Return","workPhase":"Preparation","deadline":"Jun 13","taxTypes":["1120 Corporate"],"isReady":true,"bookings":[{"week":"2026-06-08","plannedHours":3.5,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"phase"},{"id":"t-todo-overdue","company":"Cascade Timber Works","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jun 5","status":"overdue","isReady":true,"bookings":[{"week":"2026-06-08","plannedHours":8.5,"effortLogged":0,"completed":false},{"week":"2026-06-15","plannedHours":3,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"phase","taxTypes":["1120 Corporate"]},{"id":"t1","company":"Aurelius Digital Systems","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jun 13","isPriority":true,"status":"due-soon","isReady":true,"bookings":[{"week":"2026-06-08","plannedHours":11,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"job"},{"id":"t2","company":"BluePeak Software Solutions","engagementType":"1120 - Corporate Return","workPhase":"First Review","estimatedHours":4,"deadline":"Jun 27","bookings":[{"week":"2026-06-08","plannedHours":4,"effortLogged":0,"completed":false},{"week":"2026-06-22","plannedHours":4,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"phase"},{"id":"t3","company":"NebulaCore Cloud Services","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":6,"deadline":"Jun 20","isPriority":true,"status":"due-soon","bookings":[{"week":"2026-06-08","plannedHours":12,"effortLogged":0,"completed":false},{"week":"2026-06-15","plannedHours":4,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"phase","clientInfoReceived":false},{"id":"t9","company":"LumenEdge Cybersecurity","engagementType":"1120 - Corporate Return","workPhase":"Second Review","estimatedHours":3,"deadline":"Jun 25","complexity":3,"isPriority":true,"cardType":"phase"},{"id":"t10","company":"HyperVantage Analytics","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jun 28","complexity":4,"chargeable":false,"cardType":"job"},{"id":"t11","company":"CircuitWave Microtech","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jun 30","complexity":2,"cardType":"phase"},{"id":"t12","company":"VectorForge AI Labs","engagementType":"1120 - Corporate Return","workPhase":"First Review","estimatedHours":6,"deadline":"Jul 2","complexity":5,"cardType":"phase"},{"id":"t13","company":"SapphireLink Networks","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jun 27","complexity":3,"cardType":"phase"},{"id":"t14","company":"Pinnacle Process Consulting","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jun 30","complexity":4,"isPriority":true,"cardType":"job"},{"id":"t15","company":"Northbridge Financial Audit","engagementType":"1065 - Partnership Return","workPhase":"First Review","estimatedHours":3,"deadline":"Jul 5","complexity":2,"chargeable":false,"cardType":"phase"},{"id":"t16","company":"Optima Workforce Management","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jun 29","complexity":1,"cardType":"phase"},{"id":"t17","company":"Regency Compliance Partners","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jul 3","complexity":3,"cardType":"phase"},{"id":"t18","company":"TerraNovus Environmental Consulting","engagementType":"1120 - Corporate Return","workPhase":"Second Review","estimatedHours":3,"deadline":"Jun 26","complexity":4,"cardType":"phase"},{"id":"t19","company":"Evercrest Project Services","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jul 1","complexity":2,"cardType":"phase"},{"id":"t20","company":"IronVale Industrial Works","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":6,"deadline":"Jul 4","complexity":5,"cardType":"phase"},{"id":"t21","company":"Silverline Precision Tools","engagementType":"1040 - Individual Return","workPhase":"First Review","estimatedHours":2,"deadline":"Jun 17","complexity":1,"status":"due-soon","cardType":"phase"},{"id":"t22","company":"Magnus Materials Group","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jul 6","complexity":4,"cardType":"phase"},{"id":"t23","company":"Orion Aerotech Components","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":8,"deadline":"Jul 8","complexity":5,"isPriority":true,"cardType":"phase"},{"id":"t24","company":"Vertex Robotics Manufacturing","engagementType":"1120 - Corporate Return","workPhase":"First Review","estimatedHours":4,"deadline":"Jun 23","complexity":3,"cardType":"phase"},{"id":"t25","company":"DeltaForge Heavy Machinery","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":6,"deadline":"Jul 7","complexity":4,"cardType":"phase"},{"id":"t26","company":"Sterling Harbor Capital","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jul 10","complexity":2,"cardType":"phase"},{"id":"t27","company":"MarbleBank Commercial Lending","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":6,"deadline":"Jul 9","complexity":5,"cardType":"job"},{"id":"t28","company":"UnityTrust Insurance Group","engagementType":"1120 - Corporate Return","workPhase":"Second Review","estimatedHours":3,"deadline":"Jun 21","complexity":1,"cardType":"phase"},{"id":"t29","company":"BrightHarbor Home Goods","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jul 11","complexity":2,"cardType":"phase"},{"id":"t30","company":"Nordwick Apparel Co.","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":5,"deadline":"Jul 12","complexity":3,"cardType":"phase"},{"id":"t31","company":"PrimeEdge Tech Solutions","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"complexity":3,"cardType":"job"},{"id":"t32","company":"Quantum Dynamics Inc.","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":5,"complexity":4,"cardType":"phase"},{"id":"t33","company":"Stellar Manufacturing LLC","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":6,"complexity":2,"cardType":"phase"}]},{"id":"in-progress","title":"In Progress","color":"#0295b2","tasks":[{"id":"t4","company":"Smith Manufacturing Inc.","previousPhaseWorkers":[{"id":"w-sc","initials":"SC","name":"Sarah Chen","effort":4},{"id":"w-al","initials":"AL","name":"You","effort":2}],"engagementType":"1120 - Corporate Return","workPhase":"Second Review","estimatedHours":6,"deadline":"Jun 17","chargeable":true,"returnedReason":"Review Comments • Update Schedule (A) calculations. Missing depreciation details.","taxTypes":["1120"],"phaseHistory":{"preparation":3,"firstReview":3},"bookings":[{"week":"2026-06-01","plannedHours":3,"effortLogged":3,"completed":true},{"week":"2026-06-08","plannedHours":3,"effortLogged":0,"completed":false}],"phaseStatus":"in-progress","cardType":"phase"},{"id":"t5","company":"Sunrise Ventures","engagementType":"1040 - Individual Return","workPhase":"Second Review","status":"due-soon","estimatedHours":4,"deadline":"Jun 14","chargeable":true,"phaseHistory":{"preparation":0,"firstReview":2},"bookings":[{"week":"2026-06-08","plannedHours":3,"effortLogged":1,"completed":false},{"week":"2026-06-22","plannedHours":2,"effortLogged":0,"completed":false}],"phaseStatus":"in-progress","cardType":"job"},{"id":"t-prev-phase-demo","company":"Harlow & Partners LLP","engagementType":"1065 - Partnership Return","workPhase":"First Review","estimatedHours":4,"deadline":"Jun 24","chargeable":true,"taxTypes":["1065"],"assignedTo":{"initials":"SC","name":"Sarah Chen"},"bookings":[{"week":"2026-06-15","plannedHours":4,"effortLogged":0,"completed":false}],"phaseStatus":"not-started","cardType":"phase"},{"id":"t-wc-metro","company":"Metro Services Group","engagementType":"1040 - Individual Return","workPhase":"First Review","estimatedHours":2.5,"deadline":"Jun 20","status":"due-soon","isReady":true,"bookings":[{"week":"2026-06-01","plannedHours":2.5,"effortLogged":0,"completed":false}],"phaseStatus":"in-progress","cardType":"phase","taxTypes":["1040 Individual"],"prevPhaseWarn":true},{"id":"t-wc-harlow-prep","company":"Harlow & Partners LLP","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":3,"deadline":"Jun 27","isReady":true,"bookings":[{"week":"2026-06-01","plannedHours":3,"effortLogged":1.5,"completed":false}],"phaseStatus":"in-progress","cardType":"phase","taxTypes":["1065 Partnership"]},{"id":"t-wc-eng-1","company":"Aurelius Digital Systems","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":8,"deadline":"Jun 20","chargeable":true,"taxTypes":["1120 Corporate"],"bookings":[{"week":"2026-06-01","plannedHours":5,"effortLogged":2,"completed":false}],"phaseStatus":"in-progress","cardType":"job"},{"id":"t-wc-eng-2","company":"BluePeak Software Solutions","engagementType":"1120 - Corporate Return","workPhase":"First Review","estimatedHours":5,"deadline":"Jun 27","status":"due-soon","chargeable":true,"taxTypes":["1120 Corporate"],"bookings":[{"week":"2026-06-01","plannedHours":4,"effortLogged":1,"completed":false}],"phaseStatus":"in-progress","cardType":"job"},{"id":"t-wc-phase-1","company":"Northbridge Financial Audit","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":6,"deadline":"Jul 5","chargeable":true,"taxTypes":["1065"],"bookings":[{"week":"2026-06-01","plannedHours":6,"effortLogged":3,"completed":false}],"phaseStatus":"in-progress","cardType":"phase"},{"id":"t-wc-phase-2","company":"NebulaCore Cloud Services","engagementType":"1120 - Corporate Return","workPhase":"First Review","estimatedHours":4,"deadline":"Jun 20","isPriority":true,"chargeable":true,"taxTypes":["1120 Corporate"],"bookings":[{"week":"2026-06-01","plannedHours":3.5,"effortLogged":0,"completed":false}],"phaseStatus":"in-progress","cardType":"phase"},{"id":"t-wc-phase-3","company":"Magnus Materials Group","engagementType":"1120 - Corporate Return","workPhase":"Second Review","estimatedHours":3,"deadline":"Jul 6","chargeable":true,"assignedTo":{"initials":"AL","name":"You"},"bookings":[{"week":"2026-06-01","plannedHours":4,"effortLogged":4,"completed":true}],"phaseStatus":"in-progress","cardType":"phase"},{"id":"t-wc-eng-3","company":"Sterling Harbor Capital","engagementType":"1065 - Partnership Return","workPhase":"Preparation","estimatedHours":7,"deadline":"Jul 10","chargeable":true,"taxTypes":["1065"],"bookings":[{"week":"2026-06-01","plannedHours":8,"effortLogged":5,"completed":false}],"phaseStatus":"in-progress","cardType":"job"},{"id":"t31","company":"Annual Leave","engagementType":"Time Off","workPhase":"Personal Leave","estimatedHours":3,"deadline":"Jun 30","chargeable":false,"complexity":1,"cardType":"job"},{"id":"t32","company":"Professional Development","engagementType":"Training","workPhase":"CPE Credits","estimatedHours":2,"deadline":"Jul 1","chargeable":false,"complexity":1,"cardType":"phase"}]},{"id":"blocked","title":"On Hold","color":"#b02a37","tasks":[{"id":"t6","company":"Mountain Peak Co.","engagementType":"1065 - Partnership Return","workPhase":"Preparation","deadline":"Jun 25","complexity":4,"isPriority":true,"blockingReason":{"category":"Waiting for client information","details":"Missing K-1 schedules"},"cardType":"job","expectedEndDate":"2026-06-22","onHoldSinceWeek":"2026-06-08","bookings":[{"week":"2026-06-22","plannedHours":4,"effortLogged":0,"completed":false}]}]},{"id":"done","title":"Done","color":"#078138","tasks":[{"id":"t7","company":"Riverside Holdings","engagementType":"1120 - Corporate Return","workPhase":"Preparation","estimatedHours":4,"deadline":"Jun 8","complexity":3,"timeSpent":3.5,"cardType":"job","completionDate":"2026-06-10","weekCompleteOnly":true,"bookings":[{"week":"2026-06-08","plannedHours":3,"effortLogged":3,"completed":true}],"phaseStatus":"in-progress"},{"id":"t8","company":"Metro Services Inc","engagementType":"1040 - Individual Return","workPhase":"First Review","estimatedHours":2,"deadline":"Jun 7","complexity":2,"timeSpent":2,"cardType":"phase","completionDate":"2026-06-10","weekCompleteOnly":true,"bookings":[{"week":"2026-06-08","plannedHours":3,"effortLogged":3,"completed":true}],"phaseStatus":"in-progress"}]}];
 const BASE_MONDAY = new Date(2026, 5, 8); // 8 Jun 2026 — matches WorkflowBoard
 const WEEKLY_CAPACITY = 40;
 const CURRENT_USER = { initials: 'AL', name: 'You' };
@@ -3990,14 +4383,18 @@ function getPreviousPhaseName(workPhase) {
 
 function prevPhaseWarnIconHtml(task) {
   if (getPreviousPhaseStatus(task) !== 'incomplete') return '';
-  const tip = getPreviousPhaseName(task.workPhase) + ' not yet complete';
+  const prev = getPreviousPhaseName(task.workPhase);
+  const tip = prev === 'Preparation'
+    ? 'Preparation: Awaiting client info'
+    : prev + ' not yet complete';
   return (
-    '<span class="PhaseWarnDot" title="' + tip.replace(/"/g, '&quot;') + '" aria-label="' + tip.replace(/"/g, '&quot;') + '">' +
+    '<span class="PhaseWarnDot" tabindex="0" aria-label="' + tip.replace(/"/g, '&quot;') + '">' +
       '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">' +
         '<circle cx="5" cy="5" r="5" fill="#e28a00"/>' +
         '<path d="M5 2.8V5.5" stroke="white" stroke-width="1.3" stroke-linecap="round"/>' +
         '<circle cx="5" cy="7.2" r="0.65" fill="white"/>' +
       '</svg>' +
+      '<span class="PhaseWarnDot-tip" role="tooltip">' + tip.replace(/</g, '&lt;') + '</span>' +
     '</span>'
   );
 }
@@ -4520,8 +4917,45 @@ function getDropZones(fromId, toId, task) {
   }
 
   if (toId === 'to-do') {
+    // In Progress → To Do: choose Scheduled vs Pooled section
+    if (fromId === 'in-progress' && task && !isNonWorkTask(task)) {
+      if (isScheduledTask(task)) {
+        return [
+          {
+            action: 'to-scheduled',
+            variant: 'neutral',
+            title: 'Keep scheduled',
+            sub: 'Move back to To Do and keep this week\u2019s booking',
+            icon: 'fa-regular fa-calendar',
+          },
+          {
+            action: 'to-pooled',
+            variant: 'neutral',
+            title: 'Move to pool',
+            sub: 'Remove this week\u2019s booking and leave unscheduled',
+            icon: 'fa-solid fa-layer-group',
+          },
+        ];
+      }
+      return [
+        {
+          action: 'to-scheduled',
+          variant: 'neutral',
+          title: 'Schedule for this week',
+          sub: 'Add a booking and put it on your plan',
+          icon: 'fa-regular fa-calendar-plus',
+        },
+        {
+          action: 'to-pooled',
+          variant: 'neutral',
+          title: 'Return to pool',
+          sub: 'Keep unscheduled \u2014 pick up later',
+          icon: 'fa-solid fa-layer-group',
+        },
+      ];
+    }
     return [
-      { action: 'forward', variant: 'neutral', title: 'To Do', sub: 'Move back to the backlog', icon: 'fa-solid fa-arrow-left' },
+      { action: 'forward', variant: 'neutral', title: 'To Do', sub: 'Move back to the backlog', icon: 'fa-solid fa-inbox' },
     ];
   }
 
@@ -4617,6 +5051,14 @@ function drawerTransitionFromZone(zone, toId) {
     actionLabel = 'Transition to';
     pillLabel = 'Done';
     pillTone = 'done';
+  } else if (zone.action === 'to-scheduled') {
+    actionLabel = zone.title || 'Schedule';
+    pillLabel = 'Scheduled';
+    pillTone = 'to-do';
+  } else if (zone.action === 'to-pooled') {
+    actionLabel = zone.title || 'Pool';
+    pillLabel = 'Pooled';
+    pillTone = 'to-do';
   } else if (zone.action === 'forward') {
     actionLabel = 'Transition to';
     pillLabel = (col && col.title) || zone.title;
@@ -4823,6 +5265,7 @@ function layoutCardTraits(traitsEl) {
   if (tipEl) tipEl.textContent = labels.join(', ');
   overflow.dataset.overflowTip = JSON.stringify(labels);
   overflow.setAttribute('aria-label', labels.length + ' more tags: ' + labels.join(', '));
+  overflow.title = labels.join(', ');
   overflow.hidden = labels.length === 0;
 }
 
@@ -5659,8 +6102,27 @@ function statusBadgesHtml(task, columnId, weekISO, isOnHold, isPending, isReturn
   if (isOnHold) parts.push('<span class="badge badge-danger--highlighted">On hold</span>');
   if (isPending) parts.push('<span class="badge badge-primary">Pending</span>');
   if (isReturned) parts.push('<span class="badge badge-warning">Reverted</span>');
-  if (task.clientInfoReceived === false && !isOnHold) parts.push('<span class="badge badge-warning">Awaiting client info</span>');
-  if (task.isReady && !isOnHold) parts.push('<span class="badge badge-success">Ready</span>');
+  /* One readiness signal only: prev-phase warn icon XOR awaiting-client XOR Ready/Not Ready */
+  const prevPhaseIncomplete = getPreviousPhaseStatus(task) === 'incomplete';
+  const isPrepPhase = /preparation/i.test(task.workPhase || '');
+  const awaitingClient = task.clientInfoReceived === false && !isOnHold && !prevPhaseIncomplete && isPrepPhase;
+  if (awaitingClient) {
+    parts.push(
+      '<span class="badge badge-warning has-tip" tabindex="0" aria-label="Awaiting client info">' +
+        'Awaiting client info' +
+        '<span class="badge-tip" role="tooltip">Waiting on client information before this phase can start</span>' +
+      '</span>'
+    );
+  } else if (!isJobCard(task) && !isOnHold && !isDone && !prevPhaseIncomplete) {
+    if (task.isReady) {
+      parts.push('<span class="badge badge-success">Ready</span>');
+    } else {
+      parts.push('<span class="badge badge-warning has-tip" tabindex="0" aria-label="Not Ready: This phase is not ready to start">' +
+        'Not Ready' +
+        '<span class="badge-tip" role="tooltip">This phase is not ready to start</span>' +
+      '</span>');
+    }
+  }
   if (isDone) parts.push(task.weekCompleteOnly
     ? '<span class="badge badge-success">Done this week</span>'
     : '<span class="badge badge-success">Done</span>');
@@ -5997,6 +6459,65 @@ function beginPendingMove(taskId, fromColumnId, toColumnId, action) {
   }
 }
 
+function ensureThisWeekBooking(task, weekISO) {
+  if (!task) return;
+  if (!task.bookings) task.bookings = [];
+  const existing = task.bookings.find(function (b) { return b.week === weekISO && !b.completed; });
+  if (existing) return;
+  const hrs = task.estimatedHours != null ? Number(task.estimatedHours) : 4;
+  task.bookings.push({
+    week: weekISO,
+    plannedHours: Math.round(hrs * 10) / 10,
+    effortLogged: 0,
+    completed: false,
+  });
+}
+
+function removeThisWeekBooking(task, weekISO) {
+  if (!task || !task.bookings) return;
+  task.bookings = task.bookings.filter(function (b) {
+    return !(b.week === weekISO && !b.completed);
+  });
+}
+
+/** In Progress → To Do section choice: Scheduled (booking + deadline) or Pooled (unscheduled). */
+function applyMoveToTodoSection(taskId, fromColumnId, section) {
+  const found = findTask(taskId);
+  if (!found) return;
+  const weekISO = getWeekISO(state.weekOffset);
+  const task = found.task;
+  const patch = {};
+
+  if (section === 'scheduled') {
+    ensureThisWeekBooking(task, weekISO);
+    if (!task.deadline) {
+      // Use Friday of the board week as a demo deadline label
+      const friday = new Date(weekISO + 'T12:00:00');
+      friday.setDate(friday.getDate() + 4);
+      patch.deadline = deadlineLabelFromISO(toISODate(friday));
+      if (task.status === 'overdue') patch.status = undefined;
+    }
+    patch.bookings = task.bookings;
+    if (!moveTask(taskId, fromColumnId, 'to-do', patch)) return;
+    renderBoard();
+    showToast('Moved to Scheduled');
+    return;
+  }
+
+  // pooled
+  removeThisWeekBooking(task, weekISO);
+  patch.bookings = task.bookings;
+  if (!moveTask(taskId, fromColumnId, 'to-do', patch)) return;
+  const after = findTask(taskId);
+  if (after) {
+    delete after.task.deadline;
+    delete after.task.status;
+    after.task.assignedTo = null;
+  }
+  renderBoard();
+  showToast('Moved to Pooled');
+}
+
 function handleDropAction(taskId, fromColumnId, toColumnId, action) {
   if (!taskId || !fromColumnId || !action || action === 'none') {
     if (action === 'none') showToast('That move isn’t allowed');
@@ -6008,6 +6529,16 @@ function handleDropAction(taskId, fromColumnId, toColumnId, action) {
       renderBoard();
       showToast('Moved to ' + columnTitle(toColumnId));
     }
+    return;
+  }
+
+  if (action === 'to-scheduled') {
+    applyMoveToTodoSection(taskId, fromColumnId, 'scheduled');
+    return;
+  }
+
+  if (action === 'to-pooled') {
+    applyMoveToTodoSection(taskId, fromColumnId, 'pooled');
     return;
   }
 
@@ -6116,7 +6647,8 @@ function handleColumnDrop(taskId, fromColumnId, toColumnId, action) {
   // Fallback when dropped on column chrome without a zone target
   const found = findTask(taskId);
   const zones = getDropZones(fromColumnId, toColumnId, found && found.task);
-  const primary = zones.find(z => !z.disabled && z.action !== 'none' && z.action !== 'push' && z.action !== 'defer' && z.action !== 'hold' && z.action !== 'revert')
+  const primary = zones.find(z => !z.disabled && (z.action === 'to-scheduled' || z.action === 'forward'))
+    || zones.find(z => !z.disabled && z.action !== 'none' && z.action !== 'push' && z.action !== 'defer' && z.action !== 'hold' && z.action !== 'revert' && z.action !== 'to-pooled')
     || zones.find(z => !z.disabled && z.action !== 'none');
   if (primary) {
     handleDropAction(taskId, fromColumnId, toColumnId, primary.action);
@@ -6639,15 +7171,18 @@ function drawerAlertsHtml(task, columnId, isBlocked, isReturned, isDone) {
     );
   }
 
-  // Amber notices — stack in one bordered card when 2+ (matches Phase TaskDrawer)
+  // Amber notices — one readiness reason only (Due soon lives on the Details due-date row, not here)
   const warnNotices = [];
-  if (task.status === 'due-soon' && task.status !== 'overdue') warnNotices.push('Due soon');
-  if (task.clientInfoReceived === false && !isBlocked) warnNotices.push('Awaiting client information');
-  if (
-    getPreviousPhaseStatus(task) === 'incomplete' &&
-    !isBlocked && !isReturned && !isPending && !isDone
-  ) {
-    warnNotices.push(getPreviousPhaseName(task.workPhase) + ' not yet complete');
+  const prevPhaseIncomplete = getPreviousPhaseStatus(task) === 'incomplete';
+  if (prevPhaseIncomplete && !isBlocked && !isReturned && !isPending && !isDone) {
+    const prev = getPreviousPhaseName(task.workPhase);
+    warnNotices.push(
+      prev === 'Preparation'
+        ? 'Preparation: Awaiting client info'
+        : prev + ' not yet complete'
+    );
+  } else if (task.clientInfoReceived === false && !isBlocked && /preparation/i.test(task.workPhase || '')) {
+    warnNotices.push('Awaiting client information');
   }
   if (warnNotices.length === 1) {
     cards.push(
@@ -6743,56 +7278,185 @@ function milestoneCardsHtml(task, columnId, weekISO) {
     Math.round(est * 0.3 * 10) / 10,
     Math.round(est * 0.2 * 10) / 10,
   ];
-  const previewIndexes = {};
-  previewIndexes[currentIdx] = true;
-  if (currentIdx + 1 < phases.length) previewIndexes[currentIdx + 1] = true;
 
   const cards = phases.map(function (phase, phaseIdx) {
     const state = resolveMilestoneState(task, columnId, phaseIdx, phaseImpact, completedPhases, currentIdx);
-    const isPhaseCompleted = phaseIdx < completedPhases;
-    const dateLabel = isPhaseCompleted ? 'Done' : timelineLabels[phaseIdx];
-    let dateTone = '';
-    if (state === 'returned') dateTone = 'is-warn';
-    if (state === 'onhold') dateTone = 'is-danger';
-    if (state === 'due-soon') dateTone = 'is-warn'; // schedule compression only
-    const cardOpts = {
-      state: state,
-      label: phase,
-      dateLabel: dateLabel,
-      dateTone: dateTone,
-      hours: phaseHours[phaseIdx],
-      showTime: false,
-      showAvatar: false,
-      avatarInitials: '',
-      avatarName: '',
-    };
-    // Every phase nests ≥1 booking; assignee lives on booking rows only (not phase row).
-    const bookingsParts = phaseBookingsMilestonesHtml(
+    const isPhaseActive = phaseIdx === currentIdx && (columnId === 'in-progress' || columnId === 'blocked') && phaseIdx >= completedPhases;
+    const dateLabel = timelineLabels[phaseIdx];
+    const panelKey = 'ms-phase-' + phaseIdx;
+    const startOpen = isPhaseActive || state === 'inprogress' || phaseIdx === currentIdx;
+
+    const bookingsInner = phaseBookingsTimelineHtml(
       task, columnId, weekISO, phaseIdx, currentIdx, completedPhases, phaseHours[phaseIdx]
     );
-    const cardHtml = bookingsParts
-      ? milestoneCardStackHtml(cardOpts, bookingsParts)
-      : milestoneCardHtml(cardOpts);
-    const isExtra = !previewIndexes[phaseIdx];
+    const hasBookings = !!bookingsInner;
+
+    let iconHtml;
+    if (hasBookings) {
+      /* Chevron doubles as expand affordance; rotates when aria-expanded */
+      const iconCls = (isPhaseActive || state === 'inprogress')
+        ? 'MilestoneIcon MilestoneIcon--active'
+        : (state === 'onhold' ? 'MilestoneIcon MilestoneIcon--onhold' : 'MilestoneIcon MilestoneIcon--next');
+      iconHtml = '<span class="' + iconCls + '" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>';
+    } else if (isPhaseActive || state === 'inprogress') {
+      iconHtml = '<span class="MilestoneIcon MilestoneIcon--active" aria-hidden="true"><i class="fa-solid fa-exclamation"></i></span>';
+    } else if (state === 'onhold') {
+      iconHtml = milestoneIconHtml('onhold');
+    } else {
+      iconHtml = '<span class="MilestoneIcon MilestoneIcon--next" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>';
+    }
+
+    const panelId = panelKey + '-panel';
+    const bookingsPanel = hasBookings
+      ? ('<div id="' + panelId + '" class="Drawer-animPanel Drawer-msBookingsPanel' + (startOpen ? ' is-open' : '') + '" data-drawer-panel="' + panelKey + '">' +
+          '<div class="Drawer-animPanelInner">' + bookingsInner + '</div>' +
+        '</div>')
+      : '';
+
+    const headTag = hasBookings ? 'button' : 'div';
+    const headAttrs = hasBookings
+      ? (' type="button" data-drawer-collapse="' + panelKey + '" aria-expanded="' + (startOpen ? 'true' : 'false') + '"' +
+          ' aria-controls="' + panelId + '"')
+      : '';
+
     return (
-      '<div class="Drawer-milestoneItem' + (isExtra ? ' is-timelineExtra' : '') + '">' +
-        cardHtml +
+      '<div class="Drawer-msGroup">' +
+        '<' + headTag + ' class="Drawer-msHead' + (isPhaseActive || state === 'inprogress' ? ' is-active' : '') + '"' + headAttrs + '>' +
+          iconHtml +
+          '<p class="Drawer-msTitle">' + phase + '</p>' +
+          '<span class="Drawer-msDate"><i class="fa-regular fa-calendar" aria-hidden="true"></i>' + dateLabel + '</span>' +
+        '</' + headTag + '>' +
+        bookingsPanel +
       '</div>'
     );
   });
 
-  const hasExtra = phases.some(function (_p, i) { return !previewIndexes[i]; });
-  // Deadline date urgency is shown only in Engagement Details — no Deadline milestone card.
+  const deadlineDate = timeline.deadline || task.deadline || '—';
+  const clientDelivery = timeline.secondReview || deadlineDate;
+
   return (
-    '<div class="Drawer-milestones" data-timeline-collapsed="true">' +
+    '<div class="Drawer-milestones">' +
       cards.join('') +
-      (hasExtra
-        ? ('<button type="button" class="Drawer-timelineToggle" data-drawer-timeline-toggle aria-expanded="false">' +
-            'Show full timeline' +
-          '</button>')
-        : '') +
+      '<div class="Drawer-msDeadline">' +
+        '<span class="MilestoneIcon MilestoneIcon--next" aria-hidden="true"><i class="fa-regular fa-calendar"></i></span>' +
+        '<p class="Drawer-msDeadlineTitle">Client Delivery Deadline</p>' +
+        '<span class="Drawer-msDate"><i class="fa-regular fa-calendar" aria-hidden="true"></i>' + escapeHtml(String(clientDelivery)) + '</span>' +
+      '</div>' +
+      '<div class="Drawer-msDeadline">' +
+        '<span class="MilestoneIcon MilestoneIcon--next" aria-hidden="true"><i class="fa-regular fa-calendar"></i></span>' +
+        '<p class="Drawer-msDeadlineTitle">Statutory Deadline</p>' +
+        '<span class="Drawer-msDate"><i class="fa-regular fa-calendar" aria-hidden="true"></i>' + escapeHtml(String(deadlineDate)) + '</span>' +
+      '</div>' +
     '</div>'
   );
+}
+
+function bookingStatusBadgeHtml(meta) {
+  if (!meta) return '<span class="Badge Badge--sm Badge--neutral">To do</span>';
+  if (meta.state === 'done') return '<span class="Badge Badge--sm Badge--success">Done</span>';
+  if (meta.state === 'inprogress') return '<span class="Badge Badge--sm Badge--info">In Progress</span>';
+  if (meta.state === 'onhold') return '<span class="Badge Badge--sm Badge--danger">On Hold</span>';
+  if (meta.state === 'returned') return '<span class="Badge Badge--sm Badge--warning">Reverted</span>';
+  return '<span class="Badge Badge--sm Badge--neutral">To do</span>';
+}
+
+function shortDateFromWeekISO(weekISO) {
+  if (!weekISO) return '—';
+  return deadlineLabelFromISO(weekISO) || weekISO;
+}
+
+function phaseBookingsTimelineHtml(task, columnId, weekISO, phaseIdx, currentIdx, completedPhases, phaseHours) {
+  if (!task || isNonWorkTask(task)) return '';
+  ensureDemoPhaseBookings(task, phaseIdx, weekISO, currentIdx, completedPhases, phaseHours);
+  let list = getOrCreatePhaseBookings(task, phaseIdx, weekISO, currentIdx, completedPhases, phaseHours).slice();
+  // Display-only density for the current phase (does not mutate capacity bookings)
+  if (phaseIdx === currentIdx && list.length && list.length < 4) {
+    list = padDisplayBookings(list, weekISO, task, columnId, 4);
+  } else if (phaseIdx !== currentIdx && list.length && list.length < 2) {
+    list = padDisplayBookings(list, weekISO, task, columnId, 2);
+  }
+  if (!list.length) return '';
+
+  const rows = list.map(function (b) {
+    const meta = resolveBookingMilestoneMeta(b, weekISO, task, columnId, phaseIdx === currentIdx);
+    const assignee = resolveBookingAssignee(b, task, columnId, phaseIdx, currentIdx);
+    const dateTone = (meta.state === 'inprogress' || (phaseIdx === currentIdx && task.status === 'due-soon' && !b.completed)) ? ' is-warn'
+      : (meta.state === 'returned' || (task.status === 'overdue' && !b.completed)) ? ' is-danger' : '';
+    const dateLabel = shortDateFromWeekISO(b.week);
+    const effortLabel = formatEffortHours(b.plannedHours != null ? b.plannedHours : phaseHours);
+    return (
+      '<div class="Drawer-msBooking">' +
+        '<p class="Drawer-msBookingEffort">' + escapeHtml(effortLabel) + '</p>' +
+        '<p class="Drawer-msBookingDate' + dateTone + '">' + dateLabel + '</p>' +
+        '<div class="Drawer-msBookingStatus">' + bookingStatusBadgeHtml(meta) + '</div>' +
+        '<div class="Drawer-msBookingAvatar">' +
+          staffAvatarHtml(assignee ? assignee.initials : '', assignee ? assignee.name : '') +
+        '</div>' +
+      '</div>'
+    );
+  });
+
+  return '<div class="Drawer-msBookings">' + rows.join('') + '</div>';
+}
+
+function padDisplayBookings(list, weekISO, task, columnId, targetCount) {
+  const out = list.map(function (b) { return Object.assign({}, b); });
+  const staffPool = [
+    { initials: CURRENT_USER.initials, name: CURRENT_USER.name },
+    { initials: 'DL', name: 'Dana Lee' },
+    { initials: 'SC', name: 'Sam Chen' },
+    { initials: 'SM', name: 'Sara Mills' },
+    { initials: 'MJ', name: 'Morgan Jones' },
+  ];
+  const want = targetCount || 3;
+  while (out.length < want) {
+    const i = out.length;
+    const base = list[0];
+    out.unshift({
+      week: shiftISODays(base.week || weekISO, -7 * (want - out.length)),
+      plannedHours: base.plannedHours || 2,
+      effortLogged: base.plannedHours || 2,
+      completed: true,
+      assignedTo: staffPool[i % staffPool.length],
+      _displayOnly: true,
+    });
+  }
+  if (columnId === 'in-progress' && out.length) {
+    const last = out[out.length - 1];
+    if (!last.completed) {
+      last.assignedTo = last.assignedTo || { initials: CURRENT_USER.initials, name: CURRENT_USER.name };
+    }
+  }
+  return out;
+}
+
+function ensureDemoPhaseBookings(task, phaseIdx, weekISO, currentIdx, completedPhases, phaseHours) {
+  // Never mutate live task.bookings (capacity) — only pad synthetic phase booking lists
+  if (phaseIdx === currentIdx) return;
+  if (!task._phaseBookings) task._phaseBookings = {};
+  const existing = task._phaseBookings[phaseIdx];
+  if (existing && existing.length >= 2) return;
+  const isCompleted = phaseIdx < completedPhases;
+  const staffPool = [
+    { initials: 'AL', name: 'Arron Leishman' },
+    { initials: 'DL', name: 'Dana Lee' },
+    { initials: 'SC', name: 'Sam Chen' },
+    { initials: 'SM', name: 'Sara Mills' },
+    { initials: 'MJ', name: 'Morgan Jones' },
+  ];
+  const weekOffsetWeeks = phaseIdx - currentIdx;
+  const bookingWeek = shiftISODays(weekISO, weekOffsetWeeks * 7);
+  const hours = phaseHours > 0 ? phaseHours : 1;
+  task._phaseBookings[phaseIdx] = [0, 1].map(function (i) {
+    const staff = staffPool[(phaseIdx * 2 + i) % staffPool.length];
+    return {
+      week: shiftISODays(bookingWeek, i * 2),
+      plannedHours: Math.max(1, Math.round((hours / 2) * 10) / 10),
+      effortLogged: isCompleted ? Math.max(1, Math.round((hours / 2) * 10) / 10) : 0,
+      completed: isCompleted,
+      assignedTo: { initials: staff.initials, name: staff.name },
+    };
+  });
 }
 
 function getOrCreatePhaseBookings(task, phaseIdx, weekISO, currentIdx, completedPhases, phaseHours) {
@@ -6938,16 +7602,19 @@ function getDrawerExpandState() {
 
 function applyDrawerExpandState(state) {
   if (!state) return;
-  (state.openPanels || []).forEach(function (key) {
-    const panel = document.querySelector('#drawerBody [data-drawer-panel="' + key + '"]');
+  const openSet = {};
+  (state.openPanels || []).forEach(function (key) { openSet[key] = true; });
+  document.querySelectorAll('#drawerBody [data-drawer-panel]').forEach(function (panel) {
+    const key = panel.getAttribute('data-drawer-panel');
+    if (!key) return;
+    const nextOpen = !!openSet[key];
     const btn = document.querySelector('#drawerBody [data-drawer-collapse="' + key + '"]');
-    if (!panel) return;
     if (panel.classList.contains('Drawer-animPanel')) {
-      panel.classList.add('is-open');
+      panel.classList.toggle('is-open', nextOpen);
     } else {
-      panel.hidden = false;
+      panel.hidden = !nextOpen;
     }
-    if (btn) btn.setAttribute('aria-expanded', 'true');
+    if (btn) btn.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
   });
   const milestones = document.querySelector('#drawerBody .Drawer-milestones');
   const toggle = document.querySelector('#drawerBody [data-drawer-timeline-toggle]');
@@ -6958,6 +7625,119 @@ function applyDrawerExpandState(state) {
       toggle.textContent = 'Show less';
     }
   }
+}
+
+function drawerTraitTagsHtml(task) {
+  const all = allTaxLabels(task);
+  if (!all.length) return '';
+  const chips = all.map(function (t) {
+    return '<span class="badge badge-secondary tax">' + escapeHtml(t) + '</span>';
+  }).join('');
+  return (
+    '<div class="Drawer-traitRow" data-drawer-traits>' +
+      chips +
+      '<span class="badge badge-secondary tax card-overflow" hidden tabindex="0" aria-label="More tags">' +
+        '<span class="card-overflow-count">+0</span>' +
+        '<span class="card-overflow-tip" role="tooltip"></span>' +
+      '</span>' +
+    '</div>'
+  );
+}
+
+function drawerSignalBadgeHtml(task, columnId, isBlocked) {
+  if (isJobCard(task) || isBlocked || columnId === 'done') return '';
+  if (getPreviousPhaseStatus(task) === 'incomplete') {
+    return '<span class="Drawer-detailBadge Drawer-detailBadge--warning">Not Ready</span>';
+  }
+  if (task.clientInfoReceived === false && /preparation/i.test(task.workPhase || '')) {
+    return '<span class="Drawer-detailBadge Drawer-detailBadge--warning">Awaiting client info</span>';
+  }
+  if (task.isReady) return '<span class="Drawer-detailBadge Drawer-detailBadge--success">Ready</span>';
+  return '<span class="Drawer-detailBadge Drawer-detailBadge--warning">Not Ready</span>';
+}
+
+function drawerDetailsHtml(task, columnId, phase, showPhases, weekISO) {
+  const assignee = resolveAssignee(task, columnId);
+  const assigneeHtml = assignee
+    ? ('<span class="Drawer-detailAssignee">' +
+        staffAvatarHtml(assignee.initials, assignee.name) +
+        '<span class="Drawer-detailAssigneeName">' + escapeHtml(assignee.name) + '</span>' +
+      '</span>')
+    : '<span style="color:var(--text-subtle);font-weight:400">Unassigned</span>';
+
+  const phaseHtml = showPhases && phase
+    ? '<span class="Drawer-detailBadge">' + escapeHtml(phase) + '</span>'
+    : '—';
+
+  const scheduledValue = getPhaseScheduledLabel(task, weekISO);
+  const dueValue = task.deadline ? task.deadline : '—';
+  let dueTone = '';
+  let dueBadge = '';
+  if (task.deadline && task.status === 'overdue') {
+    dueTone = ' is-danger';
+    dueBadge = '<span class="Drawer-detailBadge Drawer-detailBadge--danger">Overdue</span>';
+  } else if (task.deadline && task.status === 'due-soon') {
+    dueTone = ' is-warn';
+    dueBadge = '<span class="Drawer-detailBadge Drawer-detailBadge--warn">Due Soon</span>';
+  }
+
+  const effortSummary = getTaskEffortSummary(task);
+  const effortLabel = effortSummary.estimated != null
+    ? formatEffortHours(effortSummary.estimated)
+    : '—';
+
+  const signal = drawerSignalBadgeHtml(task, columnId, !!task.blockingReason && !task.returnedReason);
+
+  const rows = [
+    { icon: 'fa-regular fa-user', label: 'Assignee', value: assigneeHtml },
+  ];
+  if (showPhases) {
+    rows.push({ icon: 'fa-regular fa-flag', label: 'Phase', value: phaseHtml });
+  }
+  rows.push(
+    {
+      icon: 'fa-regular fa-calendar',
+      label: 'Scheduled Date',
+      value: escapeHtml(String(scheduledValue)),
+    },
+    {
+      icon: 'fa-regular fa-calendar-check',
+      label: 'Due Date',
+      value: escapeHtml(String(dueValue)) + (dueBadge || ''),
+      valueClass: dueTone,
+    },
+    { icon: 'fa-regular fa-clock', label: 'Estimated Effort', value: escapeHtml(effortLabel) }
+  );
+  if (signal) {
+    /* Figma 4753:99038 reuses the time/clock icon for Signal */
+    rows.push({ icon: 'fa-regular fa-clock', label: 'Signal', value: signal });
+  }
+
+  return (
+    '<div class="Drawer-detailsList">' +
+      rows.map(function (row) {
+        return (
+          '<div class="Drawer-detailRow">' +
+            '<span class="Drawer-detailLabel"><i class="' + row.icon + '" aria-hidden="true"></i>' + row.label + '</span>' +
+            '<div class="Drawer-detailValue' + (row.valueClass || '') + '">' + row.value + '</div>' +
+          '</div>'
+        );
+      }).join('') +
+    '</div>'
+  );
+}
+
+/** When work is booked to be done (vs Due Date = deadline). */
+function getPhaseScheduledLabel(task, weekISO) {
+  if (!task) return '—';
+  const bookings = task.bookings || [];
+  if (!bookings.length) {
+    return isPooledTask(task) ? 'Unscheduled' : '—';
+  }
+  const match = bookings.find(function (b) { return b.week === weekISO; })
+    || bookings.find(function (b) { return !b.completed; })
+    || bookings[0];
+  return shortDateFromWeekISO(match.week) || '—';
 }
 
 function renderDrawer() {
@@ -6976,52 +7756,15 @@ function renderDrawer() {
   const isBlocked = !!task.blockingReason && !task.returnedReason;
   const isReturned = !!task.returnedReason && !task.blockingReason;
   const isDone = columnId === 'done';
-  const taxInfo = getTaxInfo(task);
   const phase = taskPhaseLabel(task);
   const showPhases = !isJobCard(task) && !!phase;
   const weekISO = getWeekISO(state.weekOffset);
 
   const alerts = drawerAlertsHtml(task, columnId, isBlocked, isReturned, isDone);
   const milestones = showPhases ? milestoneCardsHtml(task, columnId, weekISO) : '';
-  const effortSummary = getTaskEffortSummary(task);
-  const deadlineMilestoneState =
-    task.status === 'overdue' ? 'onhold' :
-    task.status === 'due-soon' ? 'due-soon' :
-    'deadline';
-
-  const taxTypes = taxLabel(task);
-  const deadlineValue = task.deadline
-    ? task.deadline
-    : (isPooledTask(task) ? 'Unscheduled' : '—');
-  const deadlineValueStyle =
-    task.deadline && task.status === 'overdue' ? ' style="color:#a3003c"' :
-    task.deadline && task.status === 'due-soon' ? ' style="color:#b65800"' :
-    (!task.deadline ? ' style="color:#6a708f;font-weight:600"' : '');
-
-  const engagementDetails =
-    '<div class="Drawer-section">' +
-      '<h3>Engagement Details</h3>' +
-      '<div class="Drawer-engagementCard">' +
-        '<div class="Drawer-engagementRow">' +
-          milestoneIconHtml(deadlineMilestoneState) +
-          '<div class="Drawer-engagementBody">' +
-            '<p class="Drawer-label">Deadline</p>' +
-            '<p class="Drawer-value"' + deadlineValueStyle + '>' + deadlineValue + '</p>' +
-          '</div>' +
-        '</div>' +
-        (!isNonWorkTask(task) && taxTypes.length
-          ? ('<div class="Drawer-engagementRow">' +
-              '<span class="Drawer-engagementIcon"><i class="fa-regular fa-file-lines" aria-hidden="true"></i></span>' +
-              '<div class="Drawer-engagementBody">' +
-                '<p class="Drawer-label">Tax types</p>' +
-                '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">' +
-                  taxTypes.map(t => '<span class="Drawer-taxChip">' + t + '</span>').join('') +
-                '</div>' +
-              '</div>' +
-            '</div>')
-          : '') +
-      '</div>' +
-    '</div>';
+  const traits = drawerTraitTagsHtml(task);
+  const details = drawerDetailsHtml(task, columnId, phase, showPhases, weekISO);
+  const detailsTitle = showPhases ? 'Current Phase Details' : 'Details';
 
   const priorityMark = task.isPriority
     ? '<img class="Drawer-priorityCorner" src="' + PRIORITY_CORNER_URI + '" alt="" />'
@@ -7030,70 +7773,48 @@ function renderDrawer() {
   document.getElementById('drawerBody').innerHTML =
     '<div class="Drawer-header">' +
       priorityMark +
-      '<div class="Drawer-titleRow">' +
-        '<div class="Drawer-titleBlock">' +
-          '<a class="Drawer-jobLink" id="drawerTitle" href="' + jobHref + '" data-job-link="' + String(task.id).replace(/"/g, '') + '"' +
-            ' title="Open job ' + String(jobCode).replace(/"/g, '&quot;') + '">' +
-            escapeHtml(jobCode) +
-          '</a>' +
-          '<p class="Drawer-company">' + escapeHtml(jobSubtitle || title) + '</p>' +
+      '<div class="Drawer-headerTop">' +
+        '<div class="Drawer-headerMain">' +
+          (traits || '') +
+          '<div class="Drawer-titleBlock">' +
+            '<a class="Drawer-jobLink" id="drawerTitle" href="' + jobHref + '" data-job-link="' + String(task.id).replace(/"/g, '') + '"' +
+              ' title="Open engagement ' + String(jobCode).replace(/"/g, '&quot;') + '">' +
+              escapeHtml(title) +
+            '</a>' +
+            '<p class="Drawer-company">' + escapeHtml(jobSubtitle || task.company || '') + '</p>' +
+          '</div>' +
+          '<div class="Drawer-headerBadges">' +
+            statusMenuHtml(columnId, task) +
+          '</div>' +
         '</div>' +
         '<button type="button" class="Drawer-close" id="drawerClose" aria-label="Close task details"><i class="fa-solid fa-xmark"></i></button>' +
       '</div>' +
-      '<div class="Drawer-headerBadges">' +
-        statusMenuHtml(columnId, task) +
-        (showPhases && phase ? '<span class="badge badge-phase">' + phase + '</span>' : '') +
-        (task.isReady && !isBlocked ? '<span class="badge badge-success">Ready</span>' : '') +
-      '</div>' +
     '</div>' +
     (alerts ? '<div class="Drawer-section" style="gap:12px">' + alerts + '</div>' : '') +
-    engagementDetails +
+    '<div class="Drawer-section Drawer-section--details">' +
+      '<h3>' + detailsTitle + '</h3>' +
+      details +
+    '</div>' +
     (showPhases
       ? ('<div class="Drawer-section">' +
           '<h3>Milestones</h3>' +
           milestones +
         '</div>')
-      : '') +
-    '<div class="Drawer-section" style="gap:8px">' +
-      '<h3>Effort</h3>' +
-      '<div class="Drawer-effortStats">' +
-        '<div class="Drawer-effortStat">' +
-          '<p class="Drawer-label">Estimated</p>' +
-          '<p class="Drawer-value">' + formatEffortHours(effortSummary.estimated) + '</p>' +
-        '</div>' +
-        '<div class="Drawer-effortStat">' +
-          '<p class="Drawer-label">Logged</p>' +
-          '<p class="Drawer-value">' + formatEffortHours(effortSummary.logged) + '</p>' +
-        '</div>' +
-        '<div class="Drawer-effortStat">' +
-          '<p class="Drawer-label">Remaining</p>' +
-          '<p class="Drawer-value">' + formatEffortHours(effortSummary.remaining) + '</p>' +
-        '</div>' +
-      '</div>' +
-    '</div>' +
-    '<div class="Drawer-section" style="gap:16px">' +
-      '<div class="Drawer-sectionHeading">' +
-        '<button type="button" class="Drawer-collapseBtn" data-drawer-collapse="tax" aria-expanded="false">' +
-          '<span class="chevron" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>' +
-          '<h3>Tax Information</h3>' +
-        '</button>' +
-        '<button type="button" class="Btn Btn--tertiary">Open Workflow</button>' +
-      '</div>' +
-      '<div class="Drawer-collapsePanel Drawer-taxGrid" data-drawer-panel="tax" hidden>' +
-        '<div><p class="Drawer-label">Service type</p><p class="Drawer-value">' + taxInfo.serviceType + '</p></div>' +
-        '<div><p class="Drawer-label">Fiscal Year End</p><p class="Drawer-value">' + taxInfo.fiscalYearEnd + '</p></div>' +
-        '<div><p class="Drawer-label">Entity Type</p><p class="Drawer-value">' + taxInfo.entityType + '</p></div>' +
-        '<div><p class="Drawer-label">Speciality</p><p class="Drawer-value">' + taxInfo.speciality + '</p></div>' +
-      '</div>' +
-    '</div>';
+      : '');
 
-  // Status transitions live in the header StatusMenu (Jira-style); footer kept for future secondary actions.
   document.getElementById('drawerFooter').innerHTML = '';
   document.getElementById('drawerFooter').hidden = true;
   document.getElementById('drawerClose').onclick = closeDrawer;
   bindDrawerStatusMenu();
   ui._drawerRenderedTaskId = task.id;
   applyDrawerExpandState(expandState);
+  // Fit trait overflow after drawer paints (width must be measurable)
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      const traitRow = document.querySelector('#drawerBody [data-drawer-traits]');
+      if (traitRow) layoutCardTraits(traitRow);
+    });
+  });
 }
 
 function setDrawerStatusMenuOpen(open) {
@@ -8944,7 +9665,8 @@ document.getElementById('drawerBody').addEventListener('click', (e) => {
   const collapse = e.target.closest('[data-drawer-collapse]');
   if (collapse) {
     const key = collapse.dataset.drawerCollapse;
-    const wrap = collapse.closest('.Drawer-bookingsWrap')
+    const wrap = collapse.closest('.Drawer-msGroup')
+      || collapse.closest('.Drawer-bookingsWrap')
       || collapse.closest('.Drawer-milestoneStack')
       || collapse.closest('.Drawer-section');
     const panel = (wrap && wrap.querySelector('[data-drawer-panel="' + key + '"]'))
@@ -9400,6 +10122,40 @@ document.getElementById('board').addEventListener('focusout', function (e) {
   if (_cardOverflowTipAnchor === overflow) hideCardOverflowTip();
 });
 document.getElementById('board').addEventListener('scroll', hideCardOverflowTip, true);
+
+/* Drawer trait +N tip (same portal as card overflow) */
+(function bindDrawerTraitOverflow() {
+  const drawer = document.getElementById('taskDrawer');
+  if (!drawer) return;
+  drawer.addEventListener('mouseover', function (e) {
+    const overflow = e.target.closest('.card-overflow');
+    if (!overflow || overflow.hidden) return;
+    if (_cardOverflowTipAnchor === overflow) return;
+    showCardOverflowTip(overflow);
+  });
+  drawer.addEventListener('mouseout', function (e) {
+    const overflow = e.target.closest('.card-overflow');
+    if (!overflow) return;
+    const next = e.relatedTarget && e.relatedTarget.closest
+      ? e.relatedTarget.closest('.card-overflow')
+      : null;
+    if (next === overflow) return;
+    if (_cardOverflowTipAnchor === overflow) hideCardOverflowTip();
+  });
+  drawer.addEventListener('focusin', function (e) {
+    const overflow = e.target.closest('.card-overflow');
+    if (overflow) showCardOverflowTip(overflow);
+  });
+  drawer.addEventListener('focusout', function (e) {
+    const overflow = e.target.closest('.card-overflow');
+    if (!overflow) return;
+    const next = e.relatedTarget && e.relatedTarget.closest
+      ? e.relatedTarget.closest('.card-overflow')
+      : null;
+    if (next === overflow) return;
+    if (_cardOverflowTipAnchor === overflow) hideCardOverflowTip();
+  });
+})();
 window.addEventListener('scroll', function () {
   if (_cardOverflowTipEl) hideCardOverflowTip();
 }, true);
