@@ -66,6 +66,11 @@
     --border-radius-lg: 8px;
     --border-radius-circle: 100px;
     --shadow-footer: 0 -4px 10px rgba(39, 35, 61, 0.08);
+    /* Gantt aggregation phase colours (gantt-resource-breakdown) */
+    --phase-preparation: #2398f2;
+    --phase-first-review: #2d7d46;
+    --phase-second-review: #7b3fa0;
+    --phase-sign-off: #c24cad;
 }
 
 * { box-sizing: border-box; }
@@ -281,13 +286,42 @@ button, input { font-family: inherit; }
 #phaseValue .Tag { flex: 0 0 auto; }
 .Tag--more {
     background: var(--surface-subtle-dark); border-color: var(--border-subtle); color: var(--text-subtle);
+    gap: 0; padding: 0 8px;
 }
+.Tag--more .Tag-swatch { display: none; }
 .Assoc-empty { color: var(--text-subtle); }
 .Tag {
-    display: inline-flex; align-items: center; height: 22px; padding: 0 8px;
-    border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
-    background: var(--surface-default); color: var(--text-default); font-size: var(--font-size-small);
+    display: inline-flex; align-items: center; gap: 6px; min-height: 22px; height: 22px;
+    padding: 0 6px 0 4px;
+    border: 1px solid var(--phase-badge-border, var(--border-default));
+    border-radius: var(--border-radius-default);
+    background: var(--phase-badge-bg, var(--surface-default));
+    color: var(--text-default); font-size: var(--font-size-small);
     font-weight: var(--font-weight-semibold);
+}
+.Tag-swatch {
+    flex: 0 0 auto; width: 10px; height: 10px; border-radius: 2px;
+    background: var(--phase-badge-accent, var(--border-default));
+}
+.Tag--preparation {
+    --phase-badge-accent: var(--phase-preparation);
+    --phase-badge-border: #7bc4f7;
+    --phase-badge-bg: #e8f5fe;
+}
+.Tag--first-review {
+    --phase-badge-accent: var(--phase-first-review);
+    --phase-badge-border: #7aaf8a;
+    --phase-badge-bg: #e8f3ec;
+}
+.Tag--second-review {
+    --phase-badge-accent: var(--phase-second-review);
+    --phase-badge-border: #b08ecc;
+    --phase-badge-bg: #f3ebf8;
+}
+.Tag--sign-off {
+    --phase-badge-accent: var(--phase-sign-off);
+    --phase-badge-border: #dfa0d4;
+    --phase-badge-bg: #f9ebf6;
 }
 .Tag[hidden] { display: none !important; }
 .Pencil {
@@ -336,7 +370,7 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
 }
 .ModalOverlay.is-open { display: flex; }
 .Modal {
-    width: min(560px, 100%); max-height: calc(100vh - 48px);
+    width: min(640px, 100%); max-height: calc(100vh - 48px);
     display: flex; flex-direction: column; overflow: hidden;
     border-radius: var(--border-radius-default); background: var(--surface-default);
     box-shadow: var(--shadow-footer);
@@ -365,15 +399,36 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
 }
 .PhaseEditor-rows { display: flex; flex-direction: column; max-height: min(320px, 42vh); overflow-y: auto; }
 .PhaseEditor-empty { padding: 12px; color: var(--text-subtle); font-size: var(--font-size-small); }
-.PhaseRow {
-    display: grid; grid-template-columns: 20px minmax(0, 1fr) 35px;
-    align-items: center; column-gap: 12px; padding: 8px 12px;
+.PhaseColHead, .PhaseRow {
+    display: grid; grid-template-columns: 20px minmax(0, 1fr) minmax(148px, 160px) 35px;
+    align-items: center; column-gap: 12px;
 }
+.PhaseColHead {
+    padding: 8px 12px; color: var(--text-subtle);
+    font-size: var(--font-size-small); font-weight: var(--font-weight-semibold);
+    border-bottom: 1px solid var(--border-subtle);
+}
+.PhaseRow { padding: 8px 12px; }
 .PhaseBlock { border-top: 1px solid var(--border-subtle); }
 .PhaseBlock:first-child { border-top: 0; }
 .PhaseBlock.is-dropTarget { box-shadow: inset 0 1px 0 0 var(--border-subtle); }
 .PhaseRow .Btn-iconOnly { width: 35px; height: 35px; min-height: 35px; }
-.PhaseRow-name { display: flex; align-items: center; min-width: 0; }
+.PhaseRow-name { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.PhaseRow-name .Tag-swatch {
+    background: var(--phase-badge-accent, var(--border-default));
+}
+.PhaseRow-name.PhaseTone--preparation {
+    --phase-badge-accent: var(--phase-preparation);
+}
+.PhaseRow-name.PhaseTone--first-review {
+    --phase-badge-accent: var(--phase-first-review);
+}
+.PhaseRow-name.PhaseTone--second-review {
+    --phase-badge-accent: var(--phase-second-review);
+}
+.PhaseRow-name.PhaseTone--sign-off {
+    --phase-badge-accent: var(--phase-sign-off);
+}
 .PhaseRow-handle {
     display: inline-flex; align-items: center; justify-content: center;
     width: 20px; height: 20px; padding: 0; border: 0; background: transparent;
@@ -391,6 +446,22 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
 }
 .Select:focus { border-color: var(--border-primary); }
 .PhaseRow-name .Select { flex: 1 1 auto; min-width: 0; }
+.PhaseRow-name .Tag-swatch { flex: 0 0 auto; }
+.PhaseDueWrap {
+    display: flex; align-items: center; min-width: 0;
+}
+.PhaseDue {
+    width: 100%; min-width: 0; height: 35px; padding: 0 8px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--border-radius-default);
+    background: var(--surface-default);
+    color: var(--text-default);
+    font-family: inherit; font-size: var(--font-size-medium);
+}
+.PhaseDue:focus {
+    outline: none;
+    border-color: var(--border-primary);
+}
 .PhaseEditor-actions {
     display: flex; justify-content: flex-start; padding: 12px;
     border-top: 1px solid var(--border-subtle);
@@ -712,9 +783,15 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
         </div>
         <div class="Modal-body">
             <div class="PhaseEditor">
+                <div class="PhaseColHead">
+                    <span aria-hidden="true"></span>
+                    <span>Phase</span>
+                    <span>End date</span>
+                    <span></span>
+                </div>
                 <div class="PhaseEditor-rows" id="phaseRows"></div>
                 <div class="PhaseEditor-actions">
-                    <button class="Btn Btn--primary Btn--sm" type="button" id="addPhaseBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add Phase</button>
+                    <button class="Btn Btn--secondary Btn--sm" type="button" id="addPhaseBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add Phase</button>
                 </div>
             </div>
         </div>
@@ -760,6 +837,18 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
         return PHASE_TYPES.filter(function (item) { return item.id === id; })[0];
     }
 
+    function phaseTagClass(id) {
+        return "Tag Tag--" + (id || "preparation");
+    }
+
+    function appendPhaseSwatch(el) {
+        var swatch = document.createElement("span");
+        swatch.className = "Tag-swatch";
+        swatch.setAttribute("aria-hidden", "true");
+        el.appendChild(swatch);
+        return swatch;
+    }
+
     function renderValue() {
         value.innerHTML = "";
         if (!savedPhases.length) {
@@ -773,8 +862,10 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
             var phase = phaseType(item.id);
             if (!phase) return;
             var tag = document.createElement("span");
-            tag.className = "Tag";
-            tag.textContent = phase.name;
+            tag.className = phaseTagClass(item.id);
+            tag.dataset.phaseName = phase.name;
+            appendPhaseSwatch(tag);
+            tag.appendChild(document.createTextNode(phase.name));
             value.appendChild(tag);
         });
         fitPhaseTags();
@@ -789,7 +880,7 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
         var hiddenNames = [];
         for (var i = tags.length - 1; i >= 0 && value.scrollWidth > value.clientWidth + 1; i--) {
             tags[i].hidden = true;
-            hiddenNames.unshift(tags[i].textContent);
+            hiddenNames.unshift(tags[i].dataset.phaseName || tags[i].textContent);
             more = value.querySelector(".Tag--more");
             if (!more) {
                 more = document.createElement("span");
@@ -887,7 +978,8 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
                 if (handles[next]) handles[next].focus();
             });
             var name = document.createElement("div");
-            name.className = "PhaseRow-name";
+            name.className = "PhaseRow-name PhaseTone--" + item.id;
+            appendPhaseSwatch(name);
             var select = document.createElement("select");
             select.className = "Select";
             select.setAttribute("aria-label", "Phase");
@@ -906,6 +998,18 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
                 renderModal();
             });
             name.appendChild(select);
+            var dueWrap = document.createElement("div");
+            dueWrap.className = "PhaseDueWrap";
+            var due = document.createElement("input");
+            due.type = "date";
+            due.className = "PhaseDue";
+            due.value = item.spanEnd || "";
+            due.setAttribute("aria-label", "End date for " + phase.name);
+            due.addEventListener("change", function () {
+                item.spanEnd = due.value;
+                updateSummary();
+            });
+            dueWrap.appendChild(due);
             var remove = document.createElement("button");
             remove.type = "button";
             remove.className = "Btn-iconOnly";
@@ -918,6 +1022,7 @@ body:not(.is-editing) #phaseTrigger:hover .Pencil {
             });
             row.appendChild(handle);
             row.appendChild(name);
+            row.appendChild(dueWrap);
             row.appendChild(remove);
             block.appendChild(row);
             rows.appendChild(block);

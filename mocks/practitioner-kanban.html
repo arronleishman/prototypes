@@ -98,6 +98,10 @@
   --kanban-drop-secondary-height: 180px;
   --kanban-drop-gap: 8px;
   --kanban-drop-pad: 8px;
+  /* Gantt aggregation phase colours (gantt-resource-breakdown) */
+  --phase-preparation: #2398f2;
+  --phase-first-review: #2d7d46;
+  --phase-second-review: #7b3fa0;
 }
 
 * { box-sizing: border-box; }
@@ -1726,6 +1730,15 @@ body.is-card-dragging * {
   pointer-events: none;
   box-shadow: 0 4px 12px rgba(34, 36, 48, 0.2);
 }
+/* Drawer trait overflow — match MilestoneStatusTip sheet chrome */
+.CardOverflowTip--sheet {
+  align-items: flex-start;
+  text-align: left;
+  background: var(--surface-default);
+  color: #222430;
+  border: var(--border-xs) solid var(--border-subtle);
+  box-shadow: 0 4px 12px rgba(34, 36, 48, 0.16);
+}
 .CardOverflowTip::before {
   content: '';
   position: absolute;
@@ -1735,11 +1748,19 @@ body.is-card-dragging * {
   border: 5px solid transparent;
   border-bottom-color: var(--text-default);
 }
+.CardOverflowTip--sheet::before {
+  border-bottom-color: var(--surface-default);
+  filter: drop-shadow(0 -1px 0 var(--border-subtle));
+}
 .CardOverflowTip.is-above::before {
   bottom: auto;
   top: 100%;
   border-bottom-color: transparent;
   border-top-color: var(--text-default);
+}
+.CardOverflowTip--sheet.is-above::before {
+  border-top-color: var(--surface-default);
+  filter: drop-shadow(0 1px 0 var(--border-subtle));
 }
 .CardOverflowTip-line {
   display: block;
@@ -2277,30 +2298,99 @@ body.is-card-dragging * {
 }
 .Drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }
 .Drawer {
-  position: fixed; top: 0; right: 0; bottom: 0; width: 467px; max-width: 100vw;
+  position: fixed; top: 0; right: 0; bottom: 0; width: 389px; max-width: 100vw;
   background: var(--surface-default);
   box-shadow: -6px 0 16px rgba(0,0,0,.06);
   z-index: 1001; display: flex; flex-direction: column;
+  overflow: hidden;
   transform: translateX(100%); transition: transform .28s cubic-bezier(.32,.72,0,1);
 }
 .Drawer.is-open { transform: translateX(0); }
-.Drawer-scroll {
+.Drawer-scrollWrap {
+  position: relative;
   flex: 1 1 auto;
-  overflow-y: auto;
   min-height: 0;
-  scrollbar-gutter: stable;
-  scrollbar-width: thin;
+  width: 100%;
+  overflow: hidden;
 }
-.Drawer-scroll::-webkit-scrollbar { width: 8px; }
-.Drawer-scroll::-webkit-scrollbar-track { background: transparent; }
-.Drawer-scroll::-webkit-scrollbar-thumb {
-  background: rgba(106, 112, 143, 0.35);
-  border-radius: 4px;
+.Drawer-scroll {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Hide native bar — custom overlay sits above content (z-index) */
+  scrollbar-width: none;
+}
+.Drawer-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+.Drawer-scrollbar {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  bottom: 4px;
+  width: 8px;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.Drawer-scrollWrap.is-scrollable:hover .Drawer-scrollbar,
+.Drawer-scrollWrap.is-scrolling .Drawer-scrollbar,
+.Drawer-scrollWrap.is-dragging .Drawer-scrollbar {
+  opacity: 1;
+}
+.Drawer-scrollbarThumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 24px;
+  border-radius: 8px;
+  background: rgba(106, 112, 143, 0.45);
+  pointer-events: auto;
+  cursor: default;
 }
 .Drawer-header {
-  position: sticky; top: 0; background: var(--surface-default); z-index: 5;
+  flex-shrink: 0;
+  position: relative;
+  background: var(--surface-default);
+  z-index: 5;
   padding: var(--padding-md); display: flex; flex-direction: column; gap: 12px;
   border-bottom: var(--border-xs) solid var(--border-subtle);
+  transition: box-shadow 0.18s ease;
+}
+.Drawer-scroll > .Drawer-section:first-child {
+  border-top: none;
+}
+.Drawer-header:has(+ .Drawer-scrollWrap .Drawer-section--alerts:first-child) {
+  border-bottom: none;
+}
+.Drawer-header.is-scrolled {
+  box-shadow: 0 4px 12px rgba(34, 36, 48, 0.08);
+}
+/* Entrance stagger when drawer opens */
+@keyframes Drawer-fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.Drawer.is-entering > .Drawer-header,
+.Drawer-scroll.is-entering > .Drawer-section {
+  animation: Drawer-fadeUp 0.28s cubic-bezier(.32,.72,0,1) both;
+}
+.Drawer.is-entering > .Drawer-header { animation-delay: 0ms; }
+.Drawer-scroll.is-entering > .Drawer-section { animation-delay: 45ms; }
+.Drawer-scroll.is-entering > .Drawer-section ~ .Drawer-section { animation-delay: 90ms; }
+.Drawer-scroll.is-entering > .Drawer-section ~ .Drawer-section ~ .Drawer-section { animation-delay: 135ms; }
+@media (prefers-reduced-motion: reduce) {
+  .Drawer.is-entering > .Drawer-header,
+  .Drawer-scroll.is-entering > .Drawer-section {
+    animation: none;
+  }
+  .Drawer-animPanel { transition: none; }
 }
 .Drawer-headerTop {
   display: flex; align-items: flex-start; gap: 12px; width: 100%;
@@ -2372,6 +2462,7 @@ body.is-card-dragging * {
   display: inline-flex; align-items: center; justify-content: center;
   cursor: pointer; color: var(--icon-accent); padding: 0;
 }
+.Drawer-close i { font-size: 14px; line-height: 1; }
 .Drawer-close:hover { background: var(--surface-container-default); }
 .Drawer-headerBadges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .Drawer-priorityCorner {
@@ -2380,23 +2471,20 @@ body.is-card-dragging * {
 .Drawer-section {
   border-top: var(--border-xs) solid var(--border-subtle);
   padding: 16px;
-  display: flex; flex-direction: column; gap: 12px;
+  display: flex; flex-direction: column; gap: 8px;
   background: var(--surface-default);
 }
 .Drawer-section h3 {
-  margin: 0; font-size: 18px; font-weight: var(--font-weight-semibold); color: var(--text-default);
-  line-height: 25px;
+  margin: 0; font-size: 14px; font-weight: 700; color: #3d425c;
+  line-height: 21px;
 }
-.Drawer-section--details {
+.Drawer-section--alerts {
   gap: 8px;
-}
-.Drawer-section--details h3 {
-  color: var(--text-emphasis);
 }
 .Drawer-sectionHeading {
   display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;
 }
-.Drawer-sectionHeading h3 { font-size: 16px; }
+.Drawer-sectionHeading h3 { font-size: 14px; font-weight: 700; color: #3d425c; }
 .Drawer-collapseBtn {
   display: inline-flex; align-items: center; gap: 0; border: none; background: none;
   padding: 0; cursor: pointer; color: inherit; font: inherit;
@@ -2437,36 +2525,265 @@ body.is-card-dragging * {
 .Drawer-detailRow {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   height: 50px;
   min-height: 50px;
-  padding: 8px 16px;
+  /* Match milestone head gutters (12px) so Details aligns with Milestones cards */
+  padding: 8px 12px;
   box-sizing: border-box;
   border-bottom: var(--border-xs) solid var(--border-subtle);
 }
 .Drawer-detailRow:last-child {
   border-bottom: none;
 }
+.Drawer-detailRow--schedule {
+  height: auto;
+  min-height: 50px;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.Drawer-detailValue--schedule {
+  flex: 1 1 auto;
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+.Drawer-scheduleRange {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+.Drawer-scheduleInput {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+  height: 32px;
+  margin: 0;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-default);
+  border-radius: var(--border-radius-default);
+  background: var(--surface-default);
+  color: var(--text-emphasis);
+  font-family: var(--font-family);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 16px;
+  color-scheme: light;
+  cursor: pointer;
+}
+.Drawer-scheduleInput:focus {
+  outline: none;
+  border-color: var(--border-primary);
+}
+.Drawer-scheduleInput::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  opacity: 0;
+}
+.Drawer-scheduleDash {
+  flex-shrink: 0;
+  color: #6a708f;
+  font-size: 12px;
+  line-height: 1;
+}
+.Drawer-scheduleEmpty {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  color: #6a708f;
+  line-height: 16px;
+}
+.Drawer-scheduleRead {
+  display: block;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.Drawer-detailRow--effort {
+  height: auto;
+  min-height: 50px;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.Drawer-detailValue--effort {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+.Drawer-effortReadLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.Drawer-effortActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.Drawer-effortEditBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--border-radius-default);
+  background: transparent;
+  color: #6a708f;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+}
+.Drawer-effortEditBtn:hover {
+  background: var(--surface-subtle-dark);
+  color: #3d425c;
+}
+.Drawer-effortEditBtn--save {
+  color: #078138;
+}
+.Drawer-effortEditBtn--save:hover {
+  background: var(--surface-success-subtle);
+  color: #078138;
+}
+.Drawer-effortEditBtn--cancel:hover {
+  background: var(--surface-danger-subtle);
+  color: #a3003c;
+}
+.Drawer-effortFields {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.Drawer-effortGroup {
+  display: flex;
+  align-items: stretch;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 32px;
+}
+.Drawer-effortGroup input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-default);
+  border-right: none;
+  border-radius: var(--border-radius-default) 0 0 var(--border-radius-default);
+  background: var(--surface-default);
+  color: var(--text-emphasis);
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.Drawer-effortGroup input::-webkit-outer-spin-button,
+.Drawer-effortGroup input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.Drawer-effortGroup input:focus {
+  outline: none;
+  border-color: var(--border-primary);
+  z-index: 1;
+}
+.Drawer-effortGroup .unit {
+  width: 24px;
+  min-width: 24px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1px solid var(--border-default);
+  border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0;
+  background: var(--surface-subtle-dark);
+  color: var(--text-emphasis);
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  flex-shrink: 0;
+}
 .Drawer-detailLabel {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  width: 150px;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
   flex-shrink: 0;
-  font-size: 12px;
-  font-weight: var(--font-weight-regular);
-  color: var(--text-subtle);
-  line-height: normal;
-  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--border-radius-default);
+  color: #6a708f;
+  cursor: default;
+  outline: none;
 }
-.Drawer-detailLabel i {
+.Drawer-detailLabel:hover,
+.Drawer-detailLabel:focus-visible {
+  background: var(--surface-subtle-dark);
+  color: #3d425c;
+}
+.Drawer-detailLabel i,
+.Drawer-detailIcon {
   width: 14px;
   height: 14px;
   text-align: center;
-  color: var(--icon-subtle);
+  color: #6a708f;
   flex-shrink: 0;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 14px;
+}
+.Drawer-detailIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+/* Figma Phase row — outline diamond; 1px stroke matches fa-regular detail icons */
+.Drawer-detailIcon--diamond::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  box-sizing: border-box;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  transform: rotate(45deg);
 }
 .Drawer-detailValue {
   display: inline-flex;
@@ -2475,9 +2792,9 @@ body.is-card-dragging * {
   flex-wrap: wrap;
   min-width: 0;
   font-size: 12px;
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-default);
-  line-height: normal;
+  font-weight: 600;
+  color: #222430;
+  line-height: 16px;
 }
 .Drawer-detailValue.is-warn {
   color: #e27209;
@@ -2486,6 +2803,9 @@ body.is-card-dragging * {
 .Drawer-detailValue.is-danger {
   color: var(--text-danger);
   font-weight: var(--font-weight-semibold);
+}
+.Drawer-detailValue .Drawer-detailBadge {
+  align-self: center;
 }
 .Drawer-detailAssignee {
   display: inline-flex;
@@ -2498,23 +2818,23 @@ body.is-card-dragging * {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 12px;
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-emphasis);
+  font-weight: 600;
+  color: #3d425c;
 }
 .Drawer-detailBadge {
   display: inline-flex;
   align-items: center;
   min-height: 22px;
-  padding: 4px;
+  padding: 4px 6px;
   box-sizing: border-box;
   border-radius: var(--border-radius-default);
   border: var(--border-xs) solid var(--border-subtle);
   background: var(--surface-default);
   font-family: var(--font-family);
   font-size: 12px;
-  font-weight: var(--font-weight-bold);
+  font-weight: 700;
   line-height: 14px;
-  color: var(--text-subtle);
+  color: #6a708f;
   white-space: nowrap;
 }
 .Drawer-detailBadge--warn {
@@ -2577,6 +2897,11 @@ body.is-card-dragging * {
   display: flex; align-items: center; gap: 8px;
   padding: 8px 12px; min-height: 44px; box-sizing: border-box;
 }
+.StatusCard-head > i {
+  width: 14px; height: 14px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 14px; line-height: 1;
+}
 .StatusCard-head p {
   margin: 0; flex: 1 0 0; font-size: 14px; font-weight: 600; line-height: 21px;
 }
@@ -2599,8 +2924,11 @@ body.is-card-dragging * {
 .StatusCard--hold .StatusCard-body { background: #feecf2; }
 .StatusCard--hold .StatusCard-body p { color: #a3003c; }
 .StatusCard--hold .StatusCard-frame { border-color: #a3003c; }
-.StatusCard--overdue .StatusCard-head { background: #fef2f2; color: #c53030; }
-.StatusCard--overdue .StatusCard-frame { border-color: #c53030; }
+.StatusCard--overdue .StatusCard-head {
+  background: var(--surface-danger-subtle);
+  color: var(--text-danger);
+}
+.StatusCard--overdue .StatusCard-frame { border-color: var(--border-danger-subtle); }
 .StatusCard--warn .StatusCard-head { background: #fff7ed; color: #b65800; }
 .StatusCard--warn .StatusCard-frame { border-color: #e27209; }
 .StatusCard--warnStack {
@@ -2670,8 +2998,9 @@ body.is-card-dragging * {
 .StaffAvatar.is-assigned { background: #4f3fa0; }
 .StaffAvatar.is-unassigned { background: #babfd1; }
 .StaffAvatar-initials {
-  font-family: var(--font-family); font-weight: 700; font-size: 9px;
-  line-height: 1; color: #fff; text-align: center; user-select: none;
+  font-family: var(--font-family); font-weight: 600; font-size: 11px;
+  line-height: 15px; color: #fff; text-align: center; user-select: none;
+  text-transform: uppercase;
 }
 .StaffAvatar-person {
   position: absolute; inset: 0;
@@ -2702,48 +3031,55 @@ body.is-card-dragging * {
   background: #f1f1f4; border-radius: 3px; padding: 1px 6px; line-height: 16px;
 }
 
-/* Milestones — Figma 4753:87970 */
+/* Milestones — phase heads + booking rail */
 .Drawer-milestones {
+  /* Card border (1) + pad (12) + half of 24px icon — shared by phase / booking / key-date */
+  --ms-rail-center: 25px;
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
-  position: relative;
-  padding-left: 0;
 }
+/* Spine through phase + key-date icons — shows in gaps between cards */
 .Drawer-milestones::before {
   content: '';
   position: absolute;
-  left: 23px; /* center of 24px icon in 12px padded head */
-  top: 28px;
-  bottom: 28px;
-  width: 1px;
-  background: var(--border-subtle);
-  pointer-events: none;
+  left: var(--ms-rail-center);
+  top: 22px;
+  bottom: 24px;
+  width: 0;
+  border-left: 1px solid var(--border-subtle);
   z-index: 0;
+  pointer-events: none;
+  transform: translateX(-0.5px);
 }
 .Drawer-msGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  width: 100%;
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+  background: transparent;
 }
 .Drawer-msHead {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
   box-sizing: border-box;
-  min-height: 53px;
-  padding: 12px;
-  background: var(--surface-subtle-light);
-  border: var(--border-xs) solid var(--border-subtle);
-  border-radius: var(--border-radius-default);
+  min-height: 44px;
+  padding: 10px 12px;
+  background: #f8f8f8;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
   font: inherit;
   color: inherit;
   text-align: left;
+  transition: background 0.15s ease, border-radius 0.18s ease, border-color 0.18s ease;
 }
 button.Drawer-msHead {
   appearance: none;
@@ -2752,140 +3088,438 @@ button.Drawer-msHead {
   cursor: pointer;
 }
 .Drawer-msHead:hover {
-  background: #eef0f4;
+  background: #f0f0f3;
+}
+.Drawer-msHead.is-active {
+  background: #f0effb;
+}
+.Drawer-msHead.is-active:hover {
+  background: #e8e6f8;
 }
 .Drawer-msHead:focus-visible {
   outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(79, 63, 160, 0.35);
+  box-shadow: 0 0 0 0.15rem rgba(79, 63, 160, 0.35);
 }
-.Drawer-msHead.is-active .Drawer-msTitle {
-  color: var(--text-warning);
+button.Drawer-msHead:active {
+  background: #ebebef;
 }
-.Drawer-msHead .MilestoneIcon i {
-  transition: transform 0.15s ease;
-  display: inline-block;
+button.Drawer-msHead.is-active:active {
+  background: #e0ddf5;
 }
-.Drawer-msHead[aria-expanded="true"] .MilestoneIcon i {
-  transform: rotate(90deg);
-}
-.Drawer-msBookingsPanel .Drawer-msBookings {
-  margin-top: 0;
-}
-.Drawer-msHead .MilestoneIcon,
-.Drawer-msHead .MilestoneIconTip,
-.Drawer-msDeadline .MilestoneIcon {
-  position: relative;
-  z-index: 1;
+.Drawer-msHeadMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   flex-shrink: 0;
-  background-clip: padding-box;
-}
-.Drawer-msTitle {
-  flex: 1 1 auto;
+  margin-left: auto;
   min-width: 0;
-  margin: 0;
-  font-size: 14px;
-  font-weight: var(--font-weight-bold);
-  color: var(--text-default);
-  line-height: 21px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+.Drawer-msEffort {
+  font-size: 12px;
+  font-weight: 600;
+  color: #3d425c;
+  line-height: 16px;
   white-space: nowrap;
+}
+.Drawer-msHead .MilestoneIconTip,
+.Drawer-msHead .MilestoneIcon {
+  flex-shrink: 0;
+}
+/* Phase badge — gantt colours + left swatch (Jira-style indicator) */
+.Drawer-phaseBadge {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 22px;
+  padding: 3px 6px 3px 4px;
+  gap: 6px;
+  border-radius: var(--border-radius-default);
+  border: 1px solid var(--phase-badge-border, var(--border-subtle));
+  background: var(--phase-badge-bg, #fff);
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 14px;
+  color: var(--text-emphasis);
+  white-space: nowrap;
+}
+.Drawer-phaseBadge-swatch {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--phase-badge-accent, var(--border-default));
+}
+.Drawer-phaseBadge--preparation {
+  --phase-badge-accent: var(--phase-preparation);
+  --phase-badge-border: #7bc4f7;
+  --phase-badge-bg: #e8f5fe;
+}
+.Drawer-phaseBadge--first-review {
+  --phase-badge-accent: var(--phase-first-review);
+  --phase-badge-border: #7aaf8a;
+  --phase-badge-bg: #e8f3ec;
+}
+.Drawer-phaseBadge--second-review {
+  --phase-badge-accent: var(--phase-second-review);
+  --phase-badge-border: #b08ecc;
+  --phase-badge-bg: #f3ebf8;
 }
 .Drawer-msDate {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
-  font-size: var(--font-size-small);
-  font-weight: var(--font-weight-regular);
-  color: var(--text-subtle);
+  font-size: 12px;
+  font-weight: 400;
+  color: #6a708f;
   line-height: 16px;
   white-space: nowrap;
 }
+.Drawer-msHead > .Drawer-msDate {
+  margin-left: auto;
+}
 .Drawer-msDate i {
-  color: var(--icon-subtle);
-  font-size: 12px;
+  color: #6a708f;
+  font-size: 13px;
+}
+.Drawer-msChevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-left: 2px;
+  color: #6a708f;
+}
+.Drawer-msChevron i {
+  font-size: 11px;
+  transition: transform 0.2s cubic-bezier(.32,.72,0,1);
+  display: inline-block;
+}
+.Drawer-msHead[aria-expanded="true"] .Drawer-msChevron i {
+  transform: rotate(90deg);
+}
+.Drawer-msBookingsPanel {
+  margin-top: 0 !important;
+}
+.Drawer-msBookingsPanel.is-open {
+  margin-top: 0 !important;
+}
+.Drawer-msGroup:has(.Drawer-msBookingsPanel.is-open) > .Drawer-msHead {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
 }
 .Drawer-msBookings {
   display: flex;
   flex-direction: column;
-  width: calc(100% - 24px);
-  margin: 8px 0 0 24px;
-  padding: 0;
-  background: var(--surface-default);
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 2px 8px 6px 0;
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
 }
 .Drawer-msBooking {
-  display: grid;
-  grid-template-columns: 72px minmax(0, 1fr) 100px 49px;
-  align-items: center;
-  min-height: 48px;
-  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
   box-sizing: border-box;
-  border-bottom: var(--border-xs) solid var(--border-subtle);
+  min-height: 48px;
+  /* Same inset as phase head — 24px rail column centres on MilestoneIcon */
+  padding: 0 8px 0 12px;
+  background: transparent;
 }
-.Drawer-msBooking:last-child {
+.Drawer-msBooking.is-done .Drawer-msBookingName {
+  color: #6a708f;
+}
+.Drawer-msRail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 24px;
+  width: 24px;
+  align-self: stretch;
+  min-height: 48px;
+}
+/* 1px centred stem — dashed via gradient (longer dash / tighter gap so it reads as dashes) */
+.Drawer-msRailLine {
+  flex: 1 1 auto;
+  width: 1px;
+  min-height: 8px;
+  border: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    #c5c9d6 0 5px,
+    transparent 5px 8px
+  );
+}
+.Drawer-msBooking.is-done .Drawer-msRailLine {
+  background: #078138;
+}
+.Drawer-msBooking.is-current .Drawer-msRailLine--top {
+  background: #078138;
+}
+.Drawer-msBooking.is-current .Drawer-msRailLine--bottom,
+.Drawer-msBooking:not(.is-done):not(.is-current) .Drawer-msRailLine {
+  background: repeating-linear-gradient(
+    to bottom,
+    #c5c9d6 0 5px,
+    transparent 5px 8px
+  );
+}
+.Drawer-msRadio {
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1.5px solid #babfd1;
+  z-index: 1;
+  cursor: help;
+}
+.Drawer-msRadio.is-done {
+  border: 4px solid #078138;
+}
+.Drawer-msRadio.is-current {
+  border: 4px solid #e27209;
+}
+.Drawer-msCells {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 2px 0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: transparent;
+  transition: background 0.14s ease;
+}
+/* Hover / current wash sits on the content only — rail stays continuous */
+.Drawer-msBooking:hover .Drawer-msCells {
+  background: #f5f5f8;
+}
+.Drawer-msBooking.is-current .Drawer-msCells {
+  background: #f3f2fb;
+}
+.Drawer-msBooking.is-current:hover .Drawer-msCells {
+  background: #ebe9f8;
+}
+.Drawer-msBooking.is-current .Drawer-msCell {
+  border-bottom-color: transparent;
+}
+/* Soft join: previous done row into current — keep green into the orange node */
+.Drawer-msBooking.is-done + .Drawer-msBooking.is-current .Drawer-msRailLine--top {
+  background: #078138;
+}
+.Drawer-msCell {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 40px;
+  padding: 10px 8px;
+  gap: 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: transparent;
+}
+.Drawer-msCell--name {
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  padding-left: 12px;
+}
+.Drawer-msCell--status {
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 64px;
+  max-width: 104px;
+  justify-content: flex-start;
+}
+.Drawer-msCell--avatar {
+  flex: 0 0 48px;
+  width: 48px;
+  justify-content: flex-end;
+  padding-right: 12px;
+}
+.Drawer-msBookingAvatar .StaffAvatar {
+  width: 24px;
+  height: 24px;
+  cursor: help;
+}
+.Drawer-msBooking:last-child .Drawer-msCell {
   border-bottom: none;
 }
-.Drawer-msBookingEffort {
+/* Figma booking row week label — Body 11px Regular */
+.Drawer-msBookingName {
   margin: 0;
-  padding: 0 8px 0 12px;
-  font-size: 12px;
-  font-weight: var(--font-weight-semibold);
-  color: var(--text-default);
-  line-height: 16px;
-  white-space: nowrap;
-}
-.Drawer-msBookingDate {
-  margin: 0;
-  padding: 0 8px;
-  font-size: 12px;
-  font-weight: var(--font-weight-regular);
-  color: var(--text-subtle);
+  min-width: 0;
+  max-width: 100%;
+  font-size: 11px;
+  font-weight: 400;
+  color: #6a708f;
   line-height: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
-.Drawer-msBookingDate.is-warn {
-  color: var(--text-warning);
-  font-weight: var(--font-weight-semibold);
+.Drawer-msBookingMeta {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 400;
+  color: #6a708f;
+  line-height: 14px;
 }
-.Drawer-msBookingDate.is-danger {
-  color: var(--text-danger);
-  font-weight: var(--font-weight-semibold);
+/* Only YOUR in-progress booking is highlighted (bold This Week + hours). */
+.Drawer-msBooking.is-mine {
+  min-height: 54px;
+}
+.Drawer-msBooking.is-mine .Drawer-msBookingName,
+.Drawer-msBooking.is-mine .Drawer-msBookingName strong {
+  font-weight: 600;
+  color: #222430;
+}
+.Drawer-msBooking.is-current:not(.is-mine) .Drawer-msBookingName,
+.Drawer-msBooking.is-inprogress:not(.is-mine) .Drawer-msBookingName {
+  font-weight: 400;
+  color: #6a708f;
+}
+/* Someone else’s in-progress: no current-week wash — keep the quiet row look */
+.Drawer-msBooking.is-other .Drawer-msCells {
+  background: transparent;
+}
+.Drawer-msBooking.is-other:hover .Drawer-msCells {
+  background: #f5f5f8;
+}
+.Drawer-msBookings--empty {
+  padding: 12px 16px 14px 16px;
+}
+.Drawer-msEmpty {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  color: #6a708f;
+  line-height: 16px;
+}
+/* Key dates — Figma milestone footer cards (node 4933:46076) */
+.Drawer-msKeyDates {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* Connector between key-date cards (parent spine covers phase gaps) */
+.Drawer-msKeyDates::before {
+  content: '';
+  position: absolute;
+  left: var(--ms-rail-center);
+  top: 12px;
+  bottom: 12px;
+  width: 0;
+  border-left: 1px solid var(--border-subtle);
+  z-index: 0;
+  pointer-events: none;
+  transform: translateX(-0.5px);
+}
+.Drawer-msGroup + .Drawer-msKeyDates {
+  margin-top: 6px;
 }
 .Drawer-msBookingStatus {
   display: inline-flex;
   align-items: center;
-  justify-content: flex-start;
-  padding: 0 8px;
+  min-width: 0;
 }
+.Drawer-msStatusQuiet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  gap: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  color: #6a708f;
+  white-space: nowrap;
+  cursor: help;
+}
+.Drawer-msStatusQuiet i {
+  font-size: 12px;
+  line-height: 1;
+}
+.Drawer-msStatusQuiet.is-done { color: #078138; }
+.Drawer-msStatusQuiet.is-progress { color: #0295b2; }
+.Drawer-msStatusQuiet.is-warn { color: #e27209; }
+.Drawer-msStatusQuiet.is-danger { color: #a3003c; }
 .Drawer-msBookingAvatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 12px 0 0;
 }
-.Drawer-msDeadline {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 53px;
-  padding: 12px;
-  background: var(--surface-subtle-light);
-  border: var(--border-xs) solid var(--border-subtle);
-  border-radius: var(--border-radius-default);
+.Drawer-msKeyDates .Drawer-msDeadline {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 12px;
+  background: var(--surface-subtle-light);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
 }
-.Drawer-msDeadlineTitle {
+.Drawer-msKeyDates .Drawer-msMarker {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #e2e3e9;
+  color: #6a708f;
+  box-sizing: border-box;
+}
+.Drawer-msKeyDates .Drawer-msMarker--deadline i {
+  font-size: 11px;
+  line-height: 1;
+  color: #6a708f;
+}
+.Drawer-msKeyDates .Drawer-msDeadlineTitle {
   flex: 1 1 auto;
   min-width: 0;
   margin: 0;
-  font-size: 14px;
-  font-weight: var(--font-weight-bold);
-  color: var(--text-default);
-  line-height: 21px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-emphasis);
+  line-height: 16px;
+}
+.Drawer-msKeyDates .Drawer-msDeadline .Drawer-msDate {
+  flex: 0 0 auto;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  color: #6a708f;
+  line-height: 16px;
+  white-space: nowrap;
 }
 .MilestoneIcon--active {
   background: #e27209;
@@ -2955,6 +3589,18 @@ button.Drawer-msHead {
 .Badge--warning.Badge--strong { background: var(--warning); color: var(--text-inverse); border-color: var(--warning); }
 .Badge--danger.Badge--strong { background: var(--surface-danger); color: var(--text-inverse); border-color: var(--surface-danger); }
 .Badge--info.Badge--strong { background: var(--surface-eng-01); color: var(--text-inverse); border-color: var(--surface-eng-01); }
+/* High priority — Figma Priority Indicator (chevrons-up) on the left */
+.Badge--priority {
+  gap: 4px;
+}
+.Badge--priority .Badge-priorityIcon {
+  display: block;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  /* Figma asset is #A3003C; invert to white on danger strong */
+  filter: brightness(0) invert(1);
+}
 
 .MilestoneIconTip {
   position: relative;
@@ -2976,16 +3622,21 @@ button.Drawer-msHead {
 .MilestoneIcon--returned { background: #e27209; color: #fff; }
 .MilestoneIcon--warn { background: #e27209; color: #fff; }
 
-/* Floating tip — rendered on body so drawer overflow cannot clip it */
+/* Floating tip — black Dayshape tooltip (matches deadline / card overflow tip) */
 .MilestoneStatusTip {
   position: fixed;
   z-index: 2000;
-  display: flex;
-  padding: 4px;
-  background: var(--surface-default);
-  border: var(--border-xs) solid var(--border-subtle);
-  border-radius: var(--border-radius-default);
-  box-shadow: 0 4px 12px rgba(34, 36, 48, 0.16);
+  display: block;
+  padding: 4px 8px;
+  background: #222430;
+  color: #fff;
+  border-radius: 4px;
+  font-family: var(--font-family);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(34, 36, 48, 0.2);
   pointer-events: none;
 }
 .MilestoneStatusTip::after {
@@ -2995,15 +3646,13 @@ button.Drawer-msHead {
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: var(--surface-default);
-  filter: drop-shadow(0 1px 0 var(--border-subtle));
+  border-top-color: #222430;
 }
 .MilestoneStatusTip.is-below::after {
   top: auto;
   bottom: 100%;
   border-top-color: transparent;
-  border-bottom-color: var(--surface-default);
-  filter: drop-shadow(0 -1px 0 var(--border-subtle));
+  border-bottom-color: #222430;
 }
 .Drawer-milestone-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0; }
 .Drawer-milestone-phase {
@@ -3066,7 +3715,7 @@ button.Drawer-msHead {
 .Drawer-footer:empty,
 .Drawer-footer[hidden] { display: none; }
 
-/* Status menu trigger — badge chip styling (matches Drawer-detailBadge / Badge--md) */
+/* Status menu trigger — Figma Button Size=sm Default (node 4917:74939) */
 .StatusMenu { position: relative; display: inline-flex; }
 .StatusMenu-trigger {
   display: inline-flex;
@@ -3074,90 +3723,157 @@ button.Drawer-msHead {
   justify-content: center;
   gap: 4px;
   box-sizing: border-box;
-  min-height: 22px;
-  height: auto;
-  padding: 4px 8px;
-  border: var(--border-xs) solid transparent;
+  height: 28px;
+  min-height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--border-default);
   border-radius: var(--border-radius-default);
   cursor: pointer;
   font-family: var(--font-family);
   font-size: 12px;
-  font-weight: var(--font-weight-bold);
-  line-height: 14px;
+  font-weight: 400;
+  line-height: 1;
   white-space: nowrap;
+  background: var(--surface-default);
+  color: var(--text-accent);
 }
-.StatusMenu-trigger .fa-chevron-down {
-  font-size: 9px;
-  opacity: 0.85;
-  margin-left: 2px;
+/* Figma Button “Icon right” — solid caret, 14×14 */
+.StatusMenu-trigger .StatusMenu-caret {
+  display: block;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  color: currentColor;
+}
+.StatusMenu-trigger .StatusMenu-caret path {
+  fill: currentColor;
 }
 .StatusMenu-trigger--to-do {
   background: var(--surface-default);
-  border-color: var(--border-subtle);
-  color: var(--text-subtle);
+  border-color: var(--border-default);
+  color: var(--text-accent);
 }
 .StatusMenu-trigger--in-progress {
-  background: #e8f7fa;
-  border-color: #9ad5e2;
-  color: #0295b2;
+  background: var(--surface-default);
+  border-color: #3399a3;
+  color: #005a6c;
 }
 .StatusMenu-trigger--blocked {
-  background: var(--surface-danger-subtle);
-  border-color: var(--border-danger-subtle);
-  color: var(--text-danger);
+  background: var(--surface-default);
+  border-color: #b02a37;
+  color: #a3003c;
 }
 .StatusMenu-trigger--done {
-  background: #e1faeb;
-  border-color: #c9efd8;
-  color: #07602b;
+  background: var(--surface-default);
+  border-color: #078138;
+  color: #078138;
 }
-.StatusMenu-trigger:hover { filter: brightness(0.98); }
+.StatusMenu-trigger--to-do:hover {
+  background: var(--text-accent);
+  border-color: var(--text-accent);
+  color: var(--text-inverse);
+}
+.StatusMenu-trigger--in-progress:hover {
+  background: #005a6c;
+  border-color: #005a6c;
+  color: var(--text-inverse);
+}
+.StatusMenu-trigger--blocked:hover {
+  background: #a3003c;
+  border-color: #a3003c;
+  color: var(--text-inverse);
+}
+.StatusMenu-trigger--done:hover {
+  background: #078138;
+  border-color: #078138;
+  color: var(--text-inverse);
+}
 .StatusMenu-trigger:focus-visible {
   outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(79, 63, 160, 0.35);
+  box-shadow: 0 0 0 0.15rem rgba(79, 63, 160, 0.35);
+}
+.StatusMenu-trigger[aria-expanded="true"] {
+  box-shadow: 0 0 0 0.15rem rgba(79, 63, 160, 0.22);
 }
 .StatusMenu-panel {
-  position: absolute; top: calc(100% + 6px); left: 0; z-index: 30;
-  min-width: 300px; max-width: min(420px, 90vw);
-  background: #fff; border: 1px solid #dfe1e6; border-radius: 3px;
-  box-shadow: 0 8px 16px rgba(9, 30, 66, 0.15);
-  padding: 4px 0; display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 30;
+  box-sizing: border-box;
+  min-width: 280px;
+  max-width: min(360px, 90vw);
+  padding: 4px;
+  background: var(--surface-default);
+  border: 1px solid #e2e3e9;
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgba(34, 36, 48, 0.12);
+  display: none;
 }
-.StatusMenu-panel.is-open { display: block; }
+.StatusMenu-panel.is-open { display: flex; flex-direction: column; gap: 2px; }
+.StatusMenu-sep {
+  height: 1px;
+  margin: 4px 8px;
+  background: var(--border-subtle);
+  flex-shrink: 0;
+}
+.StatusMenu-item--current {
+  cursor: default;
+  opacity: 0.85;
+}
+.StatusMenu-item--current:hover,
+.StatusMenu-item--current:focus-visible {
+  background: transparent;
+}
 .StatusMenu-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 16px auto;
-  align-items: center; gap: 10px;
-  width: 100%; border: none; background: transparent;
-  padding: 8px 12px; cursor: pointer; text-align: left;
-  font: inherit; color: #172b4d;
+  grid-template-columns: minmax(0, 1fr) 14px auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-family);
+  color: #222430;
+  transition: background 0.12s ease;
 }
 .StatusMenu-item:hover,
+.StatusMenu-item:focus-visible,
 .StatusMenu-item.is-active {
-  background: #f4f5f7;
-  box-shadow: inset 3px 0 0 #4f3fa0;
+  background: #f0effb;
+  outline: none;
 }
 .StatusMenu-itemLabel {
-  font-size: 14px; font-weight: 400; line-height: 20px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  color: #222430;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .StatusMenu-itemArrow {
-  color: #6b778c; font-size: 12px; text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6a708f;
+  font-size: 10px;
+  line-height: 1;
 }
-.StatusMenu-pill {
-  display: inline-flex; align-items: center; justify-content: center;
-  height: 20px; padding: 0 8px; border-radius: 3px;
-  font-size: 11px; font-weight: 700; line-height: 1; white-space: nowrap;
-  color: #fff;
+.StatusMenu-item .Badge {
+  justify-self: end;
 }
-.StatusMenu-pill--to-do { background: #6a708f; }
-.StatusMenu-pill--in-progress { background: #0295b2; }
-.StatusMenu-pill--blocked { background: var(--surface-danger); }
-.StatusMenu-pill--done { background: #078138; }
-.StatusMenu-pill--defer { background: #6a708f; }
-.StatusMenu-pill--revert { background: #6a708f; }
 .StatusMenu-empty {
-  padding: 10px 12px; font-size: 13px; color: #6b778c;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #6a708f;
 }
 .Drawer-bookings { display: flex; flex-direction: column; gap: 8px; width: 100%; }
 .Drawer-bookingRow {
@@ -3850,7 +4566,13 @@ body.overlay-open { overflow: hidden; }
 <!-- Phase 3: Task drawer -->
 <div class="Drawer-backdrop" id="drawerBackdrop" hidden></div>
 <aside class="Drawer" id="taskDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
-  <div class="Drawer-scroll" id="drawerBody"></div>
+  <div class="Drawer-header" id="drawerHeader"></div>
+  <div class="Drawer-scrollWrap" id="drawerScrollWrap">
+    <div class="Drawer-scroll" id="drawerBody"></div>
+    <div class="Drawer-scrollbar" id="drawerScrollbar" aria-hidden="true">
+      <div class="Drawer-scrollbarThumb" id="drawerScrollbarThumb"></div>
+    </div>
+  </div>
   <div class="Drawer-footer" id="drawerFooter"></div>
 </aside>
 
@@ -4316,6 +5038,17 @@ const BASE_MONDAY = new Date(2026, 5, 8); // 8 Jun 2026 — matches WorkflowBoar
 const WEEKLY_CAPACITY = 40;
 const CURRENT_USER = { initials: 'AL', name: 'You' };
 const PRIORITY_CORNER_URI = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiB2aWV3Qm94PSIwIDAgMzIgMzIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJHcm91cCAxIj4KPHBhdGggaWQ9IlZlY3RvciAxMSIgZD0iTTAgMzJWOEMwIDMuNTgxNzIgMy41ODE3MiAwIDggMEgzMkwwIDMyWiIgZmlsbD0iI0EzMDAzQyIvPgo8cGF0aCBpZD0iUHJpbWFyeSIgZD0iTTkuNDk3NzEgNEM5LjYwMzEyIDQgOS43MDg1NCA0LjAyMzU3IDkuODA0NzkgNC4wNjgzNEwxNC4xMjIzIDUuOTUxM0MxNC42MjY0IDYuMTcwNDYgMTUuMDAyMyA2LjY4MTg1IDE1IDcuMjk5MjlDMTQuOTg4NSA5LjYzNzA4IDE0LjA1MzUgMTMuOTE0NCAxMC4xMDUgMTUuODU4NkM5LjcyMjI5IDE2LjA0NzEgOS4yNzc3MSAxNi4wNDcxIDguODk1IDE1Ljg1ODZDNC45NDQxOCAxMy45MTQ0IDQuMDExNDcgOS42MzcwOCA0LjAwMDAxIDcuMjk5MjlDMy45OTc3MiA2LjY4MTg1IDQuMzczNTUgNi4xNzA0NiA0Ljg3NzcyIDUuOTUxM0w5LjE5MjkyIDQuMDY4MzRDOS4yODkxNyA0LjAyMzU3IDkuMzkyMjkgNCA5LjQ5NzcxIDRaTTkuNDk3NzEgNS41NzQyM1YxNC40ODQ3QzEyLjY2MDIgMTIuOTEwNCAxMy41MTA0IDkuNDIyNjIgMTMuNTMxIDcuMzM0NjRMOS40OTc3MSA1LjU3NjU5VjUuNTc0MjNaIiBmaWxsPSJ3aGl0ZSIvPgo8L2c+Cjwvc3ZnPgo=';
+/* Figma Priority Indicator — chevrons-up 12px (#A3003C) */
+const PRIORITY_CHEVRONS_URI = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgaWQ9ImNoZXZyb25zLXVwIj48cGF0aCBpZD0iaWNvbiIgZD0iTTUuNTQ3MjQgNS41NDg2N0w1Ljk5ODY3IDUuMDk3MzRMNi40NTAxIDUuNTQ4NjdMMTEuNTQ4NiAxMC42NDZMMTIgMTEuMDk3M0wxMS4wOTcxIDExLjk5NzNMMTAuNjQ1NyAxMS41NDZMNS45OTg2NyA2LjlMMS4zNTE2MyAxMS41NDg3TDAuOTAwMTk5IDEyTDIuMjI4MTJlLTA3IDExLjA5NzNMMC40NDg3NzIgMTAuNjQ2TDUuNTQ3MjQgNS41NDg2N1pNNS41NDcyNCAwLjQ1MTMyN0w1Ljk5ODY3IC0xLjE5MjA5ZS0wN0w2LjQ1MDEgMC40NTEzMjdMMTEuNTQ4NiA1LjU0ODY3TDEyIDZMMTEuMDk3MSA2LjlMMTAuNjQ1NyA2LjQ0ODY3TDUuOTk4NjcgMS44MDI2NUwxLjM1MTYzIDYuNDUxMzNMMC45MDAxOTkgNi45MDI2NUwwIDZMMC40NTE0MjcgNS41NDg2N0w1LjU0NzI0IDAuNDUxMzI3WiIgZmlsbD0iI0EzMDAzQyIvPjwvZz48L3N2Zz4=';
+
+function highPriorityBadgeHtml() {
+  return (
+    '<span class="Badge Badge--sm Badge--danger Badge--strong Badge--priority" role="status">' +
+      '<img class="Badge-priorityIcon" src="' + PRIORITY_CHEVRONS_URI + '" width="12" height="12" alt="" aria-hidden="true">' +
+      'High priority' +
+    '</span>'
+  );
+}
 
 const STATUS_DEFS = [
   { id: 'to-do', title: 'To Do', color: '#6a708f' },
@@ -4325,6 +5058,24 @@ const STATUS_DEFS = [
 ];
 
 const PHASE_LABELS = ['Preparation', 'First Review', 'Second Review'];
+
+/** Gantt aggregation phase key → badge modifier */
+function phaseBadgeKey(phaseName) {
+  const p = String(phaseName || '').toLowerCase();
+  if (p.includes('second')) return 'second-review';
+  if (p.includes('first')) return 'first-review';
+  return 'preparation';
+}
+
+function phaseBadgeHtml(phaseName) {
+  if (!phaseName) return '';
+  return (
+    '<span class="Drawer-phaseBadge Drawer-phaseBadge--' + phaseBadgeKey(phaseName) + '">' +
+      '<span class="Drawer-phaseBadge-swatch" aria-hidden="true"></span>' +
+      escapeHtml(phaseName) +
+    '</span>'
+  );
+}
 
 const VALID_TRANSITIONS = {
   'to-do': ['in-progress', 'blocked', 'done'],
@@ -4600,15 +5351,12 @@ function milestoneIconHtml(state) {
   const iconCfg = MILESTONE_ICON[state] || MILESTONE_ICON.next;
   const badgeCfg = MILESTONE_BADGE[state];
   const label = badgeCfg ? badgeCfg.label : 'Status';
-  const tipBadge = badgeCfg ? milestoneBadgeHtml(state, 'sm') : '';
   return (
     '<span class="MilestoneIconTip" tabindex="0" aria-label="' + label.replace(/"/g, '&quot;') + '">' +
       '<span class="MilestoneIcon ' + iconCfg.cls + '" aria-hidden="true">' +
         '<i class="fa-solid ' + iconCfg.icon + '"></i>' +
       '</span>' +
-      (tipBadge
-        ? ('<span class="MilestoneIconTip-balloon" hidden>' + tipBadge + '</span>')
-        : '') +
+      '<span class="MilestoneIconTip-balloon" hidden>' + escapeHtml(label) + '</span>' +
     '</span>'
   );
 }
@@ -4649,12 +5397,14 @@ function positionMilestoneStatusTip(anchor) {
 function showMilestoneStatusTip(anchor) {
   if (!anchor) return;
   const source = anchor.querySelector('.MilestoneIconTip-balloon');
-  if (!source || !source.innerHTML.trim()) return;
+  const text = (source && source.textContent.trim())
+    || (anchor.getAttribute('aria-label') || '').trim();
+  if (!text) return;
   hideMilestoneStatusTip();
   const tip = document.createElement('div');
   tip.className = 'MilestoneStatusTip';
   tip.setAttribute('role', 'tooltip');
-  tip.innerHTML = source.innerHTML;
+  tip.textContent = text;
   document.body.appendChild(tip);
   _milestoneStatusTipEl = tip;
   _milestoneStatusTipAnchor = anchor;
@@ -4721,6 +5471,20 @@ function getTaskEffortSummary(task) {
     remaining = Math.max(0, Math.round((estimated - loggedRounded) * 10) / 10);
   }
   return { estimated: estimated, logged: loggedRounded, remaining: remaining };
+}
+
+/** Planned effort for a week — same source as card hours / booking rows (not a separate estimate). */
+function getBookingEffortHours(task, weekISO) {
+  if (!task) return null;
+  const bookings = task.bookings || [];
+  if (weekISO && bookings.length) {
+    const open = bookings.find(function (b) { return b.week === weekISO && !b.completed; });
+    if (open && open.plannedHours != null) return Number(open.plannedHours);
+    const any = bookings.find(function (b) { return b.week === weekISO; });
+    if (any && any.plannedHours != null) return Number(any.plannedHours);
+  }
+  if (task.estimatedHours != null) return Number(task.estimatedHours);
+  return null;
 }
 
 function formatEffortHours(value) {
@@ -5074,16 +5838,48 @@ function drawerTransitionFromZone(zone, toId) {
   };
 }
 
+function statusMenuPillBadgeHtml(pillTone, pillLabel) {
+  let variant = 'neutral';
+  if (pillTone === 'in-progress') variant = 'info';
+  else if (pillTone === 'blocked') variant = 'danger';
+  else if (pillTone === 'done') variant = 'success';
+  return (
+    '<span class="Badge Badge--sm Badge--' + variant + ' Badge--strong">' +
+      escapeHtml(String(pillLabel)) +
+    '</span>'
+  );
+}
+
 function statusMenuHtml(columnId, task) {
   const def = STATUS_DEFS.find(function (c) { return c.id === columnId; }) || STATUS_DEFS[0];
   const transitions = getDrawerTransitions(columnId, task);
+  const currentRow =
+    '<div class="StatusMenu-item StatusMenu-item--current" role="menuitem" aria-disabled="true">' +
+      '<span class="StatusMenu-itemLabel">Current</span>' +
+      '<span class="StatusMenu-itemArrow" aria-hidden="true"></span>' +
+      statusMenuPillBadgeHtml(columnId, def.title) +
+    '</div>' +
+    '<div class="StatusMenu-sep" role="separator"></div>';
+
+  let sawTerminal = false;
+  let sawNonTerminal = false;
   const items = transitions.length
     ? transitions.map(function (t) {
+        const isTerminal = t.pillTone === 'blocked' || t.pillTone === 'done';
+        let sep = '';
+        // Only separate Hold/Done from earlier actions — Current already has a sep below it
+        if (isTerminal && !sawTerminal && sawNonTerminal) {
+          sawTerminal = true;
+          sep = '<div class="StatusMenu-sep" role="separator"></div>';
+        }
+        if (!isTerminal) sawNonTerminal = true;
+        else sawTerminal = true;
         return (
-          '<button type="button" class="StatusMenu-item" data-drawer-transition="' + t.action + '" data-to-column="' + t.toColumnId + '">' +
-            '<span class="StatusMenu-itemLabel">' + t.actionLabel + '</span>' +
-            '<span class="StatusMenu-itemArrow" aria-hidden="true">→</span>' +
-            '<span class="StatusMenu-pill StatusMenu-pill--' + t.pillTone + '">' + t.pillLabel + '</span>' +
+          sep +
+          '<button type="button" class="StatusMenu-item" role="menuitem" tabindex="-1" data-drawer-transition="' + t.action + '" data-to-column="' + t.toColumnId + '">' +
+            '<span class="StatusMenu-itemLabel">' + escapeHtml(t.actionLabel) + '</span>' +
+            '<span class="StatusMenu-itemArrow" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>' +
+            statusMenuPillBadgeHtml(t.pillTone, t.pillLabel) +
           '</button>'
         );
       }).join('')
@@ -5092,10 +5888,13 @@ function statusMenuHtml(columnId, task) {
   return (
     '<div class="StatusMenu" id="drawerStatusMenu">' +
       '<button type="button" class="StatusMenu-trigger StatusMenu-trigger--' + columnId + '" id="drawerStatusTrigger" aria-haspopup="menu" aria-expanded="false">' +
-        def.title +
-        '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i>' +
+        escapeHtml(def.title) +
+        '<svg class="StatusMenu-caret" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false">' +
+          '<path d="M3.949 5h6.102c.422 0 .633.51.335.809L7.336 8.861a.472.472 0 0 1-.672 0L3.614 5.809C3.315 5.51 3.527 5 3.949 5Z"/>' +
+        '</svg>' +
       '</button>' +
       '<div class="StatusMenu-panel" id="drawerStatusPanel" role="menu" hidden>' +
+        currentRow +
         items +
       '</div>' +
     '</div>'
@@ -5265,7 +6064,8 @@ function layoutCardTraits(traitsEl) {
   if (tipEl) tipEl.textContent = labels.join(', ');
   overflow.dataset.overflowTip = JSON.stringify(labels);
   overflow.setAttribute('aria-label', labels.length + ' more tags: ' + labels.join(', '));
-  overflow.title = labels.join(', ');
+  /* Prefer portaled tip over native browser title (especially in drawer) */
+  overflow.removeAttribute('title');
   overflow.hidden = labels.length === 0;
 }
 
@@ -5328,6 +6128,7 @@ function showCardOverflowTip(anchor) {
   if (!labels.length) return;
   hideCardOverflowTip();
   const tip = document.createElement('div');
+  const inDrawer = !!(anchor.closest && anchor.closest('#drawerBody, #taskDrawer'));
   tip.className = 'CardOverflowTip';
   tip.setAttribute('role', 'tooltip');
   labels.forEach(function (label) {
@@ -6131,12 +6932,7 @@ function statusBadgesHtml(task, columnId, weekISO, isOnHold, isPending, isReturn
 
 function hoursHtml(task, showHours, weekISO) {
   if (!showHours) return '';
-  let hrs = null;
-  if (weekISO && task.bookings && task.bookings.length) {
-    const b = task.bookings.find(function (x) { return x.week === weekISO && !x.completed; });
-    if (b && b.plannedHours != null) hrs = b.plannedHours;
-  }
-  if (hrs == null) hrs = task.estimatedHours;
+  const hrs = getBookingEffortHours(task, weekISO);
   if (hrs == null) return '';
   return '<span class="hours"><i class="fa-regular fa-clock" aria-hidden="true"></i> ' + hrs + ' hr</span>';
 }
@@ -7047,6 +7843,8 @@ const SUBSTITUTE_STAFF = [
 const ui = {
   drawerTask: null,
   drawerColumnId: null,
+  effortEditing: false,
+  effortEditBaseline: null,
   openModal: null,
   timeSelected: '',
   onHoldReason: 'Waiting on Client',
@@ -7114,6 +7912,8 @@ function closeDrawer() {
       backdrop.hidden = true;
       ui.drawerTask = null;
       ui.drawerColumnId = null;
+      ui.effortEditing = false;
+      ui.effortEditBaseline = null;
       ui._drawerRenderedTaskId = null;
       syncOverlayBodyClass();
     }
@@ -7121,8 +7921,14 @@ function closeDrawer() {
 }
 
 function openDrawer(task, columnId) {
+  const sameTask = ui.drawerTask && task && ui.drawerTask.id === task.id;
   ui.drawerTask = task;
   ui.drawerColumnId = columnId;
+  if (!sameTask) {
+    ui.effortEditing = false;
+    ui.effortEditBaseline = null;
+  }
+  ui._drawerShouldEnter = true;
   renderDrawer();
   const drawer = document.getElementById('taskDrawer');
   const backdrop = document.getElementById('drawerBackdrop');
@@ -7133,6 +7939,106 @@ function openDrawer(task, columnId) {
     backdrop.classList.add('is-open');
   });
   syncOverlayBodyClass();
+}
+
+function syncDrawerOverlayScrollbar() {
+  const wrap = document.getElementById('drawerScrollWrap');
+  const scrollEl = document.getElementById('drawerBody');
+  const track = document.getElementById('drawerScrollbar');
+  const thumb = document.getElementById('drawerScrollbarThumb');
+  if (!wrap || !scrollEl || !track || !thumb) return;
+
+  const viewH = scrollEl.clientHeight;
+  const contentH = scrollEl.scrollHeight;
+  const scrollable = contentH > viewH + 1;
+  wrap.classList.toggle('is-scrollable', scrollable);
+  if (!scrollable) {
+    thumb.style.height = '0px';
+    thumb.style.transform = 'translateY(0)';
+    return;
+  }
+
+  const trackH = track.clientHeight;
+  const thumbH = Math.max(24, Math.round((viewH / contentH) * trackH));
+  const maxTop = Math.max(0, trackH - thumbH);
+  const maxScroll = Math.max(1, contentH - viewH);
+  const top = Math.round((scrollEl.scrollTop / maxScroll) * maxTop);
+  thumb.style.height = thumbH + 'px';
+  thumb.style.transform = 'translateY(' + top + 'px)';
+}
+
+function bindDrawerOverlayScrollbar() {
+  const wrap = document.getElementById('drawerScrollWrap');
+  const scrollEl = document.getElementById('drawerBody');
+  const thumb = document.getElementById('drawerScrollbarThumb');
+  if (!wrap || !scrollEl || !thumb || scrollEl._overlayScrollBound) return;
+  scrollEl._overlayScrollBound = true;
+
+  let scrollHideTimer = null;
+  function onScroll() {
+    syncDrawerOverlayScrollbar();
+    wrap.classList.add('is-scrolling');
+    clearTimeout(scrollHideTimer);
+    scrollHideTimer = setTimeout(function () {
+      wrap.classList.remove('is-scrolling');
+    }, 800);
+  }
+  scrollEl.addEventListener('scroll', onScroll, { passive: true });
+
+  let drag = null;
+  thumb.addEventListener('mousedown', function (e) {
+    e.preventDefault();
+    const track = document.getElementById('drawerScrollbar');
+    if (!track) return;
+    const trackH = track.clientHeight;
+    const thumbH = thumb.offsetHeight;
+    const maxTop = Math.max(0, trackH - thumbH);
+    const maxScroll = Math.max(1, scrollEl.scrollHeight - scrollEl.clientHeight);
+    drag = {
+      startY: e.clientY,
+      startTop: scrollEl.scrollTop,
+      scale: maxScroll / Math.max(1, maxTop)
+    };
+    wrap.classList.add('is-dragging');
+  });
+  window.addEventListener('mousemove', function (e) {
+    if (!drag) return;
+    const dy = e.clientY - drag.startY;
+    scrollEl.scrollTop = drag.startTop + dy * drag.scale;
+  });
+  window.addEventListener('mouseup', function () {
+    if (!drag) return;
+    drag = null;
+    wrap.classList.remove('is-dragging');
+  });
+
+  if (typeof ResizeObserver !== 'undefined') {
+    const ro = new ResizeObserver(function () { syncDrawerOverlayScrollbar(); });
+    ro.observe(scrollEl);
+    ro.observe(wrap);
+  }
+  if (typeof MutationObserver !== 'undefined') {
+    const mo = new MutationObserver(function () {
+      requestAnimationFrame(syncDrawerOverlayScrollbar);
+    });
+    mo.observe(scrollEl, { attributes: true, attributeFilter: ['class', 'hidden'], subtree: true, childList: true });
+  }
+  syncDrawerOverlayScrollbar();
+}
+
+function bindDrawerHeaderScroll() {
+  const scroll = document.getElementById('drawerBody');
+  const header = document.getElementById('drawerHeader');
+  if (!scroll || !header) return;
+  bindDrawerOverlayScrollbar();
+  syncDrawerOverlayScrollbar();
+  function sync() {
+    header.classList.toggle('is-scrolled', scroll.scrollTop > 2);
+  }
+  scroll.removeEventListener('scroll', scroll._drawerScrollSync);
+  scroll._drawerScrollSync = sync;
+  scroll.addEventListener('scroll', sync, { passive: true });
+  sync();
 }
 
 function warnNoticeRow(label) {
@@ -7147,17 +8053,6 @@ function warnNoticeRow(label) {
 function drawerAlertsHtml(task, columnId, isBlocked, isReturned, isDone) {
   const isPending = columnId === 'blocked' && !!task.returnedReason;
   const cards = [];
-
-  if (task.isPriority) {
-    cards.push(
-      '<div class="StatusCard StatusCard--priority" role="status">' +
-        '<div class="StatusCard-head">' +
-          '<i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>' +
-          '<p>High priority</p>' +
-        '</div>' +
-      '</div>'
-    );
-  }
 
   if (task.status === 'overdue') {
     cards.push(
@@ -7246,9 +8141,20 @@ function drawerAlertsHtml(task, columnId, isBlocked, isReturned, isDone) {
   }
 
   if (isDone) {
-    const logged = task.timeSpent != null
-      ? ('Time Logged \u2022 ' + task.timeSpent + ' hr' +
-          (task.estimatedHours != null ? ' / ' + task.estimatedHours + ' hr estimated' : ''))
+    const weekISO = getWeekISO(state.weekOffset);
+    let estimatedHrs = getBookingEffortHours(task, weekISO);
+    if (estimatedHrs == null && task.estimatedHours != null) estimatedHrs = Number(task.estimatedHours);
+    let loggedHrs = task.timeSpent != null ? Number(task.timeSpent) : null;
+    if (loggedHrs == null && task.bookings && task.bookings.length) {
+      loggedHrs = task.bookings.reduce(function (sum, b) {
+        let spent = Number(b.effortLogged);
+        if (Number.isNaN(spent)) spent = b.completed ? (Number(b.plannedHours) || 0) : 0;
+        return sum + spent;
+      }, 0);
+    }
+    const logged = loggedHrs != null
+      ? ('Time Logged \u2022 ' + formatEffortHours(loggedHrs) +
+          (estimatedHrs != null ? ' / ' + formatEffortHours(estimatedHrs) + ' estimated' : ''))
       : '';
     cards.push(
       '<div class="StatusCard StatusCard--done" role="status">' +
@@ -7256,7 +8162,7 @@ function drawerAlertsHtml(task, columnId, isBlocked, isReturned, isDone) {
           '<i class="fa-solid fa-circle-check" aria-hidden="true"></i>' +
           '<p>Completed</p>' +
         '</div>' +
-        (logged ? '<div class="StatusCard-body"><p>' + logged + '</p></div>' : '') +
+        (logged ? '<div class="StatusCard-body"><p>' + escapeHtml(logged) + '</p></div>' : '') +
         '<div class="StatusCard-frame" aria-hidden="true"></div>' +
       '</div>'
     );
@@ -7286,46 +8192,36 @@ function milestoneCardsHtml(task, columnId, weekISO) {
     const panelKey = 'ms-phase-' + phaseIdx;
     const startOpen = isPhaseActive || state === 'inprogress' || phaseIdx === currentIdx;
 
-    const bookingsInner = phaseBookingsTimelineHtml(
+    const bookingsBlock = phaseBookingsTimelineHtml(
       task, columnId, weekISO, phaseIdx, currentIdx, completedPhases, phaseHours[phaseIdx]
     );
-    const hasBookings = !!bookingsInner;
-
-    let iconHtml;
-    if (hasBookings) {
-      /* Chevron doubles as expand affordance; rotates when aria-expanded */
-      const iconCls = (isPhaseActive || state === 'inprogress')
-        ? 'MilestoneIcon MilestoneIcon--active'
-        : (state === 'onhold' ? 'MilestoneIcon MilestoneIcon--onhold' : 'MilestoneIcon MilestoneIcon--next');
-      iconHtml = '<span class="' + iconCls + '" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>';
-    } else if (isPhaseActive || state === 'inprogress') {
-      iconHtml = '<span class="MilestoneIcon MilestoneIcon--active" aria-hidden="true"><i class="fa-solid fa-exclamation"></i></span>';
-    } else if (state === 'onhold') {
-      iconHtml = milestoneIconHtml('onhold');
-    } else {
-      iconHtml = '<span class="MilestoneIcon MilestoneIcon--next" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>';
-    }
+    const panelBody = (bookingsBlock && bookingsBlock.html)
+      ? bookingsBlock.html
+      : '<div class="Drawer-msBookings Drawer-msBookings--empty"><p class="Drawer-msEmpty">No bookings in this phase</p></div>';
+    const phaseEffortHrs = (bookingsBlock && bookingsBlock.plannedHours) || 0;
+    const iconHtml = milestoneIconHtml(state || 'next');
 
     const panelId = panelKey + '-panel';
-    const bookingsPanel = hasBookings
-      ? ('<div id="' + panelId + '" class="Drawer-animPanel Drawer-msBookingsPanel' + (startOpen ? ' is-open' : '') + '" data-drawer-panel="' + panelKey + '">' +
-          '<div class="Drawer-animPanelInner">' + bookingsInner + '</div>' +
-        '</div>')
-      : '';
-
-    const headTag = hasBookings ? 'button' : 'div';
-    const headAttrs = hasBookings
-      ? (' type="button" data-drawer-collapse="' + panelKey + '" aria-expanded="' + (startOpen ? 'true' : 'false') + '"' +
-          ' aria-controls="' + panelId + '"')
-      : '';
+    const bookingsPanel =
+      '<div id="' + panelId + '" class="Drawer-animPanel Drawer-msBookingsPanel' + (startOpen ? ' is-open' : '') + '" data-drawer-panel="' + panelKey + '">' +
+        '<div class="Drawer-animPanelInner">' + panelBody + '</div>' +
+      '</div>';
 
     return (
       '<div class="Drawer-msGroup">' +
-        '<' + headTag + ' class="Drawer-msHead' + (isPhaseActive || state === 'inprogress' ? ' is-active' : '') + '"' + headAttrs + '>' +
+        '<button type="button" class="Drawer-msHead' + (isPhaseActive || state === 'inprogress' ? ' is-active' : '') + '"' +
+          ' data-drawer-collapse="' + panelKey + '" aria-expanded="' + (startOpen ? 'true' : 'false') + '"' +
+          ' aria-controls="' + panelId + '">' +
           iconHtml +
-          '<p class="Drawer-msTitle">' + phase + '</p>' +
-          '<span class="Drawer-msDate"><i class="fa-regular fa-calendar" aria-hidden="true"></i>' + dateLabel + '</span>' +
-        '</' + headTag + '>' +
+          phaseBadgeHtml(phase) +
+          '<span class="Drawer-msHeadMeta">' +
+            (phaseEffortHrs > 0
+              ? '<span class="Drawer-msEffort">' + escapeHtml(formatEffortHours(phaseEffortHrs)) + '</span>'
+              : '') +
+            '<span class="Drawer-msDate">' + escapeHtml(String(dateLabel)) + '</span>' +
+          '</span>' +
+          '<span class="Drawer-msChevron" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>' +
+        '</button>' +
         bookingsPanel +
       '</div>'
     );
@@ -7334,30 +8230,46 @@ function milestoneCardsHtml(task, columnId, weekISO) {
   const deadlineDate = timeline.deadline || task.deadline || '—';
   const clientDelivery = timeline.secondReview || deadlineDate;
 
+  function deadlineRowHtml(title, dateVal) {
+    return (
+      '<div class="Drawer-msDeadline">' +
+        '<span class="Drawer-msMarker Drawer-msMarker--deadline" aria-hidden="true"><i class="fa-solid fa-flag"></i></span>' +
+        '<p class="Drawer-msDeadlineTitle">' + title + '</p>' +
+        '<span class="Drawer-msDate">' + escapeHtml(String(dateVal)) + '</span>' +
+      '</div>'
+    );
+  }
+
   return (
     '<div class="Drawer-milestones">' +
       cards.join('') +
-      '<div class="Drawer-msDeadline">' +
-        '<span class="MilestoneIcon MilestoneIcon--next" aria-hidden="true"><i class="fa-regular fa-calendar"></i></span>' +
-        '<p class="Drawer-msDeadlineTitle">Client Delivery Deadline</p>' +
-        '<span class="Drawer-msDate"><i class="fa-regular fa-calendar" aria-hidden="true"></i>' + escapeHtml(String(clientDelivery)) + '</span>' +
-      '</div>' +
-      '<div class="Drawer-msDeadline">' +
-        '<span class="MilestoneIcon MilestoneIcon--next" aria-hidden="true"><i class="fa-regular fa-calendar"></i></span>' +
-        '<p class="Drawer-msDeadlineTitle">Statutory Deadline</p>' +
-        '<span class="Drawer-msDate"><i class="fa-regular fa-calendar" aria-hidden="true"></i>' + escapeHtml(String(deadlineDate)) + '</span>' +
+      '<div class="Drawer-msKeyDates">' +
+        deadlineRowHtml('Client Delivery Deadline', clientDelivery) +
+        deadlineRowHtml('Statutory Deadline', deadlineDate) +
       '</div>' +
     '</div>'
   );
 }
 
-function bookingStatusBadgeHtml(meta) {
-  if (!meta) return '<span class="Badge Badge--sm Badge--neutral">To do</span>';
-  if (meta.state === 'done') return '<span class="Badge Badge--sm Badge--success">Done</span>';
-  if (meta.state === 'inprogress') return '<span class="Badge Badge--sm Badge--info">In Progress</span>';
-  if (meta.state === 'onhold') return '<span class="Badge Badge--sm Badge--danger">On Hold</span>';
-  if (meta.state === 'returned') return '<span class="Badge Badge--sm Badge--warning">Reverted</span>';
-  return '<span class="Badge Badge--sm Badge--neutral">To do</span>';
+function bookingStatusLabel(meta) {
+  const state = meta && meta.state;
+  if (state === 'done') return 'Done';
+  if (state === 'inprogress') return 'In Progress';
+  if (state === 'due-soon') return 'Due Soon';
+  if (state === 'overdue') return 'Overdue';
+  if (state === 'onhold') return 'On Hold';
+  if (state === 'awaiting-return') return 'Pending';
+  if (state === 'returned') return 'Reverted';
+  return 'To Do';
+}
+
+function bookingRailRadioHtml(radioCls, statusLabel) {
+  const tip = escapeHtml(statusLabel || 'To Do');
+  return (
+    '<span class="' + radioCls + ' MilestoneIconTip" tabindex="0" role="img" aria-label="' + tip + '">' +
+      '<span class="MilestoneIconTip-balloon" hidden>' + tip + '</span>' +
+    '</span>'
+  );
 }
 
 function shortDateFromWeekISO(weekISO) {
@@ -7366,7 +8278,7 @@ function shortDateFromWeekISO(weekISO) {
 }
 
 function phaseBookingsTimelineHtml(task, columnId, weekISO, phaseIdx, currentIdx, completedPhases, phaseHours) {
-  if (!task || isNonWorkTask(task)) return '';
+  if (!task || isNonWorkTask(task)) return { html: '', count: 0 };
   ensureDemoPhaseBookings(task, phaseIdx, weekISO, currentIdx, completedPhases, phaseHours);
   let list = getOrCreatePhaseBookings(task, phaseIdx, weekISO, currentIdx, completedPhases, phaseHours).slice();
   // Display-only density for the current phase (does not mutate capacity bookings)
@@ -7375,28 +8287,76 @@ function phaseBookingsTimelineHtml(task, columnId, weekISO, phaseIdx, currentIdx
   } else if (phaseIdx !== currentIdx && list.length && list.length < 2) {
     list = padDisplayBookings(list, weekISO, task, columnId, 2);
   }
-  if (!list.length) return '';
+  if (!list.length) {
+    return {
+      count: 0,
+      plannedHours: 0,
+      html: '<div class="Drawer-msBookings Drawer-msBookings--empty"><p class="Drawer-msEmpty">No bookings in this phase</p></div>',
+    };
+  }
 
-  const rows = list.map(function (b) {
+  const plannedHours = list.reduce(function (sum, b) {
+    return sum + (Number(b.plannedHours) || 0);
+  }, 0);
+
+  const rows = list.map(function (b, rowIdx) {
     const meta = resolveBookingMilestoneMeta(b, weekISO, task, columnId, phaseIdx === currentIdx);
     const assignee = resolveBookingAssignee(b, task, columnId, phaseIdx, currentIdx);
-    const dateTone = (meta.state === 'inprogress' || (phaseIdx === currentIdx && task.status === 'due-soon' && !b.completed)) ? ' is-warn'
-      : (meta.state === 'returned' || (task.status === 'overdue' && !b.completed)) ? ' is-danger' : '';
-    const dateLabel = shortDateFromWeekISO(b.week);
-    const effortLabel = formatEffortHours(b.plannedHours != null ? b.plannedHours : phaseHours);
+    const isCurrent = b.week === weekISO && phaseIdx === currentIdx;
+    const isDone = meta && meta.state === 'done';
+    const isInProgress = meta && meta.state === 'inprogress';
+    const isMine = !!(assignee && (
+      assignee.initials === CURRENT_USER.initials ||
+      assignee.name === CURRENT_USER.name ||
+      assignee.name === 'You'
+    ));
+    /* Yours: bold This Week + hours. Someone else’s in progress: quiet This Week, no hours. */
+    const isYourInProgress = isInProgress && isMine;
+    const isOtherInProgress = isInProgress && !isMine;
+    const nameLabel = (isInProgress || isCurrent)
+      ? 'This Week'
+      : ('Week of ' + shortDateFromWeekISO(b.week));
+    const metaLine = bookingEffortMetaHtml(b);
+    const radioCls = 'Drawer-msRadio'
+      + (isDone ? ' is-done' : '')
+      + (!isDone && (isInProgress || isCurrent) ? ' is-current' : '');
+    const rowCls = 'Drawer-msBooking'
+      + (isDone ? ' is-done' : '')
+      + (isInProgress ? ' is-inprogress' : '')
+      + (!isDone && (isInProgress || isCurrent) ? ' is-current' : '')
+      + (isYourInProgress ? ' is-mine' : '')
+      + (isOtherInProgress ? ' is-other' : '');
     return (
-      '<div class="Drawer-msBooking">' +
-        '<p class="Drawer-msBookingEffort">' + escapeHtml(effortLabel) + '</p>' +
-        '<p class="Drawer-msBookingDate' + dateTone + '">' + dateLabel + '</p>' +
-        '<div class="Drawer-msBookingStatus">' + bookingStatusBadgeHtml(meta) + '</div>' +
-        '<div class="Drawer-msBookingAvatar">' +
-          staffAvatarHtml(assignee ? assignee.initials : '', assignee ? assignee.name : '') +
+      '<div class="' + rowCls + '">' +
+        '<div class="Drawer-msRail">' +
+          '<span class="Drawer-msRailLine Drawer-msRailLine--top" aria-hidden="true"></span>' +
+          bookingRailRadioHtml(radioCls, bookingStatusLabel(meta)) +
+          (rowIdx < list.length - 1
+            ? '<span class="Drawer-msRailLine Drawer-msRailLine--bottom" aria-hidden="true"></span>'
+            : '<span class="Drawer-msRailLine Drawer-msRailLine--bottom" style="opacity:0" aria-hidden="true"></span>') +
+        '</div>' +
+        '<div class="Drawer-msCells">' +
+          '<div class="Drawer-msCell Drawer-msCell--name">' +
+            '<p class="Drawer-msBookingName">' +
+              (isYourInProgress ? '<strong>' + escapeHtml(nameLabel) + '</strong>' : escapeHtml(nameLabel)) +
+            '</p>' +
+            metaLine +
+          '</div>' +
+          '<div class="Drawer-msCell Drawer-msCell--avatar">' +
+            '<div class="Drawer-msBookingAvatar">' +
+              staffAvatarHtml(assignee ? assignee.initials : '', assignee ? assignee.name : '') +
+            '</div>' +
+          '</div>' +
         '</div>' +
       '</div>'
     );
   });
 
-  return '<div class="Drawer-msBookings">' + rows.join('') + '</div>';
+  return {
+    count: list.length,
+    plannedHours: plannedHours,
+    html: '<div class="Drawer-msBookings">' + rows.join('') + '</div>',
+  };
 }
 
 function padDisplayBookings(list, weekISO, task, columnId, targetCount) {
@@ -7570,13 +8530,13 @@ function staffAvatarHtml(initials, name) {
   const label = name || (hasInitials ? 'Staff member' : 'Unassigned');
   if (hasInitials) {
     return (
-      '<span class="StaffAvatar is-assigned" role="img" aria-label="' + String(label).replace(/"/g, '&quot;') + '">' +
+      '<span class="StaffAvatar is-assigned" tabindex="0" role="img" aria-label="' + String(label).replace(/"/g, '&quot;') + '">' +
         '<span class="StaffAvatar-initials">' + String(initials).replace(/</g, '') + '</span>' +
       '</span>'
     );
   }
   return (
-    '<span class="StaffAvatar is-unassigned" role="img" aria-label="Unassigned">' +
+    '<span class="StaffAvatar is-unassigned" tabindex="0" role="img" aria-label="Unassigned">' +
       '<span class="StaffAvatar-person" aria-hidden="true"></span>' +
     '</span>'
   );
@@ -7656,7 +8616,174 @@ function drawerSignalBadgeHtml(task, columnId, isBlocked) {
   return '<span class="Drawer-detailBadge Drawer-detailBadge--warning">Not Ready</span>';
 }
 
+/** Value for <input type="datetime-local"> — YYYY-MM-DDTHH:mm */
+function toDatetimeLocalValue(isoDate, hour, minute) {
+  if (!isoDate) return '';
+  const hh = String(hour == null ? 8 : hour).padStart(2, '0');
+  const mm = String(minute == null ? 0 : minute).padStart(2, '0');
+  return isoDate + 'T' + hh + ':' + mm;
+}
+
+function datetimeLocalToISODate(value) {
+  if (!value) return '';
+  return String(value).slice(0, 10);
+}
+
+function getBookingScheduleMatch(task, weekISO) {
+  if (!task) return null;
+  const bookings = task.bookings || [];
+  if (!bookings.length) return null;
+  return bookings.find(function (b) { return b.week === weekISO; })
+    || bookings.find(function (b) { return !b.completed; })
+    || bookings[0]
+    || null;
+}
+
+function getBookingScheduleRange(task, weekISO) {
+  const match = getBookingScheduleMatch(task, weekISO);
+  if (!match || !match.week) return null;
+  const startISO = match.week;
+  const endISO = match.endWeek || shiftISODays(startISO, 4);
+  return {
+    startLocal: toDatetimeLocalValue(startISO, 8, 0),
+    endLocal: toDatetimeLocalValue(endISO, 17, 0),
+  };
+}
+
+function applyScheduleToTask(task, weekISO, startLocal, endLocal) {
+  if (!task) return;
+  const startISO = datetimeLocalToISODate(startLocal);
+  const endISO = datetimeLocalToISODate(endLocal);
+  if (!startISO) return;
+  const safeEnd = endISO && endISO < startISO ? startISO : (endISO || shiftISODays(startISO, 4));
+  const match = getBookingScheduleMatch(task, weekISO);
+  if (match) {
+    match.week = startISO;
+    match.endWeek = safeEnd;
+    return;
+  }
+  task.bookings = task.bookings || [];
+  task.bookings.push({
+    week: startISO,
+    endWeek: safeEnd,
+    plannedHours: task.estimatedHours || 4,
+    effortLogged: 0,
+    completed: false,
+    assignedTo: null,
+  });
+}
+
+function formatDatetimeLocalLabel(local) {
+  if (!local) return '—';
+  const iso = String(local).slice(0, 10);
+  const time = String(local).slice(11, 16) || '00:00';
+  const datePart = deadlineLabelFromISO(iso);
+  return (datePart || iso) + ', ' + time;
+}
+
+function drawerScheduleValueHtml(task, weekISO, editable) {
+  const range = getBookingScheduleRange(task, weekISO);
+  const startVal = range ? range.startLocal : '';
+  const endVal = range ? range.endLocal : '';
+  if (!editable) {
+    if (!startVal && !endVal) {
+      return '<p class="Drawer-scheduleEmpty">No dates</p>';
+    }
+    return (
+      '<p class="Drawer-scheduleRead" aria-label="Booking start and end">' +
+        escapeHtml(formatDatetimeLocalLabel(startVal) + ' - ' + formatDatetimeLocalLabel(endVal)) +
+      '</p>'
+    );
+  }
+  return (
+    '<div class="Drawer-scheduleRange" data-schedule-range>' +
+      '<input class="Drawer-scheduleInput" type="datetime-local" value="' + escapeHtml(startVal) +
+        '" data-schedule-bound="start" aria-label="Booking start">' +
+      '<span class="Drawer-scheduleDash" aria-hidden="true">-</span>' +
+      '<input class="Drawer-scheduleInput" type="datetime-local" value="' + escapeHtml(endVal) +
+        '" data-schedule-bound="end" aria-label="Booking end">' +
+    '</div>'
+  );
+}
+
+function bookingEffortMetaHtml(b) {
+  const planned = Number(b && b.plannedHours) || 0;
+  let spent = Number(b && b.effortLogged);
+  if (Number.isNaN(spent)) spent = b && b.completed ? planned : 0;
+  const bits = [];
+  if (planned > 0) bits.push(formatEffortHours(planned) + ' planned');
+  if (spent > 0 || (b && b.completed)) bits.push(formatEffortHours(spent) + ' spent');
+  if (!bits.length) return '';
+  return '<p class="Drawer-msBookingMeta">' + escapeHtml(bits.join(' · ')) + '</p>';
+}
+
+function hoursToEffortParts(hours) {
+  return hoursToHmParts(hours);
+}
+
+function effortPartsToHours(h, m) {
+  return (parseFloat(h) || 0) + ((parseFloat(m) || 0) / 60);
+}
+
+function applyEffortHoursToTask(task, weekISO, hours) {
+  if (!task) return;
+  const n = Math.max(0, Number(hours) || 0);
+  task.estimatedHours = n;
+  const bookings = task.bookings || [];
+  if (!bookings.length) return;
+  const match = bookings.find(function (b) { return b.week === weekISO && !b.completed; })
+    || bookings.find(function (b) { return b.week === weekISO; })
+    || bookings.find(function (b) { return !b.completed; })
+    || bookings[0];
+  if (match) match.plannedHours = n;
+}
+
+function drawerEffortFieldsHtml(hours) {
+  const parts = hoursToEffortParts(hours != null ? hours : 0);
+  const hVal = hours != null && hours > 0 ? String(parts.h) : '';
+  const mVal = hours != null && hours > 0 && parts.m > 0 ? String(parts.m) : '';
+  return (
+    '<div class="Drawer-effortFields" data-effort-fields>' +
+      '<div class="Drawer-effortGroup">' +
+        '<input type="number" min="0" step="1" value="' + hVal + '" data-effort-h aria-label="Estimated hours">' +
+        '<span class="unit" aria-hidden="true">h</span>' +
+      '</div>' +
+      '<div class="Drawer-effortGroup">' +
+        '<input type="number" min="0" max="45" step="15" value="' + mVal + '" data-effort-m aria-label="Estimated minutes">' +
+        '<span class="unit" aria-hidden="true">m</span>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function drawerEffortValueHtml(effortLabel, hours, editing, editable) {
+  if (!editable) {
+    return '<span class="Drawer-effortReadLabel">' + escapeHtml(effortLabel) + '</span>';
+  }
+  if (editing) {
+    return drawerEffortFieldsHtml(hours) +
+      '<span class="Drawer-effortActions">' +
+        '<button type="button" class="Drawer-effortEditBtn Drawer-effortEditBtn--save" data-effort-save' +
+          ' aria-label="Save estimated effort" title="Save">' +
+          '<i class="fa-solid fa-check" aria-hidden="true"></i>' +
+        '</button>' +
+        '<button type="button" class="Drawer-effortEditBtn Drawer-effortEditBtn--cancel" data-effort-cancel' +
+          ' aria-label="Cancel estimated effort edit" title="Cancel">' +
+          '<i class="fa-solid fa-xmark" aria-hidden="true"></i>' +
+        '</button>' +
+      '</span>';
+  }
+  return (
+    '<span class="Drawer-effortReadLabel">' + escapeHtml(effortLabel) + '</span>' +
+    '<button type="button" class="Drawer-effortEditBtn" data-effort-edit' +
+      ' aria-label="Edit estimated effort" title="Edit estimated effort">' +
+      '<i class="fa-solid fa-pen" aria-hidden="true"></i>' +
+    '</button>'
+  );
+}
+
 function drawerDetailsHtml(task, columnId, phase, showPhases, weekISO) {
+  const detailsEditable = columnId !== 'done';
   const assignee = resolveAssignee(task, columnId);
   const assigneeHtml = assignee
     ? ('<span class="Drawer-detailAssignee">' +
@@ -7666,78 +8793,61 @@ function drawerDetailsHtml(task, columnId, phase, showPhases, weekISO) {
     : '<span style="color:var(--text-subtle);font-weight:400">Unassigned</span>';
 
   const phaseHtml = showPhases && phase
-    ? '<span class="Drawer-detailBadge">' + escapeHtml(phase) + '</span>'
+    ? phaseBadgeHtml(phase)
     : '—';
 
-  const scheduledValue = getPhaseScheduledLabel(task, weekISO);
-  const dueValue = task.deadline ? task.deadline : '—';
-  let dueTone = '';
-  let dueBadge = '';
-  if (task.deadline && task.status === 'overdue') {
-    dueTone = ' is-danger';
-    dueBadge = '<span class="Drawer-detailBadge Drawer-detailBadge--danger">Overdue</span>';
-  } else if (task.deadline && task.status === 'due-soon') {
-    dueTone = ' is-warn';
-    dueBadge = '<span class="Drawer-detailBadge Drawer-detailBadge--warn">Due Soon</span>';
-  }
-
-  const effortSummary = getTaskEffortSummary(task);
-  const effortLabel = effortSummary.estimated != null
-    ? formatEffortHours(effortSummary.estimated)
-    : '—';
+  const effortHrs = getBookingEffortHours(task, weekISO);
+  const effortLabel = effortHrs != null ? formatEffortHours(effortHrs) : '—';
+  const editingEffort = !!ui.effortEditing && detailsEditable;
 
   const signal = drawerSignalBadgeHtml(task, columnId, !!task.blockingReason && !task.returnedReason);
 
-  const rows = [
-    { icon: 'fa-regular fa-user', label: 'Assignee', value: assigneeHtml },
-  ];
+  const rows = [];
   if (showPhases) {
-    rows.push({ icon: 'fa-regular fa-flag', label: 'Phase', value: phaseHtml });
+    rows.push({
+      iconHtml: '<span class="Drawer-detailIcon Drawer-detailIcon--diamond" aria-hidden="true"></span>',
+      label: 'Phase',
+      value: phaseHtml,
+    });
   }
   rows.push(
     {
-      icon: 'fa-regular fa-calendar',
-      label: 'Scheduled Date',
-      value: escapeHtml(String(scheduledValue)),
+      icon: 'fa-regular fa-clock',
+      label: 'Start/end',
+      value: drawerScheduleValueHtml(task, weekISO, detailsEditable),
+      valueClass: ' Drawer-detailValue--schedule',
+      rowClass: ' Drawer-detailRow--schedule',
     },
     {
-      icon: 'fa-regular fa-calendar-check',
-      label: 'Due Date',
-      value: escapeHtml(String(dueValue)) + (dueBadge || ''),
-      valueClass: dueTone,
-    },
-    { icon: 'fa-regular fa-clock', label: 'Estimated Effort', value: escapeHtml(effortLabel) }
+      icon: 'fa-regular fa-hourglass',
+      label: 'Estimated Effort',
+      value: drawerEffortValueHtml(effortLabel, effortHrs, editingEffort, detailsEditable),
+      valueClass: ' Drawer-detailValue--effort',
+      rowClass: editingEffort ? ' Drawer-detailRow--effort' : '',
+    }
   );
   if (signal) {
-    /* Figma 4753:99038 reuses the time/clock icon for Signal */
-    rows.push({ icon: 'fa-regular fa-clock', label: 'Signal', value: signal });
+    rows.push({ icon: 'fa-regular fa-flag', label: 'Signal', value: signal });
   }
+  rows.push({ icon: 'fa-regular fa-user', label: 'Assignee', value: assigneeHtml });
 
   return (
     '<div class="Drawer-detailsList">' +
       rows.map(function (row) {
+        const icon = row.iconHtml
+          ? row.iconHtml
+          : '<i class="' + row.icon + '" aria-hidden="true"></i>';
+        const tip = escapeHtml(row.label);
         return (
-          '<div class="Drawer-detailRow">' +
-            '<span class="Drawer-detailLabel"><i class="' + row.icon + '" aria-hidden="true"></i>' + row.label + '</span>' +
+          '<div class="Drawer-detailRow' + (row.rowClass || '') + '">' +
+            '<span class="Drawer-detailLabel" tabindex="0" role="img" aria-label="' + tip +
+              '" data-detail-tip="' + tip + '">' + icon + '</span>' +
             '<div class="Drawer-detailValue' + (row.valueClass || '') + '">' + row.value + '</div>' +
           '</div>'
         );
       }).join('') +
     '</div>'
   );
-}
-
-/** When work is booked to be done (vs Due Date = deadline). */
-function getPhaseScheduledLabel(task, weekISO) {
-  if (!task) return '—';
-  const bookings = task.bookings || [];
-  if (!bookings.length) {
-    return isPooledTask(task) ? 'Unscheduled' : '—';
-  }
-  const match = bookings.find(function (b) { return b.week === weekISO; })
-    || bookings.find(function (b) { return !b.completed; })
-    || bookings[0];
-  return shortDateFromWeekISO(match.week) || '—';
 }
 
 function renderDrawer() {
@@ -7762,59 +8872,148 @@ function renderDrawer() {
 
   const alerts = drawerAlertsHtml(task, columnId, isBlocked, isReturned, isDone);
   const milestones = showPhases ? milestoneCardsHtml(task, columnId, weekISO) : '';
+  let engagementBookings = '';
+  if (!showPhases && !isNonWorkTask(task)) {
+    const engList = (task.bookings || []).slice().sort(function (a, b) {
+      return String(a.week || '').localeCompare(String(b.week || ''));
+    });
+    if (engList.length) {
+      const rows = engList.map(function (b, rowIdx) {
+        const meta = resolveBookingMilestoneMeta(b, weekISO, task, columnId, true);
+        const assignee = b.assignedTo || resolveAssignee(task, columnId);
+        const isInProgress = meta && meta.state === 'inprogress';
+        const isMine = !!(assignee && (
+          assignee.initials === CURRENT_USER.initials ||
+          assignee.name === CURRENT_USER.name ||
+          assignee.name === 'You'
+        ));
+        const isYourInProgress = isInProgress && isMine;
+        const nameLabel = (isInProgress || b.week === weekISO)
+          ? 'This Week'
+          : ('Week of ' + shortDateFromWeekISO(b.week));
+        return (
+          '<div class="Drawer-msBooking' + (isYourInProgress ? ' is-mine' : '') + '">' +
+            '<div class="Drawer-msRail">' +
+              '<span class="Drawer-msRailLine Drawer-msRailLine--top" aria-hidden="true"></span>' +
+              bookingRailRadioHtml(
+                'Drawer-msRadio' + (isInProgress ? ' is-current' : ''),
+                bookingStatusLabel(meta)
+              ) +
+              (rowIdx < engList.length - 1
+                ? '<span class="Drawer-msRailLine Drawer-msRailLine--bottom" aria-hidden="true"></span>'
+                : '<span class="Drawer-msRailLine Drawer-msRailLine--bottom" style="opacity:0" aria-hidden="true"></span>') +
+            '</div>' +
+            '<div class="Drawer-msCells">' +
+              '<div class="Drawer-msCell Drawer-msCell--name">' +
+                '<p class="Drawer-msBookingName">' +
+                  (isYourInProgress ? '<strong>' + escapeHtml(nameLabel) + '</strong>' : escapeHtml(nameLabel)) +
+                '</p>' +
+                bookingEffortMetaHtml(b) +
+              '</div>' +
+              '<div class="Drawer-msCell Drawer-msCell--avatar">' +
+                '<div class="Drawer-msBookingAvatar">' +
+                  staffAvatarHtml(assignee ? assignee.initials : '', assignee ? assignee.name : '') +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        );
+      });
+      engagementBookings = '<div class="Drawer-msBookings">' + rows.join('') + '</div>';
+    } else {
+      engagementBookings = '<div class="Drawer-msBookings Drawer-msBookings--empty"><p class="Drawer-msEmpty">No bookings</p></div>';
+    }
+  }
   const traits = drawerTraitTagsHtml(task);
   const details = drawerDetailsHtml(task, columnId, phase, showPhases, weekISO);
-  const detailsTitle = showPhases ? 'Current Phase Details' : 'Details';
 
-  const priorityMark = task.isPriority
-    ? '<img class="Drawer-priorityCorner" src="' + PRIORITY_CORNER_URI + '" alt="" />'
-    : '';
-
-  document.getElementById('drawerBody').innerHTML =
-    '<div class="Drawer-header">' +
-      priorityMark +
-      '<div class="Drawer-headerTop">' +
-        '<div class="Drawer-headerMain">' +
-          (traits || '') +
-          '<div class="Drawer-titleBlock">' +
-            '<a class="Drawer-jobLink" id="drawerTitle" href="' + jobHref + '" data-job-link="' + String(task.id).replace(/"/g, '') + '"' +
-              ' title="Open engagement ' + String(jobCode).replace(/"/g, '&quot;') + '">' +
-              escapeHtml(title) +
-            '</a>' +
-            '<p class="Drawer-company">' + escapeHtml(jobSubtitle || task.company || '') + '</p>' +
-          '</div>' +
-          '<div class="Drawer-headerBadges">' +
-            statusMenuHtml(columnId, task) +
-          '</div>' +
+  document.getElementById('drawerHeader').innerHTML =
+    '<div class="Drawer-headerTop">' +
+      '<div class="Drawer-headerMain">' +
+        (traits || '') +
+        '<div class="Drawer-titleBlock">' +
+          '<a class="Drawer-jobLink" id="drawerTitle" href="' + jobHref + '" data-job-link="' + String(task.id).replace(/"/g, '') + '"' +
+            ' title="Open engagement ' + String(jobCode).replace(/"/g, '&quot;') + '">' +
+            escapeHtml(title) +
+          '</a>' +
+          '<p class="Drawer-company">' + escapeHtml(jobSubtitle || task.company || '') + '</p>' +
         '</div>' +
-        '<button type="button" class="Drawer-close" id="drawerClose" aria-label="Close task details"><i class="fa-solid fa-xmark"></i></button>' +
+        '<div class="Drawer-headerBadges">' +
+          statusMenuHtml(columnId, task) +
+          (task.isPriority
+            ? highPriorityBadgeHtml()
+            : '') +
+        '</div>' +
       '</div>' +
-    '</div>' +
-    (alerts ? '<div class="Drawer-section" style="gap:12px">' + alerts + '</div>' : '') +
+      '<button type="button" class="Drawer-close" id="drawerClose" aria-label="Close task details"><i class="fa-solid fa-xmark"></i></button>' +
+    '</div>';
+  document.getElementById('drawerBody').innerHTML =
+    (alerts ? '<div class="Drawer-section Drawer-section--alerts">' + alerts + '</div>' : '') +
     '<div class="Drawer-section Drawer-section--details">' +
-      '<h3>' + detailsTitle + '</h3>' +
+      '<h3>Booking Details</h3>' +
       details +
     '</div>' +
     (showPhases
-      ? ('<div class="Drawer-section">' +
+      ? ('<div class="Drawer-section Drawer-section--milestones">' +
           '<h3>Milestones</h3>' +
           milestones +
         '</div>')
-      : '');
+      : (engagementBookings
+        ? ('<div class="Drawer-section Drawer-section--bookings">' +
+            '<h3>Bookings</h3>' +
+            engagementBookings +
+          '</div>')
+        : ''));
 
   document.getElementById('drawerFooter').innerHTML = '';
   document.getElementById('drawerFooter').hidden = true;
   document.getElementById('drawerClose').onclick = closeDrawer;
   bindDrawerStatusMenu();
+  bindDrawerScheduleEditors();
+  bindDrawerEffortEditor();
+  bindDrawerHeaderScroll();
   ui._drawerRenderedTaskId = task.id;
   applyDrawerExpandState(expandState);
+
+  const drawerEl = document.getElementById('taskDrawer');
+  const scrollEl = document.getElementById('drawerBody');
+  if (ui._drawerShouldEnter && scrollEl) {
+    ui._drawerShouldEnter = false;
+    if (drawerEl) drawerEl.classList.remove('is-entering');
+    scrollEl.classList.remove('is-entering');
+    void scrollEl.offsetWidth;
+    if (drawerEl) drawerEl.classList.add('is-entering');
+    scrollEl.classList.add('is-entering');
+    clearTimeout(ui._drawerEnterTimer);
+    ui._drawerEnterTimer = setTimeout(function () {
+      if (drawerEl) drawerEl.classList.remove('is-entering');
+      scrollEl.classList.remove('is-entering');
+    }, 420);
+  }
+
   // Fit trait overflow after drawer paints (width must be measurable)
   requestAnimationFrame(function () {
     requestAnimationFrame(function () {
-      const traitRow = document.querySelector('#drawerBody [data-drawer-traits]');
+      syncDrawerOverlayScrollbar();
+      const traitRow = document.querySelector('#drawerHeader [data-drawer-traits]');
       if (traitRow) layoutCardTraits(traitRow);
     });
   });
+}
+
+function statusMenuActionItems(panel) {
+  return Array.prototype.slice.call(
+    panel.querySelectorAll('.StatusMenu-item[data-drawer-transition]')
+  );
+}
+
+function focusStatusMenuItem(panel, index) {
+  const items = statusMenuActionItems(panel);
+  if (!items.length) return;
+  const i = (index + items.length) % items.length;
+  items.forEach(function (el) { el.tabIndex = -1; });
+  items[i].tabIndex = 0;
+  items[i].focus();
 }
 
 function setDrawerStatusMenuOpen(open) {
@@ -7824,16 +9023,160 @@ function setDrawerStatusMenuOpen(open) {
   trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
   panel.classList.toggle('is-open', open);
   panel.hidden = !open;
+  if (open) {
+    requestAnimationFrame(function () { focusStatusMenuItem(panel, 0); });
+  } else {
+    trigger.focus();
+  }
+}
+
+function bindDrawerScheduleEditors() {
+  const range = document.querySelector('#drawerBody [data-schedule-range]');
+  const task = ui.drawerTask;
+  if (!range || !task) return;
+  const weekISO = getWeekISO(state.weekOffset);
+  const startEl = range.querySelector('[data-schedule-bound="start"]');
+  const endEl = range.querySelector('[data-schedule-bound="end"]');
+  function syncSchedule() {
+    let startLocal = startEl && startEl.value;
+    let endLocal = endEl && endEl.value;
+    if (startLocal && endLocal && endLocal < startLocal && endEl) {
+      endEl.value = startLocal;
+      endLocal = startLocal;
+    }
+    applyScheduleToTask(task, weekISO, startLocal, endLocal);
+    renderBoard();
+  }
+  function openPicker(el) {
+    if (!el) return;
+    try {
+      if (typeof el.showPicker === 'function') el.showPicker();
+    } catch (err) { /* ignore */ }
+  }
+  [startEl, endEl].forEach(function (el) {
+    if (!el) return;
+    el.onchange = syncSchedule;
+    el.onclick = function () { openPicker(el); };
+    el.onkeydown = function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openPicker(el);
+      }
+    };
+  });
+}
+
+function bindDrawerEffortEditor() {
+  const editBtn = document.querySelector('#drawerBody [data-effort-edit]');
+  const saveBtn = document.querySelector('#drawerBody [data-effort-save]');
+  const cancelBtn = document.querySelector('#drawerBody [data-effort-cancel]');
+  const fields = document.querySelector('#drawerBody [data-effort-fields]');
+  const task = ui.drawerTask;
+  const weekISO = getWeekISO(state.weekOffset);
+  const hEl = fields && fields.querySelector('[data-effort-h]');
+  const mEl = fields && fields.querySelector('[data-effort-m]');
+
+  if (editBtn) {
+    editBtn.onclick = function (e) {
+      e.stopPropagation();
+      if (!task) return;
+      ui.effortEditBaseline = getBookingEffortHours(task, weekISO);
+      ui.effortEditing = true;
+      renderDrawer();
+    };
+  }
+  if (saveBtn) {
+    saveBtn.onclick = function (e) {
+      e.stopPropagation();
+      if (!task) return;
+      const hours = effortPartsToHours(hEl && hEl.value, mEl && mEl.value);
+      applyEffortHoursToTask(task, weekISO, hours);
+      ui.effortEditing = false;
+      ui.effortEditBaseline = null;
+      renderDrawer();
+      renderBoard();
+    };
+  }
+  if (cancelBtn) {
+    cancelBtn.onclick = function (e) {
+      e.stopPropagation();
+      if (!task) return;
+      if (ui.effortEditBaseline != null) {
+        applyEffortHoursToTask(task, weekISO, ui.effortEditBaseline);
+      }
+      ui.effortEditing = false;
+      ui.effortEditBaseline = null;
+      renderDrawer();
+    };
+  }
+  if (fields && hEl) {
+    function onEffortKey(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (saveBtn) saveBtn.click();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        if (cancelBtn) cancelBtn.click();
+      }
+    }
+    hEl.onkeydown = onEffortKey;
+    if (mEl) mEl.onkeydown = onEffortKey;
+    requestAnimationFrame(function () {
+      hEl.focus();
+      hEl.select();
+    });
+  }
 }
 
 function bindDrawerStatusMenu() {
   const trigger = document.getElementById('drawerStatusTrigger');
   const panel = document.getElementById('drawerStatusPanel');
-  if (!trigger || !panel) return;
+  const menu = document.getElementById('drawerStatusMenu');
+  if (!trigger || !panel || !menu) return;
   trigger.onclick = function (e) {
     e.stopPropagation();
     const open = trigger.getAttribute('aria-expanded') === 'true';
     setDrawerStatusMenuOpen(!open);
+  };
+  menu.onkeydown = function (e) {
+    const open = trigger.getAttribute('aria-expanded') === 'true';
+    const items = statusMenuActionItems(panel);
+    if (e.key === 'Escape') {
+      if (open) {
+        e.preventDefault();
+        setDrawerStatusMenuOpen(false);
+      }
+      return;
+    }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!open) {
+        setDrawerStatusMenuOpen(true);
+        return;
+      }
+      const active = document.activeElement;
+      const idx = items.indexOf(active);
+      const next = e.key === 'ArrowDown' ? idx + 1 : idx - 1;
+      focusStatusMenuItem(panel, idx < 0 ? 0 : next);
+      return;
+    }
+    if (e.key === 'Home' && open) {
+      e.preventDefault();
+      focusStatusMenuItem(panel, 0);
+      return;
+    }
+    if (e.key === 'End' && open) {
+      e.preventDefault();
+      focusStatusMenuItem(panel, items.length - 1);
+      return;
+    }
+    if ((e.key === 'Enter' || e.key === ' ') && open) {
+      const active = document.activeElement;
+      if (active && active.matches && active.matches('.StatusMenu-item[data-drawer-transition]')) {
+        e.preventDefault();
+        active.click();
+      }
+    }
   };
 }
 
@@ -9582,31 +10925,39 @@ document.getElementById('board').addEventListener('change', (e) => {
 
 document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
 
+function drawerStatusTipAnchor(el) {
+  if (!el || !el.closest) return null;
+  const body = document.getElementById('drawerBody');
+  if (!body || !body.contains(el)) return null;
+  const detailLabel = el.closest('.Drawer-detailLabel[data-detail-tip]');
+  if (detailLabel) return detailLabel;
+  const icon = el.closest('.MilestoneIconTip');
+  if (icon) return icon;
+  const avatar = el.closest('.Drawer-msBookingAvatar .StaffAvatar') || el.closest('.StaffAvatar');
+  if (avatar && avatar.closest('.Drawer-msBookingAvatar')) return avatar;
+  return null;
+}
 document.getElementById('drawerBody').addEventListener('mouseover', function (e) {
-  const tip = e.target.closest('.MilestoneIconTip');
-  if (!tip || !document.getElementById('drawerBody').contains(tip)) return;
+  const tip = drawerStatusTipAnchor(e.target);
+  if (!tip) return;
   if (_milestoneStatusTipAnchor === tip) return;
   showMilestoneStatusTip(tip);
 });
 document.getElementById('drawerBody').addEventListener('mouseout', function (e) {
-  const tip = e.target.closest('.MilestoneIconTip');
-  if (!tip || !document.getElementById('drawerBody').contains(tip)) return;
-  const next = e.relatedTarget && e.relatedTarget.closest
-    ? e.relatedTarget.closest('.MilestoneIconTip')
-    : null;
+  const tip = drawerStatusTipAnchor(e.target);
+  if (!tip) return;
+  const next = drawerStatusTipAnchor(e.relatedTarget);
   if (next === tip) return;
   if (_milestoneStatusTipAnchor === tip) hideMilestoneStatusTip();
 });
 document.getElementById('drawerBody').addEventListener('focusin', function (e) {
-  const tip = e.target.closest('.MilestoneIconTip');
+  const tip = drawerStatusTipAnchor(e.target);
   if (tip) showMilestoneStatusTip(tip);
 });
 document.getElementById('drawerBody').addEventListener('focusout', function (e) {
-  const tip = e.target.closest('.MilestoneIconTip');
+  const tip = drawerStatusTipAnchor(e.target);
   if (!tip) return;
-  const next = e.relatedTarget && e.relatedTarget.closest
-    ? e.relatedTarget.closest('.MilestoneIconTip')
-    : null;
+  const next = drawerStatusTipAnchor(e.relatedTarget);
   if (next === tip) return;
   if (_milestoneStatusTipAnchor === tip) hideMilestoneStatusTip();
 });
@@ -9664,6 +11015,8 @@ document.getElementById('drawerBody').addEventListener('click', (e) => {
   }
   const collapse = e.target.closest('[data-drawer-collapse]');
   if (collapse) {
+    /* Status icon tip — hover/focus only; don't toggle the phase accordion */
+    if (e.target.closest('.MilestoneIconTip')) return;
     const key = collapse.dataset.drawerCollapse;
     const wrap = collapse.closest('.Drawer-msGroup')
       || collapse.closest('.Drawer-bookingsWrap')
@@ -10090,6 +11443,7 @@ window.addEventListener('resize', function () {
   cardTraitsResizeTimer = setTimeout(function () {
     hideCardOverflowTip();
     layoutAllCardTraits();
+    syncDrawerOverlayScrollbar();
   }, 100);
 });
 
