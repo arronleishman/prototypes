@@ -200,6 +200,7 @@ button { font-family: inherit; }
 }
 .App.is-grade { --col-grade-w: 69px; }
 .App.is-breakdown { --col-expand-w: 25px; --col-dim-w: 150px; }
+.App.is-wide-dim { --col-dim-w: 210px; }
 /* No breakdown means no expand or label column. Hand that width to the
    name so the toolbar and resource panel stay as wide as they were. */
 .App:not(.is-breakdown) { --col-name-w: 370px; }
@@ -1578,8 +1579,8 @@ button.CreateBooking-unit:hover,
 
 // ── Feature flags / tenant config ──────────────────────────────────────────
 // The Resource Breakdown menu item is fully gated by the Gantt Aggregation
-// flag. MVP only breaks down by Role, so a customer without roles configured
-// has nothing to aggregate on and never sees the item (DEVO-29502).
+// flag. With roles off, Phase, Engagement and Client still give the menu
+// something to aggregate on (DEVO-29502).
 //
 // Job roles are a separate environment setting with its own "mandatory"
 // switch, giving three tenant shapes to review: roles off, roles on and
@@ -1591,13 +1592,15 @@ var FLAGS = {
     rolesMandatory: false
 };
 
-// Role only makes sense where the tenant has roles switched on; Phase needs no
-// such gate. Booking Type and Resource Requirement aggregate correctly but are
-// not exposed in the menu yet.
+// Role only makes sense where the tenant has roles switched on. Phase,
+// Engagement and Client need no such gate — Engagement and Client are in the
+// menu now so the design covers the "see all the time on a job or a client"
+// ask, ahead of that work being built. Booking Type and Resource Requirement
+// aggregate correctly but are not exposed yet.
 function breakdownOptions() {
     var opts = ['none'];
     if (FLAGS.rolesEnabled) opts.push('role');
-    opts.push('phase');
+    opts.push('phase', 'engagement', 'client');
     return opts;
 }
 
@@ -1666,8 +1669,25 @@ var DIMENSIONS = {
     role:        { label: 'Role',                 field: 'role' },
     bookingType: { label: 'Primary Booking Type', field: 'bookingType' },
     phase:       { label: 'Phase',                field: 'phase' },
+    engagement:  { label: 'Engagement',           field: 'job' },
+    client:      { label: 'Client',               field: 'client' },
     req:         { label: 'Resource Requirement', field: 'req' }
 };
+
+// High-volume rows name the client after the dash ("SA — J Whitfield").
+// The longer engagements name the account in the title or the code. Firm
+// work — training, QA, a batch with no account — has no client and falls
+// into Other.
+function clientOf(job, code) {
+    var name = job || '';
+    var dash = name.indexOf(' — ');
+    if (dash > -1) return name.slice(dash + 3);
+    var s = name + ' ' + (code || '');
+    if (/Angelo|ANCO|ANLP|ANSLP|\bANG-/.test(s)) return 'Angelo Group';
+    if (/Hawksworth|\bHEA-/.test(s)) return 'Hawksworth Energy';
+    if (/Maritime|\bMCR-/.test(s)) return 'Maritime Consulting';
+    return null;
+}
 
 var PHASE_ORDER  = ['Preparation', 'First Review', 'Second Review'];
 var PHASE_COLOUR = { 'Preparation': '#2398f2', 'First Review': '#2d7d46', 'Second Review': '#7b3fa0' };
@@ -1979,6 +1999,7 @@ DATA.forEach(function (group) {
                 id: 'it-' + (++ITEM_SEQ),
                 job: spec[0], code: spec[1],
                 phase: spec[2], role: spec[3], bookingType: spec[4], req: spec[5],
+                client: clientOf(spec[0], spec[1]),
                 startWeek: spec[6], span: span,
                 hours: spec[8],
                 cells: cells,
@@ -2168,6 +2189,7 @@ function render() {
     app.classList.toggle('is-phase-hours', state.showPhaseHours && breakdownOn());
     app.classList.toggle('is-grade', state.showGrade);
     app.classList.toggle('is-breakdown', breakdownOn());
+    app.classList.toggle('is-wide-dim', state.breakdown === 'engagement');
     var scrollLeft = document.getElementById('gantt').scrollLeft;
     ganttInner.innerHTML = '';
     ganttInner.appendChild(buildHeader());
@@ -3315,6 +3337,12 @@ function openCreateModal(worker, row, weekDate) {
     var canChoose = !!row.isOther || dim === 'none';
     var mode = 'booking';
     var engagement = null;
+    // Opened from an engagement row: that engagement is the one being booked,
+    // so long as the name points at a single engagement.
+    if (dim === 'engagement' && value) {
+        var named = ENGAGEMENTS.filter(function (e) { return e.job === value; });
+        if (named.length === 1) engagement = named[0];
+    }
     // Every booking in the data carries a phase; work that is not opened from a
     // phase row starts where new work starts.
     var phase = dim === 'phase' && value ? value : PHASE_ORDER[0];
@@ -3683,6 +3711,7 @@ function openCreateModal(worker, row, weekDate) {
             role: !leave() && dim === 'role' ? value : null,
             bookingType: !leave() && dim === 'bookingType' ? value : null,
             req: !leave() && dim === 'req' ? value : null,
+            client: leave() ? null : (dim === 'client' && value ? value : clientOf(engagement.job, engagement.code)),
             startWeek: range.start, span: range.span, hours: hours, cells: cells,
             kind: leave() ? 'unavailability' : 'booking'
         };
