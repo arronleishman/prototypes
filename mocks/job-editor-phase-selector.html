@@ -295,7 +295,7 @@ button, input { font-family: inherit; }
     padding: 0 6px 0 4px;
     border: 1px solid var(--phase-badge-border, var(--border-default));
     border-radius: var(--border-radius-default);
-    background: var(--phase-badge-bg, var(--surface-default));
+    background: transparent;
     color: var(--text-default); font-size: var(--font-size-small);
     font-weight: var(--font-weight-semibold);
 }
@@ -306,22 +306,18 @@ button, input { font-family: inherit; }
 .Tag--preparation {
     --phase-badge-accent: var(--phase-preparation);
     --phase-badge-border: #7bc4f7;
-    --phase-badge-bg: #e8f5fe;
 }
 .Tag--first-review {
     --phase-badge-accent: var(--phase-first-review);
     --phase-badge-border: #7aaf8a;
-    --phase-badge-bg: #e8f3ec;
 }
 .Tag--second-review {
     --phase-badge-accent: var(--phase-second-review);
     --phase-badge-border: #b08ecc;
-    --phase-badge-bg: #f3ebf8;
 }
 .Tag--sign-off {
     --phase-badge-accent: var(--phase-sign-off);
     --phase-badge-border: #dfa0d4;
-    --phase-badge-bg: #f9ebf6;
 }
 .Tag[hidden] { display: none !important; }
 .Pencil {
