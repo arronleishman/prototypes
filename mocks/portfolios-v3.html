@@ -1508,6 +1508,17 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     white-space: nowrap;
 }
 .Modal-resultsContent { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; padding: 16px; gap: 16px; overflow: hidden; }
+#modalStepResults .Modal-resultsContent { overflow: auto; gap: 0; padding-top: 0; padding-bottom: 0; }
+#modalStepResults .Modal-resultsTableWrap { flex: 1 1 auto; }
+#modalResultsPager { margin-top: auto; }
+#modalStepResults .Modal-resultsBar {
+    position: sticky; top: 0; z-index: 5; flex-shrink: 0;
+    background: var(--surface-default); padding-top: 16px; padding-bottom: 16px;
+}
+#modalStepResults .Modal-resultsTableWrap { overflow: visible; }
+#modalStepResults .ReportResults-table { overflow: visible; }
+#modalStepResults .ReportResults-table thead th { top: 67px; z-index: 4; background: var(--surface-subtle-dark); }
+#modalStepResults .ReportResults-table thead th.col-check:has(.TableSelect-menu:not([hidden])) { z-index: 8; }
 
 /* ReportQueryBuilder filters tab — FilterMenuCard.css + FilterCard.css */
 .RQ-filtersTabContent { display: flex; flex-wrap: nowrap; flex: 1 1 auto; min-height: 0; min-width: 0; height: 100%; overflow: hidden; padding: var(--padding-md); gap: var(--padding-md); align-items: stretch; background: var(--surface-default); }
@@ -1705,6 +1716,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .PfSectionLabel { display: flex; align-items: center; gap: 8px; }
 .PfSectionLabel-text { font-size: var(--font-size-medium); font-weight: var(--font-weight-bold); letter-spacing: 0; text-transform: uppercase; color: var(--text-accent); white-space: nowrap; }
 .PfSectionLabel-rule { flex: 1 1 auto; height: 1px; background: var(--surface-accent); }
+.PfSectionLabel .InfoTooltip { width: 20px; height: 20px; font-size: 13px; color: var(--icon-subtle); }
 .PfSection-head { display: none; }
 .PfSection-body { padding: 0; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
 .PfLink { border: none; background: none; color: var(--text-primary); cursor: pointer; padding: 0; font-size: var(--font-size-small); font-family: var(--font-family); }
@@ -1980,6 +1992,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .Modal-resultsToolbar [hidden] { display: none !important; }
 
 .Modal-resultsTableWrap { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 0; background: #fff; display: flex; flex-direction: column; }
+#modalResultsPager { position: sticky; bottom: 0; z-index: 3; flex-shrink: 0; background: var(--surface-default); }
+#modalResultsPager:empty { display: none; }
 .Modal-resultsTableWrap.is-empty #modalResultsTable { display: none; }
 .Modal-resultsEmpty { flex: 1 1 auto; display: flex; align-items: stretch; justify-content: center; min-height: 0; padding: 0; }
 .Modal-resultsEmpty[hidden] { display: none !important; }
@@ -3313,7 +3327,10 @@ const M_ASSIGNMENT = ["Assigned","Unassigned"];
 const M_SKILLS = ["Audit","Tax","IT Audit","Forensic Accounting"];
 const M_REQ_RESOURCES = ["Alex Turner","Jordan Blake","Sam Rivera","Casey Morgan"];
 
-const ENGAGEMENTS = [
+const ENGAGEMENT_KINDS = ["Statutory Audit","Internal Audit","Compliance Review","Tax Compliance","Controls Assessment","Year-end Audit","Fraud Risk Assessment","IT Systems Audit","Sustainability Reporting","Operational Review"];
+const ENGAGEMENT_CLIENTS = ["Meridian Bank","Vertex Financial","GlobalTech Industries","Apex Pharmaceuticals","GreenWave Solutions","Summit Retail","Horizon Energy","NovaTech Manufacturing","Crestline Holdings","Brightwave Media","Orion Logistics","Vanta Foods","Northwind Health","Harbor and Co","Lumen Insurance","Pinnacle Retail","Ashford Utilities","Kepler Aerospace","Bramble Housing","Sable Logistics"];
+const GENERATED_PER_PARTNER = 24;
+const BASE_ENGAGEMENTS = [
     ["ANG3125","Fraud Risk Assessment for Pinnacle Insurance"],
     ["ANG3105","Internal Controls Assessment for Meridian Bank"],
     ["ANG3117","IT Systems Audit for Vertex Financial Services"],
@@ -3327,7 +3344,15 @@ const ENGAGEMENTS = [
     ["ANG3142","Internal Audit for Brightwave Media"],
     ["ANG3148","Controls Review for Orion Logistics"],
     ["ANG3151","Statutory Audit for Vanta Foods"]
-].map(([code, name], i) => {
+];
+const GENERATED_ENGAGEMENTS = M_PARTNERS.flatMap((partner, pi) => Array.from({ length: GENERATED_PER_PARTNER }, (_, k) => {
+    const n = pi * GENERATED_PER_PARTNER + k;
+    const client = ENGAGEMENT_CLIENTS[(pi * 5 + k) % ENGAGEMENT_CLIENTS.length];
+    const kind = ENGAGEMENT_KINDS[(pi + k) % ENGAGEMENT_KINDS.length];
+    const fy = ["FY24", "FY25", "FY26"][k % 3];
+    return ["ANG" + (3200 + n), kind + " " + fy + " for " + client];
+}));
+const ENGAGEMENTS = BASE_ENGAGEMENTS.concat(GENERATED_ENGAGEMENTS).map(([code, name], i) => {
     const bu = M_BUS[i % M_BUS.length];
     const location = M_LOCS[i % M_LOCS.length];
     const parentGroup = bu + " — " + location;
@@ -3345,6 +3370,10 @@ const ENGAGEMENTS = [
     } else if (i === 3) {
         partner = M_PARTNERS.slice(0, 9);
         lead = M_LEADS.slice(0, 6);
+    } else if (i >= BASE_ENGAGEMENTS.length) {
+        const g = i - BASE_ENGAGEMENTS.length;
+        partner = [M_PARTNERS[Math.floor(g / GENERATED_PER_PARTNER)]];
+        lead = [M_LEADS[g % M_LEADS.length]];
     } else {
         partner = [M_PARTNERS[i % M_PARTNERS.length]];
         lead = [M_LEADS[i % M_LEADS.length]];
@@ -4412,7 +4441,7 @@ function portfolioEmptyState() {
         sub: "Select engagements from Search Results and add them to your portfolio."
     };
 }
-const RESULTS_ROWS_PER_PAGE = 5;
+const RESULTS_ROWS_PER_PAGE = ROWS_PER_PAGE;
 function engagementCountLabel(n) {
     return n === 1 ? "1 engagement" : n + " engagements";
 }
@@ -4492,6 +4521,22 @@ function onResultsSelectAllClick(e) {
         return;
     }
     e.preventDefault();
+    const pageRows = resultsPageRows(rows);
+    const pageFullySelected = pageRows.length > 0 && pageRows.every(row => modalState.tableSel.has(row.code));
+    e.target.checked = pageFullySelected;
+    e.target.indeterminate = !pageFullySelected && pageRows.some(row => modalState.tableSel.has(row.code));
+    if (pageFullySelected) {
+        closeResultsSelectMenu();
+        if (rows.every(row => modalState.tableSel.has(row.code))) {
+            deselectAllResultRows();
+            return;
+        }
+        pageRows.forEach(row => modalState.tableSel.delete(row.code));
+        modalState.lastSelectedCode = null;
+        renderResultsTable();
+        updateModalPrimary();
+        return;
+    }
     const menu = document.getElementById("resultsSelectMenu");
     if (menu && !menu.hidden) closeResultsSelectMenu();
     else openResultsSelectMenu();
@@ -4582,7 +4627,10 @@ function renderResultsTable() {
     updateResultsActionButtons();
 }
 
-/* Portfolio tab — two sections: "From filters" (dynamic) and "Added manually" (static) */
+/* Portfolio tab — Dynamic filters (rules) and Static filters (hand-picked) */
+function pfSectionHeading(label, count, tip) {
+    return `<div class="PfSectionLabel"><span class="PfSectionLabel-text">${htmlEsc(label)} (${count})</span><button type="button" class="InfoTooltip BtnTooltipWrap BtnTooltipWrap--float" data-tooltip="${htmlEsc(tip)}" aria-label="${htmlEsc(tip)}"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></button><span class="PfSectionLabel-rule"></span></div>`;
+}
 function pfRowHtml(e, kind) {
     const title = kind === "dynamic" ? "Exclude from this portfolio" : "Remove from portfolio";
     const fn = kind === "dynamic" ? `excludeDynamicRow('${htmlEsc(e.code)}')` : `removeManualRow('${htmlEsc(e.code)}')`;
@@ -4611,14 +4659,14 @@ function renderPortfolioView() {
 
     document.getElementById("modalPortfolioView").innerHTML = `
         <div class="PfSection">
-            <div class="PfSectionLabel"><span class="PfSectionLabel-text">From filters (${modalState.rules.length})</span><span class="PfSectionLabel-rule"></span></div>
+            ${pfSectionHeading("Dynamic filters", modalState.rules.length, "Engagements that match these filters and fall within the start and end dates are added automatically. Engagements outside that date range are not.")}
             <div class="PfSection-body">
                 ${rulesHtml}
                 ${excludedHtml}
             </div>
         </div>
         <div class="PfSection">
-            <div class="PfSectionLabel"><span class="PfSectionLabel-text">Added manually (${manual.length})</span><span class="PfSectionLabel-rule"></span></div>
+            ${pfSectionHeading("Static filters", manual.length, "Engagements you added yourself. They stay in the portfolio until you remove them.")}
             <div class="PfSection-body">${pfTableHtml(manual, "manual")}</div>
         </div>`;
 }
@@ -4736,13 +4784,9 @@ function toggleAllResultRows(on) {
     modalState.lastSelectedCode = null;
     if (on) {
         rows.forEach(e => modalState.tableSel.add(e.code));
+        modalState.declinedDynamicForResults = false;
         renderResultsTable();
         updateModalPrimary();
-        // Ask on Select all (search results only, with applied filters)
-        if (modalState.resultsTab === "search" && rows.length && hasAppliedFilters()) {
-            modalState.declinedDynamicForResults = false;
-            openDynamicFilterConfirm();
-        }
         return;
     }
     modalState.declinedDynamicForResults = false;
