@@ -98,9 +98,10 @@
   --kanban-drop-gap: 8px;
   --kanban-drop-pad: 8px;
   /* Gantt aggregation phase colours (gantt-resource-breakdown) */
-  --phase-preparation: #2398f2;
-  --phase-first-review: #2d7d46;
-  --phase-second-review: #7b3fa0;
+  /* Figma Stories drawer base (4931:43471) phase badge accents */
+  --phase-preparation: #2f6fed;
+  --phase-first-review: #2f9e5b;
+  --phase-second-review: #7b4fc4;
 }
 
 .Drawer-backdrop {
@@ -109,7 +110,8 @@
 }
 .Drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }
 .Drawer {
-  position: fixed; top: 0; right: 0; bottom: 0; width: 389px; max-width: 100vw;
+  /* Figma Stories drawer base 4931:43471 — 400px; body pad 16 → details list 368 */
+  position: fixed; top: 0; right: 0; bottom: 0; width: 400px; max-width: 100vw;
   background: var(--surface-default);
   box-shadow: -6px 0 16px rgba(0,0,0,.06);
   z-index: 1001; display: flex; flex-direction: column;
@@ -166,12 +168,21 @@
   cursor: default;
 }
 .Drawer-header {
+  /* Figma Siedebar title — pad 16, gap 8 */
   flex-shrink: 0;
   position: relative;
-  background: var(--surface-default);
+  isolation: isolate;
+  background: #ffffff;
   z-index: 5;
-  padding: var(--padding-md); display: flex; flex-direction: column; gap: 12px;
-  border-bottom: var(--border-xs) solid var(--border-subtle);
+  box-sizing: border-box;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  gap: 8px;
+  width: 100%;
+  border-bottom: 1px solid #e2e3e9;
   transition: box-shadow 0.18s ease;
 }
 /* One rule under the header — don’t stack with the next section/card edge */
@@ -205,9 +216,65 @@
   .Drawer-animPanel { transition: none; }
 }
 .Drawer-headerTop {
-  display: flex; align-items: flex-start; gap: 12px; width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  align-self: stretch;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  z-index: 0;
 }
-.Drawer-headerMain { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.Drawer-headerMain {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.Drawer-headerStatusRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+  gap: 8px;
+  width: 100%;
+  min-height: 28px;
+  padding: 0;
+  z-index: 1;
+}
+.Drawer-headerStatusRow .StatusMenu {
+  flex: none;
+}
+.Drawer-headerSignal {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  flex: none;
+  gap: 4px;
+  margin: 0;
+  padding: 4px;
+  min-height: 22px;
+  border-radius: 4px;
+  border: 1px solid #c9efd8;
+  background: #e1faeb;
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 14px;
+  color: #07602b;
+  white-space: nowrap;
+}
+.Drawer-headerSignal--warn {
+  background: #fff0e0;
+  border-color: #ffd9ad;
+  color: #804003;
+}
 .badge {
   display: inline-flex;
   align-items: center;
@@ -325,10 +392,36 @@
   -webkit-line-clamp: 2;
   white-space: normal;
 }
+.Drawer-subtitleRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+}
 .Drawer-company {
   margin: 0; font-size: var(--font-size-medium); font-weight: var(--font-weight-regular);
-  color: var(--text-subtle); line-height: 21px;
+  color: var(--text-link-color, #7059e8); line-height: 21px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* Figma Priority Indicator — 20×20 subtle surface, chevrons-up #A3003C */
+.PriorityIndicator {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--surface-subtle-light);
+  border-radius: var(--border-radius-default);
+}
+.PriorityIndicator img {
+  display: block;
+  width: 12px;
+  height: 12px;
 }
 .Drawer-close {
   flex-shrink: 0; width: 28px; height: 28px; border-radius: var(--border-radius-default);
@@ -338,7 +431,7 @@
 }
 .Drawer-close i { font-size: 14px; line-height: 1; }
 .Drawer-close:hover { background: var(--surface-container-default); }
-.Drawer-headerBadges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.Drawer-headerBadges { display: none; }
 .Drawer-priorityCorner {
   position: absolute; left: 4px; top: 4px; width: 11px; height: 12px; z-index: 3; pointer-events: none;
 }
@@ -360,7 +453,7 @@
   gap: 8px;
   padding: 16px;
 }
-/* Figma Sidebar section header — collapsible Booking Details / Milestones */
+/* Figma Gantt Sidebar section header — Booking Details / Milestones */
 .Drawer-sectionHeader {
   display: flex;
   align-items: center;
@@ -369,19 +462,19 @@
   width: 100%;
   max-width: none;
   box-sizing: border-box;
-  min-height: 42px;
+  min-height: 45px;
   margin: 0;
-  padding: 10px 16px;
+  padding: 12px 16px;
   border: none;
   border-radius: 0;
-  background: #f5f5f8;
+  background: #f8f8f8;
   cursor: pointer;
   font-family: var(--font-family);
   text-align: left;
   color: #3d425c;
 }
 .Drawer-sectionHeader:hover {
-  background: #ececf1;
+  background: #f0f0f0;
 }
 .Drawer-sectionHeader:focus-visible {
   outline: 0;
@@ -413,7 +506,7 @@
 }
 .Drawer-section > .Drawer-animPanel.is-open {
   margin-top: 0;
-  padding: 12px 16px 16px;
+  padding: 16px;
 }
 .Drawer-sectionHeading {
   display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;
@@ -431,7 +524,13 @@
 .Drawer-collapsePanel[hidden] { display: none !important; }
 .Drawer-animPanel {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 0fr;
+  justify-items: stretch;
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   transition: grid-template-rows 0.22s ease, margin-top 0.22s ease;
   overflow: hidden;
   margin-top: 0;
@@ -444,98 +543,139 @@
 .Drawer-animPanel.is-open > .Drawer-animPanelInner {
   overflow: visible;
 }
-.Drawer-animPanelInner { overflow: hidden; min-height: 0; }
+.Drawer-animPanelInner {
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 
-/* Details list — Figma 4753:98791 */
+/* Details list — Figma Sidebar / Booking details list 5055:94494 */
 .Drawer-detailsList {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  flex-grow: 0;
+  padding: 0;
   width: 100%;
-  border: var(--border-xs) solid var(--border-subtle);
-  border-radius: var(--border-radius-default);
+  max-width: 100%;
+  min-width: 0;
+  background: #ffffff;
+  border: 1px solid #e2e3e9;
+  border-radius: 4px;
   overflow: hidden;
-  background: var(--surface-default);
 }
 .Drawer-detailRow {
+  box-sizing: border-box;
   display: flex;
+  flex-direction: row;
   align-items: center;
+  align-self: stretch;
+  flex-grow: 0;
   gap: 8px;
+  width: 100%;
   height: 50px;
   min-height: 50px;
-  /* Match milestone head gutters (12px) so Details aligns with Milestones cards */
-  padding: 8px 12px;
-  box-sizing: border-box;
-  border-bottom: var(--border-xs) solid var(--border-subtle);
+  padding: 8px 12px 8px 8px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e3e9;
 }
 .Drawer-detailRow:last-child {
   border-bottom: none;
 }
 .Drawer-detailRow--schedule {
-  height: auto;
-  min-height: 50px;
-  align-items: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  height: 53px;
+  min-height: 53px;
+  padding: 10px 12px 10px 8px;
 }
 .Drawer-detailValue--schedule {
-  flex: 1 1 auto;
-  display: inline-flex;
+  display: flex;
+  flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 8px;
-  width: 100%;
+  flex: 1 1 auto;
+  flex-grow: 1;
+  gap: 4px;
   min-width: 0;
+  width: auto;
+  height: 35px;
 }
 .Drawer-scheduleRange {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 6px;
   flex: 1 1 auto;
+  flex-grow: 1;
+  gap: 4px;
   width: 100%;
   min-width: 0;
+  height: 35px;
+  padding: 0;
 }
 .Drawer-scheduleInput {
   position: relative;
-  flex: 1 1 0;
-  min-width: 0;
-  width: auto;
-  height: 32px;
-  margin: 0;
-  padding: 0 6px;
   box-sizing: border-box;
-  border: 1px solid var(--border-default);
-  border-radius: var(--border-radius-default);
-  background: var(--surface-default);
-  color: var(--text-emphasis);
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex: 1 1 0;
+  flex-grow: 1;
+  min-width: 0;
+  width: 0;
+  height: 35px;
+  min-height: 35px;
+  margin: 0;
+  padding: 8px 12px;
+  gap: 4px;
+  border: 1px solid #babfd1;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #3d425c;
   font-family: var(--font-family);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 16px;
-  color-scheme: light;
+  line-height: 21px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
 }
-.Drawer-scheduleInput:focus {
+.Drawer-scheduleInput:hover:not(:disabled) {
+  border-color: #989bb6;
+}
+.Drawer-scheduleInput:focus,
+.Drawer-scheduleInput.is-open {
   outline: none;
   border-color: var(--border-primary);
+  box-shadow: 0 0 0 1px rgba(79, 63, 160, 0.12);
 }
-/* Whole field opens the native picker (narrow datetime-local hit targets are unreliable) */
-.Drawer-scheduleInput::-webkit-calendar-picker-indicator {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-  opacity: 0;
+.Drawer-scheduleInput:disabled {
+  background: #f1f1f4;
+  border-color: #e2e3e9;
+  color: #989bb6;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 .Drawer-scheduleDash {
+  flex: none;
+  flex-grow: 0;
   flex-shrink: 0;
+  width: 5px;
   color: #6a708f;
-  font-size: 12px;
-  line-height: 1;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  text-align: center;
 }
 .Drawer-scheduleEmpty {
   margin: 0;
@@ -556,96 +696,280 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.Drawer-detailRow--effort {
-  height: auto;
-  min-height: 50px;
-  align-items: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
+
+/* Dayshape datetime popover — calendar + hour/min + AM/PM (product SoT screenshot) */
+.DtPick {
+  position: fixed;
+  z-index: 4000;
+  box-sizing: border-box;
+  width: 280px;
+  padding: 12px 12px 14px;
+  background: #ffffff;
+  border: 1px solid #e2e3e9;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(34, 36, 48, 0.16);
+  font-family: var(--font-family);
+  color: #222430;
 }
-.Drawer-detailValue--effort {
+.DtPick::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: var(--dt-caret-x, 24px);
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-left: 1px solid #e2e3e9;
+  border-top: 1px solid #e2e3e9;
+  transform: rotate(45deg);
+}
+.DtPick-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.DtPick-title {
   flex: 1 1 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  min-width: 0;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  color: #3d425c;
+  text-align: center;
 }
-.Drawer-effortReadLabel {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.Drawer-effortActions {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
-}
-.Drawer-effortEditBtn {
+.DtPick-nav {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
-  flex-shrink: 0;
   margin: 0;
   padding: 0;
   border: none;
-  border-radius: var(--border-radius-default);
+  border-radius: 4px;
   background: transparent;
   color: #6a708f;
-  cursor: pointer;
   font-size: 12px;
-  line-height: 1;
+  cursor: pointer;
 }
-.Drawer-effortEditBtn:hover {
-  background: var(--surface-subtle-dark);
+.DtPick-nav:hover {
+  background: #f1f1f4;
   color: #3d425c;
 }
-.Drawer-effortEditBtn--save {
-  color: #078138;
+.DtPick-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px 0;
+  margin-bottom: 4px;
 }
-.Drawer-effortEditBtn--save:hover {
-  background: var(--surface-success-subtle);
-  color: #078138;
+.DtPick-dow {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: #989bb6;
+  text-transform: uppercase;
 }
-.Drawer-effortEditBtn--cancel:hover {
-  background: var(--surface-danger-subtle);
-  color: #a3003c;
+.DtPick-day {
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+  padding: 0;
+  border: none;
+  border-radius: 100px;
+  background: transparent;
+  color: #222430;
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+}
+.DtPick-day:hover:not(.is-selected) {
+  background: #f1f1f4;
+}
+.DtPick-day.is-weekend {
+  color: #989bb6;
+}
+.DtPick-day.is-outside {
+  color: #babfd1;
+}
+.DtPick-day.is-selected {
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 600;
+}
+.DtPick-day.is-selected.is-weekend {
+  color: #ffffff;
+}
+.DtPick-foot {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e3e9;
+}
+.DtPick-summary {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  color: #3d425c;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.DtPick-summary span {
+  color: #989bb6;
+  font-weight: 600;
+}
+.DtPick-timeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.DtPick-clock {
+  flex: none;
+  width: 16px;
+  color: #6a708f;
+  font-size: 14px;
+  text-align: center;
+}
+.DtPick-timeSelect {
+  box-sizing: border-box;
+  height: 32px;
+  min-width: 52px;
+  padding: 0 24px 0 10px;
+  border: 1px solid #e2e3e9;
+  border-radius: 4px;
+  background: #f1f1f4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236a708f' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 8px center;
+  color: #3d425c;
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 32px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.DtPick-timeSelect:focus {
+  outline: none;
+  border-color: var(--border-primary);
+  background-color: #ffffff;
+}
+.DtPick-colon {
+  flex: none;
+  color: #6a708f;
+  font-size: 14px;
+  font-weight: 600;
+}
+.DtPick-ampm {
+  display: inline-flex;
+  flex: none;
+  margin-left: auto;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f1f1f4;
+}
+.DtPick-ampm button {
+  box-sizing: border-box;
+  min-width: 40px;
+  height: 32px;
+  margin: 0;
+  padding: 0 10px;
+  border: none;
+  background: transparent;
+  color: #3d425c;
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+.DtPick-ampm button.is-active {
+  background: var(--primary);
+  color: #ffffff;
+}
+.DtPick-ampm button:not(.is-active):hover {
+  background: #e2e3e9;
+}
+.Drawer-detailRow--effort {
+  height: 50px;
+  min-height: 50px;
+  align-items: center;
+}
+.Drawer-detailValue--effort {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1 1 auto;
+  flex-grow: 1;
+  gap: 8px;
+  min-width: 0;
+  height: 35px;
+  padding: 0;
 }
 .Drawer-effortFields {
   display: flex;
-  align-items: center;
-  gap: 4px;
-  flex: 1 1 auto;
-  min-width: 0;
+  flex-direction: row;
+  align-items: flex-start;
+  flex: none;
+  flex-grow: 0;
+  gap: 10px;
+  width: 190px;
+  height: 35px;
+  padding: 0;
 }
 .Drawer-effortGroup {
   display: flex;
-  align-items: stretch;
-  flex: 1 1 0;
-  min-width: 0;
-  height: 32px;
+  flex-direction: row;
+  align-items: flex-start;
+  flex: none;
+  flex-grow: 0;
+  width: 90px;
+  height: 35px;
+  padding: 0;
+  background: #ffffff;
+  border-radius: 4px;
 }
 .Drawer-effortGroup input {
-  flex: 1 1 auto;
-  min-width: 0;
-  width: 100%;
-  height: 32px;
-  margin: 0;
-  padding: 0 4px;
   box-sizing: border-box;
-  border: 1px solid var(--border-default);
+  display: flex;
+  flex: 1 1 auto;
+  flex-grow: 1;
+  align-items: center;
+  min-width: 0;
+  width: 55px;
+  height: 35px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid #babfd1;
   border-right: none;
-  border-radius: var(--border-radius-default) 0 0 var(--border-radius-default);
-  background: var(--surface-default);
-  color: var(--text-emphasis);
+  border-radius: 4px 0 0 4px;
+  background: #ffffff;
+  color: #3d425c;
   font-family: var(--font-family);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 16px;
+  line-height: 21px;
   -moz-appearance: textfield;
   appearance: textfield;
+}
+.Drawer-effortGroup input:disabled,
+.Drawer-effortGroup input[readonly] {
+  background: #f1f1f4;
+  color: #989bb6;
+  border-color: #e2e3e9;
+  cursor: not-allowed;
+  opacity: 1;
+}
+.Drawer-effortFields.is-disabled .Drawer-effortGroup .unit {
+  background: #e2e3e9;
+  border-color: #e2e3e9;
+  color: #989bb6;
 }
 .Drawer-effortGroup input::-webkit-outer-spin-button,
 .Drawer-effortGroup input::-webkit-inner-spin-button {
@@ -658,21 +982,26 @@
   z-index: 1;
 }
 .Drawer-effortGroup .unit {
-  width: 24px;
-  min-width: 24px;
-  height: 32px;
+  box-sizing: border-box;
   display: inline-flex;
+  flex: none;
+  flex-grow: 0;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
-  border: 1px solid var(--border-default);
-  border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0;
-  background: var(--surface-subtle-dark);
-  color: var(--text-emphasis);
+  width: 35px;
+  min-width: 35px;
+  height: 35px;
+  padding: 0 12px;
+  border-width: 1px 1px 1px 0;
+  border-style: solid;
+  border-color: #babfd1;
+  border-radius: 0 4px 4px 0;
+  background: #f1f1f4;
+  color: #3d425c;
   font-family: var(--font-family);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 16px;
+  line-height: 21px;
   flex-shrink: 0;
 }
 .Drawer-detailLabel {
@@ -684,22 +1013,26 @@
   flex-shrink: 0;
   margin: 0;
   padding: 0;
-  border-radius: var(--border-radius-default);
-  color: #6a708f;
+  border-radius: 4px;
+  color: #3d425c;
   cursor: default;
   outline: none;
+  background: transparent;
 }
 .Drawer-detailLabel:hover,
 .Drawer-detailLabel:focus-visible {
-  background: var(--surface-subtle-dark);
+  background: transparent;
   color: #3d425c;
+}
+.Drawer-detailLabel:focus-visible {
+  box-shadow: 0 0 0 2px rgba(79, 63, 160, 0.28);
 }
 .Drawer-detailLabel i,
 .Drawer-detailIcon {
   width: 14px;
   height: 14px;
   text-align: center;
-  color: #6a708f;
+  color: #3d425c;
   flex-shrink: 0;
   font-size: 14px;
   line-height: 14px;
@@ -721,13 +1054,17 @@
   transform: rotate(45deg);
 }
 .Drawer-detailValue {
-  display: inline-flex;
+  display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 8px;
+  flex: 1 1 auto;
+  flex-grow: 1;
   flex-wrap: wrap;
+  gap: 8px;
   min-width: 0;
+  padding: 0;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 400;
   color: #222430;
   line-height: 16px;
 }
@@ -753,18 +1090,19 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 12px;
-  font-weight: 600;
-  color: #3d425c;
+  font-weight: 400;
+  color: #222430;
+  line-height: 16px;
 }
 .Drawer-detailBadge {
   display: inline-flex;
   align-items: center;
   min-height: 22px;
-  padding: 4px 6px;
+  padding: 3px 6px;
   box-sizing: border-box;
-  border-radius: var(--border-radius-default);
-  border: var(--border-xs) solid var(--border-subtle);
-  background: var(--surface-default);
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
   font-family: var(--font-family);
   font-size: 12px;
   font-weight: 700;
@@ -773,17 +1111,17 @@
   white-space: nowrap;
 }
 .Drawer-detailBadge--warn {
-  background: #fff0e0;
+  background: transparent;
   border-color: #ffd9ad;
   color: #804003;
 }
 .Drawer-detailBadge--success {
-  background: #e1faeb;
+  background: transparent;
   border-color: #c9efd8;
   color: #07602b;
 }
 .Drawer-detailBadge--danger {
-  background: var(--surface-danger-subtle);
+  background: transparent;
   border-color: var(--border-danger-subtle);
   color: var(--text-danger);
 }
@@ -966,28 +1304,65 @@
   background: #f1f1f4; border-radius: 3px; padding: 1px 6px; line-height: 16px;
 }
 
-/* Milestones — phase heads + booking rail */
+/* Milestones — phase heads + booking rail (Figma 4931:43471) */
 .Drawer-milestones {
   /* Card border (1) + pad (12) + half of 24px icon — shared by phase / booking / key-date */
   --ms-rail-center: 25px;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: stretch;
+  align-self: stretch;
+  gap: 0;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
-/* Spine through phase + key-date icons — shows in gaps between cards */
-.Drawer-milestones::before {
+/* Inter-phase / key-date trail — 25px, 2px solid done or dashed upcoming */
+.Drawer-msTrail {
+  position: relative;
+  z-index: 0;
+  flex: 0 0 25px;
+  width: 48px;
+  height: 25px;
+  margin: 0;
+  pointer-events: none;
+}
+.Drawer-msTrail::before {
   content: '';
   position: absolute;
   left: var(--ms-rail-center);
-  top: 22px;
-  bottom: 24px;
-  width: 0;
-  border-left: 1px solid var(--border-subtle);
-  z-index: 0;
-  pointer-events: none;
-  transform: translateX(-0.5px);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background-color: #babfd1;
+  background-image: none;
+}
+.Drawer-msTrail.is-done::before {
+  background-color: #078138;
+}
+.Drawer-msTrail.is-inprogress::before {
+  background-color: #0295b2;
+}
+.Drawer-msTrail.is-upcoming::before,
+.Drawer-msTrail.is-next::before {
+  background-color: #babfd1;
+  -webkit-mask-image: repeating-linear-gradient(
+    to bottom,
+    #000 0 3px,
+    transparent 3px 6px
+  );
+  mask-image: repeating-linear-gradient(
+    to bottom,
+    #000 0 3px,
+    transparent 3px 6px
+  );
+  -webkit-mask-size: 100% 6px;
+  mask-size: 100% 6px;
+  -webkit-mask-repeat: repeat-y;
+  mask-repeat: repeat-y;
 }
 .Drawer-msGroup {
   position: relative;
@@ -1003,11 +1378,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
   box-sizing: border-box;
-  min-height: 44px;
-  padding: 10px 12px;
+  min-height: 48px;
+  padding: 12px;
   background: #f8f8f8;
   border: 1px solid var(--border-subtle);
   border-radius: 4px;
@@ -1023,23 +1398,23 @@ button.Drawer-msHead {
   cursor: pointer;
 }
 .Drawer-msHead:hover {
-  background: #f0f0f3;
+  background: #f0f0f0;
 }
 .Drawer-msHead.is-active {
-  background: #f0effb;
+  background: #f8f8f8;
 }
 .Drawer-msHead.is-active:hover {
-  background: #e8e6f8;
+  background: #f0f0f0;
 }
 .Drawer-msHead:focus-visible {
   outline: 0;
   box-shadow: 0 0 0 0.15rem rgba(79, 63, 160, 0.35);
 }
 button.Drawer-msHead:active {
-  background: #ebebef;
+  background: #ebebeb;
 }
 button.Drawer-msHead.is-active:active {
-  background: #e0ddf5;
+  background: #ebebeb;
 }
 .Drawer-msHead .MilestoneIconTip,
 .Drawer-msHead .MilestoneIcon {
@@ -1047,20 +1422,24 @@ button.Drawer-msHead.is-active:active {
 }
 /* Phase badge — gantt colours + left swatch (Jira-style indicator) */
 .Drawer-phaseBadge {
-  display: inline-flex;
-  align-items: center;
   box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex: none;
+  flex-grow: 0;
   min-height: 22px;
   padding: 3px 6px 3px 4px;
   gap: 6px;
-  border-radius: var(--border-radius-default);
+  border-radius: 4px;
   border: 1px solid var(--phase-badge-border, var(--border-subtle));
-  background: var(--phase-badge-bg, #fff);
+  background: var(--phase-badge-bg, transparent);
   font-family: var(--font-family);
   font-size: 12px;
   font-weight: 700;
   line-height: 14px;
-  color: var(--text-emphasis);
+  color: #1f2433;
   white-space: nowrap;
 }
 .Drawer-phaseBadge-swatch {
@@ -1072,18 +1451,18 @@ button.Drawer-msHead.is-active:active {
 }
 .Drawer-phaseBadge--preparation {
   --phase-badge-accent: var(--phase-preparation);
-  --phase-badge-border: #7bc4f7;
-  --phase-badge-bg: #e8f5fe;
+  --phase-badge-border: #2f6fed;
+  --phase-badge-bg: transparent;
 }
 .Drawer-phaseBadge--first-review {
   --phase-badge-accent: var(--phase-first-review);
-  --phase-badge-border: #7aaf8a;
-  --phase-badge-bg: #e8f3ec;
+  --phase-badge-border: #2f9e5b;
+  --phase-badge-bg: transparent;
 }
 .Drawer-phaseBadge--second-review {
   --phase-badge-accent: var(--phase-second-review);
-  --phase-badge-border: #b08ecc;
-  --phase-badge-bg: #f3ebf8;
+  --phase-badge-border: #7b4fc4;
+  --phase-badge-bg: transparent;
 }
 .Drawer-msHeadMeta {
   display: inline-flex;
@@ -1157,6 +1536,11 @@ button.Drawer-msHead.is-active:active {
   border-radius: 0 0 4px 4px;
   overflow: visible;
 }
+/* Engagement-only Bookings (JOB): no phase head above — keep a full border including top */
+.Drawer-section--bookings .Drawer-msBookings {
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 4px;
+}
 .Drawer-msBookingsPanel.is-open,
 .Drawer-msBookingsPanel.is-open > .Drawer-animPanelInner {
   overflow: visible;
@@ -1224,12 +1608,17 @@ button.Drawer-msHead.is-active:active {
 }
 .Drawer-msRadio {
   box-sizing: border-box;
+  flex: 0 0 16px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 16px;
   height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  max-width: 16px;
+  max-height: 16px;
   border-radius: 50%;
   cursor: help;
   z-index: 1;
@@ -1242,7 +1631,18 @@ button.Drawer-msHead.is-active:active {
 }
 .Drawer-msRadio i {
   font-size: 8px;
+  width: 8px;
+  height: 8px;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.Drawer-msRadio.is-overdue i {
+  /* Triangle needs a touch more size than the bare bang to read at 16px */
+  font-size: 9px;
+  width: 9px;
+  height: 9px;
 }
 .Drawer-msRadio.is-done {
   background: #078138;
@@ -1339,9 +1739,12 @@ button.Drawer-msHead.is-active:active {
   color: #6a708f;
   line-height: 15px;
 }
-/* Only YOUR in-progress booking is highlighted (bold This Week + hours). Someone else’s stays quiet. */
+/* Figma InProgress = lavender cells wash + bold This Week. InProgressOther = white cells, quiet label. */
 .Drawer-msBooking.is-mine {
   min-height: 54px;
+}
+.Drawer-msBooking.is-mine .Drawer-msCells {
+  background: var(--surface-primary-subtle);
 }
 .Drawer-msBooking.is-mine .Drawer-msBookingName,
 .Drawer-msBooking.is-mine .Drawer-msBookingName strong {
@@ -1349,7 +1752,14 @@ button.Drawer-msHead.is-active:active {
   font-weight: 600;
   color: #222430;
 }
-.Drawer-msBooking.is-inprogress:not(.is-mine) .Drawer-msBookingName {
+.Drawer-msBooking.is-other .Drawer-msCells {
+  background: #ffffff;
+}
+.Drawer-msBooking.is-other:hover .Drawer-msCells {
+  background: #f5f5f8;
+}
+.Drawer-msBooking.is-inprogress:not(.is-mine) .Drawer-msBookingName,
+.Drawer-msBooking.is-other .Drawer-msBookingName {
   font-size: 11px;
   font-weight: 400;
   color: #6a708f;
@@ -1375,32 +1785,16 @@ button.Drawer-msHead.is-active:active {
   color: #6a708f;
   line-height: 16px;
 }
-/* Key dates — Figma milestone footer cards (node 4933:46076) */
+/* Key dates — Figma Stories drawer base cards */
 .Drawer-msKeyDates {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0;
   width: 100%;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-/* Connector between key-date cards (parent spine covers phase gaps) */
-.Drawer-msKeyDates::before {
-  content: '';
-  position: absolute;
-  left: var(--ms-rail-center);
-  top: 12px;
-  bottom: 12px;
-  width: 0;
-  border-left: 1px solid var(--border-subtle);
-  z-index: 0;
-  pointer-events: none;
-  transform: translateX(-0.5px);
-}
-.Drawer-msGroup + .Drawer-msKeyDates {
-  margin-top: 6px; /* with .Drawer-milestones gap → 16px like Figma */
 }
 .Drawer-msBookingStatus {
   display: inline-flex;
@@ -1443,9 +1837,9 @@ button.Drawer-msHead.is-active:active {
   gap: 12px;
   width: 100%;
   box-sizing: border-box;
-  min-height: 48px;
-  padding: 12px;
-  background: var(--surface-subtle-light);
+  min-height: 44px;
+  padding: 10px 12px;
+  background: #f8f8f8;
   border: 1px solid var(--border-subtle);
   border-radius: var(--border-radius-default);
 }
@@ -1552,19 +1946,6 @@ button.Drawer-msHead.is-active:active {
 .Badge--warning.Badge--strong { background: var(--warning); color: var(--text-inverse); border-color: var(--warning); }
 .Badge--danger.Badge--strong { background: var(--surface-danger); color: var(--text-inverse); border-color: var(--surface-danger); }
 .Badge--info.Badge--strong { background: var(--surface-eng-01); color: var(--text-inverse); border-color: var(--surface-eng-01); }
-/* High priority — Figma Priority Indicator (chevrons-up) on the left */
-.Badge--priority {
-  gap: 4px;
-}
-.Badge--priority .Badge-priorityIcon {
-  display: block;
-  width: 12px;
-  height: 12px;
-  flex-shrink: 0;
-  /* Figma asset is #A3003C; invert to white on danger strong */
-  filter: brightness(0) invert(1);
-}
-
 .MilestoneIconTip {
   position: relative;
   display: inline-flex; align-items: center; justify-content: center;
@@ -2098,7 +2479,7 @@ body {
 .Gallery-stage .Drawer {
   position: absolute;
   top: 0; right: 0; bottom: 0;
-  width: 389px;
+  width: 400px;
   max-width: 100%;
   transform: none !important;
   box-shadow: -6px 0 16px rgba(0,0,0,.08);
@@ -2211,14 +2592,14 @@ body {
       <h2>4. Design decisions locked in this mock</h2>
       <ul>
         <li><strong>Language:</strong> Sidebar (not drawer). Phase / Card / Milestone / Trait / Effort. Engagement not “Job” in practitioner UI.</li>
-        <li><strong>High priority:</strong> solid danger Badge beside status, Figma chevrons-up Priority Indicator icon on the left — <em>not</em> a full-width magenta StatusCard banner; remove priority corner glyph from Sidebar header.</li>
+        <li><strong>High priority:</strong> compact Figma Priority Indicator (20×20, surface-subtle-light, chevrons-up #A3003C) beside the company/engagement subtitle — <em>not</em> a text Badge next to status; no full-width magenta banner; no header corner glyph.</li>
         <li><strong>Overdue banner:</strong> Dayshape danger tokens (<code>--surface-danger-subtle</code>, <code>--text-danger</code>, <code>--border-danger-subtle</code>), same family as Overdue badge.</li>
         <li><strong>Overdue:</strong> banner above Booking Details (not on the Start/end row). <strong>Due Soon is out of scope</strong> until customer/work-type rules exist — do not ship a generic “soon” chip.</li>
-        <li><strong>Readiness:</strong> visual Signal (Ready / Not Ready / awaiting client); warn StatusCard when previous phase incomplete — warn, don’t hard-block.</li>
+        <li><strong>Readiness:</strong> Ready / Not Ready / awaiting-client badge on the header status row (right of Status menu), not in Booking Details; warn StatusCard when previous phase incomplete — warn, don’t hard-block.</li>
         <li><strong>Effort in Details:</strong> show this week’s booking planned hours (not a separate estimate that disagrees with the booking).</li>
         <li><strong>Trait overflow:</strong> +N chip; black stacked tooltip listing overflow traits (board cards already use this pattern in the mock).</li>
-        <li><strong>Milestone booking rows:</strong> Figma rail Status Done / InProgress / Current warn / Overdue / Upcoming; connectors solid or dotted. Week-of labels (This Week when current). Status label lives in a black tip on the <strong>left rail node</strong> (no status text/icon in the row end). Each row shows <strong>planned · spent</strong> hours (including bookings that aren’t yours — phase roll-up = sum of parts). <strong>Your</strong> In Progress: bold This Week. <strong>Someone else’s</strong>: quiet This Week, same blue rail. Avatar 24px + black name tip.</li>
-        <li><strong>Phase headers:</strong> show aggregated planned effort for that phase next to the phase date. Phase badges use gantt aggregation colours (Prep blue / First Review green / Second Review purple) with tinted fill, matching outline, and a left colour swatch — same in Booking Details.</li>
+        <li><strong>Milestone booking rows:</strong> Figma rail Status Done / InProgress / InProgressOther / Current warn / Overdue / Upcoming; connectors solid or dotted. Week-of labels (This Week when current). Status label lives in a black tip on the <strong>left rail node</strong> (no status text/icon in the row end). Each row shows <strong>planned · spent</strong> hours (including bookings that aren’t yours — phase roll-up = sum of parts). <strong>Your</strong> In Progress: lavender cells wash + bold This Week. <strong>Someone else’s</strong> (InProgressOther): white cells, quiet This Week, same blue rail. Avatar 24px + black name tip.</li>
+        <li><strong>Phase headers:</strong> show aggregated planned effort for that phase next to the phase date. Phase badges use Stories drawer colours (Prep <code>#2f6fed</code> / First Review <code>#2f9e5b</code> / Second Review <code>#7b4fc4</code>) with transparent fill, matching outline, and a left colour swatch — same in Booking Details. Inter-phase trail: 25px × 2px solid green after Done, dashed grey for upcoming (Figma <code>4931:43471</code>).</li>
         <li><strong>Engagement-only (no phases):</strong> no Milestones section — show a <strong>Bookings</strong> list (week rows) without phase grouping. Story <code>JOB</code>.</li>
         <li><strong>Key dates:</strong> Under Milestones — card rows (subtle surface + border): Client Delivery Deadline and Statutory Deadline (circle + flag each); title semibold left, date muted right; rail line between icons.</li>
         <li><strong>Status menu:</strong> Current row + transitions; single separator under Current (no double rule before Hold/Done).</li>
@@ -2227,11 +2608,11 @@ body {
       <h2>5. Implementation checklist</h2>
       <p class="muted">Work top-down. Check Stories tab after each item. Keep Pinia as source of truth; Sidebar is presentation + transitions.</p>
       <ul class="check">
-        <li><strong>Header layout</strong> — traits row (overflow), engagement title/subtitle link, status control + High priority Badge, close. Match Stories PRI / TRAIT.</li>
+        <li><strong>Header layout</strong> — traits row (overflow), engagement title, subtitle row (optional Priority Indicator + company link), status control, close. Match Stories PRI / TRAIT.</li>
         <li><strong>Status menu</strong> — open from Sidebar; transitions consistent with Board drop rules (incl. pooled To Do cannot go straight to Done — S04).</li>
         <li><strong>Status banners</strong> — keep Hold / Pending / Reverted / Done; add Overdue + readiness warn; tokens only; edit pens keep opening existing On Hold / Revert modals.</li>
-        <li><strong>Booking Details</strong> — always titled Booking Details (card = booking); icon-only labels + tip; Phase (when phased), Start/end (editable pickers when the booking can be changed; read-only text when Done — story <code>SCH-RO</code>), Estimated Effort for <em>this</em> booking (pen → h/m with check to save / close to cancel; hours field focused on edit; no pen when Done), Signal, Assignee last. Stories RDY / NRDY / OVRD / EFF / SCH-RO.</li>
-        <li><strong>Milestones</strong> — phase-level only; light collapsibles; phase effort totals; booking rows with planned/spent; key dates. Stories PH-* / S01b / S01c / S01d.</li>
+        <li><strong>Booking Details</strong> — Figma list <code>5055:94494</code>: white card, <code>#e2e3e9</code> border, 4px radius; icon-only labels (<code>#3d425c</code>) + tip; Phase badge, Start/end inputs, Effort as always-editable h/m fields (disabled when Done), Assignee last (no Signal row). Stories RDY / NRDY / OVRD / EFF / SCH-RO.</li>
+        <li><strong>Milestones</strong> — phase-level only; light collapsibles; phase effort totals; booking rows with planned/spent; key dates. Each story sets <code>phasesOpen</code> (which phases start expanded) and <code>task.phaseBookings</code> (per-phase booking rails). Stories PH-* / S01b / S01c / S01d.</li>
         <li><strong>Bookings (engagement-only)</strong> — when there is no phase model, week list without phase groups. Story <code>JOB</code>.</li>
         <li><strong>Spacing</strong> — booking cell padding: name ~12px left, avatar ~12px right, vertical ~10px (see gallery CSS <code>.Drawer-msCell*</code>).</li>
         <li><strong>i18n</strong> — all new copy via <code>t('kanban:sidebar…')</code>; follow localisation howto.</li>
@@ -2294,8 +2675,6 @@ body {
   var CURRENT_USER = { initials: 'AL', name: 'You' };
   var activeTask = null;
   var activeColumnId = null;
-  var effortEditing = false;
-  var effortEditBaseline = null;
   var PRIORITY_CORNER_URI = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiB2aWV3Qm94PSIwIDAgMzIgMzIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJHcm91cCAxIj4KPHBhdGggaWQ9IlZlY3RvciAxMSIgZD0iTTAgMzJWOEMwIDMuNTgxNzIgMy41ODE3MiAwIDggMEgzMkwwIDMyWiIgZmlsbD0iI0EzMDAzQyIvPgo8cGF0aCBpZD0iUHJpbWFyeSIgZD0iTTkuNDk3NzEgNEM5LjYwMzEyIDQgOS43MDg1NCA0LjAyMzU3IDkuODA0NzkgNC4wNjgzNEwxNC4xMjIzIDUuOTUxM0MxNC42MjY0IDYuMTcwNDYgMTUuMDAyMyA2LjY4MTg1IDE1IDcuMjk5MjlDMTQuOTg4NSA5LjYzNzA4IDE0LjA1MzUgMTMuOTE0NCAxMC4xMDUgMTUuODU4NkM5LjcyMjI5IDE2LjA0NzEgOS4yNzc3MSAxNi4wNDcxIDguODk1IDE1Ljg1ODZDNC45NDQxOCAxMy45MTQ0IDQuMDExNDcgOS42MzcwOCA0LjAwMDAxIDcuMjk5MjlDMy45OTc3MiA2LjY4MTg1IDQuMzczNTUgNi4xNzA0NiA0Ljg3NzcyIDUuOTUxM0w5LjE5MjkyIDQuMDY4MzRDOS4yODkxNyA0LjAyMzU3IDkuMzkyMjkgNCA5LjQ5NzcxIDRaTTkuNDk3NzEgNS41NzQyM1YxNC40ODQ3QzEyLjY2MDIgMTIuOTEwNCAxMy41MTA0IDkuNjIyNjIgMTMuNTMxIDcuMzM0NjRMOS40OTc3MSA1LjU3NjU5VjUuNTc0MjNaIiBmaWxsPSJ3aGl0ZSIvPgo8L2c+Cjwvc3ZnPgo=';
   /* Figma Priority Indicator — chevrons-up 12px (#A3003C) */
   var PRIORITY_CHEVRONS_URI = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgaWQ9ImNoZXZyb25zLXVwIj48cGF0aCBpZD0iaWNvbiIgZD0iTTUuNTQ3MjQgNS41NDg2N0w1Ljk5ODY3IDUuMDk3MzRMNi40NTAxIDUuNTQ4NjdMMTEuNTQ4NiAxMC42NDZMMTIgMTEuMDk3M0wxMS4wOTcxIDExLjk5NzNMMTAuNjQ1NyAxMS41NDZMNS45OTg2NyA2LjlMMS4zNTE2MyAxMS41NDg3TDAuOTAwMTk5IDEyTDIuMjI4MTJlLTA3IDExLjA5NzNMMC40NDg3NzIgMTAuNjQ2TDUuNTQ3MjQgNS41NDg2N1pNNS41NDcyNCAwLjQ1MTMyN0w1Ljk5ODY3IC0xLjE5MjA5ZS0wN0w2LjQ1MDEgMC40NTEzMjdMMTEuNTQ4NiA1LjU0ODY3TDEyIDZMMTEuMDk3MSA2LjlMMTAuNjQ1NyA2LjQ0ODY3TDUuOTk4NjcgMS44MDI2NUwxLjM1MTYzIDYuNDUxMzNMMC45MDAxOTkgNi45MDI2NUwwIDZMMC40NTE0MjcgNS41NDg2N0w1LjU0NzI0IDAuNDUxMzI3WiIgZmlsbD0iI0EzMDAzQyIvPjwvZz48L3N2Zz4=';
@@ -2385,11 +2764,10 @@ body {
     syncDrawerOverlayScrollbar();
   }
 
-  function highPriorityBadgeHtml() {
+  function priorityIndicatorHtml() {
     return (
-      '<span class="Badge Badge--sm Badge--danger Badge--strong Badge--priority" role="status">' +
-        '<img class="Badge-priorityIcon" src="' + PRIORITY_CHEVRONS_URI + '" width="12" height="12" alt="" aria-hidden="true">' +
-        'High priority' +
+      '<span class="PriorityIndicator" role="img" aria-label="High priority" title="High priority">' +
+        '<img src="' + PRIORITY_CHEVRONS_URI + '" width="12" height="12" alt="" aria-hidden="true">' +
       '</span>'
     );
   }
@@ -2508,7 +2886,16 @@ body {
     if (phase.includes('first review')) return 1;
     return 0;
   }
-  function getCompletedPhaseCount(workPhase, columnId) {
+  function getCompletedPhaseCount(workPhase, columnId, task) {
+    /* Explicit phaseHistory wins — allows PREV (on FR with prep incomplete) */
+    if (task && task.phaseHistory && typeof task.phaseHistory === 'object') {
+      if (Object.keys(task.phaseHistory).length === 0) return 0;
+      var n = 0;
+      if (task.phaseHistory.preparation === 'done') n = 1;
+      if (task.phaseHistory.firstReview === 'done') n = 2;
+      if (task.phaseHistory.secondReview === 'done') n = 3;
+      return n;
+    }
     if (columnId === 'to-do') return 0;
     var phase = (workPhase || '').toLowerCase();
     if (columnId === 'done') {
@@ -2520,6 +2907,15 @@ body {
     if (phase.includes('second review')) return 2;
     if (phase.includes('first review')) return 1;
     return 0;
+  }
+
+  /** Scenario config: phasesOpen = 'current' | 'all' | 'none' | [0,1,…] */
+  function phaseStartsOpen(phasesOpen, phaseIdx, state, currentIdx, isPhaseActive) {
+    if (phasesOpen === 'none' || phasesOpen === false) return false;
+    if (phasesOpen === 'all' || phasesOpen === true) return true;
+    if (Array.isArray(phasesOpen)) return phasesOpen.indexOf(phaseIdx) !== -1;
+    /* default: current / in-progress phase */
+    return isPhaseActive || state === 'inprogress' || phaseIdx === currentIdx;
   }
   function getPreviousPhaseStatus(task) {
     if (!task || isJobCard(task) || !task.workPhase) return 'na';
@@ -2650,48 +3046,31 @@ body {
     if (match) match.plannedHours = n;
   }
 
-  function drawerEffortFieldsHtml(hours) {
+  function drawerEffortFieldsHtml(hours, opts) {
+    opts = opts || {};
     var parts = hoursToEffortParts(hours != null ? hours : 0);
-    var hVal = hours != null && hours > 0 ? String(parts.h) : '';
-    var mVal = hours != null && hours > 0 && parts.m > 0 ? String(parts.m) : '';
+    var hVal = hours != null ? String(parts.h) : '';
+    var mVal = hours != null ? String(parts.m) : '';
+    var ro = opts.readonly ? ' readonly' : '';
+    var dis = opts.disabled ? ' disabled' : '';
+    var wrapClass = 'Drawer-effortFields' + (opts.disabled ? ' is-disabled' : '');
     return (
-      '<div class="Drawer-effortFields" data-effort-fields>' +
+      '<div class="' + wrapClass + '" data-effort-fields>' +
         '<div class="Drawer-effortGroup">' +
-          '<input type="number" min="0" step="1" value="' + hVal + '" data-effort-h aria-label="Estimated hours">' +
+          '<input type="number" min="0" step="1" value="' + hVal + '" data-effort-h aria-label="Estimated hours"' + ro + dis + '>' +
           '<span class="unit" aria-hidden="true">h</span>' +
         '</div>' +
         '<div class="Drawer-effortGroup">' +
-          '<input type="number" min="0" max="45" step="15" value="' + mVal + '" data-effort-m aria-label="Estimated minutes">' +
+          '<input type="number" min="0" max="45" step="15" value="' + mVal + '" data-effort-m aria-label="Estimated minutes"' + ro + dis + '>' +
           '<span class="unit" aria-hidden="true">m</span>' +
         '</div>' +
       '</div>'
     );
   }
 
-  function drawerEffortValueHtml(effortLabel, hours, editing, editable) {
-    if (!editable) {
-      return '<span class="Drawer-effortReadLabel">' + escapeHtml(effortLabel) + '</span>';
-    }
-    if (editing) {
-      return drawerEffortFieldsHtml(hours) +
-        '<span class="Drawer-effortActions">' +
-          '<button type="button" class="Drawer-effortEditBtn Drawer-effortEditBtn--save" data-effort-save' +
-            ' aria-label="Save estimated effort" title="Save">' +
-            '<i class="fa-solid fa-check" aria-hidden="true"></i>' +
-          '</button>' +
-          '<button type="button" class="Drawer-effortEditBtn Drawer-effortEditBtn--cancel" data-effort-cancel' +
-            ' aria-label="Cancel estimated effort edit" title="Cancel">' +
-            '<i class="fa-solid fa-xmark" aria-hidden="true"></i>' +
-          '</button>' +
-        '</span>';
-    }
-    return (
-      '<span class="Drawer-effortReadLabel">' + escapeHtml(effortLabel) + '</span>' +
-      '<button type="button" class="Drawer-effortEditBtn" data-effort-edit' +
-        ' aria-label="Edit estimated effort" title="Edit estimated effort">' +
-        '<i class="fa-solid fa-pen" aria-hidden="true"></i>' +
-      '</button>'
-    );
+  function drawerEffortValueHtml(hours, editable) {
+    /* Figma 5055:94494 — h/m fields always editable (disabled when Done / read-only) */
+    return drawerEffortFieldsHtml(hours, editable ? {} : { readonly: true, disabled: true });
   }
   function resolveAssignee(task, columnId) {
     if (!task) return null;
@@ -2892,15 +3271,16 @@ body {
   }
 
   function drawerSignalBadgeHtml(task, columnId, isBlocked) {
+    /* Figma header Badge (5161:61770) — right of status row, not in Booking Details */
     if (isJobCard(task) || isBlocked || columnId === 'done') return '';
     if (getPreviousPhaseStatus(task) === 'incomplete') {
-      return '<span class="Drawer-detailBadge Drawer-detailBadge--warning">Not Ready</span>';
+      return '<span class="Drawer-headerSignal Drawer-headerSignal--warn">Not Ready</span>';
     }
     if (task.clientInfoReceived === false && /preparation/i.test(task.workPhase || '')) {
-      return '<span class="Drawer-detailBadge Drawer-detailBadge--warning">Awaiting client info</span>';
+      return '<span class="Drawer-headerSignal Drawer-headerSignal--warn">Awaiting client info</span>';
     }
-    if (task.isReady) return '<span class="Drawer-detailBadge Drawer-detailBadge--success">Ready</span>';
-    return '<span class="Drawer-detailBadge Drawer-detailBadge--warning">Not Ready</span>';
+    if (task.isReady) return '<span class="Drawer-headerSignal">Ready</span>';
+    return '<span class="Drawer-headerSignal Drawer-headerSignal--warn">Not Ready</span>';
   }
 
   /** Value for <input type="datetime-local"> — YYYY-MM-DDTHH:mm */
@@ -2960,37 +3340,229 @@ body {
     });
   }
 
+  var DT_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'];
+  var DT_DOW_SHORT = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  var DT_DOW_SUM = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  var DT_MON_SUM = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+  function parseDatetimeLocal(local) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(local || ''));
+    if (!m) return null;
+    return {
+      y: +m[1], mo: +m[2] - 1, d: +m[3],
+      h24: +m[4], min: +m[5]
+    };
+  }
+
+  function toDatetimeLocalParts(parts) {
+    if (!parts) return '';
+    return toDatetimeLocalValue(
+      parts.y + '-' + pad(parts.mo + 1) + '-' + pad(parts.d),
+      parts.h24,
+      parts.min
+    );
+  }
+
+  /** Display stamp matching Dayshape picker: 07/05/21 09:00AM */
   function formatDatetimeLocalLabel(local) {
-    if (!local) return '—';
-    var iso = String(local).slice(0, 10);
-    var time = String(local).slice(11, 16) || '00:00';
-    var datePart = deadlineLabelFromISO(iso);
-    return (datePart || iso) + ', ' + time;
+    var p = parseDatetimeLocal(local);
+    if (!p) return '—';
+    var h12 = p.h24 % 12;
+    if (h12 === 0) h12 = 12;
+    var ampm = p.h24 >= 12 ? 'PM' : 'AM';
+    return pad(p.mo + 1) + '/' + pad(p.d) + '/' + String(p.y).slice(-2) +
+      ' ' + pad(h12) + ':' + pad(p.min) + ampm;
+  }
+
+  function formatDtPickSummary(parts) {
+    if (!parts) return '';
+    var jsDay = new Date(parts.y, parts.mo, parts.d).getDay();
+    return DT_DOW_SUM[jsDay] + ' ' + DT_MON_SUM[parts.mo] + ' ' + parts.d +
+      ' <span>' + parts.y + '</span>';
   }
 
   function drawerScheduleValueHtml(task, weekISO, editable) {
     var range = getBookingScheduleRange(task, weekISO);
     var startVal = range ? range.startLocal : '';
     var endVal = range ? range.endLocal : '';
-    if (!editable) {
-      if (!startVal && !endVal) {
-        return '<p class="Drawer-scheduleEmpty">No dates</p>';
-      }
-      return (
-        '<p class="Drawer-scheduleRead" aria-label="Booking start and end">' +
-          escapeHtml(formatDatetimeLocalLabel(startVal) + ' - ' + formatDatetimeLocalLabel(endVal)) +
-        '</p>'
-      );
+    if (!startVal && !endVal) {
+      return '<p class="Drawer-scheduleEmpty">No dates</p>';
     }
+    /* Same field chrome when Done — disabled, not plain text */
+    var dis = editable ? '' : ' disabled';
+    var popup = editable ? ' aria-haspopup="dialog"' : '';
     return (
-      '<div class="Drawer-scheduleRange" data-schedule-range>' +
-        '<input class="Drawer-scheduleInput" type="datetime-local" value="' + escapeHtml(startVal) +
-          '" data-schedule-bound="start" aria-label="Booking start">' +
+      '<div class="Drawer-scheduleRange" data-schedule-range' + (editable ? '' : ' data-schedule-readonly') + '>' +
+        '<button type="button" class="Drawer-scheduleInput" data-schedule-bound="start" data-local="' +
+          escapeHtml(startVal) + '" aria-label="Booking start"' + popup + dis + '>' +
+          escapeHtml(formatDatetimeLocalLabel(startVal)) +
+        '</button>' +
         '<span class="Drawer-scheduleDash" aria-hidden="true">-</span>' +
-        '<input class="Drawer-scheduleInput" type="datetime-local" value="' + escapeHtml(endVal) +
-          '" data-schedule-bound="end" aria-label="Booking end">' +
+        '<button type="button" class="Drawer-scheduleInput" data-schedule-bound="end" data-local="' +
+          escapeHtml(endVal) + '" aria-label="Booking end"' + popup + dis + '>' +
+          escapeHtml(formatDatetimeLocalLabel(endVal)) +
+        '</button>' +
       '</div>'
     );
+  }
+
+  function closeDtPick() {
+    var open = document.getElementById('drawerDtPick');
+    if (open) open.remove();
+    document.querySelectorAll('.Drawer-scheduleInput.is-open').forEach(function (el) {
+      el.classList.remove('is-open');
+      el.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  function openDtPick(inputEl, onCommit) {
+    closeDtPick();
+    if (!inputEl) return;
+    var parts = parseDatetimeLocal(inputEl.getAttribute('data-local')) || {
+      y: 2026, mo: 5, d: 1, h24: 8, min: 0
+    };
+    /* Snap minutes to quarter-hour slots used by the picker */
+    parts.min = [0, 15, 30, 45].reduce(function (best, m) {
+      return Math.abs(m - parts.min) < Math.abs(best - parts.min) ? m : best;
+    }, 0);
+    var view = { y: parts.y, mo: parts.mo };
+
+    var pop = document.createElement('div');
+    pop.id = 'drawerDtPick';
+    pop.className = 'DtPick';
+    pop.setAttribute('role', 'dialog');
+    pop.setAttribute('aria-label', 'Choose date and time');
+    pop.addEventListener('mousedown', function (e) { e.stopPropagation(); });
+
+    function commit() {
+      var local = toDatetimeLocalParts(parts);
+      inputEl.setAttribute('data-local', local);
+      inputEl.textContent = formatDatetimeLocalLabel(local);
+      if (onCommit) onCommit();
+    }
+
+    function paint() {
+      var h12 = parts.h24 % 12;
+      if (h12 === 0) h12 = 12;
+      var ampm = parts.h24 >= 12 ? 'PM' : 'AM';
+      var hourOpts = '';
+      for (var h = 1; h <= 12; h++) {
+        hourOpts += '<option value="' + h + '"' + (h === h12 ? ' selected' : '') + '>' + h + '</option>';
+      }
+      var minOpts = '';
+      [0, 15, 30, 45].forEach(function (m) {
+        minOpts += '<option value="' + m + '"' + (m === parts.min ? ' selected' : '') + '>' +
+          pad(m) + '</option>';
+      });
+
+      var first = new Date(view.y, view.mo, 1);
+      var startOffset = (first.getDay() + 6) % 7; /* Monday-first */
+      var gridStart = new Date(view.y, view.mo, 1 - startOffset);
+      var cells = '';
+      DT_DOW_SHORT.forEach(function (d) {
+        cells += '<div class="DtPick-dow">' + d + '</div>';
+      });
+      for (var i = 0; i < 42; i++) {
+        var day = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+        var outside = day.getMonth() !== view.mo;
+        var weekend = day.getDay() === 0 || day.getDay() === 6;
+        var selected = day.getFullYear() === parts.y && day.getMonth() === parts.mo &&
+          day.getDate() === parts.d;
+        var cls = 'DtPick-day' +
+          (outside ? ' is-outside' : '') +
+          (weekend ? ' is-weekend' : '') +
+          (selected ? ' is-selected' : '');
+        cells += '<button type="button" class="' + cls + '" data-y="' + day.getFullYear() +
+          '" data-mo="' + day.getMonth() + '" data-d="' + day.getDate() + '">' +
+          day.getDate() + '</button>';
+        if (i >= 34 && new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1).getMonth() !== view.mo &&
+            day.getMonth() !== view.mo) break;
+      }
+
+      pop.innerHTML =
+        '<div class="DtPick-head">' +
+          '<button type="button" class="DtPick-nav" data-dt-nav="-1" aria-label="Previous month"><i class="fa-solid fa-chevron-left"></i></button>' +
+          '<p class="DtPick-title">' + DT_MONTHS[view.mo] + ' ' + view.y + '</p>' +
+          '<button type="button" class="DtPick-nav" data-dt-nav="1" aria-label="Next month"><i class="fa-solid fa-chevron-right"></i></button>' +
+        '</div>' +
+        '<div class="DtPick-grid">' + cells + '</div>' +
+        '<div class="DtPick-foot">' +
+          '<p class="DtPick-summary">' + formatDtPickSummary(parts) + '</p>' +
+          '<div class="DtPick-timeRow">' +
+            '<span class="DtPick-clock" aria-hidden="true"><i class="fa-regular fa-clock"></i></span>' +
+            '<select class="DtPick-timeSelect" data-dt-hour aria-label="Hour">' + hourOpts + '</select>' +
+            '<span class="DtPick-colon" aria-hidden="true">:</span>' +
+            '<select class="DtPick-timeSelect" data-dt-min aria-label="Minutes">' + minOpts + '</select>' +
+            '<div class="DtPick-ampm" role="group" aria-label="AM or PM">' +
+              '<button type="button" data-dt-ampm="AM"' + (ampm === 'AM' ? ' class="is-active"' : '') + '>AM</button>' +
+              '<button type="button" data-dt-ampm="PM"' + (ampm === 'PM' ? ' class="is-active"' : '') + '>PM</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      pop.querySelectorAll('[data-dt-nav]').forEach(function (btn) {
+        btn.onclick = function () {
+          view.mo += Number(btn.getAttribute('data-dt-nav'));
+          if (view.mo < 0) { view.mo = 11; view.y -= 1; }
+          if (view.mo > 11) { view.mo = 0; view.y += 1; }
+          paint();
+        };
+      });
+      pop.querySelectorAll('.DtPick-day').forEach(function (btn) {
+        btn.onclick = function () {
+          parts.y = +btn.getAttribute('data-y');
+          parts.mo = +btn.getAttribute('data-mo');
+          parts.d = +btn.getAttribute('data-d');
+          view.y = parts.y;
+          view.mo = parts.mo;
+          commit();
+          paint();
+        };
+      });
+      var hourEl = pop.querySelector('[data-dt-hour]');
+      var minEl = pop.querySelector('[data-dt-min]');
+      if (hourEl) {
+        hourEl.onchange = function () {
+          var h = +hourEl.value;
+          var isPm = parts.h24 >= 12;
+          parts.h24 = (h % 12) + (isPm ? 12 : 0);
+          commit();
+        };
+      }
+      if (minEl) {
+        minEl.onchange = function () {
+          parts.min = +minEl.value;
+          commit();
+        };
+      }
+      pop.querySelectorAll('[data-dt-ampm]').forEach(function (btn) {
+        btn.onclick = function () {
+          var next = btn.getAttribute('data-dt-ampm');
+          var h12v = parts.h24 % 12;
+          parts.h24 = next === 'PM' ? (h12v === 0 ? 12 : h12v + 12) : h12v;
+          commit();
+          paint();
+        };
+      });
+    }
+
+    paint();
+    document.body.appendChild(pop);
+    inputEl.classList.add('is-open');
+    inputEl.setAttribute('aria-expanded', 'true');
+
+    var r = inputEl.getBoundingClientRect();
+    var popW = pop.offsetWidth;
+    var popH = pop.offsetHeight;
+    var left = Math.max(8, Math.min(r.left + r.width / 2 - popW / 2, window.innerWidth - popW - 8));
+    var top = r.bottom + 10;
+    if (top + popH > window.innerHeight - 8) {
+      top = Math.max(8, r.top - popH - 10);
+    }
+    pop.style.left = left + 'px';
+    pop.style.top = top + 'px';
+    pop.style.setProperty('--dt-caret-x', Math.max(16, Math.min(popW - 28, r.left + r.width / 2 - left - 6)) + 'px');
   }
 
   function bookingEffortMetaHtml(b) {
@@ -3017,7 +3589,7 @@ body {
     return true;
   }
 
-  function drawerDetailsHtml(task, columnId, phase, showPhases, weekISO, editingEffort, opts) {
+  function drawerDetailsHtml(task, columnId, phase, showPhases, weekISO, opts) {
     opts = opts || {};
     var detailsEditable = canEditBookingDetails(columnId, opts);
     var assignee = resolveAssignee(task, columnId);
@@ -3027,8 +3599,6 @@ body {
       : '<span style="color:var(--text-subtle);font-weight:400">Unassigned</span>';
     var phaseHtml = showPhases && phase ? phaseBadgeHtml(phase) : '—';
     var effortHrs = getBookingEffortHours(task, weekISO);
-    var effortLabel = effortHrs != null ? formatEffortHours(effortHrs) : '—';
-    var signal = drawerSignalBadgeHtml(task, columnId, !!task.blockingReason && !task.returnedReason);
     var rows = [];
     if (showPhases) {
       rows.push({
@@ -3048,13 +3618,12 @@ body {
       {
         icon: 'fa-regular fa-hourglass',
         label: 'Estimated Effort',
-        value: drawerEffortValueHtml(effortLabel, effortHrs, !!editingEffort && detailsEditable, detailsEditable),
+        value: drawerEffortValueHtml(effortHrs, detailsEditable),
         valueClass: ' Drawer-detailValue--effort',
-        rowClass: editingEffort && detailsEditable ? ' Drawer-detailRow--effort' : ''
-      }
+        rowClass: ' Drawer-detailRow--effort'
+      },
+      { icon: 'fa-regular fa-user', label: 'Assignee', value: assigneeHtml }
     );
-    if (signal) rows.push({ icon: 'fa-regular fa-flag', label: 'Signal', value: signal });
-    rows.push({ icon: 'fa-regular fa-user', label: 'Assignee', value: assigneeHtml });
     return '<div class="Drawer-detailsList">' + rows.map(function (row) {
       var icon = row.iconHtml ? row.iconHtml : '<i class="' + row.icon + '" aria-hidden="true"></i>';
       var tip = escapeHtml(row.label);
@@ -3068,6 +3637,14 @@ body {
 
   function buildPhaseBookings(task, columnId, weekISO, phaseIdx, currentIdx, completedPhases) {
     if (task.forceEmptyPhase === phaseIdx) return [];
+    /* Per-scenario map wins — missing key = no bookings in that phase */
+    if (task.phaseBookings && typeof task.phaseBookings === 'object') {
+      var keyed = task.phaseBookings[phaseIdx];
+      if (keyed == null) keyed = task.phaseBookings[String(phaseIdx)];
+      if (keyed == null) return [];
+      return keyed.slice().sort(function (a, b) { return a.week.localeCompare(b.week); });
+    }
+    /* Legacy: task.bookings belong to the current phase only */
     if (phaseIdx === currentIdx && task.bookings && task.bookings.length) {
       return task.bookings.slice().sort(function (a, b) { return a.week.localeCompare(b.week); });
     }
@@ -3078,15 +3655,12 @@ body {
       { initials: 'JL', name: 'James Liu' },
       { initials: 'DL', name: 'Dana Lee' }
     ];
+    /* Future phases: no placeholder rows — keep milestones quiet until booked */
     if (phaseIdx > currentIdx && columnId !== 'done') {
-      return [{
-        week: shiftISODays(weekISO, (phaseIdx - currentIdx) * 14),
-        plannedHours: 4,
-        completed: false,
-        assignedTo: null
-      }];
+      return [];
     }
-    var n = phaseIdx === currentIdx ? 4 : 2;
+    if (!isCompleted && phaseIdx !== currentIdx) return [];
+    var n = phaseIdx === currentIdx ? 3 : 2;
     var list = [];
     for (var i = 0; i < n; i++) {
       var past = i < n - 1 || isCompleted;
@@ -3131,7 +3705,8 @@ body {
     var icon = '';
     if (rail === 'done') icon = '<i class="fa-solid fa-check" aria-hidden="true"></i>';
     else if (rail === 'inprogress') icon = '<i class="fa-solid fa-user" aria-hidden="true"></i>';
-    else if (rail === 'current' || rail === 'overdue') icon = '<i class="fa-solid fa-exclamation" aria-hidden="true"></i>';
+    else if (rail === 'current') icon = '<i class="fa-solid fa-exclamation" aria-hidden="true"></i>';
+    else if (rail === 'overdue') icon = '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>';
     var tip = escapeHtml(statusLabel || 'To Do');
     return (
       '<span class="Drawer-msRadio MilestoneIconTip is-' + rail + '" tabindex="0" role="img" aria-label="' + tip + '">' +
@@ -3161,8 +3736,8 @@ body {
       ));
       /*
        * Figma Status=InProgress vs InProgressOther:
-       * — Yours: bold “This Week”
-       * — Someone else’s: quiet “This Week”, same blue rail / In Progress label
+       * — Yours (is-mine): lavender cells wash + bold “This Week”
+       * — Someone else’s (is-other): white cells, quiet “This Week”, same blue rail
        * Planned / spent shown for every booking (phase = sum of parts).
        */
       var isYourInProgress = isInProgress && isMine;
@@ -3235,23 +3810,46 @@ body {
     return bookingsTimelineHtml(list, task, columnId, weekISO, true);
   }
 
-  function milestoneCardsHtml(task, columnId, weekISO) {
+  function milestoneTrailHtml(tone) {
+    var cls = 'Drawer-msTrail';
+    if (tone === 'done') cls += ' is-done';
+    else if (tone === 'inprogress') cls += ' is-inprogress';
+    else cls += ' is-upcoming';
+    return '<div class="' + cls + '" aria-hidden="true"></div>';
+  }
+
+  function milestoneTrailToneFromState(state) {
+    if (state === 'done') return 'done';
+    if (state === 'inprogress') return 'inprogress';
+    return 'upcoming';
+  }
+
+  function milestoneCardsHtml(task, columnId, weekISO, opts) {
+    opts = opts || {};
     var phases = ['Preparation', 'First Review', 'Second Review'];
     var timeline = getTimelineDates(task);
     var timelineLabels = [timeline.preparation, timeline.firstReview, timeline.secondReview];
     var currentIdx = getCurrentPhaseIndex(task.workPhase);
-    var completedPhases = getCompletedPhaseCount(task.workPhase, columnId);
-    var cards = phases.map(function (phase, phaseIdx) {
-      var state = resolveMilestoneState(task, columnId, phaseIdx, completedPhases, currentIdx);
+    var completedPhases = getCompletedPhaseCount(task.workPhase, columnId, task);
+    var phaseStates = phases.map(function (_phase, phaseIdx) {
+      return resolveMilestoneState(task, columnId, phaseIdx, completedPhases, currentIdx);
+    });
+    var parts = [];
+    phases.forEach(function (phase, phaseIdx) {
+      var state = phaseStates[phaseIdx];
       var isPhaseActive = phaseIdx === currentIdx && (columnId === 'in-progress' || columnId === 'blocked') && phaseIdx >= completedPhases;
-      var startOpen = isPhaseActive || state === 'inprogress' || phaseIdx === currentIdx;
+      var startOpen = phaseStartsOpen(opts.phasesOpen, phaseIdx, state, currentIdx, isPhaseActive);
       var phaseList = buildPhaseBookings(task, columnId, weekISO, phaseIdx, currentIdx, completedPhases);
       var phaseHrs = sumBookingPlannedHours(phaseList);
       var panelBody = phaseList.length
         ? bookingsTimelineHtml(phaseList, task, columnId, weekISO, phaseIdx === currentIdx)
         : '<div class="Drawer-msBookings Drawer-msBookings--empty"><p class="Drawer-msEmpty">No bookings in this phase</p></div>';
       var panelId = 'ms-phase-' + phaseIdx + '-panel';
-      return '<div class="Drawer-msGroup"><button type="button" class="Drawer-msHead' + (isPhaseActive || state === 'inprogress' ? ' is-active' : '') +
+      if (phaseIdx > 0) {
+        parts.push(milestoneTrailHtml(milestoneTrailToneFromState(phaseStates[phaseIdx - 1])));
+      }
+      parts.push(
+        '<div class="Drawer-msGroup"><button type="button" class="Drawer-msHead' + (isPhaseActive || state === 'inprogress' ? ' is-active' : '') +
         '" data-drawer-collapse="ms-phase-' + phaseIdx + '" aria-expanded="' + (startOpen ? 'true' : 'false') + '" aria-controls="' + panelId + '">' +
         milestoneIconHtml(state || 'next') +
         phaseBadgeHtml(phase) +
@@ -3261,7 +3859,8 @@ body {
         '</span>' +
         '<span class="Drawer-msChevron" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span></button>' +
         '<div id="' + panelId + '" class="Drawer-animPanel Drawer-msBookingsPanel' + (startOpen ? ' is-open' : '') + '" data-drawer-panel="ms-phase-' + phaseIdx + '">' +
-        '<div class="Drawer-animPanelInner">' + panelBody + '</div></div></div>';
+        '<div class="Drawer-animPanelInner">' + panelBody + '</div></div></div>'
+      );
     });
     function deadlineRowHtml(title, dateVal) {
       return '<div class="Drawer-msDeadline">' +
@@ -3270,27 +3869,34 @@ body {
         '<span class="Drawer-msDate">' + escapeHtml(String(dateVal)) + '</span>' +
         '</div>';
     }
-    return '<div class="Drawer-milestones">' + cards.join('') +
+    /* Trail into key dates follows last phase state (done → solid green; else dashed) */
+    parts.push(milestoneTrailHtml(milestoneTrailToneFromState(phaseStates[phaseStates.length - 1])));
+    parts.push(
       '<div class="Drawer-msKeyDates">' +
         deadlineRowHtml('Client Delivery Deadline', timeline.secondReview || timeline.deadline) +
+        milestoneTrailHtml('upcoming') +
         deadlineRowHtml('Statutory Deadline', timeline.deadline) +
-      '</div></div>';
+      '</div>'
+    );
+    return '<div class="Drawer-milestones">' + parts.join('') + '</div>';
   }
 
   function renderSidebar(task, columnId, opts) {
     opts = opts || {};
+    closeDtPick();
     var title = jobTitle(task);
     var jobSubtitle = jobSubtitleForTask(task);
     var phase = taskPhaseLabel(task);
     var showPhases = !isJobCard(task) && !!phase;
     var weekISO = WEEK_ISO;
     var alerts = drawerAlertsHtml(task, columnId);
-    var milestones = showPhases ? milestoneCardsHtml(task, columnId, weekISO) : '';
+    var milestones = showPhases ? milestoneCardsHtml(task, columnId, weekISO, opts) : '';
     var engagementBookings = (!showPhases && !isNonWorkTask(task))
       ? engagementBookingsHtml(task, columnId, weekISO)
       : '';
     var traits = drawerTraitTagsHtml(task);
-    var details = drawerDetailsHtml(task, columnId, phase, showPhases, weekISO, !!opts.effortEditing, opts);
+    var details = drawerDetailsHtml(task, columnId, phase, showPhases, weekISO, opts);
+    var signal = drawerSignalBadgeHtml(task, columnId, !!task.blockingReason && !task.returnedReason);
     var lowerSection = '';
     if (showPhases) {
       lowerSection =
@@ -3312,16 +3918,23 @@ body {
             '<div class="Drawer-animPanelInner">' + engagementBookings + '</div></div></div>';
     }
     document.getElementById('drawerHeader').innerHTML =
-      '<div class="Drawer-headerTop"><div class="Drawer-headerMain">' +
-        (traits || '') +
-        '<div class="Drawer-titleBlock">' +
-          '<h2 class="Drawer-title">' + escapeHtml(title) + '</h2>' +
-          '<p class="Drawer-company">' + escapeHtml(jobSubtitle || task.company || '') + '</p>' +
-        '</div><div class="Drawer-headerBadges">' +
-          statusMenuHtml(columnId, task, !!opts.menuOpen) +
-          (task.isPriority ? highPriorityBadgeHtml() : '') +
+      '<div class="Drawer-headerTop">' +
+        '<div class="Drawer-headerMain">' +
+          (traits || '') +
+          '<div class="Drawer-titleBlock">' +
+            '<h2 class="Drawer-title">' + escapeHtml(title) + '</h2>' +
+            '<div class="Drawer-subtitleRow">' +
+              (task.isPriority ? priorityIndicatorHtml() : '') +
+              '<p class="Drawer-company">' + escapeHtml(jobSubtitle || task.company || '') + '</p>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
-      '</div><button type="button" class="Drawer-close" tabindex="-1" aria-hidden="true" title="Preview only"><i class="fa-solid fa-xmark"></i></button></div>';
+        '<button type="button" class="Drawer-close" tabindex="-1" aria-hidden="true" title="Preview only"><i class="fa-solid fa-xmark"></i></button>' +
+      '</div>' +
+      '<div class="Drawer-headerStatusRow">' +
+        statusMenuHtml(columnId, task, !!opts.menuOpen) +
+        (signal || '') +
+      '</div>';
     document.getElementById('drawerBody').innerHTML =
       (alerts ? '<div class="Drawer-section Drawer-section--alerts">' + alerts + '</div>' : '') +
       '<div class="Drawer-section Drawer-section--details">' +
@@ -3523,103 +4136,77 @@ body {
 
   function bindScheduleEditors() {
     var range = document.querySelector('#drawerBody [data-schedule-range]');
-    if (!range || !activeTask) return;
+    if (!range || !activeTask || range.hasAttribute('data-schedule-readonly')) return;
     var startEl = range.querySelector('[data-schedule-bound="start"]');
     var endEl = range.querySelector('[data-schedule-bound="end"]');
+
     function syncSchedule() {
-      var startLocal = startEl && startEl.value;
-      var endLocal = endEl && endEl.value;
+      var startLocal = startEl && startEl.getAttribute('data-local');
+      var endLocal = endEl && endEl.getAttribute('data-local');
       if (startLocal && endLocal && endLocal < startLocal && endEl) {
-        endEl.value = startLocal;
+        endEl.setAttribute('data-local', startLocal);
+        endEl.textContent = formatDatetimeLocalLabel(startLocal);
         endLocal = startLocal;
       }
       applyScheduleToTask(activeTask, WEEK_ISO, startLocal, endLocal);
     }
-    function openPicker(el) {
+
+    function bindField(el) {
       if (!el) return;
-      try {
-        if (typeof el.showPicker === 'function') el.showPicker();
-      } catch (err) { /* ignore — browser may block until a direct user gesture settles */ }
-    }
-    [startEl, endEl].forEach(function (el) {
-      if (!el) return;
-      el.onchange = syncSchedule;
-      el.onclick = function () { openPicker(el); };
+      el.setAttribute('aria-expanded', 'false');
+      el.onclick = function (e) {
+        e.stopPropagation();
+        if (el.classList.contains('is-open')) {
+          closeDtPick();
+          return;
+        }
+        openDtPick(el, syncSchedule);
+      };
       el.onkeydown = function (e) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          openPicker(el);
+          el.click();
+        } else if (e.key === 'Escape') {
+          closeDtPick();
         }
       };
-    });
-  }
+    }
 
-  function rerenderEffortSidebar() {
-    if (!activeTask) return;
-    renderSidebar(activeTask, activeColumnId, {
-      menuOpen: false,
-      effortEditing: effortEditing,
-      showOverflowTip: false,
-      skipEnter: true
-    });
+    bindField(startEl);
+    bindField(endEl);
+
+    if (!document._dtPickOutsideBound) {
+      document._dtPickOutsideBound = true;
+      document.addEventListener('mousedown', function (e) {
+        var pop = document.getElementById('drawerDtPick');
+        if (!pop) return;
+        if (pop.contains(e.target)) return;
+        if (e.target.closest && e.target.closest('.Drawer-scheduleInput')) return;
+        closeDtPick();
+      });
+      window.addEventListener('resize', closeDtPick);
+      var scrollEl = document.getElementById('drawerBody');
+      if (scrollEl) scrollEl.addEventListener('scroll', closeDtPick, { passive: true });
+    }
   }
 
   function bindEffortEditor() {
-    var editBtn = document.querySelector('#drawerBody [data-effort-edit]');
-    var saveBtn = document.querySelector('#drawerBody [data-effort-save]');
-    var cancelBtn = document.querySelector('#drawerBody [data-effort-cancel]');
     var fields = document.querySelector('#drawerBody [data-effort-fields]');
     var hEl = fields && fields.querySelector('[data-effort-h]');
     var mEl = fields && fields.querySelector('[data-effort-m]');
+    if (!fields || !hEl || hEl.disabled || hEl.readOnly) return;
 
-    if (editBtn) {
-      editBtn.onclick = function (e) {
-        e.stopPropagation();
-        if (!activeTask) return;
-        effortEditBaseline = getBookingEffortHours(activeTask, WEEK_ISO);
-        effortEditing = true;
-        rerenderEffortSidebar();
-      };
+    function commitEffort() {
+      if (!activeTask) return;
+      var hours = effortPartsToHours(hEl.value, mEl && mEl.value);
+      applyEffortHoursToTask(activeTask, WEEK_ISO, hours);
     }
-    if (saveBtn) {
-      saveBtn.onclick = function (e) {
-        e.stopPropagation();
-        if (!activeTask) return;
-        var hours = effortPartsToHours(hEl && hEl.value, mEl && mEl.value);
-        applyEffortHoursToTask(activeTask, WEEK_ISO, hours);
-        effortEditing = false;
-        effortEditBaseline = null;
-        rerenderEffortSidebar();
-      };
-    }
-    if (cancelBtn) {
-      cancelBtn.onclick = function (e) {
-        e.stopPropagation();
-        if (!activeTask) return;
-        if (effortEditBaseline != null) {
-          applyEffortHoursToTask(activeTask, WEEK_ISO, effortEditBaseline);
-        }
-        effortEditing = false;
-        effortEditBaseline = null;
-        rerenderEffortSidebar();
-      };
-    }
-    if (fields && hEl) {
-      function onEffortKey(e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          if (saveBtn) saveBtn.click();
-        } else if (e.key === 'Escape') {
-          e.preventDefault();
-          if (cancelBtn) cancelBtn.click();
-        }
-      }
-      hEl.onkeydown = onEffortKey;
-      if (mEl) mEl.onkeydown = onEffortKey;
-      requestAnimationFrame(function () {
-        hEl.focus();
-        hEl.select();
-      });
+
+    hEl.onchange = commitEffort;
+    hEl.onblur = commitEffort;
+    if (mEl) {
+      mEl.onchange = commitEffort;
+      mEl.onblur = commitEffort;
     }
   }
 
@@ -3697,6 +4284,30 @@ body {
     }, extras || {});
   }
 
+  var YOU = { initials: 'AL', name: 'You' };
+  var SB = { initials: 'SB', name: 'Sarah Bennett' };
+  var DL = { initials: 'DL', name: 'Dana Lee' };
+  var SC = { initials: 'SC', name: 'Sam Chen' };
+  var JL = { initials: 'JL', name: 'James Liu' };
+
+  /** Done Preparation rail — three quiet completed weeks */
+  function bookingsPrepDone() {
+    return [
+      booking(-3, 2, true, SB),
+      booking(-2, 2, true, DL),
+      booking(-1, 2, true, SC)
+    ];
+  }
+  function bookingsFrDone() {
+    return [
+      booking(-2, 3, true, JL),
+      booking(-1, 3, true, YOU)
+    ];
+  }
+  function phaseBookingsMap(prep, fr, sr) {
+    return { 0: prep || [], 1: fr || [], 2: sr || [] };
+  }
+
   function baseTask(overrides) {
     return Object.assign({
       id: 'sc',
@@ -3708,7 +4319,7 @@ body {
       estimatedHours: 8.5,
       isReady: true,
       taxTypes: ['1120 Corporate', 'Planning'],
-      bookings: [booking(-2, 2, true, { initials: 'SB', name: 'Sarah Bennett' }), booking(0, 4, false, { initials: 'AL', name: 'You' })]
+      bookings: [booking(-2, 2, true, SB), booking(0, 4, false, YOU)]
     }, overrides || {});
   }
 
@@ -3716,61 +4327,396 @@ body {
     {
       name: 'Status',
       items: [
-        { id: 'S01', title: 'Ready to start', blurb: 'Work is booked this week. You can move it to In Progress.', columnId: 'to-do', task: baseTask({ id: 's01', isReady: true }), menuOpen: false },
-        { id: 'S01b', title: 'Working this week', blurb: 'Your In Progress: bold This Week + hours booked. Done weeks above stay quiet.', columnId: 'in-progress', task: baseTask({ id: 's01b', bookings: [booking(-3, 2, true, { initials: 'SB', name: 'Sarah Bennett' }), booking(-2, 2, true, { initials: 'DL', name: 'Dana Lee' }), booking(-1, 2, true, { initials: 'SC', name: 'Sam Chen' }), booking(0, 4, false, { initials: 'AL', name: 'You' }), booking(1, 3, false, { initials: 'AL', name: 'You' }), booking(2, 2, false, null)] }) },
-        { id: 'S01c', title: 'Two bookings at once', blurb: 'Your In Progress shows hours booked; someone else’s is quiet This Week (same blue rail).', columnId: 'in-progress', task: baseTask({ id: 's01c', bookings: [booking(-2, 2, true, { initials: 'SB', name: 'Sarah Bennett' }), booking(0, 3, false, { initials: 'SB', name: 'Sarah Bennett' }, { inProgress: true }), booking(0, 4, false, { initials: 'AL', name: 'You' }, { inProgress: true }), booking(1, 2, false, null)] }) },
-        { id: 'S01d', title: 'Booking rail — all statuses', blurb: 'Done, Reverted, Due Soon, In Progress, Overdue, and To Do in one list.', columnId: 'in-progress', task: baseTask({ id: 's01d', bookings: [
-          booking(-5, 2, true, { initials: 'SB', name: 'Sarah Bennett' }),
-          booking(-4, 2, false, { initials: 'DL', name: 'Dana Lee' }, { forceRail: 'current', forceLabel: 'Reverted' }),
-          booking(-3, 2, false, { initials: 'SC', name: 'Sam Chen' }, { forceRail: 'current', forceLabel: 'Due Soon' }),
-          booking(-2, 3, false, { initials: 'AL', name: 'You' }, { inProgress: true }),
-          booking(-1, 4, false, { initials: 'AL', name: 'You' }),
-          booking(1, 2, false, null)
-        ] }) },
-        { id: 'S04', title: 'Waiting in the pool', blurb: 'Nobody owns it yet. You can’t mark it Done from here.', columnId: 'to-do', task: baseTask({ id: 's04', deadline: null, assignedTo: null, bookings: [], estimatedHours: 6, taxTypes: ['1120 Corporate'] }) },
-        { id: 'S03', title: 'Finished', blurb: 'Complete, with time logged. Start/end and effort are read-only.', columnId: 'done', task: baseTask({ id: 's03', timeSpent: 8.5, estimatedHours: 8.5, bookings: [booking(0, 8.5, true, { initials: 'AL', name: 'You' })] }) },
-        { id: 'S11', title: 'Finished — can reopen', blurb: 'Open the status menu. You can send it back to In Progress.', columnId: 'done', task: baseTask({ id: 's11', timeSpent: 4, estimatedHours: 8.5, bookings: [booking(0, 8.5, true, { initials: 'AL', name: 'You' }, { effortLogged: 4 })] }), menuOpen: true }
+        {
+          id: 'S01', title: 'Ready to start', blurb: 'Prep open: done weeks + this week To Do. Later phases collapsed empty.',
+          columnId: 'to-do', phasesOpen: [0], menuOpen: false,
+          task: baseTask({
+            id: 's01', isReady: true,
+            phaseBookings: phaseBookingsMap(
+              [booking(-2, 2, true, SB), booking(0, 4, false, YOU)],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'S01b', title: 'Working this week', blurb: 'Prep open: Done weeks, bold This Week (yours), then upcoming To Do.',
+          columnId: 'in-progress', phasesOpen: [0],
+          task: baseTask({
+            id: 's01b',
+            phaseBookings: phaseBookingsMap(
+              [
+                booking(-3, 2, true, SB),
+                booking(-2, 2, true, DL),
+                booking(-1, 2, true, SC),
+                booking(0, 4, false, YOU, { inProgress: true }),
+                booking(1, 3, false, YOU),
+                booking(2, 2, false, null)
+              ],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'S01c', title: 'Two bookings at once', blurb: 'Prep open: your In Progress + someone else’s quiet This Week.',
+          columnId: 'in-progress', phasesOpen: [0],
+          task: baseTask({
+            id: 's01c',
+            phaseBookings: phaseBookingsMap(
+              [
+                booking(-2, 2, true, SB),
+                booking(0, 3, false, SB, { inProgress: true }),
+                booking(0, 4, false, YOU, { inProgress: true }),
+                booking(1, 2, false, null)
+              ],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'S01d', title: 'Booking rail — all statuses', blurb: 'Prep open: Done, Reverted, Due Soon, In Progress, Overdue, To Do.',
+          columnId: 'in-progress', phasesOpen: [0],
+          task: baseTask({
+            id: 's01d',
+            phaseBookings: phaseBookingsMap(
+              [
+                booking(-5, 2, true, SB),
+                booking(-4, 2, false, DL, { forceRail: 'current', forceLabel: 'Reverted' }),
+                booking(-3, 2, false, SC, { forceRail: 'current', forceLabel: 'Due Soon' }),
+                booking(-2, 3, false, YOU, { inProgress: true }),
+                booking(-1, 4, false, YOU, { forceRail: 'overdue', forceLabel: 'Overdue' }),
+                booking(1, 2, false, null)
+              ],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'S04', title: 'Waiting in the pool', blurb: 'Prep open empty — no owner, no bookings yet.',
+          columnId: 'to-do', phasesOpen: [0],
+          task: baseTask({
+            id: 's04', deadline: null, assignedTo: null, estimatedHours: 6, taxTypes: ['1120 Corporate'],
+            bookings: [],
+            phaseBookings: phaseBookingsMap([], [], [])
+          })
+        },
+        {
+          id: 'S03', title: 'Finished', blurb: 'All phases done; Second Review open with completed booking.',
+          columnId: 'done', phasesOpen: [2],
+          task: baseTask({
+            id: 's03', workPhase: 'Second Review', timeSpent: 8.5, estimatedHours: 8.5,
+            phaseHistory: { preparation: 'done', firstReview: 'done', secondReview: 'done' },
+            phaseBookings: phaseBookingsMap(
+              bookingsPrepDone(),
+              bookingsFrDone(),
+              [booking(0, 2.5, true, YOU)]
+            )
+          })
+        },
+        {
+          id: 'S11', title: 'Finished — can reopen', blurb: 'Done engagement; Second Review open. Status menu can reopen.',
+          columnId: 'done', phasesOpen: [2], menuOpen: true,
+          task: baseTask({
+            id: 's11', workPhase: 'Second Review', timeSpent: 4, estimatedHours: 8.5,
+            phaseHistory: { preparation: 'done', firstReview: 'done', secondReview: 'done' },
+            phaseBookings: phaseBookingsMap(
+              bookingsPrepDone(),
+              bookingsFrDone(),
+              [booking(0, 2.5, true, YOU, { effortLogged: 4 })]
+            )
+          })
+        }
       ]
     },
     {
       name: 'On hold and send-back',
       items: [
-        { id: 'S07', title: 'Stuck — waiting on client', blurb: 'On Hold, with a reason you can edit.', columnId: 'blocked', task: baseTask({ id: 's07', blockingReason: { category: 'Waiting on client', details: 'K-1 package outstanding' }, expectedEndDate: '2026-06-22' }) },
-        { id: 'S10b', title: 'Stuck — ready to resume', blurb: 'Open the status menu. Resume puts it back in progress.', columnId: 'blocked', task: baseTask({ id: 's10b', blockingReason: { category: 'Internal capacity', details: 'Unblock week of Jun 15' }, expectedEndDate: '2026-06-15' }), menuOpen: true },
-        { id: 'S12', title: 'Sent back — waiting', blurb: 'Review sent it back. It sits as Pending until prep is fixed.', columnId: 'blocked', task: baseTask({ id: 's12', workPhase: 'First Review', previousPhaseName: 'Preparation', returnedReason: 'Missing support for Schedule M-2', phaseHistory: { preparation: 'done' } }) },
-        { id: 'S12b', title: 'Sent back — you’re fixing it', blurb: 'In Progress again, with a note about why it came back.', columnId: 'in-progress', task: baseTask({ id: 's12b', workPhase: 'Preparation', returnedReason: 'Sent back from First Review — missing docs', previousPhaseName: null }) },
-        { id: 'S12c', title: 'Can send back to prep', blurb: 'Open the status menu. You can revert to Preparation.', columnId: 'in-progress', task: baseTask({ id: 's12c', workPhase: 'First Review', previousPhaseName: 'Preparation', phaseHistory: { preparation: 'done' }, bookings: [booking(0, 3, false, { initials: 'AL', name: 'You' })] }), menuOpen: true }
+        {
+          id: 'S07', title: 'Stuck — waiting on client', blurb: 'Prep open: this week shows On Hold on the rail.',
+          columnId: 'blocked', phasesOpen: [0],
+          task: baseTask({
+            id: 's07',
+            blockingReason: { category: 'Waiting on client', details: 'K-1 package outstanding' },
+            expectedEndDate: '2026-06-22',
+            phaseBookings: phaseBookingsMap(
+              [booking(-2, 2, true, SB), booking(0, 4, false, YOU)],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'S10b', title: 'Stuck — ready to resume', blurb: 'Prep open On Hold; status menu can Resume.',
+          columnId: 'blocked', phasesOpen: [0], menuOpen: true,
+          task: baseTask({
+            id: 's10b',
+            blockingReason: { category: 'Internal capacity', details: 'Unblock week of Jun 15' },
+            expectedEndDate: '2026-06-15',
+            phaseBookings: phaseBookingsMap(
+              [booking(-1, 2, true, DL), booking(0, 4, false, YOU)],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'S12', title: 'Sent back — waiting', blurb: 'Prep collapsed (done). FR open with Pending this week.',
+          columnId: 'blocked', phasesOpen: [1],
+          task: baseTask({
+            id: 's12', workPhase: 'First Review', previousPhaseName: 'Preparation',
+            returnedReason: 'Missing support for Schedule M-2',
+            phaseHistory: { preparation: 'done' },
+            phaseBookings: phaseBookingsMap(
+              bookingsPrepDone(),
+              [booking(0, 3, false, YOU)],
+              []
+            )
+          })
+        },
+        {
+          id: 'S12b', title: 'Sent back — you’re fixing it', blurb: 'Prep open again: Reverted tip + In Progress this week.',
+          columnId: 'in-progress', phasesOpen: [0],
+          task: baseTask({
+            id: 's12b', workPhase: 'Preparation',
+            returnedReason: 'Sent back from First Review — missing docs',
+            previousPhaseName: null,
+            phaseBookings: phaseBookingsMap(
+              [
+                booking(-2, 2, true, SB),
+                booking(-1, 2, false, DL, { forceRail: 'current', forceLabel: 'Reverted' }),
+                booking(0, 4, false, YOU, { inProgress: true })
+              ],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'S12c', title: 'Can send back to prep', blurb: 'Prep collapsed done; FR open In Progress. Menu can revert.',
+          columnId: 'in-progress', phasesOpen: [1], menuOpen: true,
+          task: baseTask({
+            id: 's12c', workPhase: 'First Review', previousPhaseName: 'Preparation',
+            phaseHistory: { preparation: 'done' },
+            phaseBookings: phaseBookingsMap(
+              bookingsPrepDone(),
+              [booking(0, 3, false, YOU, { inProgress: true })],
+              []
+            )
+          })
+        }
       ]
     },
     {
       name: 'Ready or not',
       items: [
-        { id: 'RDY', title: 'Ready to pick up', blurb: 'Green Ready signal in Details.', columnId: 'to-do', task: baseTask({ id: 'rdy', isReady: true }) },
-        { id: 'NRDY', title: 'Not ready yet', blurb: 'Still waiting on the client. Warning up top and signal in Details.', columnId: 'to-do', task: baseTask({ id: 'nrdy', isReady: false, clientInfoReceived: false, workPhase: 'Preparation' }) },
-        { id: 'PREV', title: 'Review before prep is done', blurb: 'You’re in First Review, but Preparation isn’t finished.', columnId: 'in-progress', task: baseTask({ id: 'prev', workPhase: 'First Review', isReady: false, phaseHistory: {}, bookings: [booking(0, 3.5, false, { initials: 'AL', name: 'You' })] }) },
-        { id: 'OVRD', title: 'Past the due date', blurb: 'Red Overdue banner above Booking Details.', columnId: 'to-do', task: baseTask({ id: 'ovrd', status: 'overdue', deadline: 'May 30', isReady: true }) },
-        { id: 'SOON', title: 'Due soon (not shipping)', blurb: 'Exploratory only — Due Soon is out of scope until rules exist. Overdue stays.', columnId: 'in-progress', task: baseTask({ id: 'soon', status: 'due-soon', deadline: 'Jun 8' }) },
-        { id: 'PRI', title: 'High priority', blurb: 'Red High priority badge with chevrons-up icon, next to status.', columnId: 'in-progress', task: baseTask({ id: 'pri', isPriority: true }) }
+        {
+          id: 'RDY', title: 'Ready to pick up', blurb: 'Prep open: booked this week, Ready badge in header status row.',
+          columnId: 'to-do', phasesOpen: [0],
+          task: baseTask({
+            id: 'rdy', isReady: true,
+            phaseBookings: phaseBookingsMap(
+              [booking(-1, 2, true, SB), booking(0, 4, false, YOU)],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'NRDY', title: 'Not ready yet', blurb: 'Prep open with this week To Do; Not Ready header badge + warn banner.',
+          columnId: 'to-do', phasesOpen: [0],
+          task: baseTask({
+            id: 'nrdy', isReady: false, clientInfoReceived: false, workPhase: 'Preparation',
+            phaseBookings: phaseBookingsMap(
+              [booking(0, 4, false, YOU)],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'PREV', title: 'Review before prep is done', blurb: 'Prep + FR both open: prep still To Do, FR In Progress.',
+          columnId: 'in-progress', phasesOpen: [0, 1],
+          task: baseTask({
+            id: 'prev', workPhase: 'First Review', isReady: false, phaseHistory: {},
+            phaseBookings: phaseBookingsMap(
+              [booking(-1, 2, false, SB), booking(0, 2, false, null)],
+              [booking(0, 3.5, false, YOU, { inProgress: true })],
+              []
+            )
+          })
+        },
+        {
+          id: 'OVRD', title: 'Past the due date', blurb: 'Prep open: this week Overdue on the rail + banner.',
+          columnId: 'to-do', phasesOpen: [0],
+          task: baseTask({
+            id: 'ovrd', status: 'overdue', deadline: 'May 30', isReady: true,
+            phaseBookings: phaseBookingsMap(
+              [booking(-2, 2, true, SB), booking(0, 4, false, YOU)],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'SOON', title: 'Due soon (not shipping)', blurb: 'Prep open with Due Soon rail (exploratory only).',
+          columnId: 'in-progress', phasesOpen: [0],
+          task: baseTask({
+            id: 'soon', status: 'due-soon', deadline: 'Jun 8',
+            phaseBookings: phaseBookingsMap(
+              [
+                booking(-1, 2, true, SB),
+                booking(0, 4, false, YOU, { forceRail: 'current', forceLabel: 'Due Soon' })
+              ],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'PRI', title: 'High priority', blurb: 'Prep open In Progress + Priority Indicator in header.',
+          columnId: 'in-progress', phasesOpen: [0],
+          task: baseTask({
+            id: 'pri', isPriority: true,
+            phaseBookings: phaseBookingsMap(
+              [booking(-1, 2, true, SB), booking(0, 4, false, YOU, { inProgress: true })],
+              [],
+              []
+            )
+          })
+        }
       ]
     },
     {
       name: 'Phases and milestones',
       items: [
-        { id: 'PH-PREP', title: 'On Preparation', blurb: 'Milestones show Prep as current; later steps are next.', columnId: 'in-progress', task: baseTask({ id: 'ph-prep', workPhase: 'Preparation' }) },
-        { id: 'PH-FR', title: 'On First Review', blurb: 'Prep is done. First Review is the active step.', columnId: 'in-progress', task: baseTask({ id: 'ph-fr', workPhase: 'First Review', phaseHistory: { preparation: 'done' }, bookings: [booking(0, 3, false, { initials: 'AL', name: 'You' })] }) },
-        { id: 'PH-SR', title: 'On Second Review', blurb: 'Prep and First Review are done. Second Review is active.', columnId: 'in-progress', task: baseTask({ id: 'ph-sr', workPhase: 'Second Review', phaseHistory: { preparation: 'done', firstReview: 'done' }, bookings: [booking(0, 2.5, false, { initials: 'AL', name: 'You' })] }) },
-        { id: 'PH-EMPTY', title: 'No bookings in this step', blurb: 'Open the phase — it says there are no bookings.', columnId: 'in-progress', task: baseTask({ id: 'ph-empty', workPhase: 'First Review', phaseHistory: { preparation: 'done' }, forceEmptyPhase: 1, bookings: [] }) },
-        { id: 'JOB', title: 'Engagement only', blurb: 'No Milestones — Bookings list by week (no phase grouping).', columnId: 'to-do', task: baseTask({ id: 'job', cardType: 'job', workPhase: null, deadline: 'Jul 15', taxTypes: ['Engagement'], estimatedHours: 6, bookings: [booking(0, 4, false, null), booking(1, 3, false, null), booking(2, 2, false, null)] }) }
+        {
+          id: 'PH-PREP', title: 'On Preparation', blurb: 'Only Prep expanded (In Progress). FR/SR collapsed empty.',
+          columnId: 'in-progress', phasesOpen: [0],
+          task: baseTask({
+            id: 'ph-prep', workPhase: 'Preparation',
+            phaseBookings: phaseBookingsMap(
+              [booking(-2, 2, true, SB), booking(-1, 2, true, DL), booking(0, 4, false, YOU, { inProgress: true })],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'PH-FR', title: 'On First Review', blurb: 'Prep collapsed (done). FR open In Progress.',
+          columnId: 'in-progress', phasesOpen: [1],
+          task: baseTask({
+            id: 'ph-fr', workPhase: 'First Review',
+            phaseHistory: { preparation: 'done' },
+            phaseBookings: phaseBookingsMap(
+              bookingsPrepDone(),
+              [booking(0, 3, false, YOU, { inProgress: true })],
+              []
+            )
+          })
+        },
+        {
+          id: 'PH-SR', title: 'On Second Review', blurb: 'Prep + FR collapsed done. SR open In Progress.',
+          columnId: 'in-progress', phasesOpen: [2],
+          task: baseTask({
+            id: 'ph-sr', workPhase: 'Second Review',
+            phaseHistory: { preparation: 'done', firstReview: 'done' },
+            phaseBookings: phaseBookingsMap(
+              bookingsPrepDone(),
+              bookingsFrDone(),
+              [booking(0, 2.5, false, YOU, { inProgress: true })]
+            )
+          })
+        },
+        {
+          id: 'PH-EMPTY', title: 'No bookings in this step', blurb: 'FR open empty; Prep collapsed with done weeks.',
+          columnId: 'in-progress', phasesOpen: [1],
+          task: baseTask({
+            id: 'ph-empty', workPhase: 'First Review',
+            phaseHistory: { preparation: 'done' },
+            forceEmptyPhase: 1,
+            bookings: [],
+            phaseBookings: phaseBookingsMap(bookingsPrepDone(), [], [])
+          })
+        },
+        {
+          id: 'JOB', title: 'Engagement only', blurb: 'No Milestones — Bookings list by week (no phase grouping).',
+          columnId: 'to-do',
+          task: baseTask({
+            id: 'job', cardType: 'job', workPhase: null, deadline: 'Jul 15',
+            taxTypes: ['Engagement'], estimatedHours: 6,
+            bookings: [booking(0, 4, false, null), booking(1, 3, false, null), booking(2, 2, false, null)]
+          })
+        }
       ]
     },
     {
       name: 'Tags and hours',
       items: [
-        { id: 'TRAIT', title: 'Too many tags', blurb: 'Extra tags hide behind +N. Hover +3 for the black tip.', columnId: 'to-do', task: baseTask({ id: 'trait', taxTypes: ['Planning', 'Single Audit', 'Yellow Book', 'A&A Community - Not for Profit', 'Ecological', 'Agricultural'] }) },
-        { id: 'EFF', title: 'Hours from this week', blurb: 'Pen opens h / m; hours focused. Check saves, close cancels (Enter / Escape).', columnId: 'in-progress', task: baseTask({ id: 'eff', estimatedHours: 8.5, bookings: [booking(0, 2.5, false, { initials: 'AL', name: 'You' })] }), effortEdit: true },
-        { id: 'SCH-RO', title: 'Can’t edit start/end', blurb: 'Done booking — Start/end are plain text (no pickers). Effort has no pen.', columnId: 'done', task: baseTask({ id: 'sch-ro', timeSpent: 6, estimatedHours: 6, bookings: [booking(0, 6, true, { initials: 'AL', name: 'You' })] }) },
-        { id: 'S05', title: 'Put off until next week', blurb: 'Open the status menu. You can defer to next week.', columnId: 'to-do', task: baseTask({ id: 's05' }), menuOpen: true },
-        { id: 'S06', title: 'In progress — more moves', blurb: 'Open the status menu for On Hold, Done, or back to To Do.', columnId: 'in-progress', task: baseTask({ id: 's06' }), menuOpen: true }
+        {
+          id: 'TRAIT', title: 'Too many tags', blurb: 'Prep open with simple To Do booking; +N traits in header.',
+          columnId: 'to-do', phasesOpen: [0],
+          task: baseTask({
+            id: 'trait',
+            taxTypes: ['Planning', 'Single Audit', 'Yellow Book', 'A&A Community - Not for Profit', 'Ecological', 'Agricultural'],
+            phaseBookings: phaseBookingsMap(
+              [booking(0, 4, false, YOU)],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'EFF', title: 'Hours from this week', blurb: 'Prep open In Progress; effort h/m fields editable in Details.',
+          columnId: 'in-progress', phasesOpen: [0],
+          task: baseTask({
+            id: 'eff', estimatedHours: 8.5,
+            phaseBookings: phaseBookingsMap(
+              [booking(-1, 2, true, SB), booking(0, 2.5, false, YOU, { inProgress: true })],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'SCH-RO', title: 'Can’t edit start/end', blurb: 'Done column: start/end + effort fields shown disabled.',
+          columnId: 'done', phasesOpen: [2],
+          task: baseTask({
+            id: 'sch-ro', workPhase: 'Second Review', timeSpent: 6, estimatedHours: 6,
+            phaseHistory: { preparation: 'done', firstReview: 'done', secondReview: 'done' },
+            phaseBookings: phaseBookingsMap(
+              bookingsPrepDone(),
+              bookingsFrDone(),
+              [booking(0, 6, true, YOU)]
+            )
+          })
+        },
+        {
+          id: 'S05', title: 'Put off until next week', blurb: 'Prep open To Do; status menu can defer.',
+          columnId: 'to-do', phasesOpen: [0], menuOpen: true,
+          task: baseTask({
+            id: 's05',
+            phaseBookings: phaseBookingsMap(
+              [booking(-1, 2, true, SB), booking(0, 4, false, YOU)],
+              [],
+              []
+            )
+          })
+        },
+        {
+          id: 'S06', title: 'In progress — more moves', blurb: 'Prep open In Progress; status menu for Hold / Done / To Do.',
+          columnId: 'in-progress', phasesOpen: [0], menuOpen: true,
+          task: baseTask({
+            id: 's06',
+            phaseBookings: phaseBookingsMap(
+              [booking(-1, 2, true, SB), booking(0, 4, false, YOU, { inProgress: true })],
+              [],
+              []
+            )
+          })
+        }
       ]
     }
   ];
@@ -3812,12 +4758,10 @@ body {
     var item = flat.find(function (x) { return x.id === activeId; }) || flat[0];
     activeTask = JSON.parse(JSON.stringify(item.task));
     activeColumnId = item.columnId;
-    effortEditing = !!item.effortEdit && canEditBookingDetails(item.columnId, item);
-    effortEditBaseline = effortEditing ? getBookingEffortHours(activeTask, WEEK_ISO) : null;
     renderSidebar(activeTask, activeColumnId, {
       menuOpen: !!item.menuOpen,
-      effortEditing: effortEditing,
-      showOverflowTip: item.id === 'TRAIT'
+      showOverflowTip: item.id === 'TRAIT',
+      phasesOpen: item.phasesOpen
     });
   }
 
