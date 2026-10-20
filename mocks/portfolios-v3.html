@@ -1459,8 +1459,9 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .Modal > .Modal-footer { align-self: stretch; width: 100%; box-sizing: border-box; }
 .Modal-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; flex-shrink: 0; min-height: 44px; border-bottom: none; border-radius: var(--border-radius-default) var(--border-radius-default) 0 0; background: var(--surface-default); position: relative; z-index: 3; }
 .Modal-headerStart { display: flex; align-items: center; gap: 12px; flex: 1 1 auto; min-width: 0; }
-.Modal-portfolioNameBar { display: inline-flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; max-width: none; }
+.Modal-portfolioNameBar { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; flex: 1 1 auto; min-width: 0; max-width: none; }
 .Modal-portfolioNameBar[hidden] { display: none !important; }
+.Modal-portfolioName-row { display: inline-flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; }
 .Modal-portfolioName-text { font-size: var(--font-size-h2); font-weight: var(--font-weight-regular); line-height: 27px; color: var(--text-default); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: min(560px, calc(100% - 40px)); }
 .Modal-portfolioName-input {
     font-family: var(--font-family);
@@ -1468,15 +1469,17 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     font-weight: var(--font-weight-regular);
     line-height: 27px;
     color: var(--text-default);
-    border: 1px solid var(--border-primary);
+    border: 1px solid var(--border-default);
     border-radius: var(--border-radius-default);
     padding: 4px 8px;
     height: 35px;
-    width: min(560px, calc(100% - 40px));
+    width: min(420px, calc(100vw - 180px));
     box-sizing: border-box;
     background: var(--surface-default);
 }
-.Modal-portfolioName-input:focus { outline: none; box-shadow: 0 0 0 3px var(--primary-accent); }
+.Modal-portfolioName-input::placeholder { color: var(--text-subtle); font-size: var(--font-size-medium); }
+.Modal-portfolioName-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-accent); }
+.Modal-portfolioName-input.is-invalid { border-color: var(--surface-danger); box-shadow: 0 0 0 3px var(--surface-danger-subtle); }
 .Modal-portfolioName-input[hidden] { display: none !important; }
 .Modal-portfolioName-edit,
 .Modal-portfolioName-edit-actions .PfIconBtn {
@@ -1490,7 +1493,9 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     background: var(--surface-accent); color: var(--text-primary);
 }
 .Modal-portfolioName-edit-actions { display: inline-flex; align-items: center; gap: 12px; }
-.Modal-portfolioName-edit-actions[hidden] { display: none !important; }
+.Modal-portfolioName-edit-actions[hidden],
+.Modal-portfolioName-edit[hidden] { display: none !important; }
+.Modal-portfolioNameBar .Modal-field-hint { margin: 0; }
 .Modal-title { font-size: var(--font-size-h2); font-weight: var(--font-weight-regular); margin: 0; color: var(--text-default); line-height: 27px; flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .Modal-title[hidden] { display: none !important; }
 .Modal-close { flex: 0 0 28px; width: 28px; height: 28px; margin-left: auto; border: none; background: none; font-size: 14px; color: var(--icon-default); cursor: pointer; padding: 0; border-radius: var(--border-radius-default); display: inline-flex; align-items: center; justify-content: center; }
@@ -2359,7 +2364,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
             <div class="Tab-navBar">
                 <button class="Tab-navItem is-active" data-tab="performance" onclick="switchTab('performance')"><span class="Tab-navItem-inner">Performance</span><span class="Tab-navItem-bar"></span></button>
                 <button class="Tab-navItem" data-tab="team" onclick="switchTab('team')"><span class="Tab-navItem-inner">Team</span><span class="Tab-navItem-bar"></span></button>
-                <span class="Tab-viewOnly BtnTooltipWrap BtnTooltipWrap--float" tabindex="0" data-tooltip="This is currently a read-only view of assigned work within your portfolio. If you need to make any edits, this can be done on the main Gantt or Engagement page in line with your permission set."><i class="fa-regular fa-eye" aria-hidden="true"></i>Read only</span>
+                <span class="Tab-viewOnly BtnTooltipWrap BtnTooltipWrap--float" tabindex="0" data-tooltip="This is currently a read-only view of assigned work within your portfolio for informational purpose only. If you need to make any edits, this can be done on the main Gantt or Engagement page in line with your permission set. Edits in this view will be permitted in a future release."><i class="fa-regular fa-eye" aria-hidden="true"></i>Read only</span>
             </div>
 
             <div id="tab-performance" class="tabpane is-active">
@@ -2450,15 +2455,18 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
         <div class="Modal-header">
             <div class="Modal-headerStart">
                 <div class="Modal-portfolioNameBar" id="modalPortfolioNameBar" hidden>
-                    <span class="Modal-portfolioName-text" id="portfolioNameDisplay"></span>
-                    <input id="portfolioName" class="Modal-portfolioName-input" type="text" maxlength="120" hidden oninput="onPortfolioNameInput()" onblur="onPortfolioNameBlur()" onkeydown="onPortfolioNameKeydown(event)" />
-                    <button type="button" class="Btn Btn--tertiary PfIconBtn Modal-portfolioName-edit" id="portfolioNameEditBtn" aria-label="Edit portfolio name" onclick="togglePortfolioNameEdit()"><i class="fa-solid fa-pencil" aria-hidden="true"></i></button>
-                    <span class="Modal-portfolioName-edit-actions" id="portfolioNameEditActions" hidden>
-                        <button type="button" class="Btn Btn--tertiary PfIconBtn" aria-label="Save portfolio name" title="Save" onmousedown="event.preventDefault()" onclick="onPortfolioNameBlur()"><i class="fa-solid fa-check" aria-hidden="true"></i></button>
-                        <button type="button" class="Btn Btn--tertiary PfIconBtn" aria-label="Cancel editing portfolio name" title="Cancel" onmousedown="event.preventDefault()" onclick="cancelPortfolioNameEdit()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
-                    </span>
+                    <div class="Modal-portfolioName-row">
+                        <span class="Modal-portfolioName-text" id="portfolioNameDisplay"></span>
+                        <input id="portfolioName" class="Modal-portfolioName-input" type="text" maxlength="120" placeholder="Portfolio name" autocomplete="off" hidden oninput="onPortfolioNameInput()" onblur="onPortfolioNameBlur()" onkeydown="onPortfolioNameKeydown(event)" aria-label="Portfolio name" />
+                        <button type="button" class="Btn Btn--tertiary PfIconBtn Modal-portfolioName-edit" id="portfolioNameEditBtn" aria-label="Edit portfolio name" onclick="togglePortfolioNameEdit()"><i class="fa-solid fa-pencil" aria-hidden="true"></i></button>
+                        <span class="Modal-portfolioName-edit-actions" id="portfolioNameEditActions" hidden>
+                            <button type="button" class="Btn Btn--tertiary PfIconBtn" aria-label="Save portfolio name" title="Save" onmousedown="event.preventDefault()" onclick="commitPortfolioName()"><i class="fa-solid fa-check" aria-hidden="true"></i></button>
+                            <button type="button" class="Btn Btn--tertiary PfIconBtn" aria-label="Cancel editing portfolio name" title="Cancel" onmousedown="event.preventDefault()" onclick="cancelPortfolioNameEdit()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                        </span>
+                    </div>
+                    <p class="Modal-field-hint is-error" id="portfolioNameHint" hidden></p>
                 </div>
-                <h2 class="Modal-title" id="modalTitle">Create portfolio</h2>
+                <h2 class="Modal-title" id="modalTitle" hidden>Edit filters</h2>
             </div>
             <button class="Modal-close" type="button" title="Close" onclick="closeCreateModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
@@ -2595,16 +2603,16 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
         <div class="DynamicFilterConfirm" id="discardPortfolioConfirm" role="dialog" aria-modal="true" aria-labelledby="discardPortfolioConfirmTitle" hidden>
             <div class="DynamicFilterConfirm-panel">
                 <div class="DynamicFilterConfirm-header">
-                    <h3 class="DynamicFilterConfirm-title" id="discardPortfolioConfirmTitle">Discard this portfolio?</h3>
+                    <h3 class="DynamicFilterConfirm-title" id="discardPortfolioConfirmTitle">Discard your progress?</h3>
                     <button type="button" class="DynamicFilterConfirm-close" aria-label="Keep editing" onclick="closeDiscardPortfolioConfirm()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <div class="DynamicFilterConfirm-body">
-                    <p class="DynamicFilterConfirm-copy" id="discardPortfolioConfirmCopy">You’ve started building this portfolio. If you close now, that work won’t be saved.</p>
-                    <p class="DynamicFilterConfirm-hint" id="discardPortfolioConfirmHint">You can keep editing and create it when you’re ready.</p>
+                    <p class="DynamicFilterConfirm-copy" id="discardPortfolioConfirmCopy">If you close now, your progress won’t be saved. This includes any filters you’ve selected.</p>
+                    <p class="DynamicFilterConfirm-hint" id="discardPortfolioConfirmHint">You can keep editing and save when you’re ready.</p>
                 </div>
                 <div class="DynamicFilterConfirm-footer">
                     <button type="button" class="Btn Btn--outline" onclick="closeDiscardPortfolioConfirm()">Keep editing</button>
-                    <button type="button" class="Btn Btn--primary" id="discardPortfolioConfirmBtn" onclick="confirmDiscardPortfolio()">Discard</button>
+                    <button type="button" class="Btn Btn--primary" id="discardPortfolioConfirmBtn" onclick="confirmDiscardPortfolio()">Discard progress</button>
                 </div>
             </div>
         </div>
@@ -3542,7 +3550,8 @@ const modalState = {
     valueSearch: {},
     filterSearch: "",
     nameTouched: false,
-    nameEditing: false
+    nameEditing: false,
+    originalName: ""
 };
 let ruleSeq = 0;
 const RULE_DATE_LABEL = "1 Jun 2026 – 1 Jun 2027";
@@ -4208,7 +4217,10 @@ function showModalStep(step) {
     const resultsCancel = document.getElementById("modalResultsCancel");
     if (resultsCancel) resultsCancel.hidden = modalMode === "edit";
     const modalTitle = document.getElementById("modalTitle");
-    if (modalTitle) modalTitle.hidden = true;
+    if (modalTitle) {
+        modalTitle.hidden = !isEditFilterSet;
+        modalTitle.textContent = "Edit filters";
+    }
     if (isEditRule) renderEditRuleTable();
     if (isResults) {
         updateResultsActionButtons();
@@ -4224,11 +4236,21 @@ function portfolioNameValue() {
     return raw || defaultPortfolioName();
 }
 function portfolioNameValid() {
-    return portfolioNameValue().length > 0;
+    return portfolioNameValue().length > 0 && !portfolioNameError();
+}
+function portfolioNameError() {
+    const raw = (document.getElementById("portfolioName")?.value || "").trim();
+    if (!raw) return "";
+    const original = (modalState.originalName || "").trim().toLowerCase();
+    const clash = allPortfolioNames().some(function (n) {
+        const name = n.trim().toLowerCase();
+        return name === raw.toLowerCase() && name !== original;
+    });
+    return clash ? "A portfolio already uses this name." : "";
 }
 function togglePortfolioNameEdit() {
     if (modalState.nameEditing) {
-        onPortfolioNameBlur();
+        commitPortfolioName();
         return;
     }
     modalState.nameEditing = true;
@@ -4244,24 +4266,41 @@ function updatePortfolioNameUI() {
     const input = document.getElementById("portfolioName");
     const editBtn = document.getElementById("portfolioNameEditBtn");
     const editActions = document.getElementById("portfolioNameEditActions");
+    const hint = document.getElementById("portfolioNameHint");
     const show = showPortfolioNameInHeader();
     if (bar) bar.hidden = !show;
-    if (!show) {
-        modalState.nameEditing = false;
-        return;
-    }
-    const name = portfolioNameValue();
+    if (!show) return;
     const editing = modalState.nameEditing;
+    const name = portfolioNameValue();
     if (display) {
-        display.textContent = name;
+        if (!editing) display.textContent = name;
         display.hidden = editing;
     }
     if (input) {
         input.hidden = !editing;
         if (!editing && input.value.trim() !== name) input.value = name;
+        const error = editing && portfolioNameError();
+        input.classList.toggle("is-invalid", !!error);
+        input.setAttribute("aria-invalid", error ? "true" : "false");
+        if (hint) {
+            hint.hidden = !error;
+            hint.textContent = error || "";
+        }
     }
     if (editBtn) editBtn.hidden = editing;
     if (editActions) editActions.hidden = !editing;
+}
+function commitPortfolioName() {
+    const input = document.getElementById("portfolioName");
+    if (input && !input.value.trim()) input.value = defaultPortfolioName();
+    if (portfolioNameError()) {
+        updatePortfolioNameUI();
+        updateModalPrimary();
+        return;
+    }
+    modalState.nameEditing = false;
+    updatePortfolioNameUI();
+    updateModalPrimary();
 }
 function onPortfolioNameInput() {
     updatePortfolioNameUI();
@@ -4270,7 +4309,7 @@ function onPortfolioNameInput() {
 function onPortfolioNameBlur() {
     const input = document.getElementById("portfolioName");
     if (input && !input.value.trim()) input.value = defaultPortfolioName();
-    modalState.nameEditing = false;
+    if (modalMode !== "create") modalState.nameEditing = false;
     updatePortfolioNameUI();
     updateModalPrimary();
 }
@@ -4285,7 +4324,7 @@ function cancelPortfolioNameEdit() {
 function onPortfolioNameKeydown(e) {
     if (e.key === "Enter") {
         e.preventDefault();
-        onPortfolioNameBlur();
+        commitPortfolioName();
     } else if (e.key === "Escape") {
         e.preventDefault();
         cancelPortfolioNameEdit();
@@ -4961,6 +5000,7 @@ function resetModalState(preselectCodes, applied) {
     modalState.filterSearch = "";
     modalState.nameTouched = false;
     modalState.nameEditing = false;
+    modalState.originalName = "";
     const fs = document.getElementById("filterSearchInput"); if (fs) fs.value = "";
     closeDynamicFilterConfirm();
 }
@@ -4982,7 +5022,7 @@ function modalSignature() {
     });
 }
 function updateModalPrimary() {
-    let disabled = effectiveMembershipSize() === 0;
+    let disabled = effectiveMembershipSize() === 0 || !!portfolioNameError();
     if (modalMode === "edit") disabled = disabled || (modalSignature() === modalState.baseline);
     document.getElementById("modalPrimary").disabled = disabled;
     updateFiltersBar();
@@ -4996,17 +5036,19 @@ function openCreateModal() {
     modalMode = "create";
     document.getElementById("modalPrimary").textContent = "Create";
     setPortfolioNameValue(defaultPortfolioName());
-    modalState.nameEditing = false;
     resetModalState([], false);
+    modalState.originalName = "";
+    modalState.nameEditing = true;
     buildModal();
     updateModalPrimary();
     document.getElementById("createModal").classList.add("is-open");
+    focusPortfolioNameInput();
 }
 function openEditModal(name) {
     modalMode = "edit";
     document.getElementById("modalPrimary").textContent = "Update";
-    setPortfolioNameValue(name || document.getElementById("detailTitle").textContent.trim());
-    modalState.nameEditing = false;
+    const portfolioName = name || document.getElementById("detailTitle").textContent.trim();
+    setPortfolioNameValue(portfolioName);
     // Seed a hybrid membership so editing demonstrates both sections:
     // a dynamic filter rule ("From filters") plus a couple of hand-picked engagements.
     const ruleUnit = ENGAGEMENTS[0] && ENGAGEMENTS[0].functionalUnit;
@@ -5015,6 +5057,8 @@ function openEditModal(name) {
         : [];
     const manualCodes = ENGAGEMENTS.filter(e => !ruleCodes.includes(e.code)).slice(0, 2).map(e => e.code);
     resetModalState(manualCodes, true);
+    modalState.originalName = portfolioName;
+    modalState.nameEditing = false;
     if (ruleUnit) {
         modalState.rules = [{ id: ++ruleSeq, name: "Technology & Media", sel: { jobFunctionalUnitId: new Set([ruleUnit]) }, dateLabel: RULE_DATE_LABEL, evaluatedAt: Date.now() - 3 * 60 * 1000 }];
     }
@@ -5043,19 +5087,14 @@ function portfolioHasProgress() {
     return Object.keys(modalState.valueSel).some(p => modalState.valueSel[p] && modalState.valueSel[p].size > 0);
 }
 function openDiscardPortfolioConfirm() {
-    const editing = modalMode === "edit";
     const title = document.getElementById("discardPortfolioConfirmTitle");
     const copy = document.getElementById("discardPortfolioConfirmCopy");
     const hint = document.getElementById("discardPortfolioConfirmHint");
     const action = document.getElementById("discardPortfolioConfirmBtn");
-    if (title) title.textContent = editing ? "Discard your changes?" : "Discard this portfolio?";
-    if (copy) copy.textContent = editing
-        ? "You’ve made changes to this portfolio. If you close now, those changes won’t be saved."
-        : "You’ve started building this portfolio. If you close now, that work won’t be saved.";
-    if (hint) hint.textContent = editing
-        ? "You can keep editing and update it when you’re ready."
-        : "You can keep editing and create it when you’re ready.";
-    if (action) action.textContent = editing ? "Discard changes" : "Discard";
+    if (title) title.textContent = "Discard your progress?";
+    if (copy) copy.textContent = "If you close now, your progress won’t be saved. This includes any filters you’ve selected.";
+    if (hint) hint.textContent = "You can keep editing and save when you’re ready.";
+    if (action) action.textContent = "Discard progress";
     const el = document.getElementById("discardPortfolioConfirm");
     if (!el) return;
     el.hidden = false;
