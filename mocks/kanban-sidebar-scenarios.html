@@ -53,8 +53,14 @@
   --text-warning-strong: #804003;
   --text-danger-strong: #6a042a;
   --text-disabled: #989bb6;
+  --text-link: #7059e8;
+  --text-success-dark: #055c28;
+  --text-active-dark: #026a7e;
   --icon-subtle: #6a708f;
   --icon-default: #222430;
+  --border-section: #e2e3e9;
+  --border-active-subtle: #9ad5e2;
+  --surface-active-subtle: #e1f6fa;
   --icon-accent: #4c5172;
   --icon-danger: #a3003c;
   --icon-success: #078138;
@@ -102,6 +108,11 @@
   --phase-preparation: #2f6fed;
   --phase-first-review: #2f9e5b;
   --phase-second-review: #7b4fc4;
+  /* Traits / schedule types — distinct from phase blues/greens/purples */
+  --trait-0: #0f766e;
+  --trait-1: #c2410c;
+  --trait-2: #a21caf;
+  --trait-3: #ca8a04;
 }
 
 .Drawer-backdrop {
@@ -301,7 +312,8 @@
   display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;
   min-width: 0; max-width: 100%; overflow: hidden;
 }
-.Drawer-traitRow .badge.tax:not(.card-overflow) {
+.Drawer-traitRow .badge.tax:not(.card-overflow),
+.Drawer-traitRow .Drawer-phaseBadge.tax:not(.card-overflow) {
   flex: 0 0 auto;
   max-width: 140px;
   overflow: hidden;
@@ -454,38 +466,60 @@
   padding: 16px;
 }
 /* Figma Gantt Sidebar section header — Booking Details / Milestones */
+/* Match Gantt .Panel-sectionHead — chevron left of title */
 .Drawer-sectionHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  justify-content: flex-start;
+  gap: 0;
   width: 100%;
   max-width: none;
   box-sizing: border-box;
-  min-height: 45px;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
   margin: 0;
-  padding: 12px 16px;
+  padding: 10px 12px;
   border: none;
   border-radius: 0;
   background: #f8f8f8;
   cursor: pointer;
   font-family: var(--font-family);
   text-align: left;
-  color: #3d425c;
+  color: #222430;
 }
 .Drawer-sectionHeader:hover {
-  background: #f0f0f0;
+  background: #f3f3f6;
 }
 .Drawer-sectionHeader:focus-visible {
   outline: 0;
   box-shadow: inset 0 0 0 2px rgba(79, 63, 160, 0.35);
 }
+/* Booking Details — always open, not collapsible (Arron + Callum) */
+.Drawer-sectionHeader--static {
+  cursor: default;
+}
+.Drawer-sectionHeader--static:hover {
+  background: #f8f8f8;
+}
+.Drawer-sectionHeader--static:focus-visible {
+  box-shadow: none;
+}
+.Drawer-sectionHeader-label {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: center;
+  gap: 0;
+}
 .Drawer-sectionHeader-title {
   margin: 0;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 21px;
-  color: #3d425c;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: -0.01em;
+  color: #222430;
 }
 .Drawer-sectionHeader-chevron {
   display: inline-flex;
@@ -494,19 +528,29 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+  border-radius: 4px;
+  color: #989bb6;
+  transition: transform 0.16s ease, color 0.12s ease;
+  transform: rotate(-90deg);
+}
+.Drawer-sectionHeader:hover .Drawer-sectionHeader-chevron {
   color: #6a708f;
-  transition: transform 0.15s ease;
 }
 .Drawer-sectionHeader-chevron i {
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1;
 }
 .Drawer-sectionHeader[aria-expanded="true"] .Drawer-sectionHeader-chevron {
-  transform: rotate(90deg);
+  transform: rotate(0deg);
+  color: #6a708f;
 }
 .Drawer-section > .Drawer-animPanel.is-open {
   margin-top: 0;
-  padding: 16px;
+  padding: 12px;
+}
+/* Booking Details list owns its own 12px pad */
+.Drawer-section--details > .Drawer-animPanel.is-open {
+  padding: 0;
 }
 .Drawer-sectionHeading {
   display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;
@@ -552,7 +596,7 @@
   box-sizing: border-box;
 }
 
-/* Details list — Figma Sidebar / Booking details list 5055:94494 */
+/* Scheduled booking card — pad 12 / gap 8, no row borders */
 .Drawer-detailsList {
   box-sizing: border-box;
   display: flex;
@@ -560,14 +604,15 @@
   align-items: flex-start;
   align-self: stretch;
   flex-grow: 0;
-  padding: 0;
+  padding: 12px;
+  gap: 8px;
   width: 100%;
   max-width: 100%;
   min-width: 0;
   background: #ffffff;
-  border: 1px solid #e2e3e9;
-  border-radius: 4px;
-  overflow: hidden;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
 }
 .Drawer-detailRow {
   box-sizing: border-box;
@@ -578,19 +623,16 @@
   flex-grow: 0;
   gap: 8px;
   width: 100%;
-  height: 50px;
-  min-height: 50px;
-  padding: 8px 12px 8px 8px;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e3e9;
-}
-.Drawer-detailRow:last-child {
+  height: 35px;
+  min-height: 35px;
+  padding: 0;
+  background: transparent;
   border-bottom: none;
 }
 .Drawer-detailRow--schedule {
-  height: 53px;
-  min-height: 53px;
-  padding: 10px 12px 10px 8px;
+  height: 35px;
+  min-height: 35px;
+  padding: 0;
 }
 .Drawer-detailValue--schedule {
   display: flex;
@@ -665,17 +707,56 @@
   cursor: not-allowed;
   box-shadow: none;
 }
-.Drawer-scheduleDash {
-  flex: none;
-  flex-grow: 0;
-  flex-shrink: 0;
-  width: 5px;
-  color: #6a708f;
+.Drawer-scheduleDash { display: none; }
+.Drawer-scheduleLock {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 24px;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #4c5172;
+  font-size: 14px;
+  cursor: pointer;
+}
+.Drawer-scheduleLock:hover { background: #f1f1f4; color: #3d425c; }
+.Drawer-scheduleLock.is-locked { color: #3d425c; }
+.Drawer-scheduleLock i { font-size: 14px; line-height: 14px; }
+.Drawer-resourceInput {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+  height: 35px;
+  min-height: 35px;
+  max-height: 35px;
+  padding: 0 12px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #babfd1;
+  border-radius: 4px;
   font-family: var(--font-family);
   font-size: 14px;
   font-weight: 400;
-  line-height: 21px;
-  text-align: center;
+  line-height: 19px;
+  color: #3d425c;
+}
+.Drawer-detailValue:has(.Drawer-resourceInput) {
+  flex-wrap: nowrap;
+  height: 35px;
+  min-height: 35px;
+  max-height: 35px;
+  align-self: center;
 }
 .Drawer-scheduleEmpty {
   margin: 0;
@@ -896,11 +977,6 @@
 .DtPick-ampm button:not(.is-active):hover {
   background: #e2e3e9;
 }
-.Drawer-detailRow--effort {
-  height: 50px;
-  min-height: 50px;
-  align-items: center;
-}
 .Drawer-detailValue--effort {
   display: flex;
   flex-direction: row;
@@ -916,10 +992,10 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  flex: none;
-  flex-grow: 0;
+  flex: 1 1 auto;
   gap: 10px;
-  width: 190px;
+  width: 100%;
+  min-width: 0;
   height: 35px;
   padding: 0;
 }
@@ -927,9 +1003,9 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  flex: none;
-  flex-grow: 0;
-  width: 90px;
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
   height: 35px;
   padding: 0;
   background: #ffffff;
@@ -942,7 +1018,7 @@
   flex-grow: 1;
   align-items: center;
   min-width: 0;
-  width: 55px;
+  width: 0;
   height: 35px;
   margin: 0;
   padding: 0 12px;
@@ -1008,50 +1084,70 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  align-self: center;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
   margin: 0;
   padding: 0;
-  border-radius: 4px;
-  color: #3d425c;
+  border-radius: 0;
+  color: #4c5172;
   cursor: default;
   outline: none;
   background: transparent;
+  line-height: 0;
 }
 .Drawer-detailLabel:hover,
 .Drawer-detailLabel:focus-visible {
   background: transparent;
-  color: #3d425c;
+  color: #4c5172;
 }
 .Drawer-detailLabel:focus-visible {
-  box-shadow: 0 0 0 2px rgba(79, 63, 160, 0.28);
+  box-shadow: none;
 }
 .Drawer-detailLabel i,
 .Drawer-detailIcon {
   width: 14px;
   height: 14px;
   text-align: center;
-  color: #3d425c;
+  color: #4c5172;
   flex-shrink: 0;
   font-size: 14px;
   line-height: 14px;
+}
+.Drawer-detailRow--effort {
+  height: 35px;
+  min-height: 35px;
 }
 .Drawer-detailIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  line-height: 0;
 }
-/* Figma Phase row — outline diamond; 1px stroke matches fa-regular detail icons */
-.Drawer-detailIcon--diamond::before {
-  content: '';
-  width: 10px;
-  height: 10px;
-  box-sizing: border-box;
-  border: 1px solid currentColor;
-  border-radius: 1px;
-  transform: rotate(45deg);
+.Drawer-detailIcon img {
+  display: block;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.Drawer-detailIcon--user {
+  width: 14px;
+  height: 15px;
+}
+.Drawer-detailIcon--user img {
+  width: 12px;
+  height: 15px;
+}
+.Drawer-detailIcon--flipY img {
+  transform: scaleY(-1);
+}
+.Drawer-scheduleLock-img,
+.Panel-lock .Drawer-scheduleLock-img {
+  display: block;
+  width: 14px;
+  height: 14px;
 }
 .Drawer-detailValue {
   display: flex;
@@ -1089,10 +1185,19 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
-  color: #222430;
-  line-height: 16px;
+  color: #3d425c;
+  line-height: 19px;
+}
+.Drawer-resourceInput .StaffAvatar {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+.Drawer-resourceInput .StaffAvatar-initials {
+  font-size: 9px;
+  line-height: 12px;
 }
 .Drawer-detailBadge {
   display: inline-flex;
@@ -1529,7 +1634,8 @@ button.Drawer-msHead.is-active:active {
   width: 100%;
   box-sizing: border-box;
   margin: 0;
-  padding: 2px 8px 6px 0;
+  /* Inset booking wash from phase head / card edges (was 2px/6px — looked flush) */
+  padding: 8px 8px 8px 0;
   background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-top: none;
@@ -1546,34 +1652,37 @@ button.Drawer-msHead.is-active:active {
   overflow: visible;
 }
 .Drawer-msBooking {
+  /* Figma Booking 4 — pad 0 0 0 16, gap 12, height 54 */
   display: flex;
   flex-direction: row;
-  align-items: stretch;
+  align-items: center;
   gap: 12px;
   width: 100%;
   box-sizing: border-box;
-  min-height: 48px;
-  /* Same inset as phase head — 24px rail column centres on MilestoneIcon */
-  padding: 0 0 0 12px;
-  background: transparent;
+  height: 54px;
+  min-height: 54px;
+  padding: 0 0 0 16px;
+  background: #ffffff;
 }
 .Drawer-msBooking.is-done .Drawer-msBookingName {
   color: #6a708f;
 }
-/* 24px column matches phase MilestoneIcon; radio + stem centred on --ms-rail-center */
+/* Figma rail node — 16×54; line 2px; InProgress #3399A3 */
 .Drawer-msRail {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 0 0 24px;
-  width: 24px;
+  flex: 0 0 16px;
+  width: 16px;
+  height: 54px;
   align-self: stretch;
-  min-height: 48px;
+  min-height: 54px;
   overflow: visible;
+  padding: 0;
 }
 .Drawer-msRailLine {
   flex: 1 1 auto;
-  width: 1px;
+  width: 2px;
   min-height: 8px;
   border: none;
   background-color: #babfd1;
@@ -1585,7 +1694,7 @@ button.Drawer-msHead.is-active:active {
   visibility: hidden;
 }
 .Drawer-msRailLine[data-tone="done"] { background-color: #078138; }
-.Drawer-msRailLine[data-tone="inprogress"] { background-color: #0295b2; }
+.Drawer-msRailLine[data-tone="inprogress"] { background-color: #3399a3; }
 .Drawer-msRailLine[data-tone="current"] { background-color: #e27209; }
 .Drawer-msRailLine[data-tone="overdue"] { background-color: #a3003c; }
 .Drawer-msRailLine[data-tone="upcoming"] { background-color: #babfd1; }
@@ -1630,16 +1739,16 @@ button.Drawer-msHead.is-active:active {
   overflow: hidden;
 }
 .Drawer-msRadio i {
-  font-size: 8px;
-  width: 8px;
-  height: 8px;
+  /* Figma user glyph ~10px inside 16px node */
+  font-size: 10px;
+  width: 10px;
+  height: 10px;
   line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 .Drawer-msRadio.is-overdue i {
-  /* Triangle needs a touch more size than the bare bang to read at 16px */
   font-size: 9px;
   width: 9px;
   height: 9px;
@@ -1649,8 +1758,8 @@ button.Drawer-msHead.is-active:active {
   border: 1px solid #078138;
 }
 .Drawer-msRadio.is-inprogress {
-  background: #0295b2;
-  border: 1px solid #0295b2;
+  background: #3399a3;
+  border: 1px solid #3399a3;
 }
 .Drawer-msRadio.is-current {
   background: #e27209;
@@ -1666,17 +1775,22 @@ button.Drawer-msHead.is-active:active {
   color: transparent;
 }
 .Drawer-msCells {
+  /* Figma content frame — pad 10, gap 10; inset vertically so wash isn’t flush to row edges */
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   flex: 1 1 auto;
+  align-self: center;
   min-width: 0;
-  margin: 0;
+  height: auto;
+  min-height: 46px;
+  margin: 4px 0;
   padding: 10px;
   gap: 10px;
-  border-radius: 0;
+  border-radius: 4px;
   background: transparent;
+  box-sizing: border-box;
   transition: background 0.14s ease;
 }
 .Drawer-msCell {
@@ -1739,12 +1853,9 @@ button.Drawer-msHead.is-active:active {
   color: #6a708f;
   line-height: 15px;
 }
-/* Figma InProgress = lavender cells wash + bold This Week. InProgressOther = white cells, quiet label. */
-.Drawer-msBooking.is-mine {
-  min-height: 54px;
-}
+/* Figma InProgress = #F0EFFB cells + bold This Week. InProgressOther = white cells, quiet label. */
 .Drawer-msBooking.is-mine .Drawer-msCells {
-  background: var(--surface-primary-subtle);
+  background: #f0effb;
 }
 .Drawer-msBooking.is-mine .Drawer-msBookingName,
 .Drawer-msBooking.is-mine .Drawer-msBookingName strong {
@@ -1837,8 +1948,9 @@ button.Drawer-msHead.is-active:active {
   gap: 12px;
   width: 100%;
   box-sizing: border-box;
-  min-height: 44px;
-  padding: 10px 12px;
+  /* Match .Drawer-msHead phase cards */
+  min-height: 48px;
+  padding: 12px;
   background: #f8f8f8;
   border: 1px solid var(--border-subtle);
   border-radius: var(--border-radius-default);
@@ -2475,8 +2587,85 @@ body {
     radial-gradient(800px 400px at 20% 0%, #e8e6f8 0%, transparent 55%),
     #eceef3;
 }
+/* Kanban ↔ Gantt sidebar switcher */
+.Gallery-modeBar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: calc(100% - 432px);
+}
+.Gallery-modeBar-label {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6a708f;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.Gallery-modeToggle {
+  display: inline-flex;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(34, 36, 48, 0.06);
+}
+.Gallery-modeToggle button {
+  appearance: none;
+  border: 0;
+  border-right: 1px solid var(--border-subtle);
+  background: #fff;
+  color: #6a708f;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  padding: 9px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.Gallery-modeToggle button:last-child { border-right: 0; }
+.Gallery-modeToggle button:hover { background: #f5f5f8; color: #3d425c; }
+.Gallery-modeToggle button.is-active {
+  background: var(--surface-primary-subtle);
+  color: var(--text-primary);
+}
+.Gallery-modeHint {
+  margin: 0;
+  font-size: 11px;
+  line-height: 15px;
+  color: #6a708f;
+  max-width: 280px;
+}
+.Gallery-toast {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 30;
+  max-width: 320px;
+  padding: 10px 12px;
+  border-radius: var(--border-radius-default);
+  background: #222430;
+  color: #fff;
+  font-size: 12px;
+  line-height: 16px;
+  box-shadow: 0 8px 24px rgba(34, 36, 48, 0.18);
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+.Gallery-toast.is-on {
+  opacity: 1;
+  transform: translateY(0);
+}
 /* Pin drawer open in gallery */
-.Gallery-stage .Drawer {
+.Gallery-stage .Drawer,
+.Gallery-stage .Panel {
   position: absolute;
   top: 0; right: 0; bottom: 0;
   width: 400px;
@@ -2484,6 +2673,879 @@ body {
   transform: none !important;
   box-shadow: -6px 0 16px rgba(0,0,0,.08);
 }
+.Gallery-stage .Drawer[hidden],
+.Gallery-stage .Panel[hidden] { display: none !important; }
+
+/*
+ * Gantt booking sidebar — same control layout as product Gantt,
+ * metrics/type/surfaces aligned to Kanban Sidebar (Booking Details + sections).
+ */
+.Panel {
+  background: #ffffff;
+  border-left: 1px solid #e2e3e9;
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--font-family);
+  color: #222430;
+}
+.Panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e3e9;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+  isolation: isolate;
+  transition: box-shadow 0.18s ease;
+}
+.Panel-head.is-scrolled {
+  box-shadow: 0 4px 12px rgba(34, 36, 48, 0.08);
+}
+.Panel-headTop { display: flex; align-items: flex-start; gap: 12px; width: 100%; }
+.Panel-headMain {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px; /* match .Drawer-headerMain */
+}
+.Panel-titleBlock {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* match .Drawer-titleBlock */
+}
+.Panel-title {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  line-height: 22px;
+  color: var(--text-default);
+  text-align: left;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+}
+.Panel-meta {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+}
+.Panel-priority {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--surface-subtle-light);
+  border-radius: var(--border-radius-default);
+  color: #a3003c;
+}
+.Panel-priority img {
+  display: block;
+  width: 12px;
+  height: 12px;
+}
+.Panel-priority i { font-size: 10px; line-height: 1; }
+.Panel-code {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-regular);
+  line-height: 21px;
+  color: var(--text-link-color, #7059e8);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  cursor: pointer;
+  background: none; border: 0; padding: 0; font-family: inherit; text-align: left;
+}
+.Panel-code:hover { text-decoration: underline; color: var(--text-primary); }
+.Panel-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  width: 100%;
+  padding-top: 0;
+  border-top: none;
+}
+.Panel-tools { display: flex; align-items: center; gap: 4px; flex-shrink: 0; flex-wrap: wrap; }
+/* Gantt toolbar Kanban status — view-only Figma Badge (no caret / menu) */
+.Panel-toolbar .Panel-statusBadge {
+  flex: none;
+  pointer-events: none;
+  min-height: 28px;
+  padding: 4px 8px;
+  font-weight: 700;
+  line-height: 14px;
+  cursor: default;
+}
+/* Toolbar = default bordered buttons (always visible — Arron + Callum) */
+.PanelBtn {
+  width: 28px; height: 28px; flex-shrink: 0; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  border: 1px solid #e2e3e9;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #3d425c;
+  font-size: 13px; cursor: pointer;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.PanelBtn:hover {
+  border-color: #dedaf4;
+  background: #f0effb;
+  color: var(--text-primary);
+}
+.PanelBtn.is-active {
+  border-color: transparent;
+  background: #3d425c;
+  color: #fff;
+}
+/* Match Kanban .Drawer-close — quiet icon, contained grey wash on hover */
+.PanelBtn.PanelBtn--close {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--border-radius-default);
+  background: transparent;
+  color: var(--icon-accent);
+  font-size: 14px;
+  box-shadow: none;
+}
+.PanelBtn.PanelBtn--close i {
+  font-size: 14px;
+  line-height: 1;
+}
+.PanelBtn.PanelBtn--close:hover,
+.PanelBtn.PanelBtn--close:focus-visible {
+  background: var(--surface-container-default);
+  border: none;
+  border-color: transparent;
+  color: var(--icon-accent);
+  box-shadow: none;
+}
+.PanelBtn--wide { width: auto; padding: 0 8px; }
+.PanelBtn--caret { width: auto; padding: 0 6px; gap: 4px; }
+.PanelBtn--caret .fa-caret-down { font-size: 10px; color: #6a708f; }
+/* Same overlay scrollbar pattern as Kanban .Drawer-scroll */
+.Panel .Drawer-scrollWrap {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.Panel-body {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #ffffff;
+  scrollbar-width: none;
+}
+.Panel-body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+.Panel-schedule,
+.Panel-section {
+  border-top: 1px solid #e2e3e9;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.Panel-schedule { border-top: none; }
+.Panel-section[data-gantt-section="details"] { border-top: none; }
+.Panel-sectionHeadWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  /* Fixed — same height with/without action buttons (Kanban .Drawer-sectionHeader) */
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
+  padding-right: 12px;
+  background: #f8f8f8;
+  box-sizing: border-box;
+}
+.Panel-sectionHeadWrap:hover {
+  background: #f3f3f6;
+}
+.Panel-sectionHeadWrap:has(.Panel-sectionHead--static):hover {
+  background: #f8f8f8;
+}
+.Panel-scheduleTitle,
+.Panel-sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+  text-align: left;
+  color: #222430;
+  cursor: pointer;
+}
+.Panel-scheduleTitle {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: -0.01em;
+  color: #222430;
+}
+/* Section actions — same default bordered PanelBtn as toolbar (always visible) */
+.Panel-sectionBtns {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  opacity: 1;
+}
+/* Traits: primary in its own field; others wrap in one card (Arron + Callum) */
+.Panel-traitLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.Panel-traitPrimary {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.Panel-traitFieldLabel {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  color: #6a708f;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.Panel-traitWrap {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
+}
+.Panel-sectionHead--static {
+  cursor: default;
+  width: 100%;
+}
+.Panel-sectionTextStatic {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: -0.01em;
+  color: #222430;
+  font-family: inherit;
+}
+.Panel-sectionTextStatic b {
+  font-weight: 600;
+}
+/* Trait badges reuse phase badge chrome; cycle accent colours */
+.Drawer-phaseBadge--trait-0 {
+  --phase-badge-accent: var(--trait-0);
+  --phase-badge-border: var(--trait-0);
+  --phase-badge-bg: transparent;
+}
+.Drawer-phaseBadge--trait-1 {
+  --phase-badge-accent: var(--trait-1);
+  --phase-badge-border: var(--trait-1);
+  --phase-badge-bg: transparent;
+}
+.Drawer-phaseBadge--trait-2 {
+  --phase-badge-accent: var(--trait-2);
+  --phase-badge-border: var(--trait-2);
+  --phase-badge-bg: transparent;
+}
+.Drawer-phaseBadge--trait-3 {
+  --phase-badge-accent: var(--trait-3);
+  --phase-badge-border: var(--trait-3);
+  --phase-badge-bg: transparent;
+}
+.Panel-actionsLabel {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6a708f;
+  line-height: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.Panel-scheduleCard {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+.Panel-fields {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+}
+.Panel-field {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 35px;
+  min-height: 35px;
+  padding: 0;
+  background: transparent;
+  border-bottom: none;
+}
+.Panel-field:last-child { border-bottom: none; }
+.Panel-field--schedule {
+  height: 35px;
+  min-height: 35px;
+  padding: 0;
+}
+.Panel-field > .lead,
+.Panel-fieldLead {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  color: #4c5172;
+  background: transparent;
+  line-height: 0;
+}
+.Panel-field > .lead { font-size: 14px; }
+.Panel-field > .lead.fa-regular,
+.Panel-field > .lead.fa-solid {
+  width: 14px;
+  height: 14px;
+  line-height: 14px;
+  text-align: center;
+}
+.Panel-field > .Drawer-detailIcon.lead {
+  font-size: inherit;
+}
+.Panel-field > .Drawer-detailIcon--user.lead {
+  width: 14px;
+  height: 15px;
+}
+.Panel-fieldBody {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+  height: 35px;
+  min-height: 35px;
+  max-height: 35px;
+}
+.Panel-input {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 0;
+  height: 35px;
+  min-height: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border: 1px solid #babfd1;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: #3d425c;
+  text-align: center;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+}
+button.Panel-input {
+  cursor: pointer;
+  color: inherit;
+}
+.Panel-input:hover:not(:disabled) { border-color: #989bb6; }
+.Panel-input:focus,
+.Panel-input.is-open {
+  outline: none;
+  border-color: var(--border-primary);
+  box-shadow: 0 0 0 2px rgba(79, 63, 160, 0.12);
+  color: #222430;
+}
+.Panel-input:disabled {
+  background: #f1f1f4;
+  border-color: #e2e3e9;
+  color: #989bb6;
+  cursor: not-allowed;
+}
+.Panel-lock {
+  width: 24px; height: 24px; flex: 0 0 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #4c5172; font-size: 14px;
+  border: 0; background: none; cursor: pointer; padding: 0;
+  border-radius: 4px;
+}
+.Panel-lock:hover { background: #f1f1f4; color: #3d425c; }
+.Panel-lock.is-locked { color: #3d425c; }
+.Panel-person {
+  flex: 1 1 auto; min-width: 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--text-link-color, #7059e8);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  background: none; border: 0; padding: 0; font-family: inherit; text-align: left; cursor: pointer;
+}
+.Panel-person:hover { text-decoration: underline; color: var(--text-primary); }
+.Panel-effortRow { height: 35px; min-height: 35px; }
+.Panel-effort {
+  display: flex;
+  align-items: stretch;
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  height: 35px;
+}
+.Panel-fieldBody--effort {
+  gap: 10px;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+.Panel-personInput {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+  height: 35px;
+  min-height: 35px;
+  max-height: 35px;
+  padding: 0 12px;
+  overflow: hidden;
+  border: 1px solid #babfd1;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 19px;
+  color: #3d425c;
+  text-align: left;
+  cursor: pointer;
+}
+.Panel-personInput:hover {
+  border-color: #989bb6;
+  color: var(--text-primary);
+}
+.Panel-personInput .StaffAvatar {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+.Panel-personInput .StaffAvatar-initials {
+  font-size: 9px;
+  line-height: 12px;
+}
+.Panel-personInput-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.Panel-personInput-grade {
+  color: #6a708f;
+}
+/* Editable phase — Task Phase input-group: select + clear (same 35px as schedule/effort) */
+.Panel-phaseGroup {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  align-items: stretch;
+  min-width: 0;
+  width: 100%;
+  height: 35px;
+  min-height: 35px;
+  max-height: 35px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #babfd1;
+  border-radius: 4px;
+  background: #ffffff;
+}
+.Panel-phaseGroup:hover {
+  border-color: #989bb6;
+}
+.Panel-phaseGroup:focus-within {
+  border-color: var(--border-primary);
+  box-shadow: 0 0 0 2px rgba(79, 63, 160, 0.12);
+}
+.Panel-phaseInput {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  gap: 8px;
+  min-width: 0;
+  width: auto;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0 10px 0 8px;
+  overflow: hidden;
+  border: none;
+  border-radius: 0;
+  background: #ffffff;
+  font-family: var(--font-family);
+  text-align: left;
+  cursor: pointer;
+  color: #3d425c;
+}
+.Panel-phaseInput:focus-visible {
+  outline: none;
+}
+.Panel-phaseInput-value {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  max-height: 100%;
+  overflow: hidden;
+}
+.Panel-phaseInput-value .Drawer-phaseBadge {
+  min-height: 0;
+  max-height: 22px;
+}
+.Panel-phaseInput-placeholder {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: #6a708f;
+  white-space: nowrap;
+}
+.Panel-phaseInput-caret {
+  flex: 0 0 auto;
+  font-size: 10px;
+  line-height: 1;
+  color: #6a708f;
+}
+.Panel-phaseClear {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 32px;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  width: 32px;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-left: 1px solid #babfd1;
+  border-radius: 0;
+  background: #ffffff;
+  color: #989bb6;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+.Panel-phaseClear:hover {
+  background: #f1f1f4;
+  color: #3d425c;
+}
+.Panel-phaseClear:focus-visible {
+  outline: none;
+  color: #3d425c;
+  box-shadow: inset 0 0 0 2px rgba(79, 63, 160, 0.25);
+}
+.Panel-effort > .val {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid #babfd1;
+  border-right: 0;
+  border-radius: 4px 0 0 4px;
+  background: #ffffff;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: #222430;
+  box-sizing: border-box;
+}
+.Panel-effort > .val:focus {
+  outline: none;
+  border-color: var(--border-primary);
+  color: #222430;
+}
+.Panel-effort > .unit {
+  width: 35px;
+  flex: 0 0 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #babfd1;
+  border-radius: 0 4px 4px 0;
+  background: #f1f1f4;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: #3d425c;
+  box-sizing: border-box;
+}
+.Panel-actionsBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 4px;
+}
+.Panel-actions { display: flex; align-items: flex-start; gap: 5px; }
+.Panel-split { display: flex; align-items: center; }
+.Panel-split > .PanelBtn:first-child {
+  width: auto; padding: 0 8px;
+  border-right: 0;
+  border-radius: 4px 0 0 4px;
+}
+.Panel-split > .PanelBtn:last-child {
+  border-radius: 0 4px 4px 0;
+}
+.Panel-sectionLabel { display: flex; flex: 1 1 auto; min-width: 0; align-items: center; gap: 0; }
+.Panel-chev {
+  width: 20px; height: 20px; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 4px;
+  color: #989bb6; font-size: 11px;
+  cursor: pointer;
+  transition: transform .16s ease, color .12s ease;
+  transform: rotate(-90deg);
+  border: 0; background: none; padding: 0;
+}
+.Panel-sectionHeadWrap:hover .Panel-chev { color: #6a708f; }
+.Panel-section.is-open .Panel-chev { transform: rotate(0deg); color: #6a708f; }
+.Panel-sectionText {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0; min-width: 0;
+  font-size: 13px; line-height: 20px; color: #222430;
+  font-family: inherit; text-align: left;
+  letter-spacing: -0.01em;
+}
+.Panel-sectionText b { font-weight: 600; white-space: nowrap; color: #222430; }
+.Panel-sectionText .muted {
+  font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #6a708f;
+  font-size: 12px;
+}
+.Panel-sectionText .link {
+  font-weight: 400; white-space: nowrap; color: var(--text-link-color, #7059e8);
+  font-size: 14px;
+}
+.Panel-sectionBtns { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.Panel-sectionBody {
+  padding: 12px;
+  background: #ffffff;
+}
+.Panel-sectionBody[hidden] { display: none !important; }
+.Panel-card {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e3e9;
+  border-radius: 4px;
+}
+.Panel-list { display: flex; flex-direction: column; gap: 10px; }
+.Panel-listRow {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; line-height: 16px; color: #222430;
+}
+.Panel-listRow > i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  color: #3d425c;
+  font-size: 14px;
+}
+.Panel-traitSwatch {
+  width: 16px; height: 16px; flex: 0 0 16px;
+  border-radius: 3px; background: var(--surface-primary);
+}
+.Panel-pill {
+  display: inline-flex; align-items: center;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: #f1f1f4;
+  border: none;
+  color: #4c5172;
+  font-size: 11px; font-weight: 700; line-height: 16px;
+  letter-spacing: 0;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+/* Booking State pill — Figma Pill (lavender), leading icon only, no chevron */
+.Panel-bookingStatePill {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  flex: none;
+  gap: 8px;
+  height: 35px;
+  padding: 0 12px;
+  background: #f0effb;
+  border: 1px solid #dedaf4;
+  border-radius: 100px;
+  color: #4f3fa0;
+  font-family: 'Open Sans', var(--font-family), sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 21px;
+  white-space: nowrap;
+}
+.Panel-bookingStatePill-icon {
+  position: relative;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  background: #4f3fa0;
+  -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE0IiB2aWV3Qm94PSIwIDAgMTQgMTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJsb2NrIj4KPHBhdGggaWQ9Imljb24iIGQ9Ik01LjM5NTgzIDMuMjk0MTJWNC45NDExOEg4LjYwNDE3VjMuMjk0MTJDOC42MDQxNyAyLjM4NTY2IDcuODg0OCAxLjY0NzA2IDcgMS42NDcwNkM2LjExNTIgMS42NDcwNiA1LjM5NTgzIDIuMzg1NjYgNS4zOTU4MyAzLjI5NDEyWk0zLjc5MTY3IDQuOTQxMThWMy4yOTQxMkMzLjc5MTY3IDEuNDc0NjMgNS4yMjc5IDAgNyAwQzguNzcyMSAwIDEwLjIwODMgMS40NzQ2MyAxMC4yMDgzIDMuMjk0MTJWNC45NDExOEMxMS4wOTMxIDQuOTQxMTggMTEuODEyNSA1LjY3OTc4IDExLjgxMjUgNi41ODgyNFYxMi4zNTI5QzExLjgxMjUgMTMuMjYxNCAxMS4wOTMxIDE0IDEwLjIwODMgMTRIMy43OTE2N0MyLjkwNjg3IDE0IDIuMTg3NSAxMy4yNjE0IDIuMTg3NSAxMi4zNTI5VjYuNTg4MjRDMi4xODc1IDUuNjc5NzggMi45MDY4NyA0Ljk0MTE4IDMuNzkxNjcgNC45NDExOFoiIGZpbGw9IiM0QzUxNzIiLz4KPC9nPgo8L3N2Zz4K') center / contain no-repeat;
+  mask: url('data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE0IiB2aWV3Qm94PSIwIDAgMTQgMTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJsb2NrIj4KPHBhdGggaWQ9Imljb24iIGQ9Ik01LjM5NTgzIDMuMjk0MTJWNC45NDExOEg4LjYwNDE3VjMuMjk0MTJDOC42MDQxNyAyLjM4NTY2IDcuODg0OCAxLjY0NzA2IDcgMS42NDcwNkM2LjExNTIgMS42NDcwNiA1LjM5NTgzIDIuMzg1NjYgNS4zOTU4MyAzLjI5NDEyWk0zLjc5MTY3IDQuOTQxMThWMy4yOTQxMkMzLjc5MTY3IDEuNDc0NjMgNS4yMjc5IDAgNyAwQzguNzcyMSAwIDEwLjIwODMgMS40NzQ2MyAxMC4yMDgzIDMuMjk0MTJWNC45NDExOEMxMS4wOTMxIDQuOTQxMTggMTEuODEyNSA1LjY3OTc4IDExLjgxMjUgNi41ODgyNFYxMi4zNTI5QzExLjgxMjUgMTMuMjYxNCAxMS4wOTMxIDE0IDEwLjIwODMgMTRIMy43OTE2N0MyLjkwNjg3IDE0IDIuMTg3NSAxMy4yNjE0IDIuMTg3NSAxMi4zNTI5VjYuNTg4MjRDMi4xODc1IDUuNjc5NzggMi45MDY4NyA0Ljk0MTE4IDMuNzkxNjcgNC45NDExOFoiIGZpbGw9IiM0QzUxNzIiLz4KPC9nPgo8L3N2Zz4K') center / contain no-repeat;
+}
+.Panel-bookingStatePill-label {
+  flex: none;
+  display: flex;
+  align-items: center;
+  color: #4f3fa0;
+  font: inherit;
+}
+.Panel-stateIcon {
+  width: 28px; height: 28px; flex: 0 0 28px;
+  border-radius: 50%;
+  border: 1px solid #babfd1;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #6a708f; font-size: 10px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+.Panel-linkBtn {
+  border: 0; background: none; padding: 0;
+  font-family: inherit; font-size: 12px; line-height: 16px;
+  color: var(--text-link-color, #7059e8); cursor: pointer; text-align: left;
+}
+.Panel-linkBtn:hover { text-decoration: underline; color: var(--text-primary); }
+.Panel-econ {
+  display: flex; flex-direction: column; gap: 0;
+}
+.Panel-econRow {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 36px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e3e9;
+  font-size: 12px; line-height: 16px;
+}
+.Panel-econRow:last-child { border-bottom: none; padding-bottom: 0; }
+.Panel-econRow:first-child { padding-top: 0; }
+.Panel-econRow span { color: #6a708f; }
+.Panel-econRow strong { color: #222430; font-weight: 700; white-space: nowrap; }
+.Panel-econRow .info {
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.Panel-econRow .info i { color: #6a708f; font-size: 11px; cursor: help; }
+.Panel-menu {
+  position: absolute;
+  z-index: 40;
+  min-width: 160px;
+  padding: 4px 0;
+  background: #fff;
+  border: 1px solid #e2e3e9;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(34, 36, 48, 0.12);
+}
+.Panel-menu button {
+  display: block; width: 100%;
+  border: 0; background: none;
+  padding: 8px 12px;
+  font-family: inherit; font-size: 13px; line-height: 18px;
+  color: #222430; text-align: left; cursor: pointer;
+}
+.Panel-menu button:hover { background: #f0effb; color: var(--text-primary); }
 .Gallery-stage .Drawer-scroll,
 .Gallery-stage .Drawer-section,
 .Gallery-stage .Drawer-sectionHeader {
@@ -2496,7 +3558,54 @@ body {
   .Gallery { grid-template-columns: 1fr; grid-template-rows: 40vh 1fr; }
 }
 
+/* Embed mode — used by sidebar-comparison.html iframes (sidebar only) */
+html.is-embed,
+html.is-embed body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #ffffff;
+}
+html.is-embed .Gallery {
+  display: block;
+  height: 100vh;
+  width: 100%;
+}
+html.is-embed .Gallery-nav,
+html.is-embed .Gallery-modeBar,
+html.is-embed .Gallery-toast,
+html.is-embed .fb-launcher,
+html.is-embed #fb-root,
+html.is-embed [data-feedback-root] {
+  display: none !important;
+}
+html.is-embed .Gallery-stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+  background: #ffffff;
+  overflow: hidden;
+}
+html.is-embed .Gallery-stage .Drawer,
+html.is-embed .Gallery-stage .Panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-width: none;
+  box-shadow: none;
+  border-left: none;
+}
+
 </style>
+<script>
+  if (/[?&]embed=1(?:&|$)/.test(location.search)) {
+    document.documentElement.classList.add('is-embed');
+  }
+</script>
 </head>
 <body>
 <div class="Gallery">
@@ -2611,7 +3720,7 @@ body {
         <li><strong>Header layout</strong> — traits row (overflow), engagement title, subtitle row (optional Priority Indicator + company link), status control, close. Match Stories PRI / TRAIT.</li>
         <li><strong>Status menu</strong> — open from Sidebar; transitions consistent with Board drop rules (incl. pooled To Do cannot go straight to Done — S04).</li>
         <li><strong>Status banners</strong> — keep Hold / Pending / Reverted / Done; add Overdue + readiness warn; tokens only; edit pens keep opening existing On Hold / Revert modals.</li>
-        <li><strong>Booking Details</strong> — Figma list <code>5055:94494</code>: white card, <code>#e2e3e9</code> border, 4px radius; icon-only labels (<code>#3d425c</code>) + tip; Phase badge, Start/end inputs, Effort as always-editable h/m fields (disabled when Done), Assignee last (no Signal row). Stories RDY / NRDY / OVRD / EFF / SCH-RO.</li>
+        <li><strong>Booking Details</strong> — Figma Scheduled booking card: always open; pad 16 / gap 8; no row borders; 14px lead icons (#4C5172); Phase badge; Start/end with lock between; Effort h/m (fixed 90px groups, no %); Resource as bordered field. Gantt keeps schedule actions under the card. Header traits use coloured schedule-type badges (not phase colours). Traits section: Primary field + others wrap.</li>
         <li><strong>Milestones</strong> — phase-level only; light collapsibles; phase effort totals; booking rows with planned/spent; key dates. Each story sets <code>phasesOpen</code> (which phases start expanded) and <code>task.phaseBookings</code> (per-phase booking rails). Stories PH-* / S01b / S01c / S01d.</li>
         <li><strong>Bookings (engagement-only)</strong> — when there is no phase model, week list without phase groups. Story <code>JOB</code>.</li>
         <li><strong>Spacing</strong> — booking cell padding: name ~12px left, avatar ~12px right, vertical ~10px (see gallery CSS <code>.Drawer-msCell*</code>).</li>
@@ -2649,7 +3758,17 @@ body {
     </article>
   </aside>
   <main class="Gallery-stage">
-    <aside class="Drawer is-open" id="taskDrawer" aria-label="Sidebar">
+    <div class="Gallery-modeBar">
+      <p class="Gallery-modeBar-label">Sidebar surface</p>
+      <div class="Gallery-modeToggle" role="group" aria-label="Sidebar type">
+        <button type="button" class="is-active" data-sidebar-mode="kanban" id="modeKanban">Kanban sidebar</button>
+        <button type="button" data-sidebar-mode="gantt" id="modeGantt">Gantt sidebar</button>
+      </div>
+      <p class="Gallery-modeHint" id="modeHint">Same story, Kanban practitioner sidebar. Switch to compare with Gantt booking chrome.</p>
+    </div>
+    <div class="Gallery-toast" id="galleryToast" role="status" aria-live="polite"></div>
+
+    <aside class="Drawer is-open" id="taskDrawer" aria-label="Kanban sidebar">
       <div class="Drawer-header" id="drawerHeader"></div>
       <div class="Drawer-scrollWrap" id="drawerScrollWrap">
         <div class="Drawer-scroll" id="drawerBody"></div>
@@ -2658,6 +3777,16 @@ body {
         </div>
       </div>
       <div class="Drawer-footer" id="drawerFooter" hidden></div>
+    </aside>
+
+    <aside class="Panel" id="ganttPanel" aria-label="Gantt sidebar" hidden>
+      <div class="Panel-head" id="ganttHeader"></div>
+      <div class="Drawer-scrollWrap" id="ganttScrollWrap">
+        <div class="Panel-body" id="ganttBody"></div>
+        <div class="Drawer-scrollbar" id="ganttScrollbar" aria-hidden="true">
+          <div class="Drawer-scrollbarThumb" id="ganttScrollbarThumb"></div>
+        </div>
+      </div>
     </aside>
   </main>
 </div>
@@ -2675,15 +3804,26 @@ body {
   var CURRENT_USER = { initials: 'AL', name: 'You' };
   var activeTask = null;
   var activeColumnId = null;
+  var activeItem = null;
+  var sidebarMode = 'kanban';
+  var ganttSectionOpen = {
+    details: true,
+    requirements: true,
+    traits: true,
+    bookingState: true,
+    engagement: true,
+    economics: true
+  };
+  var toastTimer = null;
   var PRIORITY_CORNER_URI = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiB2aWV3Qm94PSIwIDAgMzIgMzIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJHcm91cCAxIj4KPHBhdGggaWQ9IlZlY3RvciAxMSIgZD0iTTAgMzJWOEMwIDMuNTgxNzIgMy41ODE3MiAwIDggMEgzMkwwIDMyWiIgZmlsbD0iI0EzMDAzQyIvPgo8cGF0aCBpZD0iUHJpbWFyeSIgZD0iTTkuNDk3NzEgNEM5LjYwMzEyIDQgOS43MDg1NCA0LjAyMzU3IDkuODA0NzkgNC4wNjgzNEwxNC4xMjIzIDUuOTUxM0MxNC42MjY0IDYuMTcwNDYgMTUuMDAyMyA2LjY4MTg1IDE1IDcuMjk5MjlDMTQuOTg4NSA5LjYzNzA4IDE0LjA1MzUgMTMuOTE0NCAxMC4xMDUgMTUuODU4NkM5LjcyMjI5IDE2LjA0NzEgOS4yNzc3MSAxNi4wNDcxIDguODk1IDE1Ljg1ODZDNC45NDQxOCAxMy45MTQ0IDQuMDExNDcgOS42MzcwOCA0LjAwMDAxIDcuMjk5MjlDMy45OTc3MiA2LjY4MTg1IDQuMzczNTUgNi4xNzA0NiA0Ljg3NzcyIDUuOTUxM0w5LjE5MjkyIDQuMDY4MzRDOS4yODkxNyA0LjAyMzU3IDkuMzkyMjkgNCA5LjQ5NzcxIDRaTTkuNDk3NzEgNS41NzQyM1YxNC40ODQ3QzEyLjY2MDIgMTIuOTEwNCAxMy41MTA0IDkuNjIyNjIgMTMuNTMxIDcuMzM0NjRMOS40OTc3MSA1LjU3NjU5VjUuNTc0MjNaIiBmaWxsPSJ3aGl0ZSIvPgo8L2c+Cjwvc3ZnPgo=';
   /* Figma Priority Indicator — chevrons-up 12px (#A3003C) */
   var PRIORITY_CHEVRONS_URI = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgaWQ9ImNoZXZyb25zLXVwIj48cGF0aCBpZD0iaWNvbiIgZD0iTTUuNTQ3MjQgNS41NDg2N0w1Ljk5ODY3IDUuMDk3MzRMNi40NTAxIDUuNTQ4NjdMMTEuNTQ4NiAxMC42NDZMMTIgMTEuMDk3M0wxMS4wOTcxIDExLjk5NzNMMTAuNjQ1NyAxMS41NDZMNS45OTg2NyA2LjlMMS4zNTE2MyAxMS41NDg3TDAuOTAwMTk5IDEyTDIuMjI4MTJlLTA3IDExLjA5NzNMMC40NDg3NzIgMTAuNjQ2TDUuNTQ3MjQgNS41NDg2N1pNNS41NDcyNCAwLjQ1MTMyN0w1Ljk5ODY3IC0xLjE5MjA5ZS0wN0w2LjQ1MDEgMC40NTEzMjdMMTEuNTQ4NiA1LjU0ODY3TDEyIDZMMTEuMDk3MSA2LjlMMTAuNjQ1NyA2LjQ0ODY3TDUuOTk4NjcgMS44MDI2NUwxLjM1MTYzIDYuNDUxMzNMMC45MDAxOTkgNi45MDI2NUwwIDZMMC40NTE0MjcgNS41NDg2N0w1LjU0NzI0IDAuNDUxMzI3WiIgZmlsbD0iI0EzMDAzQyIvPjwvZz48L3N2Zz4=';
 
-  function syncDrawerOverlayScrollbar() {
-    var wrap = document.getElementById('drawerScrollWrap');
-    var scrollEl = document.getElementById('drawerBody');
-    var track = document.getElementById('drawerScrollbar');
-    var thumb = document.getElementById('drawerScrollbarThumb');
+  function syncOverlayScrollbar(ids) {
+    var wrap = document.getElementById(ids.wrap);
+    var scrollEl = document.getElementById(ids.scroll);
+    var track = document.getElementById(ids.track);
+    var thumb = document.getElementById(ids.thumb);
     if (!wrap || !scrollEl || !track || !thumb) return;
 
     var viewH = scrollEl.clientHeight;
@@ -2705,16 +3845,32 @@ body {
     thumb.style.transform = 'translateY(' + top + 'px)';
   }
 
-  function bindDrawerOverlayScrollbar() {
-    var wrap = document.getElementById('drawerScrollWrap');
-    var scrollEl = document.getElementById('drawerBody');
-    var thumb = document.getElementById('drawerScrollbarThumb');
+  function syncDrawerOverlayScrollbar() {
+    syncOverlayScrollbar({
+      wrap: 'drawerScrollWrap',
+      scroll: 'drawerBody',
+      track: 'drawerScrollbar',
+      thumb: 'drawerScrollbarThumb'
+    });
+    syncOverlayScrollbar({
+      wrap: 'ganttScrollWrap',
+      scroll: 'ganttBody',
+      track: 'ganttScrollbar',
+      thumb: 'ganttScrollbarThumb'
+    });
+  }
+
+  function bindOverlayScrollbar(ids) {
+    var wrap = document.getElementById(ids.wrap);
+    var scrollEl = document.getElementById(ids.scroll);
+    var thumb = document.getElementById(ids.thumb);
+    var track = document.getElementById(ids.track);
     if (!wrap || !scrollEl || !thumb || scrollEl._overlayScrollBound) return;
     scrollEl._overlayScrollBound = true;
 
     var scrollHideTimer = null;
     function onScroll() {
-      syncDrawerOverlayScrollbar();
+      syncOverlayScrollbar(ids);
       wrap.classList.add('is-scrolling');
       clearTimeout(scrollHideTimer);
       scrollHideTimer = setTimeout(function () {
@@ -2726,7 +3882,6 @@ body {
     var drag = null;
     thumb.addEventListener('mousedown', function (e) {
       e.preventDefault();
-      var track = document.getElementById('drawerScrollbar');
       if (!track) return;
       var trackH = track.clientHeight;
       var thumbH = thumb.offsetHeight;
@@ -2751,17 +3906,32 @@ body {
     });
 
     if (typeof ResizeObserver !== 'undefined') {
-      var ro = new ResizeObserver(function () { syncDrawerOverlayScrollbar(); });
+      var ro = new ResizeObserver(function () { syncOverlayScrollbar(ids); });
       ro.observe(scrollEl);
       ro.observe(wrap);
     }
     if (typeof MutationObserver !== 'undefined') {
       var mo = new MutationObserver(function () {
-        requestAnimationFrame(syncDrawerOverlayScrollbar);
+        requestAnimationFrame(function () { syncOverlayScrollbar(ids); });
       });
       mo.observe(scrollEl, { attributes: true, attributeFilter: ['class', 'hidden'], subtree: true, childList: true });
     }
-    syncDrawerOverlayScrollbar();
+    syncOverlayScrollbar(ids);
+  }
+
+  function bindDrawerOverlayScrollbar() {
+    bindOverlayScrollbar({
+      wrap: 'drawerScrollWrap',
+      scroll: 'drawerBody',
+      track: 'drawerScrollbar',
+      thumb: 'drawerScrollbarThumb'
+    });
+    bindOverlayScrollbar({
+      wrap: 'ganttScrollWrap',
+      scroll: 'ganttBody',
+      track: 'ganttScrollbar',
+      thumb: 'ganttScrollbarThumb'
+    });
   }
 
   function priorityIndicatorHtml() {
@@ -2873,6 +4043,71 @@ body {
         escapeHtml(phaseName) +
       '</span>'
     );
+  }
+
+  /** Gantt Schedule — Task Phase group: select (badge + caret) + clear */
+  function ganttPhaseFieldHtml(phaseName) {
+    var phase = phaseName || '';
+    var valueHtml = phase
+      ? phaseBadgeHtml(phase)
+      : '<span class="Panel-phaseInput-placeholder">No phase</span>';
+    return (
+      '<div class="Panel-phaseGroup">' +
+        '<button type="button" class="Panel-phaseInput" data-gantt-phase aria-haspopup="menu" aria-expanded="false" aria-label="Phase">' +
+          '<span class="Panel-phaseInput-value">' + valueHtml + '</span>' +
+          '<i class="fa-solid fa-caret-down Panel-phaseInput-caret" aria-hidden="true"></i>' +
+        '</button>' +
+        '<button type="button" class="Panel-phaseClear" data-gantt-phase-clear aria-label="Clear phase" title="Clear phase">' +
+          '<i class="fa-solid fa-xmark" aria-hidden="true"></i>' +
+        '</button>' +
+      '</div>'
+    );
+  }
+
+  /* Figma High Volume schedule lead icons (exported SVGs) */
+  var SIDEBAR_ICON = {
+    diamond: 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE0IiB2aWV3Qm94PSIwIDAgMTQgMTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJkaWFtb25kIj4KPHBhdGggaWQ9IlByaW1hcnkiIGQ9Ik02LjgwODU5IDEuMzkxOEwxLjM5MTggNi44MDg1OUMxLjMzOTg0IDYuODYwNTUgMS4zMTI1IDYuOTI4OTEgMS4zMTI1IDdDMS4zMTI1IDcuMDcxMDkgMS4zMzk4NCA3LjE0MjE5IDEuMzkxOCA3LjE5MTQxTDYuODA4NTkgMTIuNjA4MkM2Ljg2MDU1IDEyLjY2MDIgNi45Mjg5MSAxMi42ODc1IDcgMTIuNjg3NUM3LjA3MTA5IDEyLjY4NzUgNy4xNDIxOSAxMi42NjAyIDcuMTkxNDEgMTIuNjA4MkwxMi42MDgyIDcuMTkxNDFDMTIuNjYwMiA3LjEzOTQ1IDEyLjY4NzUgNy4wNzEwOSAxMi42ODc1IDdDMTIuNjg3NSA2LjkyODkxIDEyLjY2MDIgNi44NTc4MSAxMi42MDgyIDYuODA4NTlMNy4xOTE0MSAxLjM5MThDNy4xMzk0NSAxLjMzOTg0IDcuMDcxMDkgMS4zMTI1IDcgMS4zMTI1QzYuOTI4OTEgMS4zMTI1IDYuODU3ODEgMS4zMzk4NCA2LjgwODU5IDEuMzkxOFpNMC40NjQ4NDQgNS44Nzg5MUw1Ljg3ODkxIDAuNDY0ODQ0QzYuMTc2OTUgMC4xNjY3OTcgNi41Nzg5MSAwIDcgMEM3LjQyMTA5IDAgNy44MjMwNSAwLjE2Njc5NyA4LjEyMTA5IDAuNDY0ODQ0TDEzLjUzNTIgNS44Nzg5MUMxMy44MzMyIDYuMTc2OTUgMTQgNi41Nzg5MSAxNCA3QzE0IDcuNDIxMDkgMTMuODMzMiA3LjgyMzA1IDEzLjUzNTIgOC4xMjEwOUw4LjEyMTA5IDEzLjUzNTJDNy44MjMwNSAxMy44MzMyIDcuNDIxMDkgMTQgNyAxNEM2LjU3ODkxIDE0IDYuMTc2OTUgMTMuODMzMiA1Ljg3ODkxIDEzLjUzNTJMMC40NjQ4NDQgOC4xMjEwOUMwLjE2Njc5NyA3LjgyMzA1IDAgNy40MjEwOSAwIDdDMCA2LjU3ODkxIDAuMTY2Nzk3IDYuMTc2OTUgMC40NjQ4NDQgNS44Nzg5MVoiIGZpbGw9IiM0QzUxNzIiLz4KPC9nPgo8L3N2Zz4K',
+    calendarClock: 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE0IiB2aWV3Qm94PSIwIDAgMTQgMTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJjYWxlbmRhci1jbG9jayI+CjxwYXRoIGlkPSJpY29uIiBkPSJNMy4xMTExMSAwQzMuNDM0MzggMCAzLjY5NDQ0IDAuMjcxNjggMy42OTQ0NCAwLjYwOTM3NUwzLjY5NDQ0IDEuNjI1TDcuMTk0NDQgMS42MjVWMC42MDkzNzVDNy4xOTQ0NCAwLjI3MTY4IDcuNDU0NTEgMCA3Ljc3Nzc4IDBDOC4xMDEwNCAwIDguMzYxMTEgMC4yNzE2OCA4LjM2MTExIDAuNjA5Mzc1VjEuNjI1TDkuMzMzMzMgMS42MjVDMTAuMTkxMyAxLjYyNSAxMC44ODg5IDIuMzUzNzEgMTAuODg4OSAzLjI1VjMuNjU2MjVWNC44NzVIMTAuNUg5LjcyMjIyTDcgNC44NzVMMS4xNjY2NyA0Ljg3NUwxLjE2NjY3IDExLjM3NUMxLjE2NjY3IDExLjU5ODQgMS4zNDE2NyAxMS43ODEyIDEuNTU1NTYgMTEuNzgxMkw2LjkxNDkzIDExLjc4MTJDNy4yMTM4OSAxMi4yNTg2IDcuNTk1NDkgMTIuNjcyNSA4LjA0MDI4IDEzTDEuNTU1NTYgMTNDMC42OTc1NyAxMyAwIDEyLjI3MTMgMCAxMS4zNzVMMCA0Ljg3NUwwIDMuNjU2MjVMMCAzLjI1QzAgMi4zNTM3MSAwLjY5NzU3IDEuNjI1IDEuNTU1NTYgMS42MjVMMi41Mjc3OCAxLjYyNUwyLjUyNzc4IDAuNjA5Mzc1QzIuNTI3NzggMC4yNzE2OCAyLjc4Nzg1IDAgMy4xMTExMSAwWk03IDkuMzQzNzVDNyA4LjM3NDA1IDcuMzY4NzUgNy40NDQwNyA4LjAyNTEzIDYuNzU4MzlDOC42ODE1IDYuMDcyNzEgOS41NzE3NCA1LjY4NzUgMTAuNSA1LjY4NzVDMTEuNDI4MyA1LjY4NzUgMTIuMzE4NSA2LjA3MjcxIDEyLjk3NDkgNi43NTgzOUMxMy42MzEzIDcuNDQ0MDcgMTQgOC4zNzQwNSAxNCA5LjM0Mzc1QzE0IDEwLjMxMzQgMTMuNjMxMyAxMS4yNDM0IDEyLjk3NDkgMTEuOTI5MUMxMi4zMTg1IDEyLjYxNDggMTEuNDI4MyAxMyAxMC41IDEzQzkuNTcxNzQgMTMgOC42ODE1IDEyLjYxNDggOC4wMjUxMyAxMS45MjkxQzcuMzY4NzUgMTEuMjQzNCA3IDEwLjMxMzQgNyA5LjM0Mzc1Wk0xMC41IDcuMzEyNUMxMC4yODYxIDcuMzEyNSAxMC4xMTExIDcuNDk1MzEgMTAuMTExMSA3LjcxODc1VjkuMzQzNzVDMTAuMTExMSA5LjU2NzE5IDEwLjI4NjEgOS43NSAxMC41IDkuNzVIMTEuNjY2N0MxMS44ODA2IDkuNzUgMTIuMDU1NiA5LjU2NzE5IDEyLjA1NTYgOS4zNDM3NUMxMi4wNTU2IDkuMTIwMzEgMTEuODgwNiA4LjkzNzUgMTEuNjY2NyA4LjkzNzVIMTAuODg4OVY3LjcxODc1QzEwLjg4ODkgNy40OTUzMSAxMC43MTM5IDcuMzEyNSAxMC41IDcuMzEyNVoiIGZpbGw9IiM0QzUxNzIiLz4KPC9nPgo8L3N2Zz4K',
+    hourglass: 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE0LjAwMDUiIHZpZXdCb3g9IjAgMCAxNCAxNC4wMDA1IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8ZyBpZD0iSWNvbiI+CjxwYXRoIGlkPSJpY29uIiBkPSJNMiAwLjg3NUMyIDAuMzkxMDE2IDIuMzkxMDIgMCAyLjg3NSAwSDExLjYyNUMxMi4xMDkgMCAxMi41IDAuMzkxMDE2IDEyLjUgMC44NzVDMTIuNSAxLjM1ODk4IDEyLjEwOSAxLjc1IDExLjYyNSAxLjc1VjIuMDUwNzhDMTEuNjI1IDMuMjEwMTYgMTEuMTYyOSA0LjMyMzA1IDEwLjM0MjYgNS4xNDMzNkw4LjQ4NTk0IDdMMTAuMzQyNiA4Ljg1NjY0QzExLjE2MjkgOS42NzY5NSAxMS42MjUgMTAuNzg5OCAxMS42MjUgMTEuOTQ5MlYxMi4yNUMxMi4xMDkgMTIuMjUgMTIuNSAxMi42NDEgMTIuNSAxMy4xMjVDMTIuNSAxMy42MDkgMTIuMTA5IDE0IDExLjYyNSAxNEgyLjg3NUMyLjM5MTAyIDE0IDIgMTMuNjA5IDIgMTMuMTI1QzIgMTIuNjQxIDIuMzkxMDIgMTIuMjUgMi44NzUgMTIuMjVWMTEuOTQ5MkMyLjg3NSAxMC43ODk4IDMuMzM3MTEgOS42NzY5NSA0LjE1NzQyIDguODU2NjRMNi4wMTQwNiA3TDQuMTU3NDIgNS4xNDMzNkMzLjMzNzExIDQuMzIzMDUgMi44NzUgMy4yMTAxNiAyLjg3NSAyLjA1MDc4VjEuNzVDMi4zOTEwMiAxLjc1IDIgMS4zNTg5OCAyIDAuODc1Wk00LjYyNSAxLjc1VjIuMDUwNzhDNC42MjUgMi43NDgwNSA0LjkwMTE3IDMuNDE1MjMgNS4zOTMzNiAzLjkwNzQyTDcuMjUgNS43NjQwNkw5LjEwNjY0IDMuOTA3NDJDOS41OTg4MyAzLjQxNTIzIDkuODc1IDIuNzQ4MDUgOS44NzUgMi4wNTA3OFYxLjc1SDQuNjI1Wk00LjYyNSAxMi4yNUg5Ljg3NVYxMS45NDkyQzkuODc1IDExLjI1MiA5LjU5ODgzIDEwLjU4NDggOS4xMDY2NCAxMC4wOTI2TDcuMjUgOC4yMzU5NEw1LjM5MzM2IDEwLjA5MjZDNC45MDExNyAxMC41ODQ4IDQuNjI1IDExLjI1MiA0LjYyNSAxMS45NDkyVjEyLjI1WiIgZmlsbD0iIzRDNTE3MiIvPgo8L2c+Cjwvc3ZnPgo=',
+    user: 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEyLjI1IiBoZWlnaHQ9IjE1IiB2aWV3Qm94PSIwIDAgMTIuMjUgMTUiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJJY29uIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTYuMTI1IDcuNUM2Ljc2MzAyIDcuNSA3LjM0NjM1IDcuNjU0OTUgNy44NzUgNy45NjQ4NEM4LjQwMzY1IDguMjc0NzQgOC44MzIwMyA4LjcwMzEyIDkuMTYwMTYgOS4yNUM5LjQ3MDA1IDkuNzk2ODggOS42MjUgMTAuMzgwMiA5LjYyNSAxMUM5LjYyNSAxMS42MTk4IDkuNDcwMDUgMTIuMjAzMSA5LjE2MDE2IDEyLjc1QzguODMyMDMgMTMuMjk2OSA4LjQwMzY1IDEzLjcyNTMgNy44NzUgMTQuMDM1MkM3LjM0NjM1IDE0LjM0NTEgNi43NjMwMiAxNC41IDYuMTI1IDE0LjVDNS40ODY5OCAxNC41IDQuOTAzNjUgMTQuMzQ1MSA0LjM3NSAxNC4wMzUyQzMuODQ2MzUgMTMuNzI1MyAzLjQxNzk3IDEzLjI5NjkgMy4wODk4NCAxMi43NUMyLjc3OTk1IDEyLjIwMzEgMi42MjUgMTEuNjE5OCAyLjYyNSAxMUMyLjYyNSAxMC4zODAyIDIuNzc5OTUgOS43OTY4OCAzLjA4OTg0IDkuMjVDMy40MTc5NyA4LjcwMzEyIDMuODQ2MzUgOC4yNzQ3NCA0LjM3NSA3Ljk2NDg0QzQuOTAzNjUgNy42NTQ5NSA1LjQ4Njk4IDcuNSA2LjEyNSA3LjVaTTQuODY3MTkgNi4xODc1QzMuNSA2LjE1MTA0IDIuMzUxNTYgNS42NzcwOCAxLjQyMTg4IDQuNzY1NjJDMC41MTA0MTcgMy44MzU5NCAwLjAzNjQ1ODMgMi42ODc1IDAgMS4zMjAzMUMwIDEuMDgzMzMgMC4wODIwMzEyIDAuODkxOTI3IDAuMjQ2MDk0IDAuNzQ2MDk0QzAuMzkxOTI3IDAuNTgyMDMxIDAuNTgzMzMzIDAuNSAwLjgyMDMxMiAwLjVIMTEuNDI5N0MxMS42NjY3IDAuNSAxMS44NTgxIDAuNTgyMDMxIDEyLjAwMzkgMC43NDYwOTRDMTIuMTY4IDAuODkxOTI3IDEyLjI1IDEuMDgzMzMgMTIuMjUgMS4zMjAzMUMxMi4yMTM1IDIuNjg3NSAxMS43Mzk2IDMuODM1OTQgMTAuODI4MSA0Ljc2NTYyQzkuODk4NDQgNS42NzcwOCA4Ljc1IDYuMTUxMDQgNy4zODI4MSA2LjE4NzVINC44NjcxOVoiIGZpbGw9IiM0QzUxNzIiLz4KPC9nPgo8L3N2Zz4K',
+    lock: 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE0IiB2aWV3Qm94PSIwIDAgMTQgMTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJsb2NrIj4KPHBhdGggaWQ9Imljb24iIGQ9Ik01LjM5NTgzIDMuMjk0MTJWNC45NDExOEg4LjYwNDE3VjMuMjk0MTJDOC42MDQxNyAyLjM4NTY2IDcuODg0OCAxLjY0NzA2IDcgMS42NDcwNkM2LjExNTIgMS42NDcwNiA1LjM5NTgzIDIuMzg1NjYgNS4zOTU4MyAzLjI5NDEyWk0zLjc5MTY3IDQuOTQxMThWMy4yOTQxMkMzLjc5MTY3IDEuNDc0NjMgNS4yMjc5IDAgNyAwQzguNzcyMSAwIDEwLjIwODMgMS40NzQ2MyAxMC4yMDgzIDMuMjk0MTJWNC45NDExOEMxMS4wOTMxIDQuOTQxMTggMTEuODEyNSA1LjY3OTc4IDExLjgxMjUgNi41ODgyNFYxMi4zNTI5QzExLjgxMjUgMTMuMjYxNCAxMS4wOTMxIDE0IDEwLjIwODMgMTRIMy43OTE2N0MyLjkwNjg3IDE0IDIuMTg3NSAxMy4yNjE0IDIuMTg3NSAxMi4zNTI5VjYuNTg4MjRDMi4xODc1IDUuNjc5NzggMi45MDY4NyA0Ljk0MTE4IDMuNzkxNjcgNC45NDExOFoiIGZpbGw9IiM0QzUxNzIiLz4KPC9nPgo8L3N2Zz4K'
+  };
+
+  function sidebarLeadIconHtml(src, mod, extraClass, opts) {
+    opts = opts || {};
+    var cls = 'Drawer-detailIcon Drawer-detailIcon--' + mod + (extraClass ? ' ' + extraClass : '');
+    var flip = opts.flipY ? ' Drawer-detailIcon--flipY' : '';
+    var w = opts.w || 14;
+    var h = opts.h || 14;
+    return (
+      '<span class="' + cls + flip + '" aria-hidden="true">' +
+        '<img src="' + src + '" width="' + w + '" height="' + h + '" alt="">' +
+      '</span>'
+    );
+  }
+
+  function phaseLeadIconHtml(extraClass) {
+    return sidebarLeadIconHtml(SIDEBAR_ICON.diamond, 'diamond', extraClass);
+  }
+
+  function scheduleLeadIconHtml(extraClass) {
+    return sidebarLeadIconHtml(SIDEBAR_ICON.calendarClock, 'calendarClock', extraClass);
+  }
+
+  function effortLeadIconHtml(extraClass) {
+    return sidebarLeadIconHtml(SIDEBAR_ICON.hourglass, 'hourglass', extraClass);
+  }
+
+  function resourceLeadIconHtml(extraClass) {
+    /* Figma user glyph is exported upside-down; product applies scaleY(-1) */
+    return sidebarLeadIconHtml(SIDEBAR_ICON.user, 'user', extraClass, { w: 12, h: 15, flipY: true });
+  }
+
+  function scheduleLockIconHtml(locked) {
+    if (locked) {
+      return '<img class="Drawer-scheduleLock-img" src="' + SIDEBAR_ICON.lock + '" width="14" height="14" alt="">';
+    }
+    return '<i class="fa-solid fa-lock-open" aria-hidden="true"></i>';
   }
   function isScheduledTask(task) {
     return !!(task && task.deadline);
@@ -3135,6 +4370,18 @@ body {
     return '<span class="Badge Badge--sm Badge--' + variant + ' Badge--strong">' + escapeHtml(String(pillLabel)) + '</span>';
   }
 
+  /** Gantt toolbar — Kanban status as view-only badge (not a StatusMenu button) */
+  function ganttStatusBadgeHtml(columnId) {
+    var def = STATUS_DEFS.find(function (c) { return c.id === columnId; }) || STATUS_DEFS[0];
+    var variant = 'neutral';
+    if (columnId === 'in-progress') variant = 'info';
+    else if (columnId === 'blocked') variant = 'danger';
+    else if (columnId === 'done') variant = 'success';
+    return '<span class="Badge Badge--md Badge--' + variant + ' Panel-statusBadge" role="status">' +
+      escapeHtml(def.title) +
+    '</span>';
+  }
+
   function getDrawerTransitions(columnId, task) {
     var items = [];
     var scheduled = isScheduledTask(task);
@@ -3164,7 +4411,8 @@ body {
     return items;
   }
 
-  function statusMenuHtml(columnId, task, forceOpen) {
+  function statusMenuHtml(columnId, task, forceOpen, idPrefix) {
+    var prefix = idPrefix || 'drawer';
     var def = STATUS_DEFS.find(function (c) { return c.id === columnId; }) || STATUS_DEFS[0];
     var transitions = getDrawerTransitions(columnId, task);
     var currentRow =
@@ -3194,13 +4442,13 @@ body {
             '</button>';
         }).join('')
       : '<div class="StatusMenu-empty">No transitions available</div>';
-    return '<div class="StatusMenu" id="drawerStatusMenu">' +
-      '<button type="button" class="StatusMenu-trigger StatusMenu-trigger--' + columnId + '" id="drawerStatusTrigger" aria-haspopup="menu" aria-expanded="' + (forceOpen ? 'true' : 'false') + '">' +
+    return '<div class="StatusMenu" id="' + prefix + 'StatusMenu">' +
+      '<button type="button" class="StatusMenu-trigger StatusMenu-trigger--' + columnId + '" id="' + prefix + 'StatusTrigger" aria-haspopup="menu" aria-expanded="' + (forceOpen ? 'true' : 'false') + '">' +
         escapeHtml(def.title) +
         '<svg class="StatusMenu-caret" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false">' +
           '<path d="M3.949 5h6.102c.422 0 .633.51.335.809L7.336 8.861a.472.472 0 0 1-.672 0L3.614 5.809C3.315 5.51 3.527 5 3.949 5Z"/>' +
         '</svg></button>' +
-      '<div class="StatusMenu-panel' + (forceOpen ? ' is-open' : '') + '" id="drawerStatusPanel" role="menu"' + (forceOpen ? '' : ' hidden') + '>' +
+      '<div class="StatusMenu-panel' + (forceOpen ? ' is-open' : '') + '" id="' + prefix + 'StatusPanel" role="menu"' + (forceOpen ? '' : ' hidden') + '>' +
         currentRow + items +
       '</div></div>';
   }
@@ -3262,11 +4510,15 @@ body {
   function drawerTraitTagsHtml(task) {
     var all = allTaxLabels(task);
     if (!all.length) return '';
-    var chips = all.map(function (t) {
-      return '<span class="badge badge-secondary tax">' + escapeHtml(t) + '</span>';
+    /* Coloured schedule-type badges (same chrome as phase / Gantt traits) */
+    var chips = all.map(function (t, i) {
+      return '<span class="Drawer-phaseBadge Drawer-phaseBadge--trait-' + (i % 4) + ' tax">' +
+        '<span class="Drawer-phaseBadge-swatch" aria-hidden="true"></span>' +
+        escapeHtml(t) +
+      '</span>';
     }).join('');
     return '<div class="Drawer-traitRow" data-drawer-traits>' + chips +
-      '<span class="badge badge-secondary tax card-overflow" hidden tabindex="0" aria-label="More tags">' +
+      '<span class="Drawer-phaseBadge Drawer-phaseBadge--trait-0 tax card-overflow" hidden tabindex="0" aria-label="More tags">' +
       '<span class="card-overflow-count">+0</span><span class="card-overflow-tip" role="tooltip"></span></span></div>';
   }
 
@@ -3392,13 +4644,18 @@ body {
     /* Same field chrome when Done — disabled, not plain text */
     var dis = editable ? '' : ' disabled';
     var popup = editable ? ' aria-haspopup="dialog"' : '';
+    var locked = !editable;
     return (
       '<div class="Drawer-scheduleRange" data-schedule-range' + (editable ? '' : ' data-schedule-readonly') + '>' +
         '<button type="button" class="Drawer-scheduleInput" data-schedule-bound="start" data-local="' +
           escapeHtml(startVal) + '" aria-label="Booking start"' + popup + dis + '>' +
           escapeHtml(formatDatetimeLocalLabel(startVal)) +
         '</button>' +
-        '<span class="Drawer-scheduleDash" aria-hidden="true">-</span>' +
+        '<button type="button" class="Drawer-scheduleLock' + (locked ? ' is-locked' : '') + '" data-schedule-lock aria-pressed="' +
+          (locked ? 'true' : 'false') + '" title="' + (locked ? 'Unlock dates' : 'Lock dates') + '"' +
+          (editable ? '' : ' disabled') + '>' +
+          scheduleLockIconHtml(locked) +
+        '</button>' +
         '<button type="button" class="Drawer-scheduleInput" data-schedule-bound="end" data-local="' +
           escapeHtml(endVal) + '" aria-label="Booking end"' + popup + dis + '>' +
           escapeHtml(formatDatetimeLocalLabel(endVal)) +
@@ -3410,7 +4667,7 @@ body {
   function closeDtPick() {
     var open = document.getElementById('drawerDtPick');
     if (open) open.remove();
-    document.querySelectorAll('.Drawer-scheduleInput.is-open').forEach(function (el) {
+    document.querySelectorAll('.Drawer-scheduleInput.is-open, .Panel-input.is-open, [data-gantt-bound].is-open').forEach(function (el) {
       el.classList.remove('is-open');
       el.setAttribute('aria-expanded', 'false');
     });
@@ -3437,8 +4694,10 @@ body {
 
     function commit() {
       var local = toDatetimeLocalParts(parts);
+      var label = formatDatetimeLocalLabel(local);
       inputEl.setAttribute('data-local', local);
-      inputEl.textContent = formatDatetimeLocalLabel(local);
+      if (inputEl.tagName === 'INPUT') inputEl.value = label;
+      else inputEl.textContent = label;
       if (onCommit) onCommit();
     }
 
@@ -3594,35 +4853,35 @@ body {
     var detailsEditable = canEditBookingDetails(columnId, opts);
     var assignee = resolveAssignee(task, columnId);
     var assigneeHtml = assignee
-      ? ('<span class="Drawer-detailAssignee">' + staffAvatarHtml(assignee.initials, assignee.name) +
+      ? ('<span class="Drawer-resourceInput">' + staffAvatarHtml(assignee.initials, assignee.name) +
           '<span class="Drawer-detailAssigneeName">' + escapeHtml(assignee.name) + '</span></span>')
-      : '<span style="color:var(--text-subtle);font-weight:400">Unassigned</span>';
+      : '<span class="Drawer-resourceInput" style="color:#6a708f">Unassigned</span>';
     var phaseHtml = showPhases && phase ? phaseBadgeHtml(phase) : '—';
     var effortHrs = getBookingEffortHours(task, weekISO);
     var rows = [];
     if (showPhases) {
       rows.push({
-        iconHtml: '<span class="Drawer-detailIcon Drawer-detailIcon--diamond" aria-hidden="true"></span>',
+        iconHtml: phaseLeadIconHtml(),
         label: 'Phase',
         value: phaseHtml
       });
     }
     rows.push(
       {
-        icon: 'fa-regular fa-clock',
+        iconHtml: scheduleLeadIconHtml(),
         label: 'Start/end',
         value: drawerScheduleValueHtml(task, weekISO, detailsEditable),
         valueClass: ' Drawer-detailValue--schedule',
         rowClass: ' Drawer-detailRow--schedule'
       },
       {
-        icon: 'fa-regular fa-hourglass',
+        iconHtml: effortLeadIconHtml(),
         label: 'Estimated Effort',
         value: drawerEffortValueHtml(effortHrs, detailsEditable),
         valueClass: ' Drawer-detailValue--effort',
         rowClass: ' Drawer-detailRow--effort'
       },
-      { icon: 'fa-regular fa-user', label: 'Assignee', value: assigneeHtml }
+      { iconHtml: resourceLeadIconHtml(), label: 'Assignee', value: assigneeHtml }
     );
     return '<div class="Drawer-detailsList">' + rows.map(function (row) {
       var icon = row.iconHtml ? row.iconHtml : '<i class="' + row.icon + '" aria-hidden="true"></i>';
@@ -3747,7 +5006,16 @@ body {
         var fromTask = getBookingEffortHours(task, weekISO);
         if (fromTask != null) b = Object.assign({}, b, { plannedHours: fromTask });
       }
-      var metaLine = bookingEffortMetaHtml(b);
+      /* InProgress (yours): bold This Week + “N hrs planned”. InProgressOther: quiet label, no hours. */
+      var metaLine = '';
+      if (isYourInProgress) {
+        var plannedHrs = Number(b.plannedHours) || 0;
+        if (plannedHrs > 0) {
+          metaLine = '<p class="Drawer-msBookingMeta">' + escapeHtml(formatEffortHours(plannedHrs) + ' planned') + '</p>';
+        }
+      } else if (!isOtherInProgress) {
+        metaLine = bookingEffortMetaHtml(b);
+      }
       var prevTone = rowIdx > 0 ? (metas[rowIdx - 1].rail || 'upcoming') : null;
       var nextTone = rowIdx < list.length - 1 ? (metas[rowIdx + 1].rail || 'upcoming') : null;
       var topSeg = bookingRailSegment(prevTone, rail);
@@ -3894,7 +5162,6 @@ body {
     var engagementBookings = (!showPhases && !isNonWorkTask(task))
       ? engagementBookingsHtml(task, columnId, weekISO)
       : '';
-    var traits = drawerTraitTagsHtml(task);
     var details = drawerDetailsHtml(task, columnId, phase, showPhases, weekISO, opts);
     var signal = drawerSignalBadgeHtml(task, columnId, !!task.blockingReason && !task.returnedReason);
     var lowerSection = '';
@@ -3902,8 +5169,10 @@ body {
       lowerSection =
         '<div class="Drawer-section Drawer-section--milestones">' +
           '<button type="button" class="Drawer-sectionHeader" data-drawer-collapse="milestones" aria-expanded="true" aria-controls="drawer-milestones-panel">' +
-            '<span class="Drawer-sectionHeader-title">Milestones</span>' +
-            '<span class="Drawer-sectionHeader-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>' +
+            '<span class="Drawer-sectionHeader-label">' +
+              '<span class="Drawer-sectionHeader-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>' +
+              '<span class="Drawer-sectionHeader-title">Milestones</span>' +
+            '</span>' +
           '</button>' +
           '<div id="drawer-milestones-panel" class="Drawer-animPanel is-open" data-drawer-panel="milestones">' +
             '<div class="Drawer-animPanelInner">' + milestones + '</div></div></div>';
@@ -3911,8 +5180,10 @@ body {
       lowerSection =
         '<div class="Drawer-section Drawer-section--bookings">' +
           '<button type="button" class="Drawer-sectionHeader" data-drawer-collapse="bookings" aria-expanded="true" aria-controls="drawer-bookings-panel">' +
-            '<span class="Drawer-sectionHeader-title">Bookings</span>' +
-            '<span class="Drawer-sectionHeader-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>' +
+            '<span class="Drawer-sectionHeader-label">' +
+              '<span class="Drawer-sectionHeader-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>' +
+              '<span class="Drawer-sectionHeader-title">Bookings</span>' +
+            '</span>' +
           '</button>' +
           '<div id="drawer-bookings-panel" class="Drawer-animPanel is-open" data-drawer-panel="bookings">' +
             '<div class="Drawer-animPanelInner">' + engagementBookings + '</div></div></div>';
@@ -3920,7 +5191,6 @@ body {
     document.getElementById('drawerHeader').innerHTML =
       '<div class="Drawer-headerTop">' +
         '<div class="Drawer-headerMain">' +
-          (traits || '') +
           '<div class="Drawer-titleBlock">' +
             '<h2 class="Drawer-title">' + escapeHtml(title) + '</h2>' +
             '<div class="Drawer-subtitleRow">' +
@@ -3935,15 +5205,24 @@ body {
         statusMenuHtml(columnId, task, !!opts.menuOpen) +
         (signal || '') +
       '</div>';
+    var bookingTypes = bookingTypesLayoutHtml(task);
     document.getElementById('drawerBody').innerHTML =
       (alerts ? '<div class="Drawer-section Drawer-section--alerts">' + alerts + '</div>' : '') +
       '<div class="Drawer-section Drawer-section--details">' +
-        '<button type="button" class="Drawer-sectionHeader" data-drawer-collapse="details" aria-expanded="true" aria-controls="drawer-details-panel">' +
-          '<span class="Drawer-sectionHeader-title">Booking Details</span>' +
-          '<span class="Drawer-sectionHeader-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>' +
-        '</button>' +
+        '<div class="Drawer-sectionHeader Drawer-sectionHeader--static" role="heading" aria-level="3">' +
+          '<span class="Drawer-sectionHeader-title">Schedule</span>' +
+        '</div>' +
         '<div id="drawer-details-panel" class="Drawer-animPanel is-open" data-drawer-panel="details">' +
           '<div class="Drawer-animPanelInner">' + details + '</div></div></div>' +
+      '<div class="Drawer-section Drawer-section--bookingTypes">' +
+        '<button type="button" class="Drawer-sectionHeader" data-drawer-collapse="bookingTypes" aria-expanded="true" aria-controls="drawer-bookingTypes-panel">' +
+          '<span class="Drawer-sectionHeader-label">' +
+            '<span class="Drawer-sectionHeader-chevron" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>' +
+            '<span class="Drawer-sectionHeader-title">Booking types</span>' +
+          '</span>' +
+        '</button>' +
+        '<div id="drawer-bookingTypes-panel" class="Drawer-animPanel is-open" data-drawer-panel="bookingTypes">' +
+          '<div class="Drawer-animPanelInner">' + bookingTypes + '</div></div></div>' +
       lowerSection;
     var drawerEl = document.getElementById('taskDrawer');
     var scrollEl = document.getElementById('drawerBody');
@@ -3991,7 +5270,7 @@ body {
 
   function layoutCardTraits(traitsEl) {
     if (!traitsEl) return;
-    var badges = Array.prototype.slice.call(traitsEl.querySelectorAll('.badge.tax:not(.card-overflow)'));
+    var badges = Array.prototype.slice.call(traitsEl.querySelectorAll('.tax:not(.card-overflow)'));
     var overflow = traitsEl.querySelector('.card-overflow');
     if (!badges.length || !overflow) return;
     var countEl = overflow.querySelector('.card-overflow-count');
@@ -4136,9 +5415,11 @@ body {
 
   function bindScheduleEditors() {
     var range = document.querySelector('#drawerBody [data-schedule-range]');
-    if (!range || !activeTask || range.hasAttribute('data-schedule-readonly')) return;
+    if (!range || !activeTask) return;
     var startEl = range.querySelector('[data-schedule-bound="start"]');
     var endEl = range.querySelector('[data-schedule-bound="end"]');
+    var lockBtn = range.querySelector('[data-schedule-lock]');
+    var readonly = range.hasAttribute('data-schedule-readonly');
 
     function syncSchedule() {
       var startLocal = startEl && startEl.getAttribute('data-local');
@@ -4151,11 +5432,35 @@ body {
       applyScheduleToTask(activeTask, WEEK_ISO, startLocal, endLocal);
     }
 
+    function setScheduleLocked(locked) {
+      if (!lockBtn) return;
+      lockBtn.setAttribute('aria-pressed', locked ? 'true' : 'false');
+      lockBtn.classList.toggle('is-locked', locked);
+      lockBtn.title = locked ? 'Unlock dates' : 'Lock dates';
+      lockBtn.innerHTML = scheduleLockIconHtml(locked);
+      [startEl, endEl].forEach(function (el) {
+        if (!el) return;
+        el.disabled = locked || readonly;
+      });
+    }
+
+    if (lockBtn && !readonly) {
+      lockBtn.onclick = function (e) {
+        e.stopPropagation();
+        var locked = lockBtn.getAttribute('aria-pressed') === 'true';
+        setScheduleLocked(!locked);
+        showGalleryToast(locked ? 'Dates unlocked' : 'Dates locked');
+      };
+    }
+
+    if (readonly) return;
+
     function bindField(el) {
       if (!el) return;
       el.setAttribute('aria-expanded', 'false');
       el.onclick = function (e) {
         e.stopPropagation();
+        if (el.disabled) return;
         if (el.classList.contains('is-open')) {
           closeDtPick();
           return;
@@ -4181,12 +5486,17 @@ body {
         var pop = document.getElementById('drawerDtPick');
         if (!pop) return;
         if (pop.contains(e.target)) return;
-        if (e.target.closest && e.target.closest('.Drawer-scheduleInput')) return;
+        if (e.target.closest && (
+          e.target.closest('.Drawer-scheduleInput') ||
+          e.target.closest('[data-gantt-bound]')
+        )) return;
         closeDtPick();
       });
       window.addEventListener('resize', closeDtPick);
       var scrollEl = document.getElementById('drawerBody');
       if (scrollEl) scrollEl.addEventListener('scroll', closeDtPick, { passive: true });
+      var ganttScroll = document.getElementById('ganttBody');
+      if (ganttScroll) ganttScroll.addEventListener('scroll', closeDtPick, { passive: true });
     }
   }
 
@@ -4290,6 +5600,592 @@ body {
   var SC = { initials: 'SC', name: 'Sam Chen' };
   var JL = { initials: 'JL', name: 'James Liu' };
 
+  function showGalleryToast(message) {
+    var el = document.getElementById('galleryToast');
+    if (!el) return;
+    el.textContent = message;
+    el.classList.add('is-on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove('is-on'); }, 2200);
+  }
+
+  function closePanelMenus() {
+    document.querySelectorAll('.Panel-menu').forEach(function (m) { m.remove(); });
+    document.querySelectorAll('[data-gantt-phase][aria-expanded="true"]').forEach(function (el) {
+      el.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  function openPanelMenu(anchor, items) {
+    closePanelMenus();
+    var menu = document.createElement('div');
+    menu.className = 'Panel-menu';
+    menu.setAttribute('role', 'menu');
+    items.forEach(function (item) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('role', 'menuitem');
+      btn.textContent = item.label;
+      btn.onclick = function (e) {
+        e.stopPropagation();
+        closePanelMenus();
+        if (item.onClick) item.onClick();
+        else showGalleryToast(item.label);
+      };
+      menu.appendChild(btn);
+    });
+    document.body.appendChild(menu);
+    var r = anchor.getBoundingClientRect();
+    menu.style.left = Math.min(window.innerWidth - menu.offsetWidth - 8, r.left) + 'px';
+    menu.style.top = (r.bottom + 4) + 'px';
+  }
+
+  function panelBtnHtml(icon, opts) {
+    opts = opts || {};
+    var cls = 'PanelBtn' + (opts.cls ? ' ' + opts.cls : '') + (opts.active ? ' is-active' : '');
+    var caret = opts.caret ? ' <i class="fa-solid fa-caret-down" aria-hidden="true"></i>' : '';
+    return '<button type="button" class="' + cls + '" data-panel-action="' + escapeHtml(opts.action || opts.label || '') + '"' +
+      (opts.label ? ' aria-label="' + escapeHtml(opts.label) + '" title="' + escapeHtml(opts.label) + '"' : '') +
+      (opts.menu ? ' data-panel-menu="' + escapeHtml(opts.menu) + '"' : '') +
+      '>' +
+      '<i class="' + icon + '" aria-hidden="true"></i>' + caret +
+      '</button>';
+  }
+
+  function effortInputHtml(value, unit, name) {
+    return '<div class="Panel-effort">' +
+      '<input class="val" type="text" inputmode="numeric" name="' + escapeHtml(name) + '" value="' + escapeHtml(String(value)) + '" aria-label="' + escapeHtml(unit === 'h' ? 'Hours' : unit === 'm' ? 'Minutes' : 'Utilisation') + '">' +
+      '<span class="unit">' + escapeHtml(unit) + '</span></div>';
+  }
+
+  /** Gantt Schedule person field — avatar + (grade) name */
+  function ganttPersonFieldHtml(person) {
+    person = person || {};
+    var name = person.name || 'Unassigned';
+    var grade = person.grade || '';
+    var initials = person.initials || '';
+    var label =
+      (grade ? '<span class="Panel-personInput-grade">(' + escapeHtml(grade) + ')</span> ' : '') +
+      escapeHtml(name);
+    return (
+      '<button type="button" class="Panel-personInput" data-panel-action="Open person" aria-label="' + escapeHtml(name) + '">' +
+        staffAvatarHtml(initials, name) +
+        '<span class="Panel-personInput-label">' + label + '</span>' +
+      '</button>'
+    );
+  }
+
+  function ganttModelFromStory(task, columnId) {
+    var title = jobTitle(task);
+    var code = jobCodeForTask(task) || 'SMI-1120-01';
+    var assignee = resolveAssignee(task, columnId);
+    var range = getBookingScheduleRange(task, WEEK_ISO);
+    var hours = getBookingEffortHours(task, WEEK_ISO);
+    if (hours == null) hours = Number(task.estimatedHours) || 8;
+    var parts = hoursToEffortParts(hours);
+    var util = Math.max(30, Math.min(200, Math.round((hours / 37.5) * 100))) || 112;
+    var personName = assignee
+      ? (assignee.name === 'You' ? 'Arron Leishman' : assignee.name)
+      : 'Adams Absolon';
+    var personInitials = assignee ? (assignee.initials || 'AL') : 'AA';
+    var personGrade = assignee ? (assignee.initials || 'AL') : 'A1';
+    var personLabel = '(' + personGrade + ') ' + personName;
+    var person = { name: personName, grade: personGrade, initials: personInitials };
+    var startStamp = range && range.startLocal
+      ? formatDatetimeLocalLabel(range.startLocal)
+      : '08/16/21 09:00AM';
+    var endStamp = range && range.endLocal
+      ? formatDatetimeLocalLabel(range.endLocal)
+      : '08/20/21 04:30PM';
+    var phase = taskPhaseLabel(task) || task.workPhase || 'Preparation';
+    var traits = allTaxLabels(task);
+    /* Exact product screenshot chrome for the dedicated Gantt reference story */
+    var useReference = !!(task && task.ganttReference);
+    if (useReference) {
+      return {
+        title: 'Review of Antelope Corps 2018',
+        code: 'Ant-1979',
+        priority: true,
+        phase: 'Preparation',
+        start: '08/16/21 09:00AM',
+        end: '08/20/21 04:30PM',
+        startLocal: '2021-08-16T09:00',
+        endLocal: '2021-08-20T16:30',
+        locked: false,
+        person: { name: 'Adams Absolon', grade: 'A1', initials: 'AA' },
+        hours: 42,
+        minutes: 0,
+        util: 112,
+        requirements: [
+          { icon: 'fa-solid fa-graduation-cap', label: 'A2' },
+          { icon: 'fa-solid fa-building', label: 'Forensic' },
+          { icon: 'fa-solid fa-map-location-dot', label: 'Berlin' }
+        ],
+        traits: ['Completion', 'Forensic', 'Berlin office'],
+        trait: { name: 'Completion', primary: true },
+        bookingState: 'Definite',
+        engagement: {
+          code: 'Ant-1979',
+          title: 'Review of Antelope Corps 2018',
+          people: ['(DIR) Christophorus Absolon', '(SM) Lynnea Ackenhead'],
+          priorityNote: '3. Fees greater than £100k'
+        },
+        economics: {
+          summary: 'Recovery Rate 193%, Margin 83%',
+          rows: [
+            { label: 'Recovery Rate', value: '193%' },
+            { label: 'Total Fee', value: '105,377 EUR' },
+            { label: 'Gross Margin', value: '83%' },
+            { label: 'Core Team Net Revenue Per Hour', value: '95 EUR' },
+            { label: 'Total Hours', value: '576', info: 'Includes all scheduled hours on the engagement' }
+          ]
+        }
+      };
+    }
+    return {
+      title: title,
+      code: code,
+      priority: !!task.isPriority,
+      phase: phase,
+      start: startStamp,
+      end: endStamp,
+      startLocal: (range && range.startLocal) || '2026-06-01T08:00',
+      endLocal: (range && range.endLocal) || '2026-06-05T17:00',
+      locked: columnId === 'done',
+      person: person,
+      hours: parts.h,
+      minutes: parts.m,
+      util: util,
+      requirements: [
+        { icon: 'fa-solid fa-graduation-cap', label: 'A2' },
+        { icon: 'fa-solid fa-building', label: phase },
+        { icon: 'fa-solid fa-map-location-dot', label: 'Berlin' }
+      ],
+      traits: traits.length
+        ? traits
+        : ['Completion', 'Fieldwork', 'Client facing'],
+      trait: { name: (traits[0] || 'Completion'), primary: true },
+      bookingState: columnId === 'blocked' ? 'On Hold' : columnId === 'done' ? 'Complete' : 'Definite',
+      engagement: {
+        code: code,
+        title: title,
+        people: [personLabel, '(SM) Lynnea Ackenhead'],
+        priorityNote: task.isPriority ? 'High priority engagement' : '3. Fees greater than £100k'
+      },
+      economics: {
+        summary: 'Recovery Rate 193%, Margin 83%',
+        rows: [
+          { label: 'Recovery Rate', value: '193%' },
+          { label: 'Total Fee', value: '105,377 EUR' },
+          { label: 'Gross Margin', value: '83%' },
+          { label: 'Core Team Net Revenue Per Hour', value: '95 EUR' },
+          { label: 'Total Hours', value: String(Math.max(40, Math.round(hours * 12))), info: 'Includes all scheduled hours on the engagement' }
+        ]
+      }
+    };
+  }
+
+  function ganttTraitBadgeHtml(name, toneIndex) {
+    return '<span class="Drawer-phaseBadge Drawer-phaseBadge--trait-' + (toneIndex % 4) + '">' +
+      '<span class="Drawer-phaseBadge-swatch" aria-hidden="true"></span>' +
+      escapeHtml(name) +
+    '</span>';
+  }
+
+  /** Primary + wrap chips — shared by Kanban + Gantt Booking types sections */
+  function bookingTypesLayoutHtml(taskOrNames) {
+    var traitNames = Array.isArray(taskOrNames)
+      ? taskOrNames.slice()
+      : allTaxLabels(taskOrNames);
+    if (!traitNames.length) traitNames = ['General'];
+    var primaryName = traitNames[0];
+    var otherTraits = traitNames.slice(1);
+    return (
+      '<div class="Panel-traitLayout">' +
+        '<div class="Panel-card">' +
+          '<div class="Panel-traitPrimary">' +
+            '<span class="Panel-traitFieldLabel">Primary</span>' +
+            ganttTraitBadgeHtml(primaryName, 0) +
+          '</div>' +
+        '</div>' +
+        (otherTraits.length
+          ? '<div class="Panel-card"><div class="Panel-traitWrap">' +
+              otherTraits.map(function (t, i) { return ganttTraitBadgeHtml(t, i + 1); }).join('') +
+            '</div></div>'
+          : '') +
+      '</div>'
+    );
+  }
+
+  /** Gantt Booking State — Figma Pill (leading lock, no chevron / clear) */
+  function ganttBookingStateHtml(model) {
+    var state = (model && model.bookingState) || 'Definite';
+    return (
+      '<span class="Panel-bookingStatePill" role="status" aria-label="Booking state: ' + escapeHtml(state) + '">' +
+        '<span class="Panel-bookingStatePill-icon" aria-hidden="true"></span>' +
+        '<span class="Panel-bookingStatePill-label">' + escapeHtml(state) + '</span>' +
+      '</span>'
+    );
+  }
+
+  function ganttSectionHtml(key, titleHtml, bodyHtml, buttonsHtml) {
+    var open = !!ganttSectionOpen[key];
+    /* Traits body already contains cards; other sections use Panel-card */
+    var bodyWrap = key === 'traits'
+      ? bodyHtml
+      : '<div class="Panel-card">' + bodyHtml + '</div>';
+    return '<section class="Panel-section' + (open ? ' is-open' : '') + '" data-gantt-section="' + key + '">' +
+      '<div class="Panel-sectionHeadWrap">' +
+        '<button type="button" class="Panel-sectionHead" data-gantt-toggle="' + key + '" aria-expanded="' + (open ? 'true' : 'false') + '">' +
+          '<span class="Panel-sectionLabel">' +
+            '<span class="Panel-chev" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>' +
+            '<span class="Panel-sectionText">' + titleHtml + '</span>' +
+          '</span>' +
+        '</button>' +
+        (buttonsHtml ? '<div class="Panel-sectionBtns">' + buttonsHtml + '</div>' : '') +
+      '</div>' +
+      '<div class="Panel-sectionBody"' + (open ? '' : ' hidden') + '>' +
+        bodyWrap +
+      '</div>' +
+      '</section>';
+  }
+
+  /** Booking Details — always open, not collapsible (match Kanban + Callum schedule card) */
+  function ganttDetailsSectionHtml(bodyHtml) {
+    return '<section class="Panel-section is-open Panel-section--static" data-gantt-section="details">' +
+      '<div class="Panel-sectionHeadWrap">' +
+        '<div class="Panel-sectionHead Panel-sectionHead--static" role="heading" aria-level="3">' +
+          '<span class="Panel-sectionLabel">' +
+            '<span class="Panel-sectionTextStatic"><b>Schedule</b></span>' +
+          '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="Panel-sectionBody">' +
+        '<div class="Panel-scheduleCard">' + bodyHtml + '</div>' +
+      '</div>' +
+    '</section>';
+  }
+
+  function renderGanttSidebar(task, columnId) {
+    var model = ganttModelFromStory(task, columnId);
+    var header = document.getElementById('ganttHeader');
+    var body = document.getElementById('ganttBody');
+    if (!header || !body) return;
+
+    var reqRows = model.requirements.map(function (r) {
+      return '<div class="Panel-listRow"><i class="' + r.icon + '" aria-hidden="true"></i><span>' + escapeHtml(r.label) + '</span></div>';
+    }).join('');
+
+    var peopleRows = model.engagement.people.map(function (p) {
+      return '<div class="Panel-listRow"><i class="fa-solid fa-user" aria-hidden="true"></i>' +
+        '<button type="button" class="Panel-linkBtn" data-panel-action="Open person">' + escapeHtml(p) + '</button></div>';
+    }).join('');
+
+    var econRows = model.economics.rows.map(function (r) {
+      return '<div class="Panel-econRow"><span class="' + (r.info ? 'info' : '') + '">' + escapeHtml(r.label) +
+        (r.info ? ' <i class="fa-solid fa-circle-info" title="' + escapeHtml(r.info) + '" aria-label="' + escapeHtml(r.info) + '"></i>' : '') +
+        '</span><strong>' + escapeHtml(r.value) + '</strong></div>';
+    }).join('');
+
+    var traitLayout = bookingTypesLayoutHtml(model.traits || [model.trait.name]);
+
+    var detailsBody =
+      '<div class="Panel-fields">' +
+        '<div class="Panel-field">' +
+          phaseLeadIconHtml('lead') +
+          '<div class="Panel-fieldBody">' + ganttPhaseFieldHtml(model.phase) + '</div></div>' +
+        '<div class="Panel-field Panel-field--schedule">' +
+          scheduleLeadIconHtml('lead') +
+          '<div class="Panel-fieldBody">' +
+            '<button type="button" class="Panel-input" data-gantt-bound="start" data-local="' + escapeHtml(model.startLocal || '') +
+              '" aria-label="Start" aria-haspopup="dialog" aria-expanded="false"' + (model.locked ? ' disabled' : '') + '>' +
+              escapeHtml(model.start) + '</button>' +
+            '<button type="button" class="Panel-lock' + (model.locked ? ' is-locked' : '') + '" data-gantt-lock aria-pressed="' + (model.locked ? 'true' : 'false') + '" title="' + (model.locked ? 'Unlock dates' : 'Lock dates') + '">' +
+              scheduleLockIconHtml(!!model.locked) + '</button>' +
+            '<button type="button" class="Panel-input" data-gantt-bound="end" data-local="' + escapeHtml(model.endLocal || '') +
+              '" aria-label="End" aria-haspopup="dialog" aria-expanded="false"' + (model.locked ? ' disabled' : '') + '>' +
+              escapeHtml(model.end) + '</button>' +
+          '</div></div>' +
+        '<div class="Panel-field">' +
+          effortLeadIconHtml('lead') +
+          '<div class="Panel-fieldBody Panel-fieldBody--effort">' +
+            effortInputHtml(model.hours, 'h', 'gantt-h') +
+            effortInputHtml(model.minutes, 'm', 'gantt-m') +
+          '</div></div>' +
+        '<div class="Panel-field Panel-effortRow">' +
+          resourceLeadIconHtml('lead') +
+          '<div class="Panel-fieldBody">' +
+            ganttPersonFieldHtml(model.person) +
+          '</div></div>' +
+      '</div>' +
+      '<div class="Panel-actionsBlock">' +
+        '<div class="Panel-actions">' +
+          panelBtnHtml('fa-solid fa-up-down-left-right', { cls: 'PanelBtn--caret', label: 'Move', action: 'Move', caret: true, menu: 'move' }) +
+          panelBtnHtml('fa-solid fa-down-left-and-up-right-to-center', { label: 'Compress / expand', action: 'Compress / expand' }) +
+          '<div class="Panel-split">' +
+            panelBtnHtml('fa-regular fa-calendar-plus', { label: 'Reschedule', action: 'Reschedule' }) +
+            panelBtnHtml('fa-solid fa-caret-down', { label: 'Reschedule options', action: 'Reschedule options', menu: 'reschedule' }) +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    header.innerHTML =
+      '<div class="Panel-headTop">' +
+        '<div class="Panel-headMain">' +
+          '<div class="Panel-titleBlock">' +
+            '<p class="Panel-title">' + escapeHtml(model.title) + '</p>' +
+            '<div class="Panel-meta">' +
+              (model.priority
+                ? '<span class="Panel-priority" role="img" aria-label="High priority" title="High priority">' +
+                    '<img src="' + PRIORITY_CHEVRONS_URI + '" width="12" height="12" alt="" aria-hidden="true">' +
+                  '</span>'
+                : '') +
+              '<button type="button" class="Panel-code" data-panel-action="Open engagement">' + escapeHtml(model.code) + '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        panelBtnHtml('fa-solid fa-xmark', { cls: 'PanelBtn--close', label: 'Close', action: 'Close' }) +
+      '</div>' +
+      '<div class="Panel-toolbar">' +
+        '<div class="Panel-tools">' +
+          ganttStatusBadgeHtml(columnId) +
+          panelBtnHtml('fa-regular fa-clone', { label: 'Clone booking', action: 'Clone booking' }) +
+          panelBtnHtml('fa-regular fa-trash-can', { label: 'Delete booking', action: 'Delete booking' }) +
+          panelBtnHtml('fa-solid fa-crosshairs', { label: 'Jump to booking', action: 'Jump to booking' }) +
+          panelBtnHtml('fa-solid fa-scissors', { cls: 'PanelBtn--caret', label: 'Split booking', action: 'Split booking', caret: true, menu: 'split' }) +
+          panelBtnHtml('fa-solid fa-clock-rotate-left', { label: 'Audit history', action: 'Audit history' }) +
+          panelBtnHtml('fa-solid fa-retweet', { label: 'Swap / reassign', action: 'Swap / reassign' }) +
+        '</div>' +
+      '</div>';
+
+    body.innerHTML =
+      ganttDetailsSectionHtml(detailsBody) +
+      ganttSectionHtml(
+        'requirements',
+        '<b>Resource Requirements</b>',
+        '<div class="Panel-list">' + reqRows + '</div>',
+        panelBtnHtml('fa-solid fa-filter', { label: 'Filter requirements', action: 'Filter requirements' })
+      ) +
+      ganttSectionHtml(
+        'traits',
+        '<b>Booking types</b>',
+        traitLayout,
+        panelBtnHtml('fa-solid fa-pencil', { label: 'Edit traits', action: 'Edit traits' })
+      ) +
+      ganttSectionHtml(
+        'bookingState',
+        '<b>Booking State</b>',
+        ganttBookingStateHtml(model),
+        ''
+      ) +
+      ganttSectionHtml(
+        'engagement',
+        '<b>Engagement</b> <span class="link">' + escapeHtml(model.engagement.code) + '</span>',
+        '<div class="Panel-list">' +
+          '<div class="Panel-listRow"><span>' + escapeHtml(model.engagement.title) + '</span></div>' +
+          peopleRows +
+          '<div class="Panel-listRow"><span class="Panel-priority" aria-hidden="true"><img src="' + PRIORITY_CHEVRONS_URI + '" width="12" height="12" alt=""></span><span>' + escapeHtml(model.engagement.priorityNote) + '</span></div>' +
+        '</div>',
+        panelBtnHtml('fa-regular fa-calendar-plus', { label: 'Add booking', action: 'Add booking' }) +
+        panelBtnHtml('fa-solid fa-right-left', { label: 'Swap engagement', action: 'Swap engagement' }) +
+        panelBtnHtml('fa-solid fa-filter', { label: 'Filter engagement', action: 'Filter engagement' })
+      ) +
+      ganttSectionHtml(
+        'economics',
+        '<b>Economics</b> <span class="muted">(' + escapeHtml(model.economics.summary) + ')</span>',
+        '<div class="Panel-econ">' + econRows + '</div>',
+        ''
+      );
+
+    bindGanttSidebar();
+    bindDrawerOverlayScrollbar();
+    if (body && header) {
+      function syncGanttHeaderScroll() {
+        header.classList.toggle('is-scrolled', body.scrollTop > 2);
+      }
+      body.removeEventListener('scroll', body._ganttScrollSync);
+      body._ganttScrollSync = syncGanttHeaderScroll;
+      body.addEventListener('scroll', syncGanttHeaderScroll, { passive: true });
+      syncGanttHeaderScroll();
+    }
+    requestAnimationFrame(function () {
+      syncDrawerOverlayScrollbar();
+      var traitRow = header.querySelector('[data-drawer-traits]');
+      if (traitRow) layoutCardTraits(traitRow);
+    });
+  }
+
+  function bindGanttSidebar() {
+    var panel = document.getElementById('ganttPanel');
+    if (!panel) return;
+    closePanelMenus();
+
+    panel.querySelectorAll('[data-gantt-toggle]').forEach(function (btn) {
+      btn.onclick = function () {
+        var key = btn.getAttribute('data-gantt-toggle');
+        ganttSectionOpen[key] = !ganttSectionOpen[key];
+        renderGanttSidebar(activeTask, activeColumnId);
+      };
+    });
+
+    panel.querySelectorAll('[data-panel-action]').forEach(function (btn) {
+      if (btn.getAttribute('data-panel-menu')) return;
+      btn.onclick = function () {
+        var action = btn.getAttribute('data-panel-action');
+        if (action === 'Close') {
+          showGalleryToast('Close — preview only in Stories');
+          return;
+        }
+        showGalleryToast(action);
+      };
+    });
+
+    panel.querySelectorAll('[data-panel-menu]').forEach(function (btn) {
+      btn.onclick = function (e) {
+        e.stopPropagation();
+        var kind = btn.getAttribute('data-panel-menu');
+        var menus = {
+          split: [
+            { label: 'Split at cursor' },
+            { label: 'Split by day' },
+            { label: 'Split by week' }
+          ],
+          move: [
+            { label: 'Move by day' },
+            { label: 'Move by week' },
+            { label: 'Move to person…' }
+          ],
+          reschedule: [
+            { label: 'Push to next week' },
+            { label: 'Pull earlier' },
+            { label: 'Fit to availability' }
+          ]
+        };
+        openPanelMenu(btn, menus[kind] || [{ label: btn.getAttribute('data-panel-action') || 'Action' }]);
+      };
+    });
+
+    var lockBtn = panel.querySelector('[data-gantt-lock]');
+    var startEl = panel.querySelector('[data-gantt-bound="start"]');
+    var endEl = panel.querySelector('[data-gantt-bound="end"]');
+
+    function syncGanttSchedule() {
+      var startLocal = startEl && startEl.getAttribute('data-local');
+      var endLocal = endEl && endEl.getAttribute('data-local');
+      if (startLocal && endLocal && endLocal < startLocal && endEl) {
+        endEl.setAttribute('data-local', startLocal);
+        endEl.textContent = formatDatetimeLocalLabel(startLocal);
+        endLocal = startLocal;
+      }
+      if (activeTask && startLocal && endLocal) {
+        applyScheduleToTask(activeTask, WEEK_ISO, startLocal, endLocal);
+      }
+    }
+
+    function bindGanttDateField(el) {
+      if (!el) return;
+      el.setAttribute('aria-expanded', 'false');
+      el.onclick = function (e) {
+        e.stopPropagation();
+        if (el.disabled) return;
+        if (el.classList.contains('is-open')) {
+          closeDtPick();
+          return;
+        }
+        openDtPick(el, syncGanttSchedule);
+      };
+      el.onkeydown = function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          el.click();
+        } else if (e.key === 'Escape') {
+          closeDtPick();
+        }
+      };
+    }
+
+    if (lockBtn) {
+      lockBtn.onclick = function () {
+        var locked = lockBtn.getAttribute('aria-pressed') === 'true';
+        locked = !locked;
+        lockBtn.setAttribute('aria-pressed', locked ? 'true' : 'false');
+        lockBtn.classList.toggle('is-locked', locked);
+        lockBtn.title = locked ? 'Unlock dates' : 'Lock dates';
+        lockBtn.innerHTML = scheduleLockIconHtml(locked);
+        [startEl, endEl].forEach(function (inp) {
+          if (!inp) return;
+          inp.disabled = locked;
+        });
+        if (locked) closeDtPick();
+        showGalleryToast(locked ? 'Dates locked' : 'Dates unlocked');
+      };
+    }
+
+    bindGanttDateField(startEl);
+    bindGanttDateField(endEl);
+
+    var phaseBtn = panel.querySelector('[data-gantt-phase]');
+    var phaseClear = panel.querySelector('[data-gantt-phase-clear]');
+    if (phaseBtn) {
+      phaseBtn.onclick = function (e) {
+        e.stopPropagation();
+        phaseBtn.setAttribute('aria-expanded', 'true');
+        openPanelMenu(phaseBtn, ['Preparation', 'First Review', 'Second Review'].map(function (p) {
+          return {
+            label: p,
+            onClick: function () {
+              if (activeTask) activeTask.workPhase = p;
+              var value = phaseBtn.querySelector('.Panel-phaseInput-value');
+              if (value) value.innerHTML = phaseBadgeHtml(p);
+              phaseBtn.setAttribute('aria-expanded', 'false');
+              showGalleryToast('Phase: ' + p);
+            }
+          };
+        }));
+      };
+    }
+    if (phaseClear && phaseBtn) {
+      phaseClear.onclick = function (e) {
+        e.stopPropagation();
+        closePanelMenus();
+        if (activeTask) activeTask.workPhase = '';
+        var value = phaseBtn.querySelector('.Panel-phaseInput-value');
+        if (value) value.innerHTML = '<span class="Panel-phaseInput-placeholder">No phase</span>';
+        phaseBtn.setAttribute('aria-expanded', 'false');
+        showGalleryToast('Phase cleared');
+      };
+    }
+
+    panel.querySelectorAll('.Panel-effort > .val').forEach(function (inp) {
+      inp.onchange = function () {
+        showGalleryToast('Updated ' + (inp.getAttribute('aria-label') || 'effort'));
+      };
+    });
+  }
+
+  function applySidebarModeChrome() {
+    document.querySelectorAll('[data-sidebar-mode]').forEach(function (btn) {
+      var on = btn.getAttribute('data-sidebar-mode') === sidebarMode;
+      btn.classList.toggle('is-active', on);
+    });
+    var kanban = document.getElementById('taskDrawer');
+    var gantt = document.getElementById('ganttPanel');
+    var hint = document.getElementById('modeHint');
+    if (kanban) kanban.hidden = sidebarMode !== 'kanban';
+    if (gantt) gantt.hidden = sidebarMode !== 'gantt';
+    if (hint) {
+      hint.textContent = sidebarMode === 'gantt'
+        ? 'Same story, Gantt booking sidebar. Compare chrome, actions, and section density with Kanban.'
+        : 'Same story, Kanban practitioner sidebar. Switch to compare with Gantt booking chrome.';
+    }
+  }
+
+  function setSidebarMode(mode) {
+    sidebarMode = mode === 'gantt' ? 'gantt' : 'kanban';
+    applySidebarModeChrome();
+    if (typeof flat !== 'undefined' && flat && flat.length) showActive();
+  }
+
   /** Done Preparation rail — three quiet completed weeks */
   function bookingsPrepDone() {
     return [
@@ -4318,12 +6214,50 @@ body {
       deadline: 'Jul 15',
       estimatedHours: 8.5,
       isReady: true,
-      taxTypes: ['1120 Corporate', 'Planning'],
+      taxTypes: ['1120 Corporate', 'Planning', 'Single Audit'],
       bookings: [booking(-2, 2, true, SB), booking(0, 4, false, YOU)]
     }, overrides || {});
   }
 
   var GROUPS = [
+    {
+      name: 'Gantt reference',
+      items: [
+        {
+          id: 'GANT', title: 'Gantt booking sidebar', blurb: 'Exact Gantt chrome from product (Antelope Corps). Switch to Kanban on the same story to compare.',
+          columnId: 'in-progress', phasesOpen: [0],
+          task: baseTask({
+            id: 'gantt-ref',
+            ganttReference: true,
+            company: 'Antelope Corps',
+            engagementType: 'Review - Antelope Corps 2018',
+            jobCode: 'Ant-1979',
+            isPriority: true,
+            estimatedHours: 42,
+            workPhase: 'Preparation',
+            phaseBookings: phaseBookingsMap(
+              [
+                booking(-4, 6, true, SB),
+                booking(-3, 8, true, DL),
+                booking(-2, 8, true, SC),
+                booking(-1, 6, true, JL),
+                booking(0, 42, false, YOU, { inProgress: true }),
+                booking(1, 8, false, YOU),
+                booking(2, 4, false, null)
+              ],
+              [
+                booking(3, 4, false, null),
+                booking(4, 4, false, null)
+              ],
+              [
+                booking(5, 4, false, null),
+                booking(6, 3, false, null)
+              ]
+            )
+          })
+        }
+      ]
+    },
     {
       name: 'Status',
       items: [
@@ -4728,11 +6662,16 @@ body {
     });
   });
 
-  var activeId = (location.hash || '').replace(/^#/, '') || flat[0].id;
+  var qs = new URLSearchParams(location.search);
+  var isEmbed = qs.get('embed') === '1' || document.documentElement.classList.contains('is-embed');
+  if (isEmbed) document.documentElement.classList.add('is-embed');
+
+  var activeId = qs.get('id') || (location.hash || '').replace(/^#/, '') || flat[0].id;
+  if (activeId === 'dev-handoff' || activeId === 'handoff') activeId = flat[0].id;
 
   function renderNav() {
     var nav = document.getElementById('galleryNav');
-    var html = '<h1>Sidebar stories</h1><p class="lede">Click a story on the left. The side panel on the right shows what that looks like. It’s a preview — menus don’t change a real board.</p>';
+    var html = '<h1>Sidebar stories</h1><p class="lede">Click a story on the left. Use <strong>Kanban sidebar</strong> / <strong>Gantt sidebar</strong> in the stage to compare surfaces. Preview only — menus don’t change a real board.</p>';
     GROUPS.forEach(function (g) {
       html += '<div class="Gallery-group"><h2>' + escapeHtml(g.name) + '</h2>';
       g.items.forEach(function (item) {
@@ -4748,6 +6687,10 @@ body {
       btn.onclick = function () {
         activeId = btn.getAttribute('data-id');
         history.replaceState(null, '', '#' + activeId);
+        if (activeId === 'GANT' && sidebarMode !== 'gantt') {
+          sidebarMode = 'gantt';
+          applySidebarModeChrome();
+        }
         renderNav();
         showActive();
       };
@@ -4756,13 +6699,18 @@ body {
 
   function showActive() {
     var item = flat.find(function (x) { return x.id === activeId; }) || flat[0];
+    activeItem = item;
     activeTask = JSON.parse(JSON.stringify(item.task));
     activeColumnId = item.columnId;
-    renderSidebar(activeTask, activeColumnId, {
-      menuOpen: !!item.menuOpen,
-      showOverflowTip: item.id === 'TRAIT',
-      phasesOpen: item.phasesOpen
-    });
+    if (sidebarMode === 'gantt') {
+      renderGanttSidebar(activeTask, activeColumnId);
+    } else {
+      renderSidebar(activeTask, activeColumnId, {
+        menuOpen: !!item.menuOpen,
+        showOverflowTip: item.id === 'TRAIT',
+        phasesOpen: item.phasesOpen
+      });
+    }
   }
 
   function setGalleryTab(tab) {
@@ -4782,11 +6730,83 @@ body {
     });
   });
 
-  if (location.hash === '#dev-handoff' || location.hash === '#handoff') {
+  document.querySelectorAll('[data-sidebar-mode]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      setSidebarMode(btn.getAttribute('data-sidebar-mode'));
+    });
+  });
+
+  document.addEventListener('click', function () {
+    closePanelMenus();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closePanelMenus();
+    }
+  });
+
+  if (!isEmbed && (location.hash === '#dev-handoff' || location.hash === '#handoff')) {
     setGalleryTab('handoff');
   }
+  var modeParam = (qs.get('mode') || qs.get('sidebar') || '').toLowerCase();
+  if (modeParam === 'gantt' || modeParam === 'kanban') {
+    sidebarMode = modeParam;
+  } else if (/[?&#]sidebar=gantt\b/i.test(location.href) || /^#gantt\b/i.test(location.hash) || activeId === 'GANT') {
+    sidebarMode = 'gantt';
+  }
+  applySidebarModeChrome();
 
-  renderNav();
+  document.addEventListener('click', function (event) {
+    if (!isEmbed) return;
+    if (!event.target.closest('.Drawer-close')) return;
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'kanban-sidebar-close' }, '*');
+    }
+  });
+
+  window.addEventListener('message', function (event) {
+    var data = event.data || {};
+    if (data.type !== 'portfolios-board-card' || !data.card) return;
+    var card = data.card;
+    var phase = card.phase || 'Preparation';
+    var phaseIndex = /second/i.test(phase) ? 2 : /first/i.test(phase) ? 1 : 0;
+    var assignee = card.assignee
+      ? { initials: card.initials || 'EM', name: card.assignee }
+      : null;
+    var bookingExtras = card.flag === 'overdue'
+      ? { forceRail: 'overdue', forceLabel: 'Overdue' }
+      : { inProgress: card.flag !== 'hold' };
+    var rows = [[], [], []];
+    rows[phaseIndex] = [booking(0, Number(card.hours) || 0, false, assignee, bookingExtras)];
+    sidebarMode = 'kanban';
+    applySidebarModeChrome();
+    activeColumnId = card.flag === 'hold' ? 'blocked' : 'in-progress';
+    activeTask = baseTask({
+      id: card.id,
+      company: card.client || '',
+      engagementType: (card.type || 'Engagement') + ' - ' + (card.job || 'Engagement'),
+      jobCode: card.code || '',
+      workPhase: phase,
+      deadline: card.deadline || card.due || '',
+      estimatedHours: Number(card.hours) || 0,
+      taxTypes: [card.type || 'Engagement'],
+      isReady: card.flag !== 'awaiting',
+      clientInfoReceived: card.flag === 'awaiting' ? false : true,
+      status: card.flag === 'overdue' ? 'overdue' : '',
+      assignedTo: assignee,
+      blockingReason: card.flag === 'hold'
+        ? { category: 'Needs support', details: 'This phase is on hold' }
+        : null,
+      bookings: rows[phaseIndex],
+      phaseBookings: { 0: rows[0], 1: rows[1], 2: rows[2] },
+      phaseHistory: /second/i.test(phase)
+        ? { preparation: 'complete', firstReview: 'complete' }
+        : (/first/i.test(phase) && card.flag !== 'awaiting' ? { preparation: 'complete' } : {})
+    });
+    renderSidebar(activeTask, activeColumnId, { phasesOpen: [phaseIndex] });
+  });
+
+  if (!isEmbed) renderNav();
   showActive();
   window.addEventListener('resize', function () {
     syncDrawerOverlayScrollbar();

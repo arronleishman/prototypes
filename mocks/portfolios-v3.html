@@ -2305,6 +2305,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 }
 .tabpane { display: none; }
 .tabpane.is-active { display: block; }
+#tab-team.tabpane:not(.is-active) { display: none; }
 #tab-team.tabpane.is-active {
     display: flex;
     flex-direction: column;
@@ -2312,6 +2313,290 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     min-height: 0;
     overflow: hidden;
 }
+.PfList { padding: 24px; }
+.PfList .Modal-resultsTableWrap { display: block; flex: none; overflow: visible; min-height: 0; background: transparent; }
+.PfList .ReportResults-table td.PfList-eng { white-space: normal; }
+.PfList-name { display: block; }
+.PfList-meta { display: block; margin-top: 2px; font-size: var(--font-size-small); font-weight: var(--font-weight-regular); color: var(--text-subtle); }
+.PfList-miles { display: flex; align-items: center; gap: 6px; }
+.PfList-diamond { display: inline-flex; width: 14px; height: 14px; }
+.badge {
+    display: inline-flex; align-items: center; gap: var(--padding-xxs);
+    min-height: 22px; padding: var(--padding-xxs); box-sizing: border-box;
+    border: var(--border-xs) solid transparent; border-radius: var(--border-radius-default);
+    font-family: var(--font-family); font-size: var(--font-size-small); font-weight: var(--font-weight-bold);
+    line-height: 14px; white-space: nowrap;
+}
+.badge-primary { background: var(--surface-primary-subtle); color: var(--text-primary); border-color: var(--border-primary-subtle); }
+.badge-secondary { background: var(--surface-subtle-dark); color: var(--text-subtle); border-color: var(--border-subtle); }
+.badge-success { background: var(--surface-success-subtle); color: var(--text-success); border-color: var(--border-success-subtle); }
+.badge-danger--highlighted { background: var(--surface-danger); color: var(--text-inverse); border-color: var(--surface-danger); }
+.badge-warning { background: var(--surface-warning); color: var(--text-warning); border-color: var(--border-warning-subtle); }
+.badge-phase { background: var(--surface-default); color: var(--text-subtle); border-color: var(--border-subtle); }
+.badge.has-tip { position: relative; cursor: help; }
+.badge-tip {
+    display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: var(--text-default); color: var(--text-inverse);
+    font-weight: var(--font-weight-semibold); font-size: var(--font-size-extra-small); line-height: 14px;
+    padding: 4px 8px; border-radius: var(--border-radius-default); white-space: nowrap; z-index: 30;
+}
+.badge-tip::after {
+    content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border: 4px solid transparent; border-top-color: var(--text-default);
+}
+.badge.has-tip:hover .badge-tip,
+.badge.has-tip:focus-visible .badge-tip { display: block; }
+
+#tab-board.tabpane.is-active {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+.AllocBoard { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; background: var(--surface-default); }
+.AllocBoard-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    flex-wrap: wrap; padding: 24px var(--padding-lg) 0; flex-shrink: 0;
+    position: relative; z-index: 5;
+}
+.AllocBoard-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.AllocBoard-tools .Select { height: 35px; }
+.CalPicker { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.CalPicker .Btn {
+    height: 35px; padding: 0 12px; font-weight: var(--font-weight-regular);
+    color: var(--text-accent); border-color: var(--border-default); background: var(--surface-default);
+}
+.CalPicker .Btn:hover,
+.CalPicker .Btn:focus {
+    color: var(--text-accent); background: var(--surface-subtle-dark);
+    border-color: var(--border-default); box-shadow: none;
+}
+.CalPicker .Btn.is-muted { color: var(--text-disabled); border-color: var(--border-subtle); }
+.CalPicker .Btn.is-muted:hover { color: var(--text-disabled); background: var(--surface-subtle-dark); border-color: var(--border-subtle); }
+.CalPicker #pfWeekToday:not(.is-muted) { font-weight: var(--font-weight-semibold); color: var(--text-primary); border-color: var(--border-default); }
+.CalPicker #pfWeekToday:disabled { cursor: default; }
+.CalPicker .Btn--icon { width: 35px; height: 35px; padding: 0; justify-content: center; }
+.CalPicker-range {
+    display: inline-flex; align-items: center; gap: 8px; height: 35px; padding: 0 4px; box-sizing: border-box;
+    color: var(--text-accent); font-size: var(--font-size-medium); font-weight: var(--font-weight-regular);
+    line-height: 21px; white-space: nowrap; user-select: none;
+}
+.CalPicker-range i { font-size: 14px; color: var(--text-accent); }
+.AllocBoard-cols {
+    display: flex; gap: 16px; align-items: stretch;
+    overflow: hidden; padding: 24px var(--padding-lg); flex: 1 1 auto; min-height: 0;
+}
+.AllocBoard-scroll {
+    display: flex; gap: 16px; align-items: stretch;
+    flex: 1 1 auto; min-width: 0; min-height: 0;
+    overflow-x: auto; overflow-y: hidden;
+    padding-bottom: 12px; box-sizing: border-box;
+    scrollbar-width: thin;
+}
+.AllocBoard-scroll::-webkit-scrollbar { height: 10px; }
+.AllocBoard-scroll::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: var(--border-radius-circle); }
+.AllocBoard-scroll::-webkit-scrollbar-track { background: transparent; }
+#pfBoardUnassigned { display: flex; flex: 0 0 auto; min-height: 0; align-self: stretch; }
+#pfBoardUnassigned[hidden] { display: none !important; }
+.AllocCol {
+    width: 320px; flex: 0 0 320px; display: flex; flex-direction: column; min-height: 0; height: 100%;
+    background: var(--surface-subtle-light); border-radius: 0; overflow: hidden;
+}
+.AllocCol.is-drop { background: var(--surface-subtle-light); }
+.AllocCol-head {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--padding-xs);
+    height: 56px; padding: var(--padding-sm); box-sizing: border-box;
+    border-bottom: var(--border-xs) solid var(--border-subtle);
+    background: var(--surface-subtle-light); flex-shrink: 0;
+}
+.AllocCol-person { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.AllocCol-person .Avatar i { font-size: 13px; font-weight: 900; line-height: 1; }
+.CapAvatar { position: relative; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.CapAvatar .Avatar { width: 24px; height: 24px; font-size: 10px; }
+.CapAvatar-ring { position: absolute; inset: 0; width: 32px; height: 32px; transform: rotate(-90deg); }
+.CapAvatar-track, .CapAvatar-fill { fill: none; stroke-width: 2.5; }
+.CapAvatar-track { stroke: var(--border-subtle); }
+.CapAvatar-fill {
+    stroke: var(--surface-success);
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    transition: stroke-dashoffset .7s cubic-bezier(.2, .8, .2, 1);
+}
+.CapAvatar.is-under .CapAvatar-fill { stroke: var(--text-warning); }
+.CapAvatar.is-over .CapAvatar-fill,
+.CapAvatar.is-critical .CapAvatar-fill { stroke: var(--text-danger); }
+.CapAvatar.is-on .CapAvatar-fill { stroke-dashoffset: calc(100 - var(--cap)); }
+@media (prefers-reduced-motion: reduce) {
+    .CapAvatar-fill { transition: none; }
+}
+#pfUtilToggle.is-active { background: var(--surface-primary-subtle); color: var(--text-primary); border-color: var(--border-primary-subtle); }
+.UtilHover { position: relative; }
+.UtilPopover {
+    position: absolute; top: calc(100% + 8px); right: 0; z-index: 30;
+    width: 320px; box-sizing: border-box; display: none; flex-direction: column; gap: 12px;
+    padding: 12px; background: var(--surface-default);
+    border: 1px solid var(--border-subtle); border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.UtilPopover.is-open { display: flex; }
+.UtilPopover[hidden] { display: none !important; }
+.UtilRow { display: flex; align-items: center; gap: 10px; }
+.UtilRow-meta { flex: 1 1 auto; min-width: 0; }
+.UtilPerson-name { font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold); color: var(--text-default); line-height: 1.2; }
+.UtilPerson-pct { font-size: var(--font-size-small); color: var(--text-subtle); line-height: 1.3; }
+.AllocCol-name { font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold); color: var(--text-accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.AllocCol-actions { display: flex; align-items: center; gap: var(--padding-md); flex-shrink: 0; }
+.CapacityBadge {
+    border-radius: var(--border-radius-default); padding: 4px 8px;
+    font-size: 12px; font-weight: var(--font-weight-bold); white-space: nowrap; line-height: 14px;
+    background: var(--surface-default); color: var(--text-subtle); border: var(--border-xs) solid var(--border-subtle);
+}
+.CapacityBadge.is-full { background: var(--surface-danger-subtle); color: var(--text-danger); border-color: var(--border-danger-subtle); }
+.AllocCol .count {
+    min-width: 32px; width: 32px; height: 32px; padding: 0 var(--padding-xxs);
+    border-radius: var(--border-radius-circle); background: var(--surface-default);
+    font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold); box-sizing: border-box;
+    color: var(--text-primary); display: grid; place-items: center; flex: 0 0 auto;
+}
+.AllocCol-cards {
+    display: flex; flex-direction: column; gap: 8px; padding: 0 8px 8px;
+    flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto;
+    overscroll-behavior: contain; scrollbar-width: thin;
+    position: relative;
+}
+.AllocCol-cards > .card:first-child { margin-top: 8px; }
+.AllocBoard .column-empty {
+    flex: 1 1 auto; min-height: 160px; margin: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: var(--padding-sm); padding: var(--padding-lg) var(--padding-sm);
+    text-align: center; color: var(--text-subtle); box-sizing: border-box;
+}
+.AllocBoard .column-empty-icon {
+    width: 40px; height: 40px; border-radius: var(--border-radius-circle);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--icon-subtle);
+    background: var(--surface-default); border: var(--border-xs) solid var(--border-subtle);
+}
+.AllocBoard .column-empty-title {
+    margin: 0; font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold);
+    color: var(--text-accent); line-height: normal;
+}
+.AllocBoard .column-empty-sub {
+    margin: 0; max-width: 220px; font-size: var(--font-size-small);
+    font-weight: var(--font-weight-regular); color: var(--text-subtle); line-height: 1.35;
+}
+.AllocBoard .column-drop-zones {
+    display: none; flex-direction: column; align-items: stretch; gap: 8px;
+    flex: 1 1 auto; min-height: 0; width: 100%;
+}
+.AllocBoard.is-dragging .AllocCol.is-drop-target .card,
+.AllocBoard.is-dragging .AllocCol.is-drop-target .column-empty { display: none !important; }
+.AllocBoard.is-dragging .AllocCol.is-drop-target .AllocCol-cards { overflow: hidden; }
+.AllocBoard.is-dragging .AllocCol.is-drop-target .column-drop-zones { display: flex; }
+.AllocBoard .column-drop-zone {
+    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; padding: var(--padding-md); text-align: center;
+    border-radius: var(--border-radius-lg); background: var(--surface-subtle-light);
+    flex: 1 1 auto; min-height: 0; width: 100%; box-sizing: border-box;
+}
+.AllocBoard .column-drop-zone::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    border: 2px solid var(--border-subtle); border-radius: inherit;
+}
+.AllocBoard .column-drop-zone--forward { background: var(--surface-success-subtle); }
+.AllocBoard .column-drop-zone--forward::after { border-color: var(--border-success-subtle); }
+.AllocBoard .column-drop-zone--forward.is-drag-over { background: var(--surface-success-accent); }
+.AllocBoard .column-drop-zone--forward.is-drag-over::after { border-color: var(--surface-success-accent); }
+.AllocBoard .column-drop-zone--neutral.is-drag-over { background: var(--surface-subtle-dark); }
+.AllocBoard .column-drop-zone-icon {
+    width: 26px; height: 26px; border-radius: var(--border-radius-circle);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: var(--font-size-small); color: var(--text-inverse); flex-shrink: 0;
+}
+.AllocBoard .column-drop-zone--forward .column-drop-zone-icon { background: var(--surface-success); }
+.AllocBoard .column-drop-zone--neutral .column-drop-zone-icon { background: transparent; color: var(--icon-subtle); font-size: 18px; }
+.AllocBoard .column-drop-zone strong {
+    font-size: var(--font-size-h2); font-weight: var(--font-weight-semibold); color: var(--text-default); line-height: normal;
+}
+.AllocBoard .column-drop-zone span {
+    max-width: 200px; font-size: var(--font-size-small); font-weight: var(--font-weight-regular);
+    color: var(--text-subtle); line-height: 1.35;
+}
+.AllocBoard .card {
+    width: 100%; cursor: grab; display: flex; flex-direction: column;
+    background: transparent; border: none; padding: 0; text-align: left;
+    font-family: var(--font-family); position: relative;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .04));
+}
+.AllocBoard .card:active { cursor: grabbing; }
+.AllocBoard .card:hover { transform: translateY(-1px); filter: drop-shadow(0 4px 10px rgba(0, 0, 0, .08)); }
+.AllocBoard .card:focus-visible {
+    outline: 0; border-radius: var(--border-radius-lg);
+    box-shadow: 0 0 0 0.2rem rgba(79, 63, 160, 0.35); filter: none;
+}
+.AllocBoard .card.is-dragging { opacity: 0.32; transform: scale(0.985); cursor: grabbing; }
+.AllocBoard .card-body {
+    background: var(--surface-default); position: relative;
+    border: var(--border-xs) solid var(--border-subtle); border-bottom: none;
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    padding: var(--padding-md); display: flex; flex-direction: column; gap: 12px;
+}
+.AllocBoard .card-footer {
+    background: var(--surface-default);
+    border: var(--border-xs) solid var(--border-subtle);
+    border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+    padding: var(--padding-xs) var(--padding-md);
+    display: flex; align-items: center; justify-content: space-between; gap: var(--padding-xs);
+}
+.AllocBoard .card-traits { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1 1 auto; overflow: hidden; }
+.AllocBoard .meta-right { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex: 0 0 auto; }
+.AllocBoard .badge-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; width: 100%; min-height: 22px; }
+.AllocBoard .badge-row--phase { flex-wrap: nowrap; justify-content: space-between; gap: 8px; }
+.AllocBoard .badge-row--phase .badge-phase { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.AllocBoard .badge-row--phase .hours { margin-left: auto; flex: 0 0 auto; }
+.AllocBoard .badge-row .badge { max-width: 100%; }
+.AllocBoard .hours { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-subtle); font-weight: var(--font-weight-regular); line-height: normal; }
+.AllocBoard .hours i { font-size: 12px; width: 14px; text-align: center; }
+.AllocBoard .vdiv { width: 1px; height: 14px; background: var(--surface-subtle-dark); flex-shrink: 0; }
+.AllocBoard .card-rule { height: 0; border: 0; border-top: var(--border-xs) solid var(--border-subtle); margin: 0; width: 100%; }
+.AllocBoard .card-titles { display: flex; flex-direction: column; gap: 4px; width: 100%; min-width: 0; }
+.AllocBoard .card-jobLink {
+    display: inline-block; max-width: 100%; align-self: flex-start; width: fit-content;
+    margin: 0; padding: 0; border: none; background: none;
+    font-family: var(--font-family); font-size: var(--font-size-small); font-weight: var(--font-weight-bold);
+    line-height: normal; color: var(--text-primary); text-decoration: none; cursor: pointer; text-align: left;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.AllocBoard .card-jobLink:hover { color: var(--primary-emphasis); text-decoration: underline; text-underline-offset: 2px; }
+.AllocBoard .card-subtitle {
+    margin: 0; font-size: var(--font-size-extra-small); font-weight: var(--font-weight-regular);
+    line-height: normal; color: var(--text-subtle);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.AllocBoard .deadline {
+    position: relative; display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: var(--font-weight-regular); color: var(--text-accent); line-height: normal; white-space: nowrap;
+}
+.AllocBoard .deadline-icon { width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
+.AllocBoard .deadline.overdue { color: var(--text-danger); font-weight: var(--font-weight-semibold); }
+.AllocBoard .deadline-tooltip {
+    display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: var(--text-default); color: var(--text-inverse);
+    font-weight: var(--font-weight-semibold); font-size: var(--font-size-extra-small); line-height: 14px;
+    padding: 4px 8px; border-radius: var(--border-radius-default); white-space: nowrap; z-index: 20;
+}
+.AllocBoard .deadline-tooltip::after {
+    content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border: 4px solid transparent; border-top-color: var(--text-default);
+}
+.AllocBoard .deadline.has-tip:hover .deadline-tooltip { display: block; }
+.PfSidebar[hidden] { display: none !important; }
+.PfSidebar { position: fixed; inset: 0; z-index: 80; }
+.PfSidebar-backdrop { position: absolute; inset: 0; border: 0; padding: 0; background: rgba(34, 36, 48, .28); cursor: pointer; }
+.PfSidebar-frame { position: absolute; top: 0; right: 0; bottom: 0; width: 400px; max-width: 100%; background: var(--surface-default); box-shadow: -6px 0 16px rgba(0, 0, 0, .06); }
+.PfSidebar-frame iframe { display: block; width: 100%; height: 100%; border: 0; background: var(--surface-default); }
 </style>
 </head>
 <body>
@@ -2362,9 +2647,51 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
             </div>
 
             <div class="Tab-navBar">
+                <button class="Tab-navItem" data-tab="list" onclick="switchTab('list')"><span class="Tab-navItem-inner">List</span><span class="Tab-navItem-bar"></span></button>
+                <button class="Tab-navItem" data-tab="board" onclick="switchTab('board')"><span class="Tab-navItem-inner">Board</span><span class="Tab-navItem-bar"></span></button>
                 <button class="Tab-navItem is-active" data-tab="performance" onclick="switchTab('performance')"><span class="Tab-navItem-inner">Performance</span><span class="Tab-navItem-bar"></span></button>
                 <button class="Tab-navItem" data-tab="team" onclick="switchTab('team')"><span class="Tab-navItem-inner">Team</span><span class="Tab-navItem-bar"></span></button>
                 <span class="Tab-viewOnly BtnTooltipWrap BtnTooltipWrap--float" tabindex="0" data-tooltip="This is currently a read-only view of assigned work within your portfolio for informational purpose only. If you need to make any edits, this can be done on the main Gantt or Engagement page in line with your permission set. Edits in this view will be permitted in a future release."><i class="fa-regular fa-eye" aria-hidden="true"></i>Read only</span>
+            </div>
+
+            <div id="tab-board" class="tabpane">
+                <div class="AllocBoard">
+                    <div class="AllocBoard-bar">
+                        <div class="CalPicker">
+                            <button type="button" class="Btn is-muted" id="pfWeekToday" disabled onclick="pfBoardSetWeek(pfBoardTodayOffset())">Today</button>
+                            <button type="button" class="Btn Btn--icon" id="pfWeekPrev" aria-label="Previous week" onclick="pfBoardShiftWeek(-1)"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+                            <span class="CalPicker-range" aria-live="polite"><i class="fa-regular fa-calendar" aria-hidden="true"></i> <span id="pfWeekLabel">2 Nov – 6 Nov</span></span>
+                            <button type="button" class="Btn Btn--icon" id="pfWeekNext" aria-label="Next week" onclick="pfBoardShiftWeek(1)"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                        </div>
+                        <div class="AllocBoard-tools">
+                            <div class="UtilHover">
+                                <button type="button" class="Btn" id="pfUtilToggle" aria-expanded="false" aria-controls="pfUtilPanel">Utilisation</button>
+                                <div class="UtilPopover" id="pfUtilPanel" role="dialog" aria-label="Utilisation breakdown" hidden></div>
+                            </div>
+                            <select class="Select" id="pfBoardResource" aria-label="Resource" onchange="renderPfBoard()"></select>
+                            <select class="Select" id="pfBoardStatus" aria-label="Status" onchange="renderPfBoard()"></select>
+                            <select class="Select" id="pfBoardJob" aria-label="Engagement" onchange="renderPfBoard()"></select>
+                        </div>
+                    </div>
+                    <div class="AllocBoard-cols">
+                        <div id="pfBoardUnassigned"></div>
+                        <div class="AllocBoard-scroll" id="pfBoardCols"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="PfSidebar" id="pfSidebar" hidden>
+                <button type="button" class="PfSidebar-backdrop" id="pfSidebarBackdrop" aria-label="Close sidebar"></button>
+                <div class="PfSidebar-frame">
+                    <iframe id="pfSidebarFrame" title="Kanban sidebar"></iframe>
+                </div>
+            </div>
+
+            <div id="tab-list" class="tabpane">
+                <div class="PfList">
+                    <div class="Modal-resultsTableWrap">
+                        <table class="u-table table-striped table-hover ReportResults-table" id="pfListTable"></table>
+                    </div>
+                </div>
             </div>
 
             <div id="tab-performance" class="tabpane is-active">
@@ -2596,6 +2923,23 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                     <button type="button" class="Btn Btn--outline" onclick="closeDynamicFilterConfirm({ clearSelection: true })">Cancel</button>
                     <button type="button" class="Btn Btn--secondary" onclick="confirmAddAsStaticSelection()">Just add these</button>
                     <button type="button" class="Btn Btn--primary" onclick="confirmAddAsDynamicFilter()">Add as dynamic filter</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="DynamicFilterConfirm" id="unaddedSelectionConfirm" role="dialog" aria-modal="true" aria-labelledby="unaddedSelectionConfirmTitle" data-test="portfolio-selection-save-confirm" hidden>
+            <div class="DynamicFilterConfirm-panel">
+                <div class="DynamicFilterConfirm-header">
+                    <h3 class="DynamicFilterConfirm-title" id="unaddedSelectionConfirmTitle">These engagements won’t be saved</h3>
+                    <button type="button" class="DynamicFilterConfirm-close" aria-label="Cancel" data-test="portfolio-selection-save-close" onclick="closeUnaddedSelectionConfirm()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                </div>
+                <div class="DynamicFilterConfirm-body">
+                    <p class="DynamicFilterConfirm-copy" id="unaddedSelectionConfirmCopy">The engagements you’ve selected haven’t been added to the portfolio. If you continue, they won’t be saved.</p>
+                    <p class="DynamicFilterConfirm-hint">Cancel to go back and choose Add to portfolio.</p>
+                </div>
+                <div class="DynamicFilterConfirm-footer">
+                    <button type="button" class="Btn Btn--secondary" data-test="portfolio-selection-save-cancel" onclick="closeUnaddedSelectionConfirm()">Cancel</button>
+                    <button type="button" class="Btn Btn--primary" id="unaddedSelectionContinueBtn" data-test="portfolio-selection-save-continue" onclick="confirmSaveWithoutUnaddedSelection()">Continue</button>
                 </div>
             </div>
         </div>
@@ -3311,11 +3655,508 @@ function showList() {
     window.scrollTo(0, 0);
     persistState();
 }
+const PF_LIST_PHASES = ["Preparation", "First Review", "Second Review", "Client Delivery", "Statutory Deadline"];
+const PF_LIST_MILESTONES = ["Preparation", "First Review", "Second Review", "Client Delivery", "Statutory Deadline"];
+const PF_LIST_COUNT = 8;
+function pfListInitials(name) {
+    return String(name || "").split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join("").toUpperCase();
+}
+function pfListPhaseIndex(i) {
+    return i % PF_LIST_PHASES.length;
+}
+function pfListMilestones(i) {
+    const current = pfListPhaseIndex(i);
+    const alert = i % 5 === 1 ? "at-risk" : i % 5 === 3 ? "breach" : "on-track";
+    return PF_LIST_MILESTONES.map((_, idx) => {
+        if (idx < current) return "complete";
+        if (idx === current) return alert;
+        return "not-started";
+    });
+}
+function pfListDiamond(status, label) {
+    const statusLabel = { complete: "Complete", "on-track": "On track", "at-risk": "At risk", breach: "Delayed", "not-started": "Not started" }[status];
+    const fill = {
+        complete: "var(--surface-primary)",
+        "on-track": "var(--surface-success)",
+        "at-risk": "var(--icon-starrating)",
+        breach: "var(--surface-danger)",
+        "not-started": "var(--surface-default)"
+    }[status];
+    const stroke = status === "not-started" ? "var(--border-default)" : fill;
+    return `<span class="PfList-diamond BtnTooltipWrap BtnTooltipWrap--float" tabindex="0" data-tooltip="${htmlEsc(label + " · " + statusLabel)}"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1.5L12.5 7L7 12.5L1.5 7L7 1.5Z" fill="${fill}" stroke="${stroke}" stroke-width="1.2"/></svg></span>`;
+}
+function pfListStatusBadge(i) {
+    if (i % 7 === 5) {
+        return `<span class="badge badge-warning has-tip" tabindex="0" aria-label="Awaiting client info">Awaiting client info<span class="badge-tip" role="tooltip">Waiting on client information before this phase can start</span></span>`;
+    }
+    const badges = [
+        { cls: "badge badge-primary", label: "New" },
+        { cls: "badge badge-success", label: "Ready" },
+        { cls: "badge badge-danger--highlighted", label: "On hold" },
+        { cls: "badge badge-success", label: "Done" },
+        { cls: "badge badge-primary", label: "Pending" }
+    ];
+    const badge = badges[i % badges.length];
+    return `<span class="${badge.cls}">${htmlEsc(badge.label)}</span>`;
+}
+function renderPfList() {
+    const table = document.getElementById("pfListTable");
+    if (!table) return;
+    const rows = ENGAGEMENTS.slice(0, PF_LIST_COUNT);
+    const head = ["Engagement", "Type", "Status", "Phase", "Milestones", "Assigned"].map(label => `<th>${label}</th>`).join("");
+    const body = rows.map((engagement, i) => {
+        const phase = PF_LIST_PHASES[pfListPhaseIndex(i)];
+        const dueLabel = i % 5 === 3 ? "Overdue" : i % 5 === 1 ? "Due soon" : "";
+        const tip = "Due: " + engagement.periodEndDate + (dueLabel ? " · " + dueLabel : "");
+        const assignee = Array.isArray(engagement.lead) ? engagement.lead[0] : engagement.assignedResource;
+        return `<tr>
+            <td class="PfList-eng"><a class="JobHyperLink-islink PfList-name" href="/editjob/${engagement.jobId}" target="_blank" rel="noopener">${htmlEsc(engagement.client || engagement.name)}</a><span class="PfList-meta">${htmlEsc(engagement.code)} · ${htmlEsc(engagement.name)}</span></td>
+            <td><span class="badge badge-secondary">${htmlEsc(engagement.functionalUnit)}</span></td>
+            <td>${pfListStatusBadge(i)}</td>
+            <td><span class="badge badge-phase has-tip" tabindex="0">${htmlEsc(phase)}<span class="badge-tip" role="tooltip">${htmlEsc(tip)}</span></span></td>
+            <td><div class="PfList-miles">${pfListMilestones(i).map((statusName, idx) => pfListDiamond(statusName, PF_LIST_MILESTONES[idx])).join("")}</div></td>
+            <td class="col-avatar"><span class="Avatar" title="${htmlEsc(assignee)}">${htmlEsc(pfListInitials(assignee))}</span></td>
+        </tr>`;
+    }).join("");
+    table.innerHTML = `<thead><tr>${head}</tr></thead><tbody>${body}</tbody>`;
+}
+const PF_BOARD_FLAGS = [
+    { value: "overdue", label: "Overdue" },
+    { value: "hold", label: "On hold" },
+    { value: "awaiting", label: "Awaiting client info" }
+];
+const PF_BOARD_GRADE = {
+    PTR: "Partner", DIR: "Director", SRM: "Senior Manager", MAN: "Manager",
+    SA: "Senior Associate", A2: "Associate", A1: "Associate", AM: "Assistant Manager"
+};
+function pfBoardPeople() {
+    const people = [{ id: "unassigned", name: "Unassigned", initials: "", cap: null, role: "" }];
+    (pfTeamWorkers || []).forEach(worker => {
+        if (worker.unassigned || !worker.name) return;
+        people.push({
+            id: worker.id,
+            name: worker.name,
+            initials: pfListInitials(worker.name),
+            cap: worker.cap,
+            role: PF_BOARD_GRADE[worker.grade] || worker.grade || ""
+        });
+    });
+    return people;
+}
+function pfBoardSplitEngagement(job) {
+    const parts = String(job || "").split(" — ");
+    if (parts.length < 2) return { job: job || "Booking", client: "" };
+    return { job: parts[0], client: parts.slice(1).join(" — ") };
+}
+function pfBoardDueLabel(date) {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return date.getDate() + " " + months[date.getMonth()];
+}
+function pfBoardBuildCards() {
+    const week = pfBoardWeekIndex();
+    const cards = [];
+    (pfTeamWorkers || []).forEach(worker => {
+        const person = worker.unassigned ? "unassigned" : worker.id;
+        (worker.items || []).forEach(item => {
+            if (!item || item.kind === "unavailability" || !item.job) return;
+            const end = item.startWeek + item.span - 1;
+            if (week < item.startWeek || week > end) return;
+            const split = pfBoardSplitEngagement(item.job);
+            const dueDate = PF_WEEKS[Math.min(PF_WEEK_COUNT - 1, end)];
+            const hours = item.cells && item.cells[week] != null ? item.cells[week] : item.hours;
+            cards.push({
+                id: item.id,
+                person: person,
+                client: split.client,
+                job: split.job,
+                engagement: item.job,
+                code: item.code || "",
+                type: item.bookingType || "Booking",
+                phase: item.phase || item.bookingType || "Booking",
+                hours: hours,
+                due: dueDate ? pfBoardDueLabel(pfAddDays(dueDate, 4)) : ""
+            });
+        });
+    });
+    return cards;
+}
+function pfBoardFlagBadge(card) {
+    if (card.flag === "overdue") return `<span class="badge badge-warning">Overdue</span>`;
+    if (card.flag === "hold") return `<span class="badge badge-danger--highlighted">On hold</span>`;
+    if (card.flag === "awaiting") return `<span class="badge badge-warning has-tip" tabindex="0">Awaiting client info<span class="badge-tip" role="tooltip">Waiting on client information before this phase can start.</span></span>`;
+    return "";
+}
+function pfBoardFillSelect(sel, placeholder, options) {
+    const current = sel.value;
+    sel.innerHTML = `<option value="">${htmlEsc(placeholder)}</option>` + options.map(opt => `<option value="${htmlEsc(opt.value)}">${htmlEsc(opt.label)}</option>`).join("");
+    sel.value = [...sel.options].some(opt => opt.value === current) ? current : "";
+}
+function pfBoardCardHtml(card) {
+    const flag = pfBoardFlagBadge(card);
+    const hours = `<span class="hours"><i class="fa-regular fa-clock" aria-hidden="true"></i> ${card.hours} hr</span>`;
+    const overdue = card.flag === "overdue";
+    const deadline = `<span class="deadline${overdue ? " overdue has-tip" : ""}"${overdue ? ` aria-label="${htmlEsc(card.due)}. Past due date"` : ""}><span class="deadline-icon" aria-hidden="true"><i class="fa-regular fa-calendar"></i></span><span class="deadline-date">${htmlEsc(card.due)}</span>${overdue ? `<span class="deadline-tooltip" aria-hidden="true">Past due date</span>` : ""}</span>`;
+    return `<div class="card card--phase" role="button" tabindex="0" draggable="true" data-id="${card.id}">
+        <div class="card-body">
+            <div class="badge-row badge-row--phase">
+                <span class="badge badge-phase">${htmlEsc(card.phase)}</span>
+                ${hours}
+            </div>
+            ${flag ? `<div class="badge-row">${flag}</div>` : ""}
+            <hr class="card-rule" />
+            <div class="card-titles">
+                <a class="card-jobLink" href="#">${htmlEsc(card.job)}</a>
+                ${card.client ? `<p class="card-subtitle">${htmlEsc(card.client)}</p>` : ""}
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="card-traits"><span class="badge badge-secondary tax">${htmlEsc(card.type)}</span></div>
+            <div class="meta-right">${deadline}</div>
+        </div>
+    </div>`;
+}
+function movePfBoardCard(id, personId) {
+    const people = pfBoardPeople();
+    if (!people.some(person => person.id === personId)) return;
+    let item = null;
+    let source = null;
+    pfTeamWorkers.forEach(worker => {
+        const index = (worker.items || []).findIndex(entry => entry.id === id);
+        if (index < 0) return;
+        source = worker;
+        item = worker.items.splice(index, 1)[0];
+    });
+    if (!item || !source) return;
+    const sourceId = source.unassigned ? "unassigned" : source.id;
+    if (sourceId === personId) {
+        source.items.push(item);
+        return;
+    }
+    if (personId === "unassigned") {
+        let bucket = pfTeamWorkers.find(worker => worker.unassigned);
+        if (!bucket) {
+            bucket = { id: "w-unassigned", unassigned: true, name: null, grade: null, cap: null, items: [], role: null };
+            pfTeamWorkers.push(bucket);
+        }
+        bucket.items.push(item);
+    } else {
+        const target = pfTeamWorkers.find(worker => worker.id === personId);
+        if (!target) {
+            source.items.push(item);
+            return;
+        }
+        target.items.push(item);
+    }
+    renderPfBoard();
+}
+function pfBoardEmptyHtml(person, filtered) {
+    const unassigned = person.id === "unassigned";
+    const title = filtered ? "Nothing in this view" : (unassigned ? "Nothing unassigned" : "No work assigned");
+    const sub = filtered
+        ? "Try another status or engagement."
+        : (unassigned ? "Work without an owner shows up here." : "Drag a card here to allocate it.");
+    const icon = unassigned ? "fa-solid fa-inbox" : "fa-regular fa-user";
+    return `<div class="column-empty" role="status"><span class="column-empty-icon" aria-hidden="true"><i class="${icon}"></i></span><p class="column-empty-title">${title}</p><p class="column-empty-sub">${sub}</p></div>`;
+}
+function pfBoardDropZoneHtml(person) {
+    const unassigned = person.id === "unassigned";
+    const variant = unassigned ? "neutral" : "forward";
+    const icon = unassigned ? "fa-solid fa-inbox" : "fa-solid fa-user";
+    const title = unassigned ? "Unassigned" : person.name.split(" ")[0];
+    const sub = unassigned ? "Remove the current owner" : `Assign this work to ${person.name}`;
+    return `<div class="column-drop-zones"><div class="column-drop-zone column-drop-zone--${variant}"><span class="column-drop-zone-icon" aria-hidden="true"><i class="${icon}"></i></span><strong>${htmlEsc(title)}</strong><span>${htmlEsc(sub)}</span></div></div>`;
+}
+function pfBoardSetDropZones(cardId, on) {
+    const board = document.querySelector(".AllocBoard");
+    if (board) board.classList.toggle("is-dragging", on);
+    const card = pfBoardWeekCards().find(item => item.id === cardId);
+    document.querySelectorAll(".AllocCol").forEach(col => {
+        const cards = col.querySelector(".AllocCol-cards");
+        if (!cards) return;
+        const existing = cards.querySelector(".column-drop-zones");
+        if (existing) existing.remove();
+        col.classList.remove("is-drop-target");
+        if (!on || !card || col.dataset.person === card.person) return;
+        const person = pfBoardPeople().find(item => item.id === col.dataset.person);
+        if (!person) return;
+        col.classList.add("is-drop-target");
+        cards.insertAdjacentHTML("beforeend", pfBoardDropZoneHtml(person));
+    });
+}
+function pfBoardHours(personId) {
+    return pfBoardWeekCards().filter(card => card.person === personId).reduce((sum, card) => sum + card.hours, 0);
+}
+let pfBoardWeekOffset = 0;
+let pfBoardWeekReady = false;
+function pfBoardEnsureWeek() {
+    if (pfBoardWeekReady) return;
+    pfBoardWeekReady = true;
+    pfBoardWeekOffset = pfBoardTodayOffset();
+}
+function pfBoardTodayOffset() {
+    const monday = pfSnapMonday(new Date());
+    return Math.max(0, Math.min(PF_WEEK_COUNT - 1, Math.round((monday - PF_FIRST_MONDAY) / 86400000 / 7)));
+}
+function pfBoardWeekMonday(offset) {
+    return pfAddDays(PF_FIRST_MONDAY, offset * 7);
+}
+function pfBoardWeekIndex() {
+    pfBoardEnsureWeek();
+    return Math.max(0, Math.min(PF_WEEK_COUNT - 1, pfBoardWeekOffset));
+}
+function pfBoardWeekLabel(offset) {
+    const monday = pfBoardWeekMonday(offset);
+    const friday = new Date(monday);
+    friday.setDate(monday.getDate() + 4);
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const day = date => date.getDate() + " " + months[date.getMonth()];
+    return day(monday) + " – " + day(friday);
+}
+function pfBoardWeekCards() {
+    return pfBoardBuildCards();
+}
+function pfBoardShiftWeek(delta) {
+    pfBoardEnsureWeek();
+    pfBoardWeekOffset = Math.max(0, Math.min(PF_WEEK_COUNT - 1, pfBoardWeekOffset + delta));
+    renderPfBoard();
+}
+function pfBoardSetWeek(offset) {
+    pfBoardWeekReady = true;
+    pfBoardWeekOffset = Math.max(0, Math.min(PF_WEEK_COUNT - 1, offset));
+    renderPfBoard();
+}
+function pfBoardUtil(person) {
+    if (!person || person.cap == null) return null;
+    const hours = pfBoardHours(person.id);
+    const pct = Math.round((hours / person.cap) * 100);
+    if (pct >= 125) return { hours, pct, level: "critical", label: "Critical overload", badge: "badge-danger--highlighted", ring: 100 };
+    if (pct > 100) return { hours, pct, level: "over", label: "Over capacity", badge: "badge-danger--highlighted", ring: 100 };
+    if (pct < 80) return { hours, pct, level: "under", label: "Under utilised", badge: "badge-warning", ring: pct };
+    return { hours, pct, level: "ok", label: "On track", badge: "badge-success", ring: pct };
+}
+function pfBoardAvatarHtml(person) {
+    const util = pfBoardUtil(person);
+    if (!util) return `<span class="Avatar" aria-hidden="true"><i class="fa-solid fa-inbox"></i></span>`;
+    return `<span class="CapAvatar is-${util.level}" style="--cap:${util.ring}" role="img" aria-label="${htmlEsc(person.name)}, ${util.pct}% utilised"><svg class="CapAvatar-ring" viewBox="0 0 36 36" aria-hidden="true"><circle class="CapAvatar-track" cx="18" cy="18" r="16" pathLength="100"></circle><circle class="CapAvatar-fill" cx="18" cy="18" r="16" pathLength="100"></circle></svg><span class="Avatar">${htmlEsc(person.initials)}</span></span>`;
+}
+function pfBoardAnimateRings(root) {
+    const scope = root || document;
+    scope.querySelectorAll(".CapAvatar").forEach(el => el.classList.remove("is-on"));
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        scope.querySelectorAll(".CapAvatar").forEach(el => el.classList.add("is-on"));
+    }));
+}
+function setPfUtilOpen(open) {
+    const button = document.getElementById("pfUtilToggle");
+    const panel = document.getElementById("pfUtilPanel");
+    if (!button || !panel) return;
+    button.setAttribute("aria-expanded", open ? "true" : "false");
+    panel.hidden = !open;
+    panel.classList.toggle("is-open", open);
+    if (open) pfBoardAnimateRings(panel);
+}
+let pfUtilTimer = null;
+function openPfUtilSoon() {
+    clearTimeout(pfUtilTimer);
+    pfUtilTimer = setTimeout(() => setPfUtilOpen(true), 80);
+}
+function closePfUtilSoon() {
+    clearTimeout(pfUtilTimer);
+    pfUtilTimer = setTimeout(() => setPfUtilOpen(false), 120);
+}
+function renderPfUtil() {
+    const panel = document.getElementById("pfUtilPanel");
+    if (!panel) return;
+    const open = !panel.hidden;
+    const rows = pfBoardPeople().filter(person => person.cap != null).map(person => {
+        const util = pfBoardUtil(person);
+        const hoursLabel = `${util.hours}/${person.cap}h`;
+        const full = util.level === "over" || util.level === "critical";
+        return `<div class="UtilRow">${pfBoardAvatarHtml(person)}<div class="UtilRow-meta"><div class="UtilPerson-name">${htmlEsc(person.name)}</div><div class="UtilPerson-pct">${util.pct}% · ${htmlEsc(util.label)}</div></div><span class="CapacityBadge${full ? " is-full" : ""}">${hoursLabel}</span></div>`;
+    }).join("");
+    panel.innerHTML = rows;
+    if (open) pfBoardAnimateRings(panel);
+}
+const pfUtilHover = document.getElementById("pfUtilToggle")?.closest(".UtilHover");
+if (pfUtilHover) {
+    pfUtilHover.addEventListener("mouseenter", openPfUtilSoon);
+    pfUtilHover.addEventListener("mouseleave", closePfUtilSoon);
+    pfUtilHover.addEventListener("focusin", () => setPfUtilOpen(true));
+    pfUtilHover.addEventListener("focusout", event => {
+        if (!pfUtilHover.contains(event.relatedTarget)) closePfUtilSoon();
+    });
+}
+function pfBoardColumnHtml(person, visible) {
+    const owned = pfBoardWeekCards().filter(card => card.person === person.id);
+    const hours = owned.reduce((sum, card) => sum + card.hours, 0);
+    const shown = visible.filter(card => card.person === person.id);
+    const over = person.cap != null && hours > person.cap;
+    const load = person.cap == null ? `${hours}h` : `${hours}h / ${person.cap}h`;
+    const avatar = pfBoardAvatarHtml(person);
+    const cards = shown.map(pfBoardCardHtml).join("") || pfBoardEmptyHtml(person, owned.length > 0);
+    return `<section class="AllocCol${person.id === "unassigned" ? " AllocCol--unassigned" : ""}" data-person="${person.id}">
+        <header class="AllocCol-head">
+            <div class="AllocCol-person">${avatar}<div class="AllocCol-name">${htmlEsc(person.name)}</div></div>
+            <div class="AllocCol-actions">
+                <span class="CapacityBadge${over ? " is-full" : ""}">${load}</span>
+                <span class="count" aria-label="${shown.length} tasks">${shown.length}</span>
+            </div>
+        </header>
+        <div class="AllocCol-cards">${cards}</div>
+    </section>`;
+}
+function pfBoardBindColumns(root) {
+    root.querySelectorAll(".card-jobLink").forEach(link => {
+        link.addEventListener("click", event => event.preventDefault());
+    });
+    root.querySelectorAll(".card").forEach(card => {
+        card.addEventListener("dragstart", event => {
+            card.dataset.dragged = "1";
+            card.classList.add("is-dragging");
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData("text/plain", card.dataset.id);
+            pfBoardSetDropZones(card.dataset.id, true);
+        });
+        card.addEventListener("dragend", () => {
+            card.classList.remove("is-dragging");
+            pfBoardSetDropZones(card.dataset.id, false);
+            setTimeout(() => { card.dataset.dragged = "0"; }, 0);
+        });
+        card.addEventListener("click", () => {
+            if (card.dataset.dragged === "1") return;
+            openPfSidebar(card.dataset.id);
+        });
+    });
+    root.querySelectorAll(".AllocCol").forEach(col => {
+        col.addEventListener("dragover", event => {
+            event.preventDefault();
+            col.classList.add("is-drop");
+            const zone = col.querySelector(".column-drop-zone");
+            if (zone) zone.classList.add("is-drag-over");
+        });
+        col.addEventListener("dragleave", event => {
+            if (!col.contains(event.relatedTarget)) {
+                col.classList.remove("is-drop");
+                const zone = col.querySelector(".column-drop-zone");
+                if (zone) zone.classList.remove("is-drag-over");
+            }
+        });
+        col.addEventListener("drop", event => {
+            event.preventDefault();
+            movePfBoardCard(event.dataTransfer.getData("text/plain"), col.dataset.person);
+        });
+    });
+}
+function pfBoardCanScrollCards(cardsEl, deltaY) {
+    if (cardsEl.scrollHeight <= cardsEl.clientHeight + 1) return false;
+    if (deltaY > 0) return cardsEl.scrollTop + cardsEl.clientHeight < cardsEl.scrollHeight - 1;
+    return cardsEl.scrollTop > 0;
+}
+function pfBoardWheelToRow(event) {
+    if (!document.getElementById("tab-board")?.classList.contains("is-active")) return;
+    const board = event.target.closest && event.target.closest(".AllocBoard-cols");
+    if (!board) return;
+    const row = document.getElementById("pfBoardCols");
+    if (!row || row.scrollWidth <= row.clientWidth + 1) return;
+    const dx = event.deltaX;
+    const dy = event.deltaY;
+    const sideways = event.shiftKey || Math.abs(dx) > Math.abs(dy);
+    if (sideways) {
+        const delta = dx !== 0 ? dx : dy;
+        if (!delta) return;
+        row.scrollLeft += delta;
+        event.preventDefault();
+        return;
+    }
+    if (!dy) return;
+    const cardsEl = event.target.closest(".AllocCol-cards");
+    if (cardsEl && pfBoardCanScrollCards(cardsEl, dy)) return;
+    row.scrollLeft += dy;
+    event.preventDefault();
+}
+document.addEventListener("wheel", pfBoardWheelToRow, { passive: false });
+function pfBoardSidebarDeadline(due) {
+    const parts = String(due || "").trim().split(/\s+/);
+    if (parts.length === 2 && /^\d/.test(parts[0])) return `${parts[1]} ${parts[0]}`;
+    return due || "";
+}
+function postPfSidebarCard() {
+    const frame = document.getElementById("pfSidebarFrame");
+    if (!frame || !frame.contentWindow || !pfSidebarPayload) return;
+    frame.contentWindow.postMessage({ type: "portfolios-board-card", card: pfSidebarPayload }, "*");
+}
+let pfSidebarPayload = null;
+function openPfSidebar(cardId) {
+    const card = pfBoardWeekCards().find(item => item.id === cardId);
+    const panel = document.getElementById("pfSidebar");
+    const frame = document.getElementById("pfSidebarFrame");
+    if (!card || !panel || !frame) return;
+    const person = pfBoardPeople().find(item => item.id === card.person);
+    pfSidebarPayload = Object.assign({}, card, {
+        assignee: person && person.id !== "unassigned" ? person.name : "",
+        initials: person ? person.initials : "",
+        deadline: pfBoardSidebarDeadline(card.due)
+    });
+    panel.hidden = false;
+    if (!frame.getAttribute("src")) {
+        frame.addEventListener("load", postPfSidebarCard, { once: true });
+        frame.src = "kanban-sidebar-scenarios.html?embed=1&mode=kanban";
+        return;
+    }
+    postPfSidebarCard();
+}
+function closePfSidebar() {
+    const panel = document.getElementById("pfSidebar");
+    if (panel) panel.hidden = true;
+}
+document.getElementById("pfSidebarBackdrop")?.addEventListener("click", closePfSidebar);
+window.addEventListener("message", event => {
+    if (event.data && event.data.type === "kanban-sidebar-close") closePfSidebar();
+});
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closePfSidebar();
+});
+function renderPfBoard() {
+    const cols = document.getElementById("pfBoardCols");
+    const unassigned = document.getElementById("pfBoardUnassigned");
+    const statusSel = document.getElementById("pfBoardStatus");
+    const jobSel = document.getElementById("pfBoardJob");
+    const resourceSel = document.getElementById("pfBoardResource");
+    if (!cols || !unassigned || !statusSel || !jobSel || !resourceSel) return;
+    pfBoardEnsureWeek();
+    const weekLabel = document.getElementById("pfWeekLabel");
+    if (weekLabel) weekLabel.textContent = pfBoardWeekLabel(pfBoardWeekOffset);
+    const todayBtn = document.getElementById("pfWeekToday");
+    if (todayBtn) {
+        const onToday = pfBoardWeekOffset === pfBoardTodayOffset();
+        todayBtn.classList.toggle("is-muted", onToday);
+        todayBtn.disabled = onToday;
+    }
+    pfBoardFillSelect(resourceSel, "All resources", pfBoardPeople().map(person => ({ value: person.id, label: person.name })));
+    pfBoardFillSelect(statusSel, "All statuses", PF_BOARD_FLAGS);
+    const weekCards = pfBoardWeekCards();
+    const jobs = [...new Set(weekCards.map(card => card.engagement))].sort();
+    pfBoardFillSelect(jobSel, "All engagements", jobs.map(job => ({ value: job, label: job })));
+    const visible = weekCards.filter(card => (!resourceSel.value || card.person === resourceSel.value) && (!statusSel.value || card.flag === statusSel.value) && (!jobSel.value || card.engagement === jobSel.value));
+    const people = pfBoardPeople().filter(person => !resourceSel.value || person.id === resourceSel.value);
+    const unassignedPerson = people.find(person => person.id === "unassigned");
+    unassigned.hidden = !unassignedPerson;
+    unassigned.innerHTML = unassignedPerson ? pfBoardColumnHtml(unassignedPerson, visible) : "";
+    cols.innerHTML = people.filter(person => person.id !== "unassigned").map(person => pfBoardColumnHtml(person, visible)).join("");
+    pfBoardBindColumns(unassigned);
+    pfBoardBindColumns(cols);
+    renderPfUtil();
+    pfBoardAnimateRings();
+}
 function switchTab(tab, skipPersist) {
     currentTab = tab;
     document.querySelectorAll(".Tab-navItem").forEach(b => b.classList.toggle("is-active", b.dataset.tab === tab));
     document.getElementById("tab-performance").classList.toggle("is-active", tab === "performance");
     document.getElementById("tab-team").classList.toggle("is-active", tab === "team");
+    document.getElementById("tab-list").classList.toggle("is-active", tab === "list");
+    document.getElementById("tab-board").classList.toggle("is-active", tab === "board");
+    if (tab === "list") renderPfList();
+    if (tab === "board") renderPfBoard();
     if (tab === "team") renderGantt();
     if (tab === "performance") {
         renderPerfTable();
@@ -5069,6 +5910,52 @@ function openEditModal(name) {
     document.getElementById("createModal").classList.add("is-open");
 }
 function modalSubmit() {
+    if (modalState.tableSel.size > 0) {
+        openUnaddedSelectionConfirm();
+        return;
+    }
+    commitPortfolioSave();
+}
+function openUnaddedSelectionConfirm() {
+    const n = modalState.tableSel.size;
+    const copy = document.getElementById("unaddedSelectionConfirmCopy");
+    if (copy) {
+        copy.textContent = n === 1
+            ? "The engagement you’ve selected hasn’t been added to the portfolio. If you continue, it won’t be saved."
+            : "The engagements you’ve selected haven’t been added to the portfolio. If you continue, they won’t be saved.";
+    }
+    const el = document.getElementById("unaddedSelectionConfirm");
+    if (!el) return;
+    el.hidden = false;
+    el.classList.add("is-open");
+    const cancel = el.querySelector("[data-test='portfolio-selection-save-cancel']");
+    if (cancel) cancel.focus();
+}
+function hideUnaddedSelectionConfirm() {
+    const el = document.getElementById("unaddedSelectionConfirm");
+    if (!el) return;
+    el.classList.remove("is-open");
+    el.hidden = true;
+}
+function closeUnaddedSelectionConfirm() {
+    hideUnaddedSelectionConfirm();
+    const primary = document.getElementById("modalPrimary");
+    if (primary && !primary.disabled) primary.focus();
+}
+function confirmSaveWithoutUnaddedSelection() {
+    hideUnaddedSelectionConfirm();
+    commitPortfolioSave();
+}
+document.getElementById("unaddedSelectionConfirm").addEventListener("click", function (e) {
+    if (e.target.id === "unaddedSelectionConfirm") closeUnaddedSelectionConfirm();
+});
+document.getElementById("unaddedSelectionConfirm").addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    e.preventDefault();
+    e.stopPropagation();
+    closeUnaddedSelectionConfirm();
+});
+function commitPortfolioSave() {
     const mode = modalMode;
     const name = portfolioNameValue();
     closeCreateModal({ force: true });
@@ -5116,6 +6003,7 @@ function closeCreateModal(opts) {
         return;
     }
     closeDiscardPortfolioConfirm();
+    hideUnaddedSelectionConfirm();
     closeDynamicFilterConfirm();
     document.getElementById("createModal").classList.remove("is-open");
 }
