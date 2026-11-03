@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dayshape — Your Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --surface-default: #ffffff;
+      --surface-subtle-light: #f8f8f8;
+      --surface-subtle-dark: #f1f1f4;
+      --surface-primary: #4f3fa0;
+      --surface-primary-emphasis: #403577;
+      --surface-primary-subtle: #f0effb;
+      --surface-inverse-blue: #27233d;
+      --surface-container-default: rgba(152, 155, 182, 0.15);
+      --surface-container-hover: rgba(152, 155, 182, 0.20);
+      --surface-data-strong: #1a0142;
+      --surface-data-primary: #ff8d6c;
+      --surface-data-secondary: #6881c5;
+      --surface-data-recessive: #babfd1;
+      --surface-accent: #e2e3e9;
+      --text-default: #222430;
+      --text-subtle: #6a708f;
+      --text-accent: #4c5172;
+      --text-link: #7059e8;
+      --text-inverse: #ffffff;
+      --border-default: #babfd1;
+      --border-subtle: #e2e3e9;
+      --border-primary: #4f3fa0;
+      --border-dayshape: #ff8d6c;
+      --avatar-booking: #6b86ce;
+      --avatar-unavailability: #c4c8d6;
+      --scroll-thumb: #aaaaaa;
+      --nav-divider: rgba(137, 141, 164, 0.5);
+      --nav-hover: rgba(255, 255, 255, 0.06);
+      --separator-dot: #989bb6;
+      --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.05);
+      --font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
+      --radius: 4px;
+      --radius-lg: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-width: 1100px; background: var(--surface-subtle-light); color: var(--text-default); }
+    body { font: 400 14px/20px var(--font-family); -webkit-font-smoothing: antialiased; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    a { color: var(--text-link); }
+
+    .App { display: flex; min-height: 100vh; }
+    .NavBar {
+      position: fixed; inset: 0 auto 0 0; z-index: 10;
+      width: 48px; background: var(--surface-inverse-blue);
+      display: flex; flex-direction: column; align-items: center; overflow: hidden;
+    }
+    .NavBar-logoWrapper { width: 100%; padding: 4px 4px 16px; }
+    .NavBar-logo {
+      width: 40px; height: 40px; border-radius: var(--radius); background: var(--surface-default);
+      display: grid; place-items: center;
+    }
+    .NavBar-logo svg { width: 18px; height: 20px; fill: var(--surface-data-primary); }
+    .NavBar-section { list-style: none; margin: 0; padding: 16px 0; width: 100%; }
+    .NavBar-section--grow { flex: 1 1 auto; }
+    .NavBar-hr { border: 0; border-top: 1px solid var(--nav-divider); margin: 0; width: 100%; }
+    .NavBar-li { position: relative; width: 100%; }
+    .NavBar-li.is-active::before {
+      content: ""; position: absolute; left: 0; top: 0; width: 4px; height: 44px;
+      background: var(--text-inverse);
+    }
+    .NavBar-menuLink {
+      width: 100%; height: 44px; color: var(--text-inverse); text-decoration: none;
+      display: grid; place-items: center;
+    }
+    .NavBar-menuLink:hover { background: var(--nav-hover); }
+    .NavBar-menuLink i { width: 20px; text-align: center; font-size: 16px; }
+    .NavBar-menuBottom { width: 100%; padding: 0 0 20px 8px; display: flex; justify-content: flex-end; }
+    .NavBar-expand {
+      width: 40px; height: 34px; border: 0; color: var(--surface-inverse-blue);
+      background: var(--surface-primary-subtle); border-radius: var(--radius) 0 0 var(--radius);
+    }
+
+    main { width: 100%; margin-left: 48px; }
+    .Page { padding: 48px; display: flex; flex-direction: column; gap: 48px; }
+    h1 { margin: 0; font-size: 24px; line-height: 32px; font-weight: 400; }
+    h2 { margin: 0; font-size: 16px; line-height: 24px; font-weight: 600; }
+    .TitleWithInfo { display: flex; align-items: center; gap: 0; }
+    .Info {
+      width: 24px; height: 24px; padding: 0; border: 0; background: transparent;
+      color: var(--surface-primary); font-size: 14px;
+    }
+    .Section { display: flex; flex-direction: column; gap: 16px; }
+    .Hero { gap: 24px; }
+    .GraphGroup { display: flex; flex-direction: column; gap: 16px; }
+    .Split { display: grid; grid-template-columns: minmax(0, 749px) 425px; gap: 48px; }
+    .Split > .Section,
+    .Card,
+    .ScheduleScroll,
+    .Week,
+    .Task { min-width: 0; }
+    .Split--equal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .Card {
+      background: var(--surface-default); border-left: 2px solid var(--border-dayshape);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-card);
+    }
+    .CardBody { padding: 48px; }
+    .ChartCard { height: 489px; }
+    .ChartCard .CardBody { height: 100%; display: flex; flex-direction: column; gap: 24px; }
+    .Toolbar { height: 35px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .ToolbarGroup { display: flex; align-items: center; gap: 8px; }
+    .ToolbarGroup--wide { gap: 24px; }
+    .Btn, .Select {
+      height: 35px; border: 1px solid var(--border-default); border-radius: var(--radius);
+      background: var(--surface-default); color: var(--text-accent); padding: 0 12px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
+    }
+    .Btn:hover, .Select:hover { background: var(--surface-subtle-light); }
+    .Btn--step { border-color: var(--border-subtle); background: var(--surface-container-default); }
+    .Btn--step:hover { background: var(--surface-container-hover); }
+    .Btn--page { min-width: 35px; padding: 0 10px; border-color: var(--border-primary); color: var(--surface-primary); }
+    .Btn--page.is-active { color: var(--text-inverse); background: var(--surface-primary-emphasis); }
+    .Select { justify-content: space-between; }
+    .Select--views { width: 148px; }
+    .Select--period { width: 160px; }
+    .Select--sort { width: 80px; }
+    .Select--full { width: 100%; }
+
+    .Chart { flex: 1; min-height: 0; display: grid; grid-template-columns: 18px 1fr; }
+    .AxisTitle { color: var(--text-subtle); display: grid; place-items: center; }
+    .AxisTitle span { transform: rotate(-90deg); white-space: nowrap; }
+    .Plot { position: relative; height: 280px; margin-left: 58px; }
+    .GridLine { position: absolute; left: 0; right: 0; border-top: 1px solid var(--border-subtle); }
+    .GridLabel { position: absolute; right: calc(100% + 8px); top: -10px; white-space: nowrap; }
+    .Columns { position: absolute; inset: 0; display: flex; align-items: flex-end; gap: 26px; padding: 0 6px; }
+    .Column { height: 100%; min-width: 0; flex: 1; display: flex; align-items: flex-end; justify-content: center; position: relative; }
+    .Stack { width: 100%; max-width: 64px; display: flex; flex-direction: column; border-radius: var(--radius) var(--radius) 0 0; overflow: hidden; }
+    .Segment--scheduled { background: var(--surface-data-secondary); }
+    .Segment--unscheduled { background: var(--surface-data-primary); }
+    .Segment--unavailable { background: var(--surface-data-recessive); }
+    .CapacitySvg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+    .CapacitySvg path { fill: none; stroke: var(--surface-data-strong); stroke-width: 2; vector-effect: non-scaling-stroke; }
+    .CapacitySvg circle { fill: var(--surface-data-strong); }
+    .MonthLabels { display: flex; gap: 26px; margin-left: 58px; padding: 8px 6px 0; }
+    .MonthLabels span { flex: 1; min-width: 0; text-align: center; white-space: nowrap; }
+    .Legend { display: flex; justify-content: center; align-items: center; gap: 24px; height: 21px; }
+    .LegendItem { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .Key { width: 10px; height: 10px; background: var(--surface-data-secondary); }
+    .Key--dot { border-radius: 50%; background: var(--surface-data-strong); }
+    .Key--primary { background: var(--surface-data-primary); }
+    .Key--recessive { background: var(--surface-data-recessive); }
+    .RevenueColumns { gap: 28px; padding: 0 8px; }
+    .BarPair { height: 100%; min-width: 0; flex: 1; display: flex; align-items: flex-end; gap: 4px; }
+    .RevenueBar { flex: 1; border-radius: var(--radius) var(--radius) 0 0; }
+
+    .TallCard { height: 476px; }
+    .TallCard .CardBody { height: 100%; }
+    .ScheduleTools { margin-bottom: 20px; }
+    .ScheduleScroll { height: 320px; overflow-y: auto; padding-right: 16px; }
+    .ScheduleScroll::-webkit-scrollbar, .List::-webkit-scrollbar { width: 8px; }
+    .ScheduleScroll::-webkit-scrollbar-track, .List::-webkit-scrollbar-track { background: var(--surface-accent); border-radius: var(--radius-lg); }
+    .ScheduleScroll::-webkit-scrollbar-thumb, .List::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: var(--radius-lg); }
+    .Week { container: week / inline-size; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .WeekHeader { padding: 12px; background: var(--surface-subtle-dark); border-radius: var(--radius); display: flex; align-items: center; gap: 20px; }
+    .WeekTitle { flex: 1; }
+    .WeekTitle strong, .WeekTitle span { display: block; }
+    .WeekTitle span { color: var(--text-accent); }
+    .Duration { display: flex; align-items: center; justify-content: flex-end; white-space: nowrap; }
+    .Task {
+      background: var(--surface-default); border: 1px solid var(--border-subtle); border-radius: var(--radius);
+      box-shadow: var(--shadow-card); display: flex; flex-direction: column; overflow: hidden;
+    }
+    .Task--job {
+      border-left: 2px solid var(--surface-data-secondary);
+      display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: stretch;
+      column-gap: 0; padding: 0 12px;
+    }
+    .Task--job .TaskRow,
+    .Task--job .TaskDetails { display: contents; }
+    .Task--job .Booking { grid-area: 1 / 1; align-self: stretch; padding: 8px 8px 8px 0; }
+    .Task--job .Days { grid-area: 1 / 2; align-self: stretch; padding-block: 8px; }
+    .Task--job .TaskDuration { grid-area: 1 / 3; align-self: center; justify-self: end; margin: 8px 0 8px 8px; }
+    .Task--job .BookingMeta { grid-area: 2 / 1 / 3 / 3; }
+    .Task--job .AvatarStack { grid-area: 2 / 3; align-self: stretch; padding: 8px 0 8px 16px; border-top: 1px solid var(--border-subtle); }
+    .TaskRow { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; }
+    .BookingMeta {
+      display: flex; align-items: center; min-width: 0; overflow: hidden;
+      align-self: stretch; padding: 8px 8px 8px 0; border-top: 1px solid var(--border-subtle);
+    }
+    .BookingMetaLine { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; width: 100%; max-height: 24px; overflow: hidden; padding: 3px 0; }
+    .BookingMetaItem {
+      display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; max-width: min(160px, 100%); min-width: 0; overflow: hidden;
+      color: var(--text-accent); font-size: 14px; font-weight: 400; line-height: 18px;
+    }
+    .BookingMetaItem span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .BookingMetaDot { display: block; flex: 0 0 auto; }
+    .AvatarStack { display: flex; align-items: center; flex: none; }
+    .Avatar {
+      position: relative; width: 24px; height: 24px; flex: 0 0 24px; margin-right: -8px;
+      border: 2px solid var(--surface-subtle-light); border-radius: 50%;
+      background: var(--surface-primary); color: var(--text-inverse);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600; line-height: 15px; letter-spacing: 0; text-transform: uppercase;
+    }
+    .Avatar:nth-child(1) { z-index: 1; }
+    .Avatar:nth-child(2) { z-index: 2; }
+    .Avatar:nth-child(3) { z-index: 3; }
+    .Avatar:last-child { margin-right: 0; }
+    .Booking { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .BookingIconSvg { display: block; flex: 0 0 auto; }
+    .BookingIcon { width: 28px; height: 28px; border-radius: 50%; background: var(--avatar-booking); color: var(--text-inverse); display: grid; place-items: center; font-size: 12px; flex: none; }
+    .BookingIcon--unavailable { background: var(--avatar-unavailability); color: var(--text-default); }
+    .BookingText { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .BookingText strong, .BookingText span { font-size: 14px; line-height: 21px; white-space: nowrap; }
+    .BookingText strong { font-weight: 600; color: var(--text-link); flex: none; }
+    .BookingText span { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .Task--job .BookingText span { font-weight: 600; color: var(--text-default); }
+    .BookingText .plain { color: var(--text-default); }
+    .Days { display: flex; align-items: center; gap: 1px; flex: none; }
+    .Day { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 20px; }
+    .Day span { color: var(--text-subtle); font-size: 12px; line-height: 16px; font-weight: 400; }
+    .DayBox { display: block; width: 20px; height: 3px; background: var(--surface-subtle-dark); }
+    .DayBox.is-booked { background: var(--surface-data-secondary); }
+    .DayBox.is-away { background: var(--surface-data-recessive); }
+    .TaskDuration {
+      height: 33px; padding: 0 12px; border-radius: var(--radius); background: var(--surface-subtle-light);
+      display: inline-flex; align-items: center; gap: 4px; flex: none;
+      color: var(--text-default); font-size: 14px; font-weight: 600; line-height: 21px; white-space: nowrap;
+    }
+
+    @container week (max-width: 440px) {
+      .Task:not(.Task--job) .TaskRow { flex-wrap: wrap; row-gap: 8px; }
+      .Task:not(.Task--job) .Booking { flex: 1 0 100%; }
+      .Task:not(.Task--job) .TaskDuration { margin-left: auto; }
+    }
+
+    .UtilBody { display: flex; flex-direction: column; gap: 24px; align-items: center; }
+    .UtilIntro { margin: 0; color: var(--text-subtle); width: 100%; }
+    .Gauge { position: relative; width: 100%; margin-top: 12px; }
+    .Gauge svg { width: 100%; display: block; }
+    .GaugeTrack, .GaugeValue { fill: none; stroke-width: 18; }
+    .GaugeTrack { stroke: var(--surface-subtle-dark); }
+    .GaugeValue { stroke: var(--surface-data-secondary); stroke-dasharray: 408.4; stroke-dashoffset: 269.5; }
+    .GaugePercent { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-size: 54px; line-height: 64px; font-weight: 600; color: var(--text-accent); }
+    .GaugeScale { width: 100%; margin-top: -18px; display: flex; justify-content: space-between; font-size: 18px; font-weight: 600; color: var(--text-accent); }
+
+    .ListCard { height: 384px; }
+    .ListCard .CardBody { height: 100%; display: flex; flex-direction: column; gap: 24px; }
+    .ListWrap { flex: 1; min-height: 0; position: relative; }
+    .List { height: 100%; overflow-y: auto; padding-right: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .List::after { content: ""; display: block; height: 20px; flex: 0 0 20px; }
+    .ListItem {
+      min-height: 40px; padding: 8px 12px; border: 1px solid var(--border-subtle);
+      border-radius: var(--radius); display: flex; align-items: center; gap: 8px; text-decoration: none;
+    }
+    .ListItem:hover { background: var(--surface-subtle-dark); }
+    .ListItem.is-selected { border-color: var(--border-primary); }
+    .ListFade { position: absolute; left: 0; right: 24px; bottom: 0; height: 30px; background: linear-gradient(to top, var(--surface-default), transparent); pointer-events: none; }
+
+    .TableCard { height: 501px; }
+    .TableCard .CardBody { height: 100%; display: flex; flex-direction: column; gap: 24px; }
+    .Field { display: flex; flex-direction: column; gap: 4px; }
+    .Field label { font-weight: 600; }
+    .InputGroup { display: flex; width: 230px; }
+    .InputGroup input { width: 195px; height: 35px; padding: 0 12px; border: 1px solid var(--border-default); border-radius: var(--radius) 0 0 var(--radius); color: var(--text-default); }
+    .InputClear { width: 35px; height: 35px; border: 1px solid var(--border-default); border-left: 0; border-radius: 0 var(--radius) var(--radius) 0; color: var(--text-link); background: var(--surface-default); }
+    .TableScroll { overflow-x: auto; border: 1px solid var(--border-subtle); border-radius: var(--radius); }
+    table { width: 100%; min-width: 1060px; border-collapse: collapse; table-layout: fixed; }
+    th, td { height: 40px; padding: 8px 12px; text-align: left; border-right: 1px solid var(--border-subtle); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    th { height: 55px; background: var(--surface-subtle-dark); border-bottom: 2px solid var(--border-default); font-weight: 600; white-space: normal; }
+    th:last-child, td:last-child { border-right: 0; }
+    tbody tr:nth-child(odd) { background: var(--surface-subtle-light); }
+    .TableFooter { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+    .Pagination { display: flex; gap: 4px; }
+
+    .Toast {
+      position: fixed; z-index: 20; right: 24px; bottom: 24px; padding: 12px 16px;
+      color: var(--text-inverse); background: var(--surface-inverse-blue); border-radius: var(--radius);
+      box-shadow: var(--shadow-card); opacity: 0; transform: translateY(8px); pointer-events: none; transition: 160ms ease;
+    }
+    .Toast.is-visible { opacity: 1; transform: none; }
+
+    @media (max-width: 1200px) {
+      .Page { padding: 32px; }
+      .Split { grid-template-columns: minmax(0, 1fr) 360px; gap: 32px; }
+      .Split--equal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .CardBody { padding: 32px; }
+      .Columns, .MonthLabels { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="App">
+    <aside class="NavBar" aria-label="Primary navigation">
+      <div class="NavBar-logoWrapper">
+        <div class="NavBar-logo" title="Dayshape">
+          <svg viewBox="0 0 172 172" role="img" aria-label="Dayshape">
+            <path d="M112 54a73 73 0 0 1 0 65c9-8 16-20 16-33s-7-25-16-32Z"/>
+            <path d="M79 45a74 74 0 0 1 0 83 42 42 0 0 0 0-83Z"/>
+            <path d="M52 44v84c19 0 35-19 35-42S71 44 52 44Z"/>
+          </svg>
+        </div>
+      </div>
+      <ul class="NavBar-section">
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="Notifications"><i class="fa-regular fa-bell"></i></a></li>
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="Search"><i class="fa-solid fa-magnifying-glass"></i></a></li>
+      </ul>
+      <hr class="NavBar-hr">
+      <ul class="NavBar-section NavBar-section--grow">
+        <li class="NavBar-li is-active"><a class="NavBar-menuLink" href="#" title="Dashboard"><i class="fa-solid fa-chart-line"></i></a></li>
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="Schedule"><i class="fa-regular fa-calendar"></i></a></li>
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="Engagements"><i class="fa-solid fa-briefcase"></i></a></li>
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="People"><i class="fa-solid fa-users"></i></a></li>
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="Create"><i class="fa-solid fa-plus"></i></a></li>
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="Reports"><i class="fa-regular fa-file-lines"></i></a></li>
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="Referential data"><i class="fa-solid fa-table-list"></i></a></li>
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="Configuration"><i class="fa-solid fa-wrench"></i></a></li>
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="Profile"><i class="fa-regular fa-user"></i></a></li>
+      </ul>
+      <hr class="NavBar-hr">
+      <ul class="NavBar-section">
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="Help"><i class="fa-regular fa-circle-question"></i></a></li>
+        <li class="NavBar-li"><a class="NavBar-menuLink" href="#" title="Log out"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+      </ul>
+      <div class="NavBar-menuBottom"><button class="NavBar-expand" title="Expand navigation"><i class="fa-solid fa-angle-right"></i></button></div>
+    </aside>
+
+    <main>
+      <div class="Page">
+        <section class="Section Hero">
+          <h1>Your Dashboard</h1>
+          <div class="GraphGroup">
+            <div class="TitleWithInfo"><h2>Capacity vs Demand</h2><button class="Info" title="About this chart"><i class="fa-solid fa-circle-question"></i></button></div>
+            <div class="Card ChartCard">
+              <div class="CardBody">
+                <div class="Toolbar chart-toolbar"></div>
+                <div class="Chart" data-chart="capacity">
+                  <div class="AxisTitle"><span>Hours</span></div>
+                  <div><div class="Plot"></div><div class="MonthLabels"></div></div>
+                </div>
+                <div class="Legend">
+                  <span class="LegendItem"><i class="Key Key--dot"></i>Capacity</span>
+                  <span class="LegendItem"><i class="Key"></i>Scheduled Booking Hours</span>
+                  <span class="LegendItem"><i class="Key Key--primary"></i>Unscheduled Booking Hours</span>
+                  <span class="LegendItem"><i class="Key Key--recessive"></i>Unavailability Hours</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="Section">
+          <div class="TitleWithInfo"><h2>Revenue Over Time</h2><button class="Info" title="About this chart"><i class="fa-solid fa-circle-question"></i></button></div>
+          <div class="Card ChartCard">
+            <div class="CardBody">
+              <div class="Toolbar chart-toolbar"></div>
+              <div class="Chart" data-chart="revenue">
+                <div class="AxisTitle"><span>Hours</span></div>
+                <div><div class="Plot"></div><div class="MonthLabels"></div></div>
+              </div>
+              <div class="Legend">
+                <span class="LegendItem"><i class="Key Key--primary"></i>Net revenue</span>
+                <span class="LegendItem"><i class="Key"></i>Gross revenue</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="Split">
+          <section class="Section">
+            <h2>Your Schedule</h2>
+            <div class="Card TallCard">
+              <div class="CardBody">
+                <div class="Toolbar ScheduleTools">
+                  <div class="ToolbarGroup">
+                    <button class="Btn Btn--step" data-shift="-1" title="Previous weeks"><i class="fa-solid fa-angle-left"></i></button>
+                    <button class="Btn" id="weekLabel"><i class="fa-regular fa-calendar-days"></i>Week 31 to 33</button>
+                    <button class="Btn Btn--step" data-shift="1" title="Next weeks"><i class="fa-solid fa-angle-right"></i></button>
+                  </div>
+                  <button class="Btn action"><i class="fa-solid fa-calendar-arrow-up"></i>Open Personal Gantt</button>
+                </div>
+                <div class="ScheduleScroll" id="schedule"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="Section">
+            <h2>Your Utilisation</h2>
+            <div class="Card TallCard">
+              <div class="CardBody UtilBody">
+                <p class="UtilIntro">Your utilisation is your scheduled booking hours expressed as a percentage of your total work hour capacity. Note that this does not account for unavailabilities.</p>
+                <div class="Gauge">
+                  <svg viewBox="0 0 300 166" aria-hidden="true">
+                    <path class="GaugeTrack" d="M20 150 A130 130 0 0 1 280 150"/>
+                    <path class="GaugeValue" d="M20 150 A130 130 0 0 1 280 150"/>
+                  </svg>
+                  <div class="GaugePercent">34%</div>
+                </div>
+                <div class="GaugeScale"><span>0</span><span>100</span></div>
+                <button class="Select Select--full"><span>[Dropdown text]</span><i class="fa-solid fa-caret-down"></i></button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="Split Split--equal">
+          <section class="Section">
+            <h2>Saved Gantt Views</h2>
+            <div class="Card ListCard">
+              <div class="CardBody">
+                <div class="Toolbar">
+                  <button class="Select Select--sort">A-Z<i class="fa-solid fa-caret-down"></i></button>
+                  <button class="Btn action"><i class="fa-solid fa-calendar-arrow-up"></i>Open Gantt</button>
+                </div>
+                <div class="ListWrap"><div class="List" id="ganttViews"></div><div class="ListFade"></div></div>
+              </div>
+            </div>
+          </section>
+          <section class="Section">
+            <h2>Pinned Reports</h2>
+            <div class="Card ListCard">
+              <div class="CardBody">
+                <div class="Toolbar">
+                  <button class="Select Select--sort">A-Z<i class="fa-solid fa-caret-down"></i></button>
+                  <button class="Btn action"><i class="fa-regular fa-file-lines"></i>Create new report</button>
+                </div>
+                <div class="ListWrap"><div class="List" id="reports"></div><div class="ListFade"></div></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="Section">
+          <h2>Your Claimed Engagements</h2>
+          <div class="Card TableCard">
+            <div class="CardBody">
+              <div class="Toolbar" style="height:63px;align-items:flex-end">
+                <div class="Field">
+                  <label for="engagementFilter">Filter by Engagement Name</label>
+                  <div class="InputGroup">
+                    <input id="engagementFilter" type="text" placeholder="Filter...">
+                    <button class="InputClear" id="clearFilter" title="Clear filter"><i class="fa-solid fa-xmark"></i></button>
+                  </div>
+                </div>
+                <div class="ToolbarGroup" style="gap:16px">
+                  <button class="Btn action"><i class="fa-solid fa-calendar-arrow-up"></i>View all in Gantt</button>
+                  <button class="Btn action"><i class="fa-solid fa-play"></i>Start Advise</button>
+                </div>
+              </div>
+              <div class="TableScroll">
+                <table>
+                  <thead><tr>
+                    <th style="width:135px"><i class="fa-solid fa-sort"></i> Engagement code</th>
+                    <th><i class="fa-solid fa-sort"></i> Client</th>
+                    <th><i class="fa-solid fa-sort"></i> Engagement<br>business unit</th>
+                    <th><i class="fa-solid fa-sort"></i> Engagement<br>location</th>
+                    <th><i class="fa-solid fa-sort"></i> Engagement<br>partner</th>
+                    <th><i class="fa-solid fa-sort"></i> Engagement<br>manager</th>
+                    <th><i class="fa-solid fa-sort"></i> Period end date</th>
+                  </tr></thead>
+                  <tbody id="engagementRows"></tbody>
+                </table>
+              </div>
+              <div class="TableFooter">
+                <span id="showingCount">Showing 1-5 of 34</span>
+                <div class="Pagination">
+                  <button class="Btn Btn--page" data-page="previous">&lt;</button>
+                  <button class="Btn Btn--page is-active" data-page="1">1</button>
+                  <button class="Btn Btn--page" data-page="2">2</button>
+                  <button class="Btn Btn--page" data-page="next">&gt;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="Toast" id="toast" role="status"></div>
+
+  <script>
+    const months = ["Jan 25","Feb 25","Mar 25","Apr 25","May 25","Jun 25","Jul 25","Aug 25","Sep 25","Oct 25","Nov 25","Dec 25"];
+
+    function toolbar() {
+      return `
+        <button class="Select Select--views"><span><i class="fa-regular fa-folder"></i>&nbsp; Saved Views</span><i class="fa-solid fa-caret-down"></i></button>
+        <div class="ToolbarGroup ToolbarGroup--wide">
+          <div class="ToolbarGroup">
+            <button class="Select Select--period"><span>Monthly</span><i class="fa-solid fa-caret-down"></i></button>
+            <button class="Btn Btn--step period-shift" data-shift="-1"><i class="fa-solid fa-angle-left"></i></button>
+            <button class="Btn Btn--step period-shift" data-shift="1"><i class="fa-solid fa-angle-right"></i></button>
+          </div>
+          <button class="Btn filter-button"><i class="fa-solid fa-filter"></i>Filters</button>
+        </div>`;
+    }
+    document.querySelectorAll(".chart-toolbar").forEach(node => node.innerHTML = toolbar());
+
+    function grid(plot, values, max) {
+      values.forEach((value, index) => {
+        const line = document.createElement("div");
+        line.className = "GridLine";
+        line.style.top = `${index * (280 / (values.length - 1))}px`;
+        line.innerHTML = `<span class="GridLabel">${value}</span>`;
+        plot.appendChild(line);
+      });
+    }
+
+    function labels(chart) {
+      chart.querySelector(".MonthLabels").innerHTML = months.map(month => `<span>${month}</span>`).join("");
+    }
+
+    function capacityChart(chart) {
+      const plot = chart.querySelector(".Plot");
+      grid(plot, ["1,800","1,600","1,400","1,200","1,000","800","600","400","200","0"], 1800);
+      const totals = [143,129,143,169,190,169,143,173,143,173,143,143];
+      const unavailable = [14,9,14,14,14,14,14,14,14,14,14,14];
+      const columns = document.createElement("div");
+      columns.className = "Columns";
+      totals.forEach((total, i) => {
+        const remaining = total - unavailable[i];
+        const scheduled = i === 7 ? 56 : remaining / 2;
+        const unscheduled = remaining - scheduled;
+        columns.innerHTML += `<div class="Column"><div class="Stack">
+          <i class="Segment--unavailable" style="height:${unavailable[i]}px"></i>
+          <i class="Segment--unscheduled" style="height:${unscheduled}px"></i>
+          <i class="Segment--scheduled" style="height:${scheduled}px"></i>
+        </div></div>`;
+      });
+      plot.appendChild(columns);
+      const capacity = [1600,1470,1570,1550,1660,1600,1660,1490,1470,1660,1570,1420];
+      const points = capacity.map((value, i) => {
+        const x = 50 + (i * 100);
+        const y = 280 - (value / 1800 * 280);
+        return [x, y];
+      });
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("class", "CapacitySvg");
+      svg.setAttribute("viewBox", "0 0 1200 280");
+      svg.setAttribute("preserveAspectRatio", "none");
+      const path = document.createElementNS(svg.namespaceURI, "path");
+      path.setAttribute("d", points.map((p, i) => `${i ? "L" : "M"}${p[0]} ${p[1]}`).join(" "));
+      svg.appendChild(path);
+      points.forEach(([x,y]) => {
+        const c = document.createElementNS(svg.namespaceURI, "circle");
+        c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", 5);
+        svg.appendChild(c);
+      });
+      plot.appendChild(svg);
+      labels(chart);
+    }
+
+    function revenueChart(chart) {
+      const plot = chart.querySelector(".Plot");
+      grid(plot, ["20,000,000","18,000,000","16,000,000","14,000,000","12,000,000","10,000,000","8,000,000","6,000,000","4,000,000","2,000,000","0"], 20000000);
+      const net = [11500000,11500000,10600000,11600000,4800000,11500000,4800000,4800000,11500000,11500000,11500000,11500000];
+      const gross = [19100000,19100000,4600000,4600000,7800000,19100000,7800000,7800000,19100000,19100000,19100000,19100000];
+      const columns = document.createElement("div");
+      columns.className = "Columns RevenueColumns";
+      net.forEach((value, i) => {
+        columns.innerHTML += `<div class="BarPair">
+          <i class="RevenueBar Segment--unscheduled" style="height:${value / 20000000 * 280}px"></i>
+          <i class="RevenueBar Segment--scheduled" style="height:${gross[i] / 20000000 * 280}px"></i>
+        </div>`;
+      });
+      plot.appendChild(columns);
+      labels(chart);
+    }
+    capacityChart(document.querySelector('[data-chart="capacity"]'));
+    revenueChart(document.querySelector('[data-chart="revenue"]'));
+
+    const dayLetters = ["M","T","W","T","F","S","S"];
+    const dayNames = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    const days = (states = []) => dayLetters.map((letter, i) =>
+      `<span class="Day" title="${dayNames[i]}"><span>${letter}</span><i class="DayBox ${states[i] || ""}"></i></span>`).join("");
+    const metaDot = `<svg class="BookingMetaDot" preserveAspectRatio="none" overflow="visible" width="4" height="4" viewBox="0 0 4 4" fill="none" aria-hidden="true"><circle cx="2" cy="2" r="2" fill="var(--separator-dot)"/></svg>`;
+    const entityIcon = `<svg class="BookingIconSvg" preserveAspectRatio="none" overflow="visible" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M0 14C0 6.26801 6.26801 0 14 0C21.732 0 28 6.26801 28 14C28 21.732 21.732 28 14 28C6.26801 28 0 21.732 0 14Z" fill="var(--surface-data-secondary)"/><path d="M18.625 19.25V12.25H15.5625C14.8379 12.25 14.25 11.6621 14.25 10.9375V7.875H10.75C10.266 7.875 9.875 8.26602 9.875 8.75V19.25C9.875 19.734 10.266 20.125 10.75 20.125H17.75C18.234 20.125 18.625 19.734 18.625 19.25ZM18.6113 11.375C18.5922 11.2984 18.5539 11.2273 18.4965 11.1727L15.3273 8.00352C15.2699 7.94609 15.2016 7.90781 15.125 7.88867V10.9375C15.125 11.1781 15.3219 11.375 15.5625 11.375H18.6113ZM9 8.75C9 7.78477 9.78477 7 10.75 7H15.0184C15.3656 7 15.6992 7.13945 15.9453 7.38555L19.1145 10.552C19.3605 10.798 19.5 11.1316 19.5 11.4789V19.25C19.5 20.2152 18.7152 21 17.75 21H10.75C9.78477 21 9 20.2152 9 19.25V8.75Z" fill="var(--text-inverse)"/></svg>`;
+    const metaItem = (label, withDot) => `<span class="BookingMetaItem">${withDot ? metaDot : ""}<span>${label}</span></span>`;
+    const timeParts = (totalMinutes) => {
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      return { hours: `${hours}h`, minutes: `${minutes}m`, label: `${hours}h ${minutes}m` };
+    };
+    const duration = (totalMinutes) => {
+      const time = timeParts(totalMinutes);
+      return `<span class="TaskDuration"><span>${time.hours}</span><span>${time.minutes}</span></span>`;
+    };
+    const task = (type, states = []) => {
+      const minutes = type === "booking" ? 90 : 0;
+      const booking = type === "booking"
+        ? `${entityIcon}<div class="BookingText"><strong>CON4004</strong><span>IFRS Conversion for Pacifica Textiles</span></div>`
+        : type === "away"
+          ? `<div class="BookingIcon BookingIcon--unavailable"><i class="fa-regular fa-calendar-xmark"></i></div><div class="BookingText"><strong class="plain">Unavailability</strong><span>Unavailability type</span></div>`
+          : `<div class="BookingText"><span>Nothing scheduled</span></div>`;
+      const details = type === "booking"
+        ? `<div class="TaskDetails"><div class="BookingMeta"><div class="BookingMetaLine">${["Crestwood Retail Holdings","Advisory","External Audit","Manchester"].map((label, i) => metaItem(label, i > 0)).join("")}</div></div><div class="AvatarStack" aria-label="Assigned people"><span class="Avatar" title="SB"><span>SB</span></span><span class="Avatar" title="LU"><span>LU</span></span><span class="Avatar" title="RL"><span>RL</span></span></div></div>`
+        : "";
+      const html = `<div class="Task${type === "booking" ? " Task--job" : ""}"><div class="TaskRow"><div class="Booking">${booking}</div><div class="Days" aria-label="Days of the week">${days(states)}</div>${duration(minutes)}</div>${details}</div>`;
+      return { html, minutes };
+    };
+    const week = (number, tasks) => {
+      const total = tasks.reduce((sum, item) => sum + item.minutes, 0);
+      return `<div class="Week">
+      <div class="WeekHeader"><div class="WeekTitle"><strong>${number}</strong><span>Mon 11 Jan 2021 to Sun 31 Jan 2021</span></div><span class="Duration">${timeParts(total).label}</span></div>
+      ${tasks.map(item => item.html).join("")}</div>`;
+    };
+    document.getElementById("schedule").innerHTML =
+      week("Week 31 (this week)", [task("booking",["","","is-booked","is-booked"]), task("nothing"), task("away",["","","","is-away","is-away"])]) +
+      week("Week 32", [task("booking",["is-booked","is-booked"]), task("booking",["","","is-booked","is-booked"]), task("nothing"), task("away")]);
+
+    const ganttItems = ["London - Consultancy - Manager","Edinburgh - Consultancy - A1","London - Audit - A3","London - Consultancy - Manager","Edinburgh - Audit - A1"];
+    const reportItems = ["Assistant Manager - London - Utilization","London - Audit - Eng Code","London - Audit - A3","Edinburgh - Consultancy - Engagement Code","Edinburgh - Audit - A1"];
+    function renderList(id, items, icon) {
+      document.getElementById(id).innerHTML = items.map((item, i) =>
+        `<a class="ListItem ${i === 3 ? "is-selected" : ""}" href="#"><i class="${icon}"></i><span>${item}</span></a>`).join("");
+    }
+    renderList("ganttViews", ganttItems, "fa-regular fa-calendar-days");
+    renderList("reports", reportItems, "fa-regular fa-file-lines");
+
+    const rows = [
+      ["Ang-1159","Campos","Actuarial Services","Edinburgh","Anthony Vance","Edinburgh","-"],
+      ["Ang-368","Calhoun","Actuarial Services","Kuala Lumpur","Theresa Springer","Kuala Lumpur","-"],
+      ["Ang-900","Flores","Actuarial Services","Berlin","Anthony Vance","Berlin","-"],
+      ["Ant-2158","Rangel","Actuarial Services","Buenos Aires","Jacob Underwood","Buenos Aires","-"],
+      ["Aqu-3399","Frazier","Actuarial Services","New York","Kevin Sharp","New York","-"]
+    ];
+    function renderRows(filter = "") {
+      const visible = rows.filter(row => row.join(" ").toLowerCase().includes(filter.toLowerCase()));
+      document.getElementById("engagementRows").innerHTML = visible.map(row =>
+        `<tr>${row.map((cell, i) => `<td>${i === 0 ? `<a href="#">${cell}</a>` : cell}</td>`).join("")}</tr>`).join("");
+      document.getElementById("showingCount").textContent = filter ? `Showing ${visible.length} matching engagements` : "Showing 1-5 of 34";
+    }
+    renderRows();
+    const filter = document.getElementById("engagementFilter");
+    filter.addEventListener("input", () => renderRows(filter.value));
+    document.getElementById("clearFilter").addEventListener("click", () => { filter.value = ""; renderRows(); filter.focus(); });
+
+    let weekStart = 31;
+    document.querySelectorAll("[data-shift]").forEach(button => button.addEventListener("click", () => {
+      if (button.closest(".ScheduleTools")) {
+        weekStart += Number(button.dataset.shift);
+        document.getElementById("weekLabel").innerHTML = `<i class="fa-regular fa-calendar-days"></i>Week ${weekStart} to ${weekStart + 2}`;
+      }
+    }));
+    document.querySelectorAll(".Pagination .Btn").forEach(button => button.addEventListener("click", () => {
+      const current = document.querySelector(".Pagination .is-active");
+      let page = Number(current.dataset.page);
+      if (button.dataset.page === "previous") page = Math.max(1, page - 1);
+      else if (button.dataset.page === "next") page = Math.min(2, page + 1);
+      else page = Number(button.dataset.page);
+      document.querySelectorAll(".Pagination [data-page='1'], .Pagination [data-page='2']").forEach(item => item.classList.toggle("is-active", Number(item.dataset.page) === page));
+      document.getElementById("showingCount").textContent = page === 1 ? "Showing 1-5 of 34" : "Showing 6-10 of 34";
+    }));
+
+    const toast = document.getElementById("toast");
+    function showToast(message) {
+      toast.textContent = message; toast.classList.add("is-visible");
+      clearTimeout(showToast.timer); showToast.timer = setTimeout(() => toast.classList.remove("is-visible"), 1800);
+    }
+    document.querySelectorAll(".action").forEach(button => button.addEventListener("click", () => showToast(`${button.textContent.trim()} selected`)));
+    document.querySelectorAll(".filter-button").forEach(button => button.addEventListener("click", () => showToast("Filters selected")));
+    document.querySelectorAll('a[href="#"]').forEach(link => link.addEventListener("click", event => event.preventDefault()));
+  </script>
+</body>
+</html>

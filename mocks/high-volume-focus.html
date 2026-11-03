@@ -346,6 +346,14 @@ ul.clean li { margin: 0 0 6px; }
   border-top: 1px solid var(--border-subtle);
 }
 .q p { margin: 4px 0 0; }
+.q .q-note {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: var(--surface-subtle-light);
+  border-left: 3px solid var(--border-subtle);
+  color: var(--text-accent);
+}
+.q.is-answered > p:first-of-type { color: var(--text-accent); }
 .concept-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .note {
   background: var(--surface-warning);
@@ -576,6 +584,18 @@ ul.clean li { margin: 0 0 6px; }
   border: 1px solid var(--border-subtle);
   border-radius: var(--border-radius-default);
 }
+.prototype-frame {
+  margin-top: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-default);
+  overflow: hidden;
+  background: var(--surface-default);
+}
+.gantt-mount {
+  height: 680px;
+  background: #fff;
+  color: var(--text-accent);
+}
 @media (max-width: 980px) {
   .app-shell { grid-template-columns: 1fr; }
   .app-nav {
@@ -653,32 +673,45 @@ ul.clean li { margin: 0 0 6px; }
       <article class="panel">
         <h3>Do these before the first meeting</h3>
         <div class="focus-list">
-          <div class="focus-row"><span class="step-num">1</span><div><strong>Phase order</strong><p>One sequence people can reorder. Overlap is allowed. Going past the next phase is flagged.</p></div><button type="button" class="Btn" data-go-view="concepts" data-open-concept="sequence">Try it</button></div>
-          <div class="focus-row"><span class="step-num">2</span><div><strong>Mark done</strong><p>Ask about the whole phase only when another booking exists. A long booking gets shorter.</p></div><button type="button" class="Btn" data-go-view="concepts" data-open-concept="done">Try it</button></div>
+          <div class="focus-row"><span class="step-num">1</span><div><strong>Phase order</strong><p>The links are already decided. A phase can come after one or more phases. The open part is the first screen: a picker on every row, or a simple list people drag.</p></div><button type="button" class="Btn" data-go-view="concepts" data-open-concept="sequence">Try it</button></div>
+          <div class="focus-row"><span class="step-num">2</span><div><strong>Mark done</strong><p>Done this week and Phase Complete are built. Nobody is asked unless they have a later booking. One long booking is still open.</p></div><button type="button" class="Btn" data-go-view="concepts" data-open-concept="done">Try it</button></div>
           <div class="focus-row"><span class="step-num">3</span><div><strong>Work that runs past this week</strong><p>Show the booking in every week it covers, with a way to tuck the long ones away.</p></div><button type="button" class="Btn" data-go-view="concepts" data-open-concept="span">Try it</button></div>
-          <div class="focus-row"><span class="step-num">4</span><div><strong>Ready does not mean the column</strong><p>If review can overlap prep, the card cannot say review is not allowed to start.</p></div><button type="button" class="Btn" data-go-view="decisions" data-open-decision="readiness">Open it</button></div>
-          <div class="focus-row"><span class="step-num">5</span><div><strong>Someone else’s next phase</strong><p>Unassigned work follows. Assigned work is either flagged or moved, and the person is told.</p></div><button type="button" class="Btn" data-go-view="concepts" data-open-concept="shunt">Try it</button></div>
+          <div class="focus-row"><span class="step-num">4</span><div><strong>Ready does not mean the column</strong><p>The Ready pill is built. It warns and never stops anyone. The words still have to make sense when review overlaps prep.</p></div><button type="button" class="Btn" data-go-view="decisions" data-open-decision="readiness">Open it</button></div>
+          <div class="focus-row"><span class="step-num">5</span><div><strong>Someone else’s next phase</strong><p>Today the next phase never moves. Should unassigned work follow? Should assigned work be flagged or moved?</p></div><button type="button" class="Btn" data-go-view="concepts" data-open-concept="shunt">Try it</button></div>
         </div>
         <p class="muted">Pools and templates need a customer conversation before we draw a screen. They are on the third meeting, not this week’s build.</p>
       </article>
     </div>
+    <article class="panel" style="margin-top:12px">
+      <span class="tag is-info">Checked on 7 October</span>
+      <h3>What the Tax team’s docs already decided</h3>
+      <p>We read the docs in the Tax app folder of the Dayshape repo. A few things this board treated as open were settled weeks ago. Here they are.</p>
+      <ul class="clean">
+        <li><strong>Phase order is a set of links.</strong> Each phase can come after one or more phases. No links means no order. Booking dates never invent one. Agreed on 15 September in ADR 0022.</li>
+        <li><strong>The links live on the engagement.</strong> You set them in a Configure window on the Details tab, and they save with the engagement. They store no overlap rule. They never move a booking.</li>
+        <li><strong>Ready comes from two things.</strong> A yes or no field on the engagement called Work released opens the first phases. A later phase is ready when every phase before it is done. The pill is built and only warns.</li>
+        <li><strong>Phase Complete is built.</strong> It deletes your own later bookings on that phase and nobody else’s. You cannot undo it.</li>
+        <li><strong>Pooled work in 26.6 is gated by the Pool Worker trait.</strong> Take one pooled booking and you take every open booking for that phase and requirement, in every week.</li>
+      </ul>
+    </article>
   </section>
 
   <section id="line">
     <div class="view-header"><div><p class="kicker">6 November 2026</p><h1>What this release includes</h1><p class="lede">Two things leave in November. Portfolio views go to customers. The practitioner board goes to a lower environment so people can try it. The totals on the Gantt wait.</p></div><button type="button" class="Btn Btn--secondary" data-go-view="decisions">See when we decide</button></div>
-    <p class="muted">From the 30 Sep session. 26.6 ships on 6 November 2026. Portfolio scope is meant to lock at the end of the current sprint. Kanban’s next sprint inside this release is tidy-up and exploratory testing, not a new concept.</p>
+    <p class="muted">From the 30 Sep session. 26.6 ships on 6 November 2026. Portfolio scope is meant to lock at the end of the current sprint. Kanban’s next sprint inside this release is tidying up and exploratory testing, not a new concept.</p>
     <div class="grid-3">
       <article class="panel">
         <span class="tag is-ok">Ships 6 Nov</span>
         <h3>Portfolio views</h3>
         <p>In the release. The full feature list is not locked until the end of this sprint. The descope candidate, if the sprint will not land everything, is jumping from the portfolio Gantt into an engagement view. Team, Performance, and managing the portfolio are the parts the room wants nailed.</p>
-        <p class="muted">Gantt aggregation does not start in 26.6. Tickets are refined. There is no capacity. Whether 27.1 can start it depends on how long portfolio mop-up is allowed to run. A new graduate joins mid-October and does not unlock this release.</p>
+        <p class="muted">Gantt aggregation does not start in 26.6. Tickets are refined. There is no capacity. Whether 27.1 can start it depends on how long portfolio mop up is allowed to run. A new graduate joins in the middle of October and does not unlock this release.</p>
       </article>
       <article class="panel">
         <span class="tag is-warn">Lower environments</span>
         <h3>Practitioner Kanban</h3>
         <p>A board will exist for 26.6. It is not a production launch. Known limits are acceptable if they are named. SignalR from Gantt back to Kanban, and Kanban to Kanban, can be one of those limits. The bar Boney set is a stable object model, not a finished feature list.</p>
-        <p class="muted">Play it internally as well as with customers. Azets / Blake is the only formal hand-up so far, and their tax data may not be rich enough. A demo environment is a separate decision with the people who demo, and only if the slice represents the story.</p>
+        <p>The docs already name some limits. The unblock date never brings work back by itself. A reviewer sending work back does not survive a reload. Moving the rest of a person’s bookings when one is put on hold is designed, not built. Live updates are designed too, but the board does not connect to SignalR yet.</p>
+        <p class="muted">Play it internally as well as with customers. Azets / Blake is the only customer to put a hand up so far, and their tax data may not be rich enough. A demo environment is a separate decision with the people who demo, and only if the slice represents the story.</p>
       </article>
       <article class="panel">
         <span class="tag is-risk">Not this release</span>
@@ -693,25 +726,27 @@ ul.clean li { margin: 0 0 6px; }
         <ul class="clean">
           <li>A card is a booking. The board is a week.</li>
           <li>Start, complete, defer to next week, and on hold are the moves.</li>
-          <li>Defer moves the booking. On hold is different: when it unblocks, what was actually done, and the remainder is split.</li>
+          <li>Defer moves this week’s booking forward exactly one week. It asks nothing and records nothing. It only warns if the new week breaks the deadline.</li>
+          <li>On hold is different. It asks why, when the work unblocks, and how much is done. The rest goes into a new booking in the unblock week.</li>
           <li>A different actual effort updates that booking. Capacity for this week is the point of doing it immediately.</li>
-          <li>Whole-phase complete removes future bookings on that phase. One booking does not ask the question.</li>
-          <li>Overlap between phases is allowed. Overtake is signalled. Nothing is hard-blocked in this cut, so customers can tell us if they wanted the stop.</li>
-          <li>Readiness is not the column name. A job-level yes/no feeds the first phase. Later phases follow the sequence. That rule is the known weak spot.</li>
-          <li>Not every practitioner sees every unassigned booking. For 26.6 that gate is a pool-eligible marker. It is a short-term mechanism, and Boney does not want it to become the real model.</li>
+          <li>Phase Complete deletes your own later bookings on that phase. Other people’s stay. If you have no later bookings, nobody asks.</li>
+          <li>Phase order is a set of links on the engagement. A phase can come after one or more phases. No links means no order.</li>
+          <li>Overlap between phases is allowed. The links do not stop it. Overtake should be a signal, not a block, so customers can tell us if they want the stop.</li>
+          <li>Readiness is not the column. Work released, a yes or no field on the engagement, opens the first phases. A later phase is ready when every phase before it is done. The weak spot: review says Not ready while it overlaps prep.</li>
+          <li>Not every practitioner sees every unassigned booking. For 26.6 only people with the Pool Worker trait do. It is a stopgap, and Boney does not want it to become the real model. The docs say the same.</li>
         </ul>
       </article>
       <article class="panel">
         <h3>Still open</h3>
         <ul class="clean">
           <li>Workflow as the thing that moves Kanban status. The boolean is the fallback. Workflow can sit on top later. Calum still needs a session, with real use cases, before that is designed.</li>
-          <li>What a pool is. US pool work and UK mixed pool-and-advisory are different. Prep can be pooled when sign-off is not. “The pool” is the wrong noun.</li>
+          <li>What a pool is. US pool work is different from UK work that mixes pool and advisory. Prep can be pooled when sign off is not. “The pool” is the wrong noun.</li>
           <li>Automatic allocation, a utilisation buffer under a full week, and advise filling people to the ceiling.</li>
           <li>A practitioner move that also moves a colleague’s diary.</li>
-          <li>Kanban moves that raise suggestions. For this work the room wants practitioner-led changes. Other service lines may want the opposite.</li>
+          <li>Kanban moves that raise suggestions. For this work the room wants practitioners to make the change. Other service lines may want the opposite.</li>
           <li>A stored completion date on the phase. Derive it from the last booking.</li>
           <li>One Gantt row per booking, or a new hours setting.</li>
-          <li>Putting phase dates in Details as the long-term home. Near term they can live in Timeframe. The Gantt is where dates want to be seen.</li>
+          <li>Where phase dates live. Phase order already sits on the Details tab. For now the dates can live in Timeframe. The Gantt is where people want to see them.</li>
         </ul>
       </article>
     </div>
@@ -730,13 +765,13 @@ ul.clean li { margin: 0 0 6px; }
     </div>
 
     <article class="panel" id="concept-done">
-      <span class="tag is-now">Design can prototype</span>
+      <span class="tag is-ok">Mostly built</span>
       <h3>Mark done</h3>
-      <p>Boney: if there is only one booking, do not ask whether the phase is finished. A long booking is shortened at the end, not deleted as if later bookings existed. Steven, 2 Oct: the hours already on the booking are the starting value.</p>
+      <p>Most of this already works. If you have another booking later on the same phase, the board asks you one thing: Done this week, or Phase Complete? Phase Complete deletes your later bookings on that phase. You cannot undo it. Other people’s bookings stay put. With only one booking, nobody asks. The open part is one long booking. Boney says shorten it at the end, do not delete it. Steven, 2 Oct: the hours already on the booking are where the field starts.</p>
       <div class="row-actions">
         <div class="BtnGroup" role="group" aria-label="Booking shape">
           <button type="button" data-shape="single" aria-pressed="true">One booking this week</button>
-          <button type="button" data-shape="multi" aria-pressed="false">Two bookings, same phase</button>
+          <button type="button" data-shape="multi" aria-pressed="false">Another booking next week</button>
           <button type="button" data-shape="long" aria-pressed="false">One booking across four weeks</button>
         </div>
       </div>
@@ -745,20 +780,20 @@ ul.clean li { margin: 0 0 6px; }
           <input id="actual-hours" type="number" min="0" step="0.5" value="5" />
         </label>
         <div class="BtnGroup" id="phase-choice" role="group" aria-label="What was completed" hidden>
-          <button type="button" data-scope="booking" aria-pressed="true">This booking</button>
-          <button type="button" data-scope="phase" aria-pressed="false">Whole phase</button>
+          <button type="button" data-scope="booking" aria-pressed="true">Done this week</button>
+          <button type="button" data-scope="phase" aria-pressed="false">Phase Complete</button>
         </div>
         <button type="button" class="Btn Btn--primary" id="mark-done">Mark done</button>
         <button type="button" class="Btn" id="reset-done">Reset</button>
       </div>
       <div id="done-board"></div>
-      <div class="result" id="done-result"><strong>Not marked yet.</strong> The question about the phase stays hidden until there are two bookings.</div>
+      <div class="result" id="done-result"><strong>Not marked yet.</strong> The question about the phase stays hidden until you have another booking later on this phase.</div>
     </article>
 
     <article class="panel" id="concept-span" hidden>
       <span class="tag is-now">Room agreed the direction</span>
       <h3>A booking that spans more than one week</h3>
-      <p>Today the Kanban shows that card only in the week it ends, so a four-week booking sits in one column and then vanishes from the weeks you are actually in. The room agreed it should appear in every week it covers, with a quieter group for work that runs past this week so the column does not fill with the same card.</p>
+      <p>Today the Kanban shows that card only in the week it ends. So a booking that runs four weeks sits in one column, and it is missing from the weeks you are actually working in. The room agreed it should appear in every week it covers. A quieter group holds work that runs past this week, so the column does not fill with the same card. The docs still list this as open, so it needs writing down.</p>
       <div class="row-actions">
         <div class="BtnGroup" role="group" aria-label="How a long booking is shown">
           <button type="button" data-span="end" aria-pressed="true">Only the week it ends</button>
@@ -773,7 +808,8 @@ ul.clean li { margin: 0 0 6px; }
     <article class="panel" id="concept-sequence" hidden>
       <span class="tag is-now">Agreed: warn, do not stop</span>
       <h3>Overlap is allowed. Overtake is flagged.</h3>
-      <p>Steven replayed this as the working model: phases may overlap, and the product tells you that. If prep runs past the end of review, Boney wants that called out as a serious problem. Steve Mayo’s cut for 26.6 is a signal, not a block, until customers ask for the stop. A simple numbered list cannot express parallel phases. Boney’s first UI is a draggable order, with parallel only if a real case shows up. The predecessor multi-select can stay in the data model and out of the first screen.</p>
+      <p>Steven played back the working model. Phases may overlap, and the product tells you. If prep runs past the end of review, Boney wants that called out as a serious problem. For 26.6 Steve Mayo wants a signal, not a block, until customers ask for the stop.</p>
+      <p>The links between phases are already decided. Each phase can come after one or more phases, so phases can run side by side. The planned editor gives every phase row a picker for the phases it comes after. Boney wants something simpler on the first screen: a list people drag. Either way the links hold no overlap rule and never move a booking. So overlap and overtake are still their own decision.</p>
       <div class="row-actions">
         <button type="button" class="Btn Btn--primary" id="push-prep">Push prep one week</button>
         <button type="button" class="Btn" id="reset-seq">Reset</button>
@@ -786,7 +822,8 @@ ul.clean li { margin: 0 0 6px; }
     <article class="panel" id="concept-hold" hidden>
       <span class="tag is-now">Two different moves</span>
       <h3>Defer is not on hold</h3>
-      <p>Defer is the quick kick to next week. Customers asked for that as its own action. On hold means the work is blocked: when you expect it to unblock, and how much of this week you already did. The remainder is what moves. The deadline consequence still needs a design; the session’s demo of the split also regressed on one future booking.</p>
+      <p>Defer is the quick kick to next week. Customers asked for it as its own action. It moves this week’s booking forward exactly seven days. It asks nothing and records nothing. If the new week breaks the deadline, it warns you first. Later bookings stay where they are.</p>
+      <p>On hold means the work is blocked. It asks why, when you expect it to unblock, and how much you already did. The rest goes into a new booking in the unblock week. The window already shows how late each later phase could be, with a red badge. It does not say who that delay lands on. In the session demo the split also failed once on a booking that was already in the future.</p>
       <div class="row-actions">
         <button type="button" class="Btn Btn--primary" id="do-defer">Defer Project Alpha</button>
         <label class="field">Hours already done
@@ -802,7 +839,8 @@ ul.clean li { margin: 0 0 6px; }
     <article class="panel" id="concept-shunt" hidden>
       <span class="tag is-warn">Not agreed</span>
       <h3>What happens to the next phase</h3>
-      <p>If review is still unassigned, Steven expects it to follow prep so it is not left in a week nobody will pick up. If Happy is already booked to review, moving her week because Jose slipped feels intrusive, and leaving her in the past is also wrong. Boney’s answer was that it depends, and that a portfolio could be configured from “do not move” through to “move and reassign”. The prototype should show the flag and the move. It should not pretend one of them won.</p>
+      <p>Today nothing moves. Phase links never move a booking, and the on hold window only shows the delay. If review is still unassigned, Steven expects it to follow prep, so it is not left in a week nobody will pick up. In August the team leaned the same way: only move follow on work that nobody has yet.</p>
+      <p>If Happy is already booked to review, moving her week because Jose slipped feels intrusive. Leaving her in the past is wrong too. Boney said it depends, and a portfolio could be set anywhere from “do not move” to “move and reassign”. This prototype shows the flag and the move. It does not pretend one of them won.</p>
       <div class="row-actions">
         <div class="BtnGroup" role="group" aria-label="Who has the review">
           <button type="button" data-reviewer="pool" aria-pressed="true">Review is unassigned</button>
@@ -820,63 +858,22 @@ ul.clean li { margin: 0 0 6px; }
     </article>
 
     <article class="panel" id="concept-hours" hidden>
-      <span class="tag is-ok">Steven, 2 Oct — specify this</span>
+      <span class="tag is-ok">Steven, 2 Oct. Specify this</span>
       <h3>Total hours on each breakdown row</h3>
-      <p>Same setting the Gantt already has. With breakdown on, Ashlyn is named once. Prep and review each carry their own total. The hours repeat. The name does not. Per-bucket roll-up of what sits inside the bar stays in the tooltip. This is the aggregation slice that can be written up for Steve Mayo without waiting for the aggregation build to start.</p>
+      <p>This is the Gantt resource breakdown prototype. A person is named once. Each breakdown row keeps its own total. The totals use the hours setting the Gantt already has.</p>
       <div class="row-actions">
-        <div class="BtnGroup" role="group" aria-label="Total hours column">
-          <button type="button" data-hours="on" aria-pressed="true">Total hours on</button>
-          <button type="button" data-hours="off" aria-pressed="false">Total hours off</button>
-        </div>
+        <a class="Btn Btn--secondary" href="gantt-resource-breakdown.html" target="_blank" rel="noopener">Open the Gantt</a>
       </div>
-      <table class="gantt" id="hours-table">
-        <thead>
-          <tr>
-            <th>Resource</th>
-            <th>5 Oct</th>
-            <th class="num hours-col">Total hours</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Ashlyn Cole</td>
-            <td>Prep and review</td>
-            <td class="num hours-col">80</td>
-          </tr>
-          <tr class="is-child">
-            <td>Prep</td>
-            <td>40h scheduled</td>
-            <td class="num hours-col">40</td>
-          </tr>
-          <tr class="is-child">
-            <td>Review</td>
-            <td>40h scheduled</td>
-            <td class="num hours-col">40</td>
-          </tr>
-          <tr>
-            <td>Jack McLean</td>
-            <td>Prep and review</td>
-            <td class="num hours-col">80</td>
-          </tr>
-          <tr class="is-child">
-            <td>Prep</td>
-            <td>40h scheduled</td>
-            <td class="num hours-col">40</td>
-          </tr>
-          <tr class="is-child">
-            <td>Review</td>
-            <td>40h scheduled</td>
-            <td class="num hours-col">40</td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="muted" style="margin-top:8px">Tooltip, not a column: Prep on this portfolio is 80h across Ashlyn and Jack. A row for every booking was looked at and set aside.</p>
+      <div class="prototype-frame">
+        <div id="gantt-mount" class="gantt-mount">Loading the Gantt.</div>
+      </div>
     </article>
 
     <article class="panel" id="concept-pool" hidden>
-      <span class="tag is-warn">26.6 is the left-hand version only</span>
+      <span class="tag is-warn">26.6 is the first version only</span>
       <h3>Pooled work is not “everything unassigned”</h3>
-      <p>The current build shows every unassigned booking to anyone marked pool-eligible. That stops partners grabbing the shelf, which is the 26.6 need. It is not a definition of a pool. Boney separated two questions: am I allowed to take pooled work at all, and which pooled work do I see? Firms already have several pools, often by phase. A list of 600 cards is not a queue. The right-hand sketch is a stimulus for the next customer drop-in, not a design to build.</p>
+      <p>The current build shows every unassigned booking to anyone with the Pool Worker trait. That stops partners grabbing the shelf, which is what 26.6 needs. It is not a definition of a pool.</p>
+      <p>Boney split it into two questions. Am I allowed to take pooled work at all? Which pooled work do I see? The docs split it the same way. The trait says who may take work. Pool eligibility, set on the phase later, says which work. Firms already have several pools, often by phase. A list of 600 cards is not a queue. The second sketch is something to show at the next customer drop in, not a design to build.</p>
       <div class="row-actions">
         <div class="BtnGroup" role="group" aria-label="Pool list">
           <button type="button" data-pool="all" aria-pressed="true">26.6: all unassigned</button>
@@ -968,7 +965,7 @@ ul.clean li { margin: 0 0 6px; }
       <div>
         <p class="kicker">Recommended cadence · decide in dependency order</p>
         <h1>Three meetings</h1>
-        <p class="lede">Do not try to settle all 11 rows in one meeting. The first call closes the model decisions that unblock the rest; the second validates behaviour and release readiness; the third sets the post-26.6 boundary.</p>
+        <p class="lede">Do not try to settle all 11 rows in one meeting. The first call closes the model decisions that unblock the rest. The second checks behaviour and whether the release is ready. The third sets the line for after 26.6.</p>
       </div>
       <button type="button" class="Btn Btn--secondary" data-go-view="decisions">Open decision Gantt</button>
     </div>
@@ -980,13 +977,13 @@ ul.clean li { margin: 0 0 6px; }
           <p>90 minutes · Steven Cote, Arron, Steve Mayo, Boney; Callum for the Gantt items</p>
         </header>
         <div class="agenda-items">
-          <div class="agenda-item"><div class="agenda-time">00–05</div><div><h3>Frame the outcome</h3><p>Leave with written decisions, owners and parked questions. This is not a general progress update.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">05–30</div><div><h3>Phase order and overlap</h3><p>Choose single sequence or predecessor graph. Then settle whether parallel phases are in the first cut. Continue the focused grilling map after this call.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">30–45</div><div><h3>Complete and actual effort</h3><p>Agree the single-booking, several-booking and long-booking outcomes. Confirm capacity and future-booking changes.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">45–55</div><div><h3>Breakdown total hours</h3><p>Approve the existing-setting, one-name, per-breakdown-row treatment or state the exact correction.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">55–70</div><div><h3>Lock portfolio 26.6 scope</h3><p>Keep or disable the engagement pivot. Protect Team, Performance and portfolio management.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">70–85</div><div><h3>Bookings longer than a week</h3><p>Choose every covered week and the collapsed treatment; state whether it is required for 26.6.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">85–90</div><div><h3>Read back decisions</h3><p>Name owners, unanswered branches and the prototype or evidence due for Call 2.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">0 to 5</div><div><h3>Frame the outcome</h3><p>Leave with written decisions, owners and parked questions. This is not a general progress update.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">5 to 30</div><div><h3>Phase order and overlap</h3><p>The links are decided in ADR 0022. Choose the first screen: a picker on every row, or a simple list people drag. Then settle how overlap and overtake show up. Carry on with the phase order notes after the call.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">30 to 45</div><div><h3>Complete and actual effort</h3><p>Done this week and Phase Complete are built. Agree what happens to one long booking. Confirm the change to this week’s capacity.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">45 to 55</div><div><h3>Breakdown total hours</h3><p>Walk through the Gantt prototype. Approve it, or say exactly what to change.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">55 to 70</div><div><h3>Lock portfolio 26.6 scope</h3><p>Keep or turn off the engagement pivot. Protect Team, Performance and portfolio management.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">70 to 85</div><div><h3>Bookings longer than a week</h3><p>Choose every covered week and the collapsed group. Say whether 26.6 needs it.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">85 to 90</div><div><h3>Read back decisions</h3><p>Name owners, unanswered branches and the prototype or evidence due for Call 2.</p></div></div>
         </div>
         <div class="agenda-footer"><strong>Required output:</strong> four decision records, one explicit portfolio scope cut, and a bounded validation list for the next call.</div>
       </article>
@@ -998,10 +995,10 @@ ul.clean li { margin: 0 0 6px; }
           <p>75 minutes · add an RM or engagement manager and the enablement owner</p>
         </header>
         <div class="agenda-items">
-          <div class="agenda-item"><div class="agenda-time">00–15</div><div><h3>Readiness language</h3><p>Choose copy for predecessor open, in progress, overdue and complete.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">15–40</div><div><h3>Assigned follow-on work</h3><p>Flag or move; compare practitioner, RM, assigned and unassigned cases.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">40–60</div><div><h3>Kanban test cohort</h3><p>Name environments, data owner, test task, feedback form and debrief.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">60–75</div><div><h3>26.6 readiness readback</h3><p>List known limitations and verify they do not disguise an unsettled model.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">0 to 15</div><div><h3>Readiness language</h3><p>The pill is built. Choose its words for when the phase before is open, in progress, overdue and done.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">15 to 40</div><div><h3>Assigned follow on work</h3><p>Flag or move. Compare the practitioner, the RM, assigned work and unassigned work.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">40 to 60</div><div><h3>Kanban test cohort</h3><p>Name environments, data owner, test task, feedback form and debrief.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">60 to 75</div><div><h3>Is 26.6 ready?</h3><p>List known limits and check they do not hide an unsettled model.</p></div></div>
         </div>
         <div class="agenda-footer"><strong>Required output:</strong> validated interaction rules and a test plan with names and dates.</div>
       </article>
@@ -1013,10 +1010,10 @@ ul.clean li { margin: 0 0 6px; }
           <p>60 minutes · product, engineering, scheduling and US RM expertise</p>
         </header>
         <div class="agenda-items">
-          <div class="agenda-item"><div class="agenda-time">00–15</div><div><h3>Portfolio mop-up stop line</h3><p>Separate defects from enhancements and release capacity to aggregation.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">15–35</div><div><h3>Define a pool</h3><p>Separate permission, work rules, people rules and suitability.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">35–55</div><div><h3>Choose the template framing</h3><p>Settle hours versus proportions, optional phases and what Apply creates.</p></div></div>
-          <div class="agenda-item"><div class="agenda-time">55–60</div><div><h3>Set the next frontier</h3><p>Only create follow-on tickets made sharp by these decisions.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">0 to 15</div><div><h3>Where portfolio mop up stops</h3><p>Separate defects from enhancements and free people for aggregation.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">15 to 35</div><div><h3>Define a pool</h3><p>Separate the Pool Worker trait, the rules for work, the rules for people, and suitability.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">35 to 55</div><div><h3>Choose the template framing</h3><p>Settle hours versus proportions, optional phases and what Apply creates.</p></div></div>
+          <div class="agenda-item"><div class="agenda-time">55 to 60</div><div><h3>Set the next frontier</h3><p>Only create follow on tickets that these decisions made sharp.</p></div></div>
         </div>
         <div class="agenda-footer"><strong>Required output:</strong> a credible 27.1/27.2 boundary, not a production promise.</div>
       </article>
@@ -1025,6 +1022,7 @@ ul.clean li { margin: 0 0 6px; }
       <h2>Preparation rule for every call</h2>
       <ul class="clean">
         <li>The owner circulates the decision question, recommendation and evidence 24 hours before the call.</li>
+        <li>Check the Tax docs first. If an ADR already decided it, the call talks about the screen, not the model.</li>
         <li>Facts are checked before the call; meeting time is for product choices, not searching the transcript.</li>
         <li>Every topic ends as decided, explicitly deferred with owner and date, or ruled out of scope.</li>
         <li>The answer is recorded on its wayfinder ticket and linked from the relevant map.</li>
@@ -1037,13 +1035,13 @@ ul.clean li { margin: 0 0 6px; }
     <article class="panel timeline">
       <div class="release">
         <div>
-          <time datetime="2026-10-02">Now – mid Oct</time>
+          <time datetime="2026-10-02">Now to mid Oct</time>
           <p class="muted">This sprint</p>
         </div>
         <div>
           <span class="tag is-now">Design</span>
           <h3>Decision pack, not padding</h3>
-          <p>Share this board. Specify total hours on breakdown rows for Steve Mayo. Walk Callum through the sidebar. Keep the complete modal prefilled. Portfolio close warning, sticky headers, and the pencil save/cancel can finish, and they are not the week’s outcome. End of sprint: lock what is in portfolio for 26.6, including whether the engagement-view pivot drops.</p>
+          <p>Share this board. Specify total hours on breakdown rows for Steve Mayo. Walk Callum through the sidebar. Keep the complete modal prefilled. Portfolio close warning, sticky headers, and the pencil save/cancel can finish, and they are not the week’s outcome. End of sprint: lock what is in portfolio for 26.6, including whether the engagement view pivot drops.</p>
         </div>
       </div>
       <div class="release">
@@ -1054,7 +1052,7 @@ ul.clean li { margin: 0 0 6px; }
         <div>
           <span class="tag is-ok">Release</span>
           <h3>Portfolio in production. Kanban in lower environments.</h3>
-          <p>Portfolio: management, Team, Performance. Engagement pivot only if it still fits. Kanban: week board, the four moves, prefilled effort, phase-complete only when there are future bookings, job-level readiness, overlap with a flag, pool-eligible as a temporary gate. Name the missing SignalR directions. Internal players plus a very small customer set, with a debrief rather than an open inbox. Gantt aggregation does not start. Tech author walkthrough of portfolio with Sarah, and someone from the value side once Steven confirms who already has the portfolio-versus-job-group table.</p>
+          <p>Portfolio: management, Team, Performance. Engagement pivot only if it still fits. Kanban: week board, the four moves, prefilled effort, Phase Complete only when there are later bookings, readiness from Work released and the phase links, overlap with a flag, the Pool Worker trait as a stopgap. Name the missing SignalR directions. Internal players plus a very small customer set, with a debrief rather than an open inbox. Gantt aggregation does not start. Tech author walkthrough of portfolio with Sarah, and someone from the value side once Steven confirms who already has the table of portfolio versus job group.</p>
         </div>
       </div>
       <div class="release">
@@ -1065,7 +1063,7 @@ ul.clean li { margin: 0 0 6px; }
         <div>
           <span class="tag is-warn">Only if decisions land</span>
           <h3>Not a production Kanban launch</h3>
-          <p>A credible 27.1 is portfolio fixes that are actually broken, then a stop, so Gantt aggregation can start. Kanban stays in lower environments with the five prototypes above if they have been chosen: phase order on the engagement, smarter complete, long bookings across weeks, readiness copy that allows overlap, and a visible choice for follow-on work. A production bet waits until those are no longer hypothetical. The graduate adds capacity after this, not inside it.</p>
+          <p>A credible 27.1 is portfolio fixes that are actually broken, then a stop, so Gantt aggregation can start. Kanban stays in lower environments with the five prototypes above if they have been chosen: the phase order screen on the engagement, smarter complete, long bookings across weeks, readiness copy that allows overlap, and a visible choice for follow on work. A production bet waits until those are no longer hypothetical. The graduate adds capacity after this, not inside it.</p>
         </div>
       </div>
       <div class="release">
@@ -1076,7 +1074,7 @@ ul.clean li { margin: 0 0 6px; }
         <div>
           <span class="tag is-info">If 27.1 started the work</span>
           <h3>Aggregation visible. Pool model drafted.</h3>
-          <p>Customer-visible total hours and breakdown if aggregation started. Pool discovery from the drop-in turned into a permission plus a rule for which work, including phase-level pools. Overlap configurable on the engagement when there is no template. Template authoring only if hours-versus-proportion, optional phases, and apply-from-deadline have an owner. Otherwise templating slips rather than shipping a model the 26 Aug session already found confusing.</p>
+          <p>Customers can see total hours and breakdown, if aggregation started. Pool discovery from the drop in becomes a permission plus a rule for which work, including pools by phase. Overlap can be set on the engagement when there is no template. Template authoring only if hours versus proportion, optional phases, and applying from a deadline have an owner. Otherwise templating slips rather than shipping a model the 26 Aug session already found confusing.</p>
         </div>
       </div>
       <div class="release">
@@ -1098,7 +1096,7 @@ ul.clean li { margin: 0 0 6px; }
         <div>
           <span class="tag">Strategic, not a patch</span>
           <h3>Integration and automatic allocation</h3>
-          <p>Completion can be signalled from Dayshape or from the tax workflow tool. Forecast hours still originate in Dayshape for almost every tool except XCM, and that conversation is not ready. Pool allocation that hands someone a week of suitable work, with room left for review notes, is the advise-shaped idea to take to scheduling. A team Kanban for an engagement manager sits with portfolio. Other service lines that want every Kanban move to become a suggestion get an explicit no, or a separate permission, rather than inheriting the high-volume rule.</p>
+          <p>Completion can be signalled from Dayshape or from the tax workflow tool. Forecast hours still originate in Dayshape for almost every tool except XCM, and that conversation is not ready. Pool allocation that hands someone a week of suitable work, with room left for review notes, is the idea from advise to take to scheduling. A team Kanban for an engagement manager sits with portfolio. Other service lines that want every Kanban move to become a suggestion get a clear no, or a separate permission. They do not inherit the high volume rule.</p>
         </div>
       </div>
     </article>
@@ -1107,11 +1105,11 @@ ul.clean li { margin: 0 0 6px; }
       <div class="grid-2">
         <div>
           <p><strong>Portfolio</strong> is operational responsibility. It can cut across job groups, years, clients, and offices. <strong>Job group</strong> stays the financial source of truth. They are used together. Steven has already walked Sarah through that. Confirm the table is the one she has before the value team writes the guidance.</p>
-          <p><strong>Week blocks</strong> are the stance for high-volume compliance. <strong>Longer blocks</strong> are the stance for advisory and for returns that genuinely run for months. The product survives the other patterns. It should say which one it recommends.</p>
+          <p><strong>Week blocks</strong> are the stance for high volume compliance. <strong>Longer blocks</strong> are the stance for advisory and for returns that genuinely run for months. The product survives the other patterns. It should say which one it recommends.</p>
         </div>
         <div>
-          <p><strong>Practitioner-led</strong> for work that just has to flow. Resource managers watch capacity, they do not approve every kick to next week. Suggestions stay for the changes that need that control. GT’s use of suggestions for everything was called out the same morning as a warning, not a pattern to copy.</p>
-          <p><strong>Best-practice guidance</strong> is a workstream of its own: when to use suggestions, when scheduling is centralised, when a portfolio is the right object. Melissa and Ainsley are the faster route to US resource-management practice than five more customer sessions.</p>
+          <p><strong>Led by practitioners</strong> for work that just has to flow. Resource managers watch capacity, they do not approve every kick to next week. Suggestions stay for the changes that need that control. GT’s use of suggestions for everything was called out the same morning as a warning, not a pattern to copy.</p>
+          <p><strong>Best practice guidance</strong> is a workstream of its own: when to use suggestions, when scheduling is centralised, when a portfolio is the right object. Melissa and Ainsley are a faster route to US resource management practice than five more customer sessions.</p>
         </div>
       </div>
     </article>
@@ -1136,6 +1134,13 @@ ul.clean li { margin: 0 0 6px; }
           <option value="266">November release</option>
           <option value="271">Before January</option>
           <option value="later">Later</option>
+        </select>
+      </label>
+      <label class="field">Status
+        <select id="filter-status">
+          <option value="all">Open and answered</option>
+          <option value="open">Still open</option>
+          <option value="answered">Answered by the Tax docs</option>
         </select>
       </label>
       <label class="field">Search
@@ -1182,10 +1187,10 @@ ul.clean li { margin: 0 0 6px; }
       title: "Phase order and overlap",
       stream: "Kanban foundation",
       start: 1, span: 2, due: 2, status: "decide", deadline: "9 Oct 2026",
-      question: "Use a draggable phase order for the first cut, allow overlap, and flag overtake without blocking it. Confirm whether parallel phases stay out until a real case requires them.",
-      why: "Readiness, completion and follow-on movement all depend on this model. It is the first object-model decision Boney said must be stable before customer feedback is useful.",
-      people: "Arron, Steven Cote, Steve Mayo and Boney. Callum should review the scheduling implication.",
-      evidence: "The overlap/overtake concept, one compliance sequence and one genuine parallel-phase example if the team believes it belongs in the first cut.",
+      question: "The links are already decided. Each phase can come after one or more phases (ADR 0022, 15 Sep). Decide what the first screen looks like: a picker on every phase row, which is the plan, or a simple list people drag that saves as a chain. Then decide how overlap and overtake show, because the links hold no rule for them.",
+      why: "Readiness, completion and follow on movement all lean on this. Boney said the object model must be steady before customer feedback is useful. The model is steady now. The screen is not.",
+      people: "Arron, Steven Cote, Steve Mayo and Boney. Callum should check what it means for scheduling.",
+      evidence: "The overlap and overtake concept, the planned Configure window on the engagement Details tab, one compliance sequence, and one real case of phases running side by side.",
       impact: "Later Kanban behaviour will be built around a sequence the team may replace, invalidating customer feedback and creating rework.",
       concept: "sequence"
     },
@@ -1194,8 +1199,8 @@ ul.clean li { margin: 0 0 6px; }
       title: "Complete and actual effort",
       stream: "Kanban interaction",
       start: 1, span: 2, due: 2, status: "decide", deadline: "9 Oct 2026",
-      question: "Ask ‘this booking or the whole phase?’ only when future bookings exist. Confirm that one long booking is shortened and that actual effort always starts from the booking value.",
-      why: "This is a common move in the 26.6 lower-environment flow and Steven explicitly asked design to fix the re-entry burden.",
+      question: "Done this week and Phase Complete are built, and they only appear when you have later bookings on the phase. Decide what happens to one long booking: shorten it at the end, or leave it. Confirm the hours field always starts from the booking.",
+      why: "People will do this all the time in the 26.6 lower environment. Steven asked design to stop people typing the same hours twice.",
       people: "Arron, Steve Mayo and Steven Cote.",
       evidence: "Single booking, several bookings and one long booking run through the Mark done prototype.",
       impact: "Practitioners see unnecessary choices or remove future work accidentally; capacity is wrong after completion.",
@@ -1206,11 +1211,11 @@ ul.clean li { margin: 0 0 6px; }
       title: "Bookings longer than a week",
       stream: "Kanban visibility",
       start: 1, span: 3, due: 3, status: "decide", deadline: "16 Oct 2026",
-      question: "Show a spanning booking in every covered week and agree the collapsible grouping for long-running work.",
-      why: "The current end-week-only behaviour makes the weekly board misleading. This needs to be known before the final 26.6 tidy-up sprint.",
+      question: "Show a booking in every week it covers, and agree the group that collapses work running past this week.",
+      why: "Today the card only shows in the week it ends, so the weekly board misleads people. The docs still list this as open. It needs an answer before the last 26.6 sprint, which is for tidying up.",
       people: "Arron, Steve Mayo and one advisory user as a check against the compliance default.",
-      evidence: "A four-week advisory booking beside the week-block compliance recommendation.",
-      impact: "Advisory work is invisible in the weeks it is happening, and the board appears to lose in-progress work.",
+      evidence: "An advisory booking that runs four weeks, beside the advice to book compliance in week blocks.",
+      impact: "Advisory work is invisible in the weeks it is happening, and the board seems to lose work that is in progress.",
       concept: "span"
     },
     {
@@ -1218,8 +1223,8 @@ ul.clean li { margin: 0 0 6px; }
       title: "Readiness language",
       stream: "Kanban foundation",
       start: 2, span: 3, due: 4, status: "validate", deadline: "23 Oct 2026",
-      question: "Replace the misleading ‘Not ready’ message for a later phase when overlap is allowed. Decide what the practitioner sees while prep remains open.",
-      why: "The lower-environment build can keep the job boolean and phase sequence, but the UI must not claim review cannot start when the model allows it.",
+      question: "The Ready and Not ready pill is built. Review shows Not ready until prep is done, even when overlap is allowed. Decide the words a practitioner sees while prep is still open.",
+      why: "The rule stays: Work released opens the first phases, and a later phase waits for every phase before it. The pill only warns, so nobody is blocked. But the words must not say review cannot start when the plan allows it.",
       people: "Arron, Steven Cote, Steve Mayo and Boney.",
       evidence: "Copy options on a review card while prep is open, in progress and overdue.",
       impact: "The board contradicts its own scheduling model and feedback will focus on wording rather than the underlying behaviour.",
@@ -1227,13 +1232,13 @@ ul.clean li { margin: 0 0 6px; }
     },
     {
       id: "shunting",
-      title: "Assigned follow-on work",
+      title: "Assigned follow on work",
       stream: "Kanban behaviour",
       start: 2, span: 4, due: 5, status: "validate", deadline: "30 Oct 2026",
       question: "When Jose pushes prep, either flag Happy’s review or move it and tell her. Confirm whether the rule differs for unassigned work, practitioners and resource managers.",
-      why: "Unassigned work following is relatively safe. Moving another person’s diary is the unresolved behaviour with the largest trust cost.",
+      why: "Today nothing moves. Moving unassigned work is fairly safe, and in August the team leaned that way. Moving another person’s diary is the open part, and it costs the most trust.",
       people: "Arron, Steven Cote, Boney, Callum and an RM or engagement manager.",
-      evidence: "Both paths in the Follow-on work concept, including the deadline consequence before confirmation.",
+      evidence: "Both paths in the Follow on work concept, including what happens to the deadline before anyone confirms.",
       impact: "The system either leaves impossible work in the past or changes a colleague’s schedule without an agreed permission model.",
       concept: "shunt"
     },
@@ -1242,7 +1247,7 @@ ul.clean li { margin: 0 0 6px; }
       title: "Lock portfolio 26.6 scope",
       stream: "Release gate",
       start: 1, span: 3, due: 3, status: "risk", deadline: "End of current sprint",
-      question: "Confirm whether the portfolio-Gantt pivot into an engagement ships, or is removed so Team, Performance and portfolio management land cleanly.",
+      question: "Confirm whether the jump from the portfolio Gantt into an engagement ships, or is removed so Team, Performance and portfolio management land cleanly.",
       why: "The 30 September call said this choice is made at the end of the sprint, not at release cut.",
       people: "Matt Jenkins, Steven Cote, Steve Mayo and Arron.",
       evidence: "Remaining engineering work, UAT severity and the cost of carrying the pivot versus disabling it.",
@@ -1255,7 +1260,7 @@ ul.clean li { margin: 0 0 6px; }
       stream: "Release gate",
       start: 2, span: 4, due: 5, status: "risk", deadline: "30 Oct 2026",
       question: "Name the internal users and at most two customer environments. Confirm whether Blake has enough tax data and whether a generic demo environment is useful.",
-      why: "Configuration and data setup are more than a feature flag. The cohort must be ready before the 6 November lower-environment release.",
+      why: "Configuration and data setup are more than a feature flag. The cohort must be ready before the 6 November release to lower environments.",
       people: "Steven Cote, Matt Jenkins, Evans Bridgeford and the internal enablement/demo owners.",
       evidence: "Data readiness, relationship strength, the intended feedback task and a booked debrief.",
       impact: "26.6 technically contains a board but nobody can give meaningful feedback on it.",
@@ -1266,20 +1271,20 @@ ul.clean li { margin: 0 0 6px; }
       title: "Specify breakdown total hours",
       stream: "Gantt aggregation",
       start: 1, span: 3, due: 3, status: "decide", deadline: "16 Oct 2026",
-      question: "Reuse the existing total-hours setting, show totals on each breakdown row, avoid repeating the person, and leave bucket roll-ups in the tooltip.",
+      question: "Reuse the total hours setting that already exists. Show a total on each breakdown row. Do not repeat the person. Leave the bucket totals in the tooltip.",
       why: "Steven said this is small enough to turn into requirements now even though aggregation engineering has not started.",
       people: "Arron, Steven Cote, Steve Mayo and Callum for Gantt consistency.",
-      evidence: "The Total hours concept with one person and four breakdown rows.",
+      evidence: "The Gantt resource breakdown prototype, shown in the Total hours concept.",
       impact: "Aggregation starts later without a refined presentation requirement and repeats the same design discussion.",
       concept: "hours"
     },
     {
       id: "portfolio-stop",
-      title: "Set portfolio mop-up stop line",
+      title: "Set where portfolio mop up stops",
       stream: "27.1 gate",
       start: 6, span: 2, due: 7, status: "risk", estimate: true, deadline: "Before 27.1 planning",
       question: "Decide which portfolio defects must be fixed after 26.6 and the point at which the team stops polishing so Gantt aggregation can start.",
-      why: "The call could not say whether aggregation begins in 27.1 because portfolio mop-up has no stop line.",
+      why: "The call could not say whether aggregation begins in 27.1 because portfolio mop up has no stop line.",
       people: "Steven Cote, Matt Jenkins, Steve Mayo and Arron.",
       evidence: "Production defects separated from unfamiliarity and optional UAT enhancements.",
       impact: "Portfolio work expands release by release and aggregation remains refined but unstarted.",
@@ -1291,9 +1296,9 @@ ul.clean li { margin: 0 0 6px; }
       stream: "Post-26.6 discovery",
       start: 6, span: 3, due: 8, status: "validate", estimate: true, deadline: "Before 27.2 scope",
       question: "Separate permission to take pooled work from the rule that selects which work someone sees. Decide whether a pool is a shared configuration, two matched rule sets or an extension of portfolios.",
-      why: "The 26.6 pool-eligible trait is an intentional temporary gate and cannot safely become the product model.",
+      why: "The 26.6 Pool Worker trait is a stopgap on purpose (ADR 0027). It says who may take work, not which work. It cannot safely become the product model.",
       people: "Steven Cote, Boney, Matt Jenkins, scheduling, Melissa and Ainsley.",
-      evidence: "US pool-only and UK mixed-work operating models, phase-level eligibility and the top-20 queue stimulus.",
+      evidence: "The US model where staff only do pool work, the UK model where they mix it, eligibility set on the phase, and the sketch of a top 20 queue.",
       impact: "Runtime traits and ‘all unassigned work’ become permanent behaviour, producing hundreds of irrelevant cards.",
       concept: "pool"
     },
@@ -1302,10 +1307,10 @@ ul.clean li { margin: 0 0 6px; }
       title: "Choose template model",
       stream: "Post-26.6 discovery",
       start: 7, span: 2, due: 8, status: "decide", estimate: true, deadline: "Before 27.2 scope",
-      question: "Choose hours, proportions or the hybrid baseline-hours model; confirm optional phases; and define what Apply creates when working backwards from a deadline.",
+      question: "Choose hours, proportions or the mix that starts from baseline hours. Confirm optional phases. Define what Apply creates when it works backwards from a deadline.",
       why: "Steven called templating the biggest unresolved item. Design cannot converge on a screen while those three domain choices remain open.",
       people: "Steven Cote, Arron, Boney, Steve Mayo and an engineering owner for application capabilities.",
-      evidence: "One phased and one non-phase example from creation through apply, with a different target size.",
+      evidence: "One example with phases and one without, from creation through apply, with a different target size.",
       impact: "The team polishes a template UI whose stored model or application behaviour is later replaced.",
       concept: ""
     }
@@ -1315,26 +1320,26 @@ ul.clean li { margin: 0 0 6px; }
     "phase-order": {
       ticket: "../.scratch/high-volume-phase-order/issues/01-first-cut-phase-order-shape.md",
       todos: [
-        "Choose single sequence or predecessor graph.",
-        "Bring one linear compliance sequence and one credible parallel-phase case.",
-        "Confirm whether parallel phases are first cut or deferred.",
-        "Record the answer on the focused phase-order map."
+        "Read ADR 0022 and the Job Phase Editor plan before the call.",
+        "Put a picker on every row next to a simple list people drag.",
+        "Bring one compliance sequence and one case with phases side by side.",
+        "Record the answer on the phase order notes."
       ]
     },
     "complete": {
       ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/01-complete-and-actual-effort.md",
       todos: [
-        "Run single, multiple and long booking shapes.",
+        "Run one booking, a later booking, and one long booking.",
         "Confirm actual effort and this week's capacity change.",
-        "Define remove versus truncate for future work.",
+        "Decide shorten or leave for one long booking.",
         "Bring a case with time already logged."
       ]
     },
     "long-bookings": {
       ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/02-bookings-longer-than-a-week.md",
       todos: [
-        "Compare end-week-only and every-covered-week treatments.",
-        "Test the collapsed longer-work group.",
+        "Compare the end week only with every week it covers.",
+        "Test the collapsed group for longer work.",
         "Bring one compliance and one advisory booking.",
         "Decide whether this is required for 26.6."
       ]
@@ -1342,26 +1347,26 @@ ul.clean li { margin: 0 0 6px; }
     "readiness": {
       ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/03-readiness-language.md",
       todos: [
-        "Write copy for predecessor not started, in progress, overdue and complete.",
-        "Keep readiness separate from Kanban status.",
+        "Write words for when the phase before is not started, in progress, overdue and done.",
+        "Keep readiness separate from the column.",
         "Test labels on the card and sidebar.",
-        "Validate after phase-order behaviour is settled."
+        "Check the words against Work released and the phase links."
       ]
     },
     "shunting": {
       ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/04-assigned-follow-on-work.md",
       todos: [
-        "Run flag-only and move-and-notify paths.",
+        "Run the flag path and the move and tell path.",
         "Bring assigned, unassigned and pooled examples.",
-        "Show the deadline and colleague impact before confirmation.",
-        "Get an RM or engagement-manager response."
+        "Show the deadline and the colleague affected before anyone confirms.",
+        "Get a response from an RM or engagement manager."
       ]
     },
     "portfolio-scope": {
       ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/05-lock-portfolio-26-6-scope.md",
       todos: [
         "Bring remaining engineering effort.",
-        "Separate must-fix defects from optional UAT improvements.",
+        "Separate defects we must fix from optional UAT improvements.",
         "Show the path with and without the engagement pivot.",
         "Record the descope before release cut."
       ]
@@ -1371,24 +1376,24 @@ ul.clean li { margin: 0 0 6px; }
       todos: [
         "Confirm Blake data readiness with Evans Bridgeford.",
         "Name internal practitioners and managers.",
-        "Choose customer and generic-demo environments.",
+        "Choose customer and generic demo environments.",
         "Book setup, test task, feedback form and debrief."
       ]
     },
     "aggregation": {
       ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/07-specify-breakdown-total-hours.md",
       todos: [
-        "Use the existing total-hours switch.",
-        "Show one person with four breakdown rows.",
-        "Separate visible row totals from tooltip roll-ups.",
+        "Use the total hours switch that already exists.",
+        "Walk through the Gantt breakdown prototype.",
+        "Separate the totals on each row from the totals in the tooltip.",
         "Review with Steve Mayo and Callum."
       ]
     },
     "portfolio-stop": {
       ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/08-set-portfolio-mop-up-stop-line.md",
       todos: [
-        "List production defects, mock-only defects and optional requests separately.",
-        "Size the must-fix items.",
+        "List production defects, defects only in the mock, and optional requests separately.",
+        "Size the items we must fix.",
         "Name the first aggregation slice ready to start.",
         "Agree who can veto work crossing the stop line."
       ]
@@ -1396,16 +1401,16 @@ ul.clean li { margin: 0 0 6px; }
     "pool-model": {
       ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/09-define-a-pool.md",
       todos: [
-        "Bring US pool-only and UK mixed-work models.",
-        "Show phase-level eligibility.",
-        "Compare all unassigned with a named top-20 queue.",
-        "Separate permission, affiliation and suitability."
+        "Bring the US model, where staff only do pool work, and the UK model, where they mix it.",
+        "Show eligibility set on the phase.",
+        "Compare all unassigned work with a named queue of the top 20.",
+        "Separate the Pool Worker trait, pool membership and suitability."
       ]
     },
     "template-model": {
       ticket: "../.scratch/high-volume-roadmap-wayfinder/issues/10-choose-template-model.md",
       todos: [
-        "Bring one phased and one non-phase engagement.",
+        "Bring one engagement with phases and one without.",
         "Apply the same template to a differently sized target.",
         "Confirm whether Apply creates requirements, bookings or both.",
         "Identify backend capability and ownership."
@@ -1485,6 +1490,62 @@ ul.clean li { margin: 0 0 6px; }
     });
   }
 
+  function showGantt() {
+    const host = document.getElementById("gantt-mount");
+    if (!host || host.dataset.state === "ready" || host.dataset.state === "loading") return;
+    host.dataset.state = "loading";
+    fetch("gantt-resource-breakdown.html")
+      .then((res) => {
+        if (!res.ok) throw new Error("The Gantt file did not load.");
+        return res.text();
+      })
+      .then((html) => {
+        const parsed = new DOMParser().parseFromString(html, "text/html");
+        const shadow = host.attachShadow({ mode: "open" });
+        parsed.head.querySelectorAll("style, link[rel='stylesheet']").forEach((node) => {
+          const copy = document.importNode(node, true);
+          if (copy.tagName === "STYLE") copy.textContent = copy.textContent.replaceAll(":root", ":host");
+          shadow.appendChild(copy);
+        });
+        const fix = document.createElement("style");
+        fix.textContent = ":host{display:block;height:680px;overflow:hidden;background:#fff;font-family:var(--font-family);color:var(--text-default)}.embed-root,.App{height:100%}.App{transform:translateZ(0)}";
+        shadow.appendChild(fix);
+        const root = document.createElement("div");
+        root.className = "embed-root";
+        [...parsed.body.children].forEach((child) => {
+          if (child.tagName === "SCRIPT") return;
+          root.appendChild(document.importNode(child, true));
+        });
+        shadow.appendChild(root);
+        const ganttDoc = {
+          getElementById: (id) => shadow.getElementById(id),
+          querySelector: (sel) => shadow.querySelector(sel),
+          querySelectorAll: (sel) => shadow.querySelectorAll(sel),
+          createElement: (tag) => document.createElement(tag),
+          createElementNS: (ns, tag) => document.createElementNS(ns, tag),
+          createTextNode: (text) => document.createTextNode(text),
+          body: root,
+          documentElement: root,
+          addEventListener: (type, fn, opt) => document.addEventListener(type, fn, opt),
+          removeEventListener: (type, fn, opt) => document.removeEventListener(type, fn, opt)
+        };
+        try {
+          parsed.body.querySelectorAll("script:not([src])").forEach((script) => {
+            new Function("document", "window", script.textContent)(ganttDoc, window);
+          });
+        } catch (error) {
+          root.textContent = "The Gantt did not load in this page. Use Open the Gantt.";
+          throw error;
+        }
+        host.dataset.state = "ready";
+      })
+      .catch((error) => {
+        host.dataset.state = "error";
+        host.textContent = "The Gantt did not load in this page. Use Open the Gantt.";
+        console.error(error);
+      });
+  }
+
   const conceptButtons = document.querySelectorAll("[data-concept]");
   conceptButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -1494,6 +1555,7 @@ ul.clean li { margin: 0 0 6px; }
       document.querySelectorAll("[id^='concept-']").forEach((panel) => {
         panel.hidden = panel.id !== "concept-" + btn.dataset.concept;
       });
+      if (btn.dataset.concept === "hours") showGantt();
     });
   });
 
@@ -1531,14 +1593,14 @@ ul.clean li { margin: 0 0 6px; }
     const result = document.getElementById("done-result");
     if (!done.marked) {
       result.innerHTML = "<strong>Not marked yet.</strong> Planned effort is " + plannedHours() + "h and that is what the field starts at." +
-        (done.shape === "multi" ? " Two bookings exist, so the phase question is on." : " One booking, so the phase question stays off.");
+        (done.shape === "multi" ? " You have another booking later on this phase, so the board asks." : " One booking, so nobody asks.");
       return;
     }
     const freed = Math.max(plannedHours() - actual, 0);
     let line = actual + "h recorded. " + freed + "h comes back as capacity this week.";
-    if (done.shape === "multi" && done.scope === "booking") line += " Next week’s prep booking stays.";
-    if (done.shape === "multi" && done.scope === "phase") line += " Future prep bookings on this phase are removed.";
-    if (done.shape === "long") line += " The booking’s end moves to this week. There were no later cards to delete.";
+    if (done.shape === "multi" && done.scope === "booking") line += " Next week’s prep booking stays. This is how Done this week works today.";
+    if (done.shape === "multi" && done.scope === "phase") line += " Your later prep bookings on this phase are deleted, and you cannot undo it. Anyone else’s stay. This is how Phase Complete works today.";
+    if (done.shape === "long") line += " The booking’s end moves to this week. There were no later cards to delete. This part is a proposal, not built.";
     if (done.shape === "single") line += " The single booking is updated. Nothing else is asked.";
     result.innerHTML = "<strong>Marked done.</strong> " + line;
   }
@@ -1618,12 +1680,12 @@ ul.clean li { margin: 0 0 6px; }
       }).join("");
       return '<div class="lane"><span>' + label + '</span>' + cells + '</div>';
     }
-    host.innerHTML = lane("Prep", prepStart, 2, "") + lane("Review", reviewStart, 1, "is-review") + lane("Sign-off", signStart, 1, "is-sign");
+    host.innerHTML = lane("Prep", prepStart, 2, "") + lane("Review", reviewStart, 1, "is-review") + lane("Sign off", signStart, 1, "is-sign");
     const result = document.getElementById("seq-result");
     if (overtake) {
-      result.innerHTML = "<strong>Overtake.</strong> Prep now finishes after review. This is flagged as a problem. The move is still allowed. Happy is not blocked from the board, and Jose is not blocked from the push. Ping-pong back into prep after review is a known case this rule does not solve.";
+      result.innerHTML = "<strong>Overtake.</strong> Prep now finishes after review. This is flagged as a problem. The move is still allowed. Happy is not blocked from the board, and Jose is not blocked from the push. Review sending a small fix back to prep after review has started is a known case this rule does not solve.";
     } else if (overlap) {
-      result.innerHTML = "<strong>Overlap.</strong> Prep and review share a week. That is allowed. The signal says review is underway while prep is still open. It does not say review cannot start.";
+      result.innerHTML = "<strong>Overlap.</strong> Prep and review share a week. That is allowed. The signal says review is underway while prep is still open. It does not say review cannot start. Today the built pill would still say Not ready, because prep is not done.";
     } else {
       result.innerHTML = "<strong>In order.</strong> Prep finishes as review starts. No signal.";
     }
@@ -1646,9 +1708,9 @@ ul.clean li { margin: 0 0 6px; }
     if (!hold.thanos && hold.alphaWeek === 0) {
       result.innerHTML = "<strong>Nothing moved.</strong> On hold starts from the 5 hours already on the booking.";
     } else if (hold.thanos) {
-      result.innerHTML = "<strong>On hold.</strong> " + actual + "h stays on this week’s forecast. " + remaining + "h is the remainder pushed out. The missing piece is the sentence about the delivery date and the reviewer, which the session wanted in this moment and did not have a finished UI for.";
+      result.innerHTML = "<strong>On hold.</strong> " + actual + "h stays on this week’s forecast. " + remaining + "h goes into a new booking in the unblock week. The window already shows how late the later phases could be. The missing piece is one plain sentence about the delivery date and the reviewer.";
     } else {
-      result.innerHTML = "<strong>Deferred.</strong> Alpha is on next week’s board and on next week in the Gantt. No split, no reason.";
+      result.innerHTML = "<strong>Deferred.</strong> Alpha moved exactly seven days. It is on next week’s board and next week in the Gantt. No split, no reason, nothing recorded.";
     }
   }
   document.getElementById("do-defer").addEventListener("click", () => { hold.alphaWeek = 1; renderHold(); });
@@ -1690,7 +1752,7 @@ ul.clean li { margin: 0 0 6px; }
     if (shunt.reviewer === "pool" && shunt.pushes) summary += " Nobody was displaced. The unassigned review followed.";
     if (shunt.reviewer === "happy" && shunt.policy === "flag" && prepWeek === reviewWeek) summary += " Happy’s week did not change. Prep now overlaps her review. That is allowed, and it should be visible before Jose confirms.";
     if (shunt.reviewer === "happy" && shunt.policy === "flag" && prepWeek > reviewWeek) summary += " Happy’s week did not change. Her review is now earlier than the prep, which cannot start. Jose should have seen that before he confirmed. An RM may still need to act.";
-    if (shunt.reviewer === "happy" && shunt.policy === "move" && shunt.pushes) summary += " Happy’s booking moved because Jose slipped. That is Steven’s current lean for small pre-scheduled work, and it is the option Boney wants to be configurable rather than universal. Reassigning her work to someone else is a further step, not this one.";
+    if (shunt.reviewer === "happy" && shunt.policy === "move" && shunt.pushes) summary += " Happy’s booking moved because Jose slipped. That is Steven’s current lean for small work that was booked ahead, and it is the option Boney wants to be configurable rather than universal. Reassigning her work to someone else is a further step, not this one.";
     const lead = shunt.pushes === 0 ? "Starting plan." : "After " + shunt.pushes + " push" + (shunt.pushes === 1 ? "" : "es") + ".";
     document.getElementById("shunt-result").innerHTML = "<strong>" + lead + "</strong> " + summary;
   }
@@ -1713,22 +1775,13 @@ ul.clean li { margin: 0 0 6px; }
   document.getElementById("reset-shunt").addEventListener("click", () => { shunt.pushes = 0; renderShunt(); });
   renderShunt();
 
-  document.querySelectorAll("[data-hours]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      press(btn.parentElement, "data-hours", btn.dataset.hours);
-      document.querySelectorAll(".hours-col").forEach((cell) => {
-        cell.hidden = btn.dataset.hours === "off";
-      });
-    });
-  });
-
   function renderPool(mode) {
     const host = document.getElementById("pool-list");
     if (mode === "all") {
-      host.innerHTML = '<div class="result"><strong>600 unassigned bookings this week.</strong> Anyone with the pool-eligible marker sees the lot, inside the units they can already see. Suitability is not applied. There is no named pool, and sign-off work is mixed in with two-hour prep. This is the 26.6 slice, and the trait is doing a permission’s job.</div>';
+      host.innerHTML = '<div class="result"><strong>600 unassigned bookings this week.</strong> Anyone with the Pool Worker trait sees the lot, inside the units they can already see. Suitability is not applied. There is no named pool, and sign off work is mixed in with prep that takes two hours. Take one booking and you take every open booking for that phase and requirement, in every week. This is the 26.6 slice, and the trait is doing a permission’s job.</div>';
       return;
     }
-    host.innerHTML = '<div class="result"><strong>Pacific Northwest 1040s · prep only · 20 shown.</strong> A rule picked the work: business unit, return type, under a few hours, prep phase. Sign-off never entered the list. The person sees the top of that list, not 600 rows. Widening past their own office is a second step for crunch, not the default. Taking something off the shelf, or putting a named return back on it, still needs an explicit override. Who is allowed to take pooled work is a permission. Which shelf they see is not that permission.</div>' +
+    host.innerHTML = '<div class="result"><strong>Pacific Northwest 1040s · prep only · 20 shown.</strong> A rule picked the work: business unit, return type, under a few hours, prep phase. Sign off never entered the list. The person sees the top of that list, not 600 rows. Widening past their own office is a second step for crunch, not the default. Taking something off the shelf, or putting a named return back on it, still needs an explicit override. Who is allowed to take pooled work is a permission. Which shelf they see is not that permission.</div>' +
       ["Walker 1040 · Prep · 2h", "Nguyen 1040 · Prep · 1.5h", "Okoye 1040 · Prep · 2h"].map((t) => '<div class="card"><strong>' + t + '</strong><div class="meta">Suitable · not assigned</div></div>').join("");
   }
   document.querySelectorAll("[data-pool]").forEach((btn) => {
@@ -1740,93 +1793,93 @@ ul.clean li { margin: 0 0 6px; }
   renderPool("all");
 
   const questions = [
-    ["26.6 scope", "focus", "266", "Is the portfolio engagement-view pivot in 26.6, or is it the thing we drop at the end of this sprint so Team, Performance, and portfolio management land cleanly?"],
-    ["26.6 scope", "focus", "266", "Which Kanban gaps are acceptable known limits in a lower environment, and which would make the object model look finished when it is not?"],
+    ["26.6 scope", "focus", "266", "Is the jump from portfolio into an engagement view in 26.6, or is it the thing we drop at the end of this sprint so Team, Performance, and portfolio management land cleanly?"],
+    ["26.6 scope", "focus", "266", "Which Kanban gaps are acceptable known limits in a lower environment, and which would make the object model look finished when it is not?", "The docs already list some gaps. The unblock date never brings work back by itself. A reviewer sending work back is lost on reload. Moving later bookings on hold is designed, not built. Live updates are designed, but the Kanban does not connect to SignalR yet."],
     ["26.6 scope", "focus", "266", "Who plays with Kanban first: named internal people, Blake / Azets, a generic demo, or more than one of those, and what are they told it is not?"],
     ["26.6 scope", "focus", "266", "Does Blake have enough tax work in Dayshape for a usability session to mean anything, and what does Evans Bridgeford say?"],
     ["26.6 scope", "focus", "266", "Is a demo environment appropriate in 26.6, and who decides it represents the product well enough to show?"],
-    ["26.6 scope", "focus", "now", "Who from the value team joins Matt’s portfolio walkthrough with Sarah, and does Sarah already have Steven’s portfolio-versus-job-group table?"],
+    ["26.6 scope", "focus", "now", "Who from the value team joins Matt’s portfolio walkthrough with Sarah, and does Sarah already have Steven’s table of portfolio versus job group?"],
     ["26.6 scope", "focus", "266", "What must be configured, beyond a feature flag, before one customer environment can run Kanban, and who does that work?"],
-    ["26.6 scope", "focus", "later", "How long is portfolio mop-up allowed to run after 26.6 before Gantt aggregation is allowed to start?"],
+    ["26.6 scope", "focus", "later", "How long is portfolio mop up allowed to run after 26.6 before Gantt aggregation is allowed to start?"],
     ["26.6 scope", "focus", "271", "What is the smallest 27.1 Kanban increment that is worth a lower environment, if production launch is explicitly not the goal?"],
-    ["Kanban behaviour", "focus", "now", "When a phase has one booking, what exactly is written back: actual hours, a shortened end, both, and is the booking removed from later weeks?"],
-    ["Kanban behaviour", "focus", "now", "When a phase has several bookings and the person completes only this one, do the later bookings keep their hours even if this week used less than planned?"],
-    ["Kanban behaviour", "focus", "now", "Whole-phase complete deletes future bookings. Does it also truncate a single booking that has already started, and what happens to time already logged?"],
-    ["Kanban behaviour", "focus", "266", "On hold splits the remainder into the unblock week. Why did a booking that already sat in the future fail to split, and is the split always whole weeks?"],
-    ["Kanban behaviour", "focus", "now", "What one or two sentences does on hold show about a missed delivery date and pressure on the next person, before they confirm?"],
-    ["Kanban behaviour", "focus", "266", "Defer and on hold can both move work a week. What makes a practitioner pick one, and do we need that distinction in the lower-environment build?"],
-    ["Kanban behaviour", "focus", "now", "A long booking is shown only in its end week. Is every spanned week in 26.6, or is the collapsible group allowed to follow in 27.1?"],
+    ["Kanban behaviour", "focus", "now", "When a phase has one booking, what exactly is written back: actual hours, a shortened end, both, and is the booking removed from later weeks?", "Actual hours are built. The booking is updated to what you enter, and capacity changes straight away. A shortened end is not in the docs."],
+    ["Kanban behaviour", "focus", "now", "When a phase has several bookings and the person completes only this one, do the later bookings keep their hours even if this week used less than planned?", "Yes. Done this week only changes this week’s booking. Later bookings keep their hours.", true],
+    ["Kanban behaviour", "focus", "now", "Phase Complete deletes future bookings. Does it also shorten a single booking that has already started, and what happens to time already logged?", "Phase Complete deletes only your own later bookings, counted from the server’s idea of this week. Other people’s stay. Shortening a started booking is not in the docs."],
+    ["Kanban behaviour", "focus", "266", "On hold splits the remainder into the unblock week. Why did a booking that already sat in the future fail to split, and is the split always whole weeks?", "The built split keeps the hours done on this booking and makes a new booking in the week of the unblock date. Later bookings do not move yet."],
+    ["Kanban behaviour", "focus", "now", "What one or two sentences does on hold show about a missed delivery date and pressure on the next person, before they confirm?", "The on hold window already previews the delay on every later phase, with a red badge. It does not name the next person."],
+    ["Kanban behaviour", "focus", "266", "Defer and on hold can both move work a week. What makes a practitioner pick one, and do we need that difference in the lower environment build?", "Both are built and kept apart on purpose. Defer is a choice: exactly one week, no questions, nothing recorded. On hold is a blocker: a reason, an unblock date and the hours done.", true],
+    ["Kanban behaviour", "focus", "now", "A long booking is shown only in its end week. Is every spanned week in 26.6, or is the collapsible group allowed to follow in 27.1?", "The docs confirm the card only shows in its end week today, and still list this as open."],
     ["Kanban behaviour", "focus", "271", "Inside In progress and To do, what is the group label for work that runs past this week, and does it collapse by default?"],
-    ["Kanban behaviour", "focus", "266", "Adding a card from the board creates a booking. Which spans are in the first cut: this week, next week, and a custom range, or fewer?"],
-    ["Kanban behaviour", "review", "now", "The complete and on-hold hours start from the booking. Is that true for a phase-complete that covers several bookings with different efforts?"],
+    ["Kanban behaviour", "focus", "266", "Adding a card from the board creates a booking. Which spans are in the first cut: this week, next week, and a custom range, or fewer?", "Agreed so far: it makes one booking for you, and it can link to a phase that already exists. The rest of the flow is not designed."],
+    ["Kanban behaviour", "review", "now", "The hours for complete and on hold start from the booking. Is that true for a Phase Complete that covers several bookings with different efforts?"],
     ["Kanban behaviour", "review", "now", "Does the Kanban sidebar keep scheduling at the top and tuck tags, warnings, and phase progress into sections Callum would recognise on the Gantt?"],
     ["Kanban behaviour", "review", "271", "If this sidebar is the more modern one, which parts should the Gantt sidebar adopt, and which parts must stay as they are for scheduling?"],
-    ["Sequencing", "focus", "now", "Is the first phase UI a draggable order, with parallel phases left out until a customer case needs them?"],
-    ["Sequencing", "focus", "271", "If two phases genuinely run side by side, is that a visual pair in the list, a shared bucket, or a predecessor link we do not show yet?"],
-    ["Sequencing", "focus", "271", "Some engagements have phases and no sequence. Is that an explicit choice, or do we always store an order and treat it as soft?"],
-    ["Sequencing", "focus", "now", "Overlap is allowed and overtake is flagged. What is the exact condition for each, in weeks, when bookings are the only dates we have?"],
-    ["Sequencing", "focus", "later", "Ping-pong is real: review sends a small fix back to prep after review has started. Does the sequence model allow that, or is it a new booking on the earlier phase?"],
-    ["Sequencing", "focus", "271", "Are phase start and end stored even when the UI does not ask for them, and is a per-phase due date optional because the engagement due date is the one people mean?"],
-    ["Sequencing", "focus", "266", "For the lower environment, do phase order and dates live in the Timeframe section, and is the strip above the Gantt explicitly later?"],
-    ["Sequencing", "focus", "271", "Completion of a phase is derived from the last booking. What do we show when that booking is shortened, deleted, or still in the future?"],
-    ["Sequencing", "review", "now", "Where does “allow overlap” live on an engagement that has no template?"],
-    ["Sequencing", "template", "271", "How should sequential work, overlap, and shunting be represented in template authoring, and where does allow-overlap sit in that flow?"],
+    ["Sequencing", "focus", "now", "The links between phases are decided. Is the first screen a simple list people drag, or the planned picker on every phase row?", "ADR 0022 and the Job Phase Editor plan, 15 Sep: each phase can come after one or more phases, so phases can run side by side. The plan is a Configure window on the Details tab, with a picker on each row."],
+    ["Sequencing", "focus", "271", "If two phases genuinely run side by side, is that a visual pair in the list, a shared bucket, or two links we do not show yet?", "The links already allow it. A phase can have several phases before it, and one phase can lead to several."],
+    ["Sequencing", "focus", "271", "Some engagements have phases and no sequence. Is that an explicit choice, or do we always store an order and treat it as soft?", "It is an explicit choice. No links means no order. Booking dates never invent one, and old engagements are not filled in.", true],
+    ["Sequencing", "focus", "now", "Overlap is allowed and overtake is flagged. What is the exact condition for each, in weeks, when bookings are the only dates we have?", "Still open in the docs. The links hold no overlap rule. On 24 Sep one idea was a rule that review cannot start before prep starts."],
+    ["Sequencing", "focus", "later", "Review sometimes sends a small fix back to prep after review has started. Does the sequence allow that, or is it a new booking on the earlier phase?", "The agreed flow makes a new prep booking for the rework and puts the reviewer on hold. The send back flag is not saved yet."],
+    ["Sequencing", "focus", "271", "Are phase start and end stored even when the UI does not ask for them, and is a due date on each phase optional because the engagement due date is the one people mean?", "Half answered on 29 Sep. A phase due date is optional and stands on its own. Schedule changes never move it. Missing a deadline warns and never blocks. Stored start and end are not decided."],
+    ["Sequencing", "focus", "266", "For the lower environment, do phase order and dates live in the Timeframe section, and is the strip above the Gantt explicitly later?", "Phase order lives on the engagement Details tab, in a Configure window. Dates are not settled."],
+    ["Sequencing", "focus", "271", "Completion of a phase is derived from the last booking. What do we show when that booking is shortened, deleted, or still in the future?", "A phase is done when all of its bookings are done. It stays done even if no bookings are left."],
+    ["Sequencing", "review", "now", "Where does “allow overlap” live on an engagement that has no template?", "Not in the phase links. They hold no overlap rule. Overlap is its own open question, and there is no ticket for it yet."],
+    ["Sequencing", "template", "271", "How should sequential work, overlap, and shunting be represented in template authoring, and where does the overlap setting sit in that flow?"],
     ["Sequencing", "template", "271", "How is phase order established when someone creates resource requirements first: creation order, a workflow, or links on the timeline?"],
-    ["Readiness and workflow", "focus", "now", "Job-level ready plus “later phases wait until the previous phase is done” marks review not ready while prep is open. If overlap is normal, what should review show instead?"],
-    ["Readiness and workflow", "focus", "271", "Is readiness a property of the booking, driven by workflow, or is the job boolean plus sequence enough until a customer asks for the other behaviour?"],
-    ["Readiness and workflow", "focus", "271", "Boney’s tactical idea was a flag on the phase: cannot start until the previous phase is complete. Is that the escape hatch, and who sets it?"],
-    ["Readiness and workflow", "focus", "later", "Can a workflow set the ready custom field, and do we hide that field so people are not editing the mechanism by hand?"],
-    ["Readiness and workflow", "focus", "later", "What is a job workflow for, and what is a booking workflow for, once Kanban progress exists? Draft-to-confirmed and to-do-to-done may be two axes or one flow."],
+    ["Readiness and workflow", "focus", "now", "Work released on the engagement, plus “later phases wait until the phase before is done”, marks review Not ready while prep is open. If overlap is normal, what should review show instead?", "The pill is built. Ready only shows in To Do. Not ready shows in every column except Done. It only warns, so people can still start."],
+    ["Readiness and workflow", "focus", "271", "Is readiness a property of the booking, driven by workflow, or is the engagement field plus the phase links enough until a customer asks for more?", "Decided. Readiness belongs to the phase, never the booking. It comes from Work released and the phase links, not from workflow.", true],
+    ["Readiness and workflow", "focus", "271", "Boney’s tactical idea was a flag on the phase: cannot start until the phase before is complete. Is that the escape hatch, and who sets it?", "The docs say hard gates come later. Manual overrides are out of the current epic."],
+    ["Readiness and workflow", "focus", "later", "Can a workflow set the ready custom field, and do we hide that field so people are not editing the mechanism by hand?", "The field is called Work released. Today the normal custom field control is the only way to change it. If an instance has no such field, readiness is switched off and the engagement editor warns."],
+    ["Readiness and workflow", "focus", "later", "What is a job workflow for, and what is a booking workflow for, once Kanban progress exists? Draft to confirmed and to do to done may be two axes or one flow."],
     ["Readiness and workflow", "focus", "later", "If they are two axes, how does someone who expects a single flow from draft to done avoid thinking the product is broken?"],
     ["Readiness and workflow", "focus", "later", "Which Kanban and readiness facts need to be available to the workflow editor so derived states are possible without a new phase workflow?"],
     ["Readiness and workflow", "focus", "later", "Does a heavier workflow, with more actions, slow the environment enough that we should not hang readiness off it? What is the test?"],
-    ["Readiness and workflow", "focus", "later", "Three integration shapes need a decision tree: updates only in the tax tool, updates in Dayshape that flow back, and no tax tool at all. What does each one do to the board?"],
+    ["Readiness and workflow", "focus", "later", "Three integration shapes need a decision tree: updates only in the tax tool, updates in Dayshape that flow back, and no tax tool at all. What does each one do to the board?", "The docs now hold these three modes as a proposal, with six questions to answer for each. None is agreed."],
     ["Readiness and workflow", "focus", "later", "A ready signal months before the booking: does anything move on the board, or is that an RM signal to pull the work forward?"],
     ["Readiness and workflow", "focus", "271", "We will not rebuild a tax workflow engine inside Dayshape. Which states, if any, still belong on the job or the booking for RM reporting?"],
-    ["Follow-on work", "focus", "271", "When prep slips and review is unassigned, does review always move to stay after prep, including across a pool?"],
-    ["Follow-on work", "focus", "271", "When review is already assigned to someone else, does a practitioner push flag it, move it, or ask? Does an RM pushing the same booking do something stronger?"],
-    ["Follow-on work", "focus", "later", "Can follow-on work be reassigned, not only moved, and is that a portfolio setting, a template setting, or a solve rather than an instant rule?"],
-    ["Follow-on work", "focus", "271", "Repeated slips pile every phase into the deadline week. Is there any shunt rule that resists that, or is the only defence the warning at the moment of the push?"],
-    ["Follow-on work", "focus", "later", "How does the reviewer see at-risk prep without opening every card: on their own board, or on a portfolio of engagements they review?"],
-    ["Follow-on work", "focus", "later", "Should a practitioner be able to push a week on the Kanban and be unable to drag that same booking on the Gantt?"],
-    ["Follow-on work", "focus", "later", "For which service lines must a Kanban move raise a suggestion instead of editing the booking, and how do we stop high-volume work generating thousands of them?"],
-    ["Follow-on work", "focus", "later", "If work is not ready the week before it starts, do we ever push it on automatically, or is that out of the product?"],
-    ["Pools", "focus", "266", "For 26.6, is the pool-eligible marker an accepted temporary permission, with the debt written down so it does not become the design?"],
-    ["Pools", "focus", "271", "What is the permission to take pooled work, separate from which pool someone belongs to?"],
+    ["Follow on work", "focus", "271", "When prep slips and review is unassigned, does review always move to stay after prep, including across a pool?", "Today nothing moves. In August the team leaned towards moving follow on work only when it is still unassigned or pooled. Not decided."],
+    ["Follow on work", "focus", "271", "When review is already assigned to someone else, does a practitioner push flag it, move it, or ask? Does an RM pushing the same booking do something stronger?", "Still open in the docs. On 24 Sep moving the other person was called potentially intrusive. Moving together, warning, and leaving dates alone are all still on the table."],
+    ["Follow on work", "focus", "later", "Can follow on work be reassigned, not only moved, and is that a portfolio setting, a template setting, or a solve rather than an instant rule?"],
+    ["Follow on work", "focus", "271", "Repeated slips pile every phase into the deadline week. Is there any shunt rule that resists that, or is the only defence the warning at the moment of the push?"],
+    ["Follow on work", "focus", "later", "How does the reviewer see prep at risk without opening every card: on their own board, or on a portfolio of engagements they review?"],
+    ["Follow on work", "focus", "later", "Should a practitioner be able to push a week on the Kanban and be unable to drag that same booking on the Gantt?"],
+    ["Follow on work", "focus", "later", "For which service lines must a Kanban move raise a suggestion instead of editing the booking, and how do we stop high volume work generating thousands of them?"],
+    ["Follow on work", "focus", "later", "If work is not ready the week before it starts, do we ever push it on automatically, or is that out of the product?", "Customers asked this on 22 Sep. No answer yet. Readiness never changes bookings or capacity today."],
+    ["Pools", "focus", "266", "For 26.6, is the Pool Worker trait an accepted stopgap permission, with the debt written down so it does not become the design?", "Yes. ADR 0027 accepts it for 26.6. If the trait is not set up, nobody sees pooled work. ADR 0021 keeps which work is pooled as a separate idea for later.", true],
+    ["Pools", "focus", "271", "What is the permission to take pooled work, separate from which pool someone belongs to?", "The docs split it the same way. The Pool Worker trait says who may take work. Pool eligibility, set on the phase from a template with an override, says which work. Where the override lives is not decided."],
     ["Pools", "focus", "271", "Is a pool a saved population of work and people, an extension of portfolio, or two rule sets matched together?"],
     ["Pools", "focus", "271", "Portfolios are personal, even if the link can be saved by someone else. Is that acceptable as the home of a pool the whole team depends on?"],
-    ["Pools", "focus", "271", "Can one engagement have pooled prep and named review or sign-off, and where is that stored?"],
+    ["Pools", "focus", "271", "Can one engagement have pooled prep and named review or sign off, and where is that stored?", "In August the team leaned towards storing it on each phase, so this mix would work. The evidence that customers want it is anecdotal."],
     ["Pools", "focus", "later", "Customers already use hour thresholds and client complexity to decide what hits the shelf. Can our current job filters express that, or is it a new configuration?"],
     ["Pools", "focus", "later", "Who maintains pool membership if it is an explicit list of people, and how do we avoid that becoming a weekly admin task?"],
     ["Pools", "focus", "later", "Suitability can filter what a person sees. How do we still let a finished office help another office in crunch without showing them every shelf by default?"],
     ["Pools", "focus", "later", "Is the default a capped list, and what are the top 20 ordered by?"],
     ["Pools", "focus", "later", "Can a manager pull one engagement out of a pool, or drop one in, without rewriting the rule?"],
     ["Pools", "focus", "later", "Is automatic allocation a property of the whole pool, or of a subset such as anything under an hour?"],
-    ["Pools", "focus", "later", "Advise fills people up. High-volume work needs slack for slippage and review notes. Can the ceiling sit below a full week, and is that the same control as today?"],
+    ["Pools", "focus", "later", "Advise fills people up. High volume work needs slack for slippage and review notes. Can the ceiling sit below a full week, and is that the same control as today?"],
     ["Pools", "focus", "later", "A week of allocated work is a different product from handing someone the next return the moment they finish. Which one are we recommending, and for whom?"],
     ["Pools", "focus", "later", "US pool staff and UK staff who mix pool compliance with advisory do not want the same board. Do we document two operating models before we draw one UI?"],
     ["Pools", "focus", "later", "Is an autonomous agent that assigns a defined shelf a later experiment, or a distraction from defining the shelf?"],
-    ["Gantt aggregation", "review", "now", "Is the column label Total hours, and is the old total-engagement-hours control the only switch?"],
+    ["Gantt aggregation", "review", "now", "Is the column label Total hours, and is the old Total Engagement Hours control the only switch?"],
     ["Gantt aggregation", "review", "now", "When four phase rows sit under one person, how are the repeated hour values aligned so the row still reads as one person?"],
     ["Gantt aggregation", "review", "now", "Which totals stay in the tooltip, and which totals are always on the row?"],
     ["Gantt aggregation", "focus", "later", "If aggregation can show a long phase as one bar, does that change the recommendation to book compliance in weeks?"],
-    ["Gantt aggregation", "focus", "271", "What is the first aggregation increment that is worth starting, once portfolio mop-up has a stop line?"],
-    ["Gantt aggregation", "review", "later", "Is there any small-engagement case where one row per booking is worth the misalignment, or is that closed?"],
+    ["Gantt aggregation", "focus", "271", "What is the first aggregation increment that is worth starting, once portfolio mop up has a stop line?"],
+    ["Gantt aggregation", "review", "later", "Is there any small engagement where one row per booking is worth the misalignment, or is that closed?"],
     ["Customers and guidance", "focus", "266", "What does the feedback form need to ask so a weekly debrief is about the task, not a transcript we cannot interpret?"],
-    ["Customers and guidance", "focus", "later", "Which scenarios get a written operating model first: centralised scheduling, suggestions, portfolio versus job group, and high-volume Kanban?"],
+    ["Customers and guidance", "focus", "later", "Which scenarios get a written operating model first: centralised scheduling, suggestions, portfolio versus job group, and high volume Kanban?", "The docs now have a draft Tax workflow operating model. It is marked proposed and open."],
     ["Customers and guidance", "focus", "later", "RSM US is choosing a suggestions pattern as they onboard tax. Do we lead that, or arrive after it is installed?"],
-    ["Customers and guidance", "focus", "later", "What would we borrow from the other product’s pool, portfolio, and auto-allocation, and what do we refuse?"],
-    ["Customers and guidance", "focus", "271", "Which of Melissa and Ainsley’s US practices can stand in for another customer round on pools and practitioner-led edits?"],
+    ["Customers and guidance", "focus", "later", "What would we borrow from the other product’s pool, portfolio, and automatic allocation, and what do we refuse?"],
+    ["Customers and guidance", "focus", "271", "Which of Melissa and Ainsley’s US practices can stand in for another customer round on pools and edits made by practitioners?"],
     ["Portfolio views", "portfolio", "266", "Is the loss of dynamic membership after save a production defect in Glaikit, or only the local mock? The mock itself is settled: membership is not persisted there."],
     ["Portfolio views", "portfolio", "266", "What is the relationship between Add to portfolio and Save: does Add stage membership while Save persists the definition?"],
     ["Portfolio views", "portfolio", "266", "What opens when someone clicks a portfolio: the list, the editor, or Performance or Team? What do Search results and the menu do?"],
     ["Portfolio views", "portfolio", "266", "Are dynamic matches and manual additions one list or two inspectable groups?"],
-    ["Portfolio views", "portfolio", "271", "Which totals are always on the portfolio roll-up, and how does someone expand to the engagement?"],
+    ["Portfolio views", "portfolio", "271", "Which totals are always on the portfolio rollup, and how does someone expand to the engagement?"],
     ["Portfolio views", "portfolio", "271", "Which Performance affordances are in this scope, including a marker that an engagement sits in a related group?"],
     ["Portfolio views", "portfolio", "266", "Does deleting a portfolio always ask, and is that the same confirm as other destructive actions?"],
     ["Portfolio views", "review", "266", "Sticky table headers may not be a switch on the shared table. If they change every table, do we still want them on portfolio?"],
     ["Portfolio views", "review", "266", "Closing the portfolio editor with an unsaved add warns that the add will be discarded. Is that confirm only when membership changed?"],
-    ["Templates", "template", "271", "Is a template proportional, a typical job in hours, or both, with scale-or-keep-baseline chosen when it is applied?"],
+    ["Templates", "template", "271", "Is a template proportional, a typical job in hours, or both, with scale or keep baseline chosen when it is applied?"],
     ["Templates", "template", "271", "If it is proportional, what quantity is on screen while someone edits it?"],
     ["Templates", "template", "271", "Can a template be marked as not scalable, and what happens when the engagement total differs?"],
     ["Templates", "template", "271", "Are hours stored on the template, taken from a sample engagement, or entered only at apply time?"],
@@ -1861,12 +1914,12 @@ ul.clean li { margin: 0 0 6px; }
     ["Templates", "template", "271", "What does the hours option calculate against?"],
     ["Templates", "template", "271", "Do resource percentages need to total 100% within the phase, the booking type, or the whole template?"],
     ["Templates", "template", "271", "What role do booking types play, and how do several optional booking types interact with phases and colour?"],
-    ["Templates", "template", "271", "Is there a simple warning for an unusually large hour value that does not depend on a live working-time calendar?"],
-    ["Templates", "template", "271", "Does Details only hold identity and scope, with no template-structure switch?"],
+    ["Templates", "template", "271", "Is there a simple warning for an unusually large hour value that does not depend on a live working time calendar?"],
+    ["Templates", "template", "271", "Does Details only hold identity and scope, with no switch for template structure?"],
     ["Templates", "template", "271", "Does configuration profile replace business unit as the scope field?"],
     ["Templates", "template", "271", "Can someone add a phase before any resource requirement?"],
     ["Templates", "template", "271", "Are phases optional unless configuration says they are required?"],
-    ["Templates", "template", "271", "Is add-requirement disabled until a phase exists, when phases are required?"],
+    ["Templates", "template", "271", "Is Add requirement turned off until a phase exists, when phases are required?"],
     ["Templates", "template", "271", "Does clicking a phase preselect it when adding a requirement?"],
     ["Templates", "template", "271", "Do the phase and resource timelines share one time axis?"],
     ["Templates", "template", "271", "Can phase duration be edited on the shape itself?"],
@@ -1892,9 +1945,9 @@ ul.clean li { margin: 0 0 6px; }
     ["Templates", "template", "271", "Does the engagement keep the template id and version?"],
     ["Templates", "template", "later", "Is automatic template selection configured in Dayshape, middleware, workflow, or the integration?"],
     ["Templates", "template", "later", "Which fields can a matching rule see?"],
-    ["Templates", "template", "271", "For the first high-volume use, is API apply more important than doing it by hand in the UI?"],
+    ["Templates", "template", "271", "For the first high volume use, is API apply more important than doing it by hand in the UI?"],
     ["Templates", "template", "later", "Is bulk upload in the first release?"],
-    ["Templates", "template", "271", "How are permissions and configuration-profile visibility enforced?"],
+    ["Templates", "template", "271", "How are permissions and configuration profile visibility enforced?"],
     ["Templates", "template", "271", "Can people apply only published templates?"],
     ["Templates", "template", "later", "Can a template be archived without changing engagements already created from it?"],
     ["Templates", "template", "later", "How are versions named and chosen by an API or workflow?"],
@@ -1903,7 +1956,7 @@ ul.clean li { margin: 0 0 6px; }
     ["Templates", "template", "271", "Which of manual create, manual apply, API apply, workflow apply, and bulk upload must the first release include, and which need a designed UI?"],
     ["Templates", "template", "271", "May the first release create unassigned demand only?"],
     ["Templates", "template", "later", "Is automatic resource suggestion out of the first cut?"],
-    ["Templates", "template", "later", "Are skills, buffers, phase milestones, and configuration rules first-cut or follow-up?"],
+    ["Templates", "template", "later", "Are skills, buffers, phase milestones, and configuration rules in the first cut, or later?"],
     ["Templates", "template", "271", "Which template behaviours in the current mock are illustrative and must not be promised?"],
     ["Templates", "review", "271", "Steven has no recommended path through templating yet. Which of the questions above, if answered, would let him point design at a single screen?"]
   ];
@@ -1914,14 +1967,18 @@ ul.clean li { margin: 0 0 6px; }
   function renderQuestions() {
     const source = document.getElementById("filter-source").value;
     const when = document.getElementById("filter-when").value;
+    const status = document.getElementById("filter-status").value;
     const q = document.getElementById("filter-q").value.trim().toLowerCase();
     const rows = questions.filter((item) => {
       if (source !== "all" && item[1] !== source) return false;
       if (when !== "all" && item[2] !== when) return false;
-      if (q && (item[0] + " " + item[3]).toLowerCase().indexOf(q) === -1) return false;
+      if (status === "open" && item[5]) return false;
+      if (status === "answered" && !item[5]) return false;
+      if (q && (item[0] + " " + item[3] + " " + (item[4] || "")).toLowerCase().indexOf(q) === -1) return false;
       return true;
     });
-    document.getElementById("q-count").textContent = rows.length + " of " + questions.length + " open questions";
+    const answered = rows.filter((item) => item[5]).length;
+    document.getElementById("q-count").textContent = "Showing " + rows.length + " of " + questions.length + " questions. " + (rows.length - answered) + " still open, " + answered + " answered by the Tax docs.";
     const groups = [];
     rows.forEach((item) => {
       let group = groups.find((g) => g.name === item[0]);
@@ -1933,12 +1990,14 @@ ul.clean li { margin: 0 0 6px; }
     });
     document.getElementById("q-list").innerHTML = groups.map((group) =>
       '<div class="q-group"><h3>' + group.name + '</h3>' + group.items.map((item) =>
-        '<article class="q"><span class="tag">' + sourceLabel[item[1]] + '</span><span class="tag is-info">' + whenLabel[item[2]] + '</span><p>' + item[3] + '</p></article>'
+        '<article class="q' + (item[5] ? ' is-answered' : '') + '"><span class="tag">' + sourceLabel[item[1]] + '</span><span class="tag is-info">' + whenLabel[item[2]] + '</span>' + (item[5] ? '<span class="tag is-ok">Answered by the docs</span>' : '') + '<p>' + item[3] + '</p>' +
+        (item[4] ? '<p class="q-note"><strong>Tax docs:</strong> ' + item[4] + '</p>' : '') + '</article>'
       ).join("") + '</div>'
     ).join("") || '<p>Nothing matches.</p>';
   }
   document.getElementById("filter-source").addEventListener("change", renderQuestions);
   document.getElementById("filter-when").addEventListener("change", renderQuestions);
+  document.getElementById("filter-status").addEventListener("change", renderQuestions);
   document.getElementById("filter-q").addEventListener("input", renderQuestions);
   renderQuestions();
 })();

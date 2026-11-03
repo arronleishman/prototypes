@@ -22,6 +22,8 @@
   --surface-list-item-hover: #f1f1f4;
   --surface-list-item-selected-light: #f0effb;
   --surface-list-item-selected-dark: #4f3fa0;
+  --surface-accent: #e2e3e9;
+  --border-disabled-dark: #dad8e5;
   --surface-emphasis: #4c5172;
   --surface-strong: #3d425c;
   --surface-success: #078138;
@@ -520,6 +522,11 @@ body {
   border-radius: var(--border-radius-default);
   background: var(--surface-default); color: var(--icon-subtle); display: inline-flex; align-items: center;
   justify-content: center; cursor: pointer; font-size: var(--icon-size-sm, 10px); padding: 0;
+}
+.ColFilter.is-active {
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+  background: var(--surface-primary-subtle);
 }
 .count {
   min-width: 32px; width: 32px; height: 32px; padding: 0 var(--padding-xxs);
@@ -2159,19 +2166,382 @@ body.is-card-dragging * {
   padding: 0 8px; border: 1px solid #babfd1; border-radius: 0 4px 4px 0;
   background: #fff; font-size: 13px; color: #4c5172; font-weight: 600;
 }
+/* To Do filters — Portfolio PfTeam filter panel chrome, practitioner-light set.
+   Fixed to the viewport so column overflow:hidden cannot clip the panel or flyout. */
 .PrepFilters {
-  display: none; position: absolute; z-index: 40; top: 52px; right: 12px;
-  width: 280px; background: #fff; border: 1px solid #e2e3e9; border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.12); padding: 12px; gap: 10px;
+  display: none;
+  position: fixed;
+  z-index: 90;
+  width: 320px;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--surface-default);
+  border: var(--border-xs) solid var(--border-default);
+  border-radius: var(--border-radius-default);
+  box-shadow: 0 2px 4px 2px rgb(178 178 178 / 30%);
   flex-direction: column;
+  overflow: visible;
 }
 .PrepFilters.is-open { display: flex; }
-.PrepFilters label { font-size: 12px; font-weight: 600; color: #4c5172; display: flex; flex-direction: column; gap: 4px; }
-.PrepFilters input[type="search"], .PrepFilters select {
-  height: 32px; border: 1px solid #babfd1; border-radius: 4px; padding: 0 8px;
-  font-family: var(--font-family); font-size: 13px;
+.PrepFilters-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: min(70vh, 520px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 8px 0 0;
+  box-sizing: border-box;
 }
-.PrepFilters .FilterCheck { flex-direction: row; align-items: center; gap: 8px; font-weight: 400; }
+.PrepFilters-search {
+  display: flex;
+  width: calc(100% - 24px);
+  height: 35px;
+  margin: 0 12px 8px;
+}
+.PrepFilters-search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 35px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border: var(--border-xs) solid var(--border-default);
+  border-radius: var(--border-radius-default);
+  background: var(--surface-default);
+  color: var(--text-emphasis);
+  font: inherit;
+  font-size: 14px;
+}
+.PrepFilters-search input::placeholder { color: var(--text-subtle); }
+.PrepFilters-top {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 42px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  background: var(--surface-default);
+}
+.PrepFilters-toggle {
+  width: 28px;
+  height: 16px;
+  padding: 0;
+  border-radius: 40px;
+  flex: 0 0 28px;
+  border: var(--border-xs) solid var(--border-default);
+  background: var(--surface-accent);
+  cursor: pointer;
+  position: relative;
+}
+.PrepFilters-toggle::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--text-subtle);
+}
+.PrepFilters-toggle.is-on { background: var(--primary); }
+.PrepFilters-toggle.is-on::after { left: 13px; background: var(--surface-default); }
+.PrepFilters-clear {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 28px;
+  margin-left: auto;
+  padding: 0 8px;
+  border: var(--border-xs) solid var(--border-disabled-dark);
+  border-radius: var(--border-radius-default);
+  background: var(--surface-default);
+  color: var(--text-disabled);
+  font: inherit;
+  font-size: 12px;
+  font-weight: var(--font-weight-regular);
+  cursor: not-allowed;
+}
+.PrepFilters-clear.is-active {
+  color: var(--text-primary);
+  border-color: var(--border-primary);
+  cursor: pointer;
+}
+.PrepFilters-group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+.PrepFilters-groupTitle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-height: 46px;
+  padding: 16px 12px;
+  box-sizing: border-box;
+  border: 0;
+  border-top: var(--border-xs) solid var(--border-subtle);
+  background: var(--surface-default);
+  color: var(--text-accent);
+  font: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  line-height: 20px;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.PrepFilters-groupTitle i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--text-accent);
+  font-size: 12px;
+  line-height: 1;
+}
+.PrepFilters-options {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 0 8px;
+}
+.PrepFilters-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 30px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  border: 0;
+  background: transparent;
+  color: var(--text-default);
+  font: inherit;
+  font-size: 14px;
+  line-height: 21px;
+  text-align: left;
+  cursor: pointer;
+}
+.PrepFilters-check:hover {
+  background: var(--surface-list-item-hover);
+}
+.PrepFilters-check input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--primary);
+  flex: 0 0 16px;
+}
+.PrepFilters-subitem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 30px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  gap: 4px;
+  border: 0;
+  background: var(--surface-default);
+  color: var(--text-default);
+  font: inherit;
+  font-size: 14px;
+  line-height: 21px;
+  cursor: pointer;
+}
+.PrepFilters-subitem:hover:not(.is-active) {
+  background: var(--surface-list-item-hover);
+}
+.PrepFilters-subitem i {
+  margin-left: auto;
+  width: 14px;
+  color: var(--icon-subtle);
+  font-size: 12px;
+}
+.PrepFilters-subitem.is-active {
+  background: var(--surface-list-item-selected-dark);
+  color: var(--text-inverse);
+}
+.PrepFilters-subitem.is-active i { color: var(--text-inverse); }
+.PrepFilters-subCount {
+  margin-left: auto;
+  margin-right: 4px;
+  height: 20px;
+  min-width: 20px;
+  padding: 0 6px;
+  border: var(--border-xs) solid var(--border-default);
+  border-radius: var(--border-radius-default);
+  color: var(--text-accent);
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+}
+.PrepFilters-subitem.is-active .PrepFilters-subCount {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: var(--text-inverse);
+}
+/* Tree pick flyout — matches Portfolio PfTeam filter flyout */
+.PrepFilters-flyout {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 376px;
+  min-height: 280px;
+  max-height: min(70vh, 520px);
+  padding: 8px 12px;
+  box-sizing: border-box;
+  background: var(--surface-default);
+  border: var(--border-xs) solid var(--border-default);
+  border-left: 0;
+  border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0;
+  box-shadow: 0 2px 4px 2px rgb(0 0 0 / 5%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 91;
+}
+.PrepFilters-flyout.is-start {
+  left: auto;
+  right: 100%;
+  border-left: var(--border-xs) solid var(--border-default);
+  border-right: 0;
+  border-radius: var(--border-radius-default) 0 0 var(--border-radius-default);
+}
+.PrepFilters-flyoutSearch {
+  display: flex;
+  width: 100%;
+  height: 35px;
+  flex: 0 0 auto;
+}
+.PrepFilters-flyoutSearch input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 35px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border: var(--border-xs) solid var(--border-default);
+  border-radius: var(--border-radius-default) 0 0 var(--border-radius-default);
+  background: var(--surface-default);
+  color: var(--text-emphasis);
+  font: inherit;
+  font-size: 14px;
+}
+.PrepFilters-flyoutSearch input::placeholder { color: var(--text-emphasis); }
+.PrepFilters-flyoutSearch button {
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  border: var(--border-xs) solid var(--border-default);
+  border-left: 0;
+  border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0;
+  background: var(--surface-default);
+  color: var(--icon-subtle);
+  cursor: pointer;
+}
+.PrepFilters-flyoutActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 24px;
+  flex: 0 0 auto;
+}
+.PrepFilters-flyoutAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: var(--border-xs) solid var(--border-disabled-dark);
+  border-radius: var(--border-radius-default);
+  background: var(--surface-default);
+  color: var(--icon-subtle);
+  cursor: pointer;
+}
+.PrepFilters-flyoutAction--apply {
+  border-color: var(--border-default);
+  color: var(--icon-accent);
+  margin-left: auto;
+}
+.PrepFilters-flyoutAction--apply + .PrepFilters-flyoutAction--extra {
+  margin-left: 8px;
+}
+.PrepFilters-flyoutValues {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.PrepFilters-flyoutValue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 30px;
+  padding: 4px;
+  border: 0;
+  border-radius: var(--border-radius-default);
+  background: var(--surface-default);
+  color: var(--text-default);
+  font: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.PrepFilters-flyoutValue:hover {
+  background: var(--surface-list-item-hover);
+}
+.PrepFilters-flyoutChevron {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--icon-subtle);
+  cursor: pointer;
+  flex: 0 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.PrepFilters-flyoutChevron i { font-size: 10px; }
+.PrepFilters-flyoutValue input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--primary);
+  pointer-events: none;
+  flex: 0 0 16px;
+}
+.PrepFilters-flyoutValue-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.PrepFilters-flyoutCount {
+  margin-left: auto;
+  height: 24px;
+  padding: 0 8px;
+  border: var(--border-xs) solid var(--border-default);
+  border-radius: var(--border-radius-default);
+  color: var(--text-accent);
+  font-size: 12px;
+  line-height: 22px;
+  flex: 0 0 auto;
+}
+.PrepFilters-flyoutEmpty {
+  padding: 8px 4px;
+  color: var(--text-subtle);
+  font-size: 14px;
+}
 .column { position: relative; }
 
 .panel-placeholder {
@@ -5944,7 +6314,7 @@ function renderDropZone(zone, toId) {
 
 // Mutable board state — status columns (To Do / In Progress / On Hold / Done)
 let columns = JSON.parse(JSON.stringify(ALL_COLUMNS));
-/* Demo overflow tags on a couple of cards (matches design example grey chips) */
+/* Demo filter + overflow tags so To Do filters have distinct values to apply */
 (function enrichTaxTagOverflowDemo() {
   const demoTags = [
     'Planning',
@@ -5954,12 +6324,28 @@ let columns = JSON.parse(JSON.stringify(ALL_COLUMNS));
     'Ecological',
     'Agricultural'
   ];
-  columns.forEach(function (col) {
-    (col.tasks || []).forEach(function (t) {
-      if (t.id === 't-todo-overdue' || t.id === 't-smith-client') {
-        t.taxTypes = demoTags.slice();
-      }
-    });
+  const altTypes = ['1120 Corporate', '1040 Individual', 'Audit', 'Advisory'];
+  const todo = columns.find(function (c) { return c.id === 'to-do'; });
+  (todo && todo.tasks || []).forEach(function (t, i) {
+    if (t.id === 't-todo-overdue' || t.id === 't-smith-client') {
+      t.taxTypes = demoTags.slice();
+    } else if (!t.taxTypes || !t.taxTypes.length) {
+      t.taxTypes = [altTypes[i % altTypes.length]];
+    } else if (i % 5 === 0) {
+      t.taxTypes = [altTypes[i % altTypes.length]];
+    }
+    if (!t.bookingState) {
+      if (t.blockingReason || t.status === 'on-hold') t.bookingState = 'On Hold';
+      else if (i % 11 === 3) t.bookingState = 'Tentative';
+      else if (i % 13 === 0) t.bookingState = 'Complete';
+      else t.bookingState = 'Definite';
+    }
+    if (!t.engagementPeople || !t.engagementPeople.length) {
+      t.engagementPeople = (i % 2 === 0)
+        ? [{ role: 'Manager', name: 'Lynnea Ackenhead' }, { role: 'Partner', name: 'Christophorus Absolon' }]
+        : [{ role: 'Manager', name: 'Lynnea Ackenhead' }];
+      if (i % 7 === 0) t.engagementPeople = [{ role: 'Partner', name: 'Christophorus Absolon' }];
+    }
   });
 })();
 
@@ -6288,15 +6674,151 @@ const prepFilters = {
   search: '',
   priorityOnly: false,
   readyOnly: false,
+  showSelected: false,
+  openGroups: { work: true, booking: true, engagement: false },
+  submenu: null,
+  flyoutQuery: '',
+  draft: null,
+  expanded: new Set(),
+  bookingStates: new Set(),
+  bookingTypes: new Set(),
+  clients: new Set(),
+  keyPersonnel: new Set(),
   scheduledCollapsed: false,
   pooledCollapsed: false,
 };
+
+const PREP_BOOKING_STATES = ['Definite', 'Tentative', 'On Hold', 'Complete'];
+const PREP_KEY_PERSONNEL = ['Manager', 'Partner'];
 
 function parseDeadlineSort(d) {
   const months = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
   if (!d) return 9999;
   const parts = String(d).split(' ');
   return (months[parts[0]] ?? 0) * 31 + (parseInt(parts[1] || '0', 10) || 0);
+}
+
+function prepFilterActiveCount() {
+  let n = 0;
+  if ((prepFilters.search || '').trim()) n += 1;
+  if (prepFilters.priorityOnly) n += 1;
+  if (prepFilters.readyOnly) n += 1;
+  n += prepFilters.bookingStates.size;
+  n += prepFilters.bookingTypes.size;
+  n += prepFilters.clients.size;
+  n += prepFilters.keyPersonnel.size;
+  return n;
+}
+
+function clearPrepFilters() {
+  prepFilters.search = '';
+  prepFilters.priorityOnly = false;
+  prepFilters.readyOnly = false;
+  prepFilters.submenu = null;
+  prepFilters.flyoutQuery = '';
+  prepFilters.draft = null;
+  prepFilters.expanded = new Set();
+  prepFilters.bookingStates = new Set();
+  prepFilters.bookingTypes = new Set();
+  prepFilters.clients = new Set();
+  prepFilters.keyPersonnel = new Set();
+}
+
+function openPrepFilterSubmenu(key) {
+  const set = prepSelectionSet(key);
+  prepFilters.submenu = key;
+  prepFilters.flyoutQuery = '';
+  prepFilters.draft = new Set(set || []);
+  prepFilters.expanded = new Set();
+  /* Auto-expand first parent so Booking State tree is visible */
+  if (key === 'bookingState') prepFilters.expanded.add('New Task Workflow');
+  else if (key === 'bookingTypes') prepFilters.expanded.add('Booking types');
+  else if (key === 'clients') prepFilters.expanded.add('Clients');
+  else if (key === 'keyPersonnel') prepFilters.expanded.add('Key Personnel');
+}
+
+function closePrepFilterSubmenu(apply) {
+  if (apply && prepFilters.submenu && prepFilters.draft) {
+    const set = prepSelectionSet(prepFilters.submenu);
+    if (set) {
+      set.clear();
+      prepFilters.draft.forEach(function (v) { set.add(v); });
+    }
+  }
+  prepFilters.submenu = null;
+  prepFilters.flyoutQuery = '';
+  prepFilters.draft = null;
+  prepFilters.expanded = new Set();
+}
+
+function prepFilterTree(key, opts) {
+  if (key === 'bookingState') {
+    return [{
+      label: 'New Task Workflow',
+      children: (opts.bookingState || []).map(function (v) {
+        return { label: v, value: v };
+      })
+    }];
+  }
+  if (key === 'bookingTypes') {
+    return [{
+      label: 'Booking types',
+      children: (opts.bookingTypes || []).map(function (v) {
+        return { label: v, value: v };
+      })
+    }];
+  }
+  if (key === 'clients') {
+    return [{
+      label: 'Clients',
+      children: (opts.clients || []).map(function (v) {
+        return { label: v, value: v };
+      })
+    }];
+  }
+  if (key === 'keyPersonnel') {
+    return [{
+      label: 'Key Personnel',
+      children: (opts.keyPersonnel || []).map(function (v) {
+        return { label: v, value: v };
+      })
+    }];
+  }
+  return [];
+}
+
+function taskBookingStateLabel(task) {
+  if (!task) return 'Definite';
+  if (task.bookingState) return task.bookingState;
+  if (task.status === 'on-hold' || task.blockingReason) return 'On Hold';
+  if (task.status === 'done' || task.phaseStatus === 'complete') return 'Complete';
+  if (task.status === 'tentative') return 'Tentative';
+  return 'Definite';
+}
+
+function collectPrepFilterOptions() {
+  const todoCol = columns.find(function (c) { return c.id === 'to-do'; });
+  const todo = (todoCol && todoCol.tasks) || [];
+  const types = new Set();
+  const clients = new Set();
+  todo.forEach(function (task) {
+    (task.taxTypes || []).forEach(function (t) { if (t) types.add(t); });
+    if (task.company) clients.add(task.company);
+  });
+  return {
+    bookingState: PREP_BOOKING_STATES.slice(),
+    bookingTypes: [...types].sort(),
+    clients: [...clients].sort(),
+    keyPersonnel: PREP_KEY_PERSONNEL.slice()
+  };
+}
+
+function prepSelectionSet(key) {
+  if (key === 'bookingState') return prepFilters.bookingStates;
+  if (key === 'bookingTypes') return prepFilters.bookingTypes;
+  if (key === 'clients') return prepFilters.clients;
+  if (key === 'keyPersonnel') return prepFilters.keyPersonnel;
+  return null;
 }
 
 function matchesPrepColumnFilters(task) {
@@ -6308,7 +6830,207 @@ function matchesPrepColumnFilters(task) {
   }
   if (prepFilters.priorityOnly && !task.isPriority) return false;
   if (prepFilters.readyOnly && !task.isReady) return false;
+  if (prepFilters.bookingStates.size) {
+    if (!prepFilters.bookingStates.has(taskBookingStateLabel(task))) return false;
+  }
+  if (prepFilters.bookingTypes.size) {
+    const types = task.taxTypes || [];
+    if (!types.some(function (t) { return prepFilters.bookingTypes.has(t); })) return false;
+  }
+  if (prepFilters.clients.size) {
+    if (!prepFilters.clients.has(task.company)) return false;
+  }
+  if (prepFilters.keyPersonnel.size) {
+    const roles = (task.engagementPeople || []).map(function (p) { return p.role; });
+    const hit = [...prepFilters.keyPersonnel].some(function (role) {
+      return roles.indexOf(role) !== -1;
+    });
+    if (!hit) return false;
+  }
   return true;
+}
+
+function positionPrepFiltersPanel() {
+  const panel = document.getElementById('prepFiltersPanel');
+  const btn = document.querySelector('.column[data-column-id="to-do"] [data-prep-filter-toggle]');
+  if (!panel || !btn || !prepFilters.open) return;
+  const rect = btn.getBoundingClientRect();
+  const gap = 4;
+  const panelWidth = panel.offsetWidth || 320;
+  const flyoutWidth = 376;
+  const flyout = document.getElementById('prepFiltersFlyout');
+  const needsFlyout = !!flyout;
+  const pairWidth = panelWidth + (needsFlyout ? flyoutWidth : 0);
+
+  /* Prefer anchoring under the filter button, but shift left so the value menu can sit on the right */
+  let left = rect.right - panelWidth;
+  if (needsFlyout && left + pairWidth > window.innerWidth - 8) {
+    left = window.innerWidth - 8 - pairWidth;
+  }
+  left = Math.max(8, Math.min(left, window.innerWidth - panelWidth - 8));
+
+  let top = rect.bottom + gap;
+  const maxH = Math.min(window.innerHeight * 0.7, 520);
+  if (top + Math.min(panel.scrollHeight || 320, maxH) > window.innerHeight - 8) {
+    top = Math.max(8, rect.top - gap - Math.min(panel.scrollHeight || 320, maxH));
+  }
+  panel.style.left = left + 'px';
+  panel.style.top = top + 'px';
+  panel.style.right = 'auto';
+
+  if (flyout) {
+    const roomOnRight = left + panelWidth + flyoutWidth <= window.innerWidth - 8;
+    flyout.classList.toggle('is-start', !roomOnRight);
+  }
+}
+
+function renderPrepFlyoutHtml(key, opts) {
+  const draft = prepFilters.draft || new Set();
+  const q = (prepFilters.flyoutQuery || '').trim().toLowerCase();
+  const tree = prepFilterTree(key, opts);
+
+  function nodeVisible(node) {
+    const children = node.children || [];
+    if (children.length) {
+      const childHits = children.filter(nodeVisible);
+      const selfMatch = !q || node.label.toLowerCase().includes(q);
+      if (prepFilters.showSelected) return childHits.length > 0;
+      return selfMatch || childHits.length > 0;
+    }
+    if (prepFilters.showSelected && !draft.has(node.value)) return false;
+    return !q || node.label.toLowerCase().includes(q);
+  }
+
+  function renderNode(node, depth) {
+    if (!nodeVisible(node)) return '';
+    const children = node.children || [];
+    const open = children.length && (prepFilters.expanded.has(node.label) || !!q || prepFilters.showSelected);
+    const picked = children.length
+      ? children.filter(function (c) { return draft.has(c.value); }).length
+      : (draft.has(node.value) ? 1 : 0);
+    const total = children.length || 1;
+    const checked = picked === total;
+    const indeterminate = picked > 0 && picked < total;
+    const pad = 4 + depth * 18;
+    const chevron = children.length
+      ? ('<button type="button" class="PrepFilters-flyoutChevron" data-prep-tree-toggle="' + escapeHtml(node.label) + '" aria-label="' + (open ? 'Collapse ' : 'Expand ') + escapeHtml(node.label) + '">' +
+          '<i class="fa-solid fa-chevron-' + (open ? 'down' : 'right') + '" aria-hidden="true"></i></button>')
+      : '<span class="PrepFilters-flyoutChevron" aria-hidden="true"></span>';
+    const badge = children.length
+      ? '<span class="PrepFilters-flyoutCount">' + picked + '/' + children.length + '</span>'
+      : '';
+    const valueAttr = children.length
+      ? ' data-prep-tree-parent="' + escapeHtml(node.label) + '"'
+      : ' data-prep-filter-value="' + String(node.value).replace(/"/g, '&quot;') + '"';
+    const row =
+      '<div class="PrepFilters-flyoutValue" role="button" tabindex="0" style="padding-left:' + pad + 'px"' + valueAttr + '>' +
+        chevron +
+        '<input type="checkbox"' + (checked ? ' checked' : '') + (indeterminate ? ' data-indeterminate="1"' : '') + ' tabindex="-1" aria-hidden="true" />' +
+        '<span class="PrepFilters-flyoutValue-label" title="' + escapeHtml(node.label) + '">' + escapeHtml(node.label) + '</span>' +
+        badge +
+      '</div>';
+    const kids = (children.length && open)
+      ? children.map(function (child) { return renderNode(child, depth + 1); }).join('')
+      : '';
+    return row + kids;
+  }
+
+  const rows = tree.map(function (node) { return renderNode(node, 0); }).join('');
+  return (
+    '<div class="PrepFilters-flyout" id="prepFiltersFlyout" data-prep-flyout="' + key + '">' +
+      '<div class="PrepFilters-flyoutSearch">' +
+        '<input type="search" id="prepFlyoutSearch" placeholder="Filter..." value="' + (prepFilters.flyoutQuery || '').replace(/"/g, '&quot;') + '" aria-label="Filter values" />' +
+        '<button type="button" data-prep-flyout-clear-search aria-label="Clear value search"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>' +
+      '</div>' +
+      '<div class="PrepFilters-flyoutActions">' +
+        '<button type="button" class="PrepFilters-flyoutAction" data-prep-flyout-cancel aria-label="Cancel filter selection"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>' +
+        '<button type="button" class="PrepFilters-flyoutAction PrepFilters-flyoutAction--apply" data-prep-flyout-apply aria-label="Apply filter selection"><i class="fa-solid fa-check" aria-hidden="true"></i></button>' +
+      '</div>' +
+      '<div class="PrepFilters-flyoutValues">' +
+        (rows || '<div class="PrepFilters-flyoutEmpty">No values</div>') +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function renderPrepFiltersPanelHtml() {
+  if (!prepFilters.open) return '';
+  const active = prepFilterActiveCount();
+  const opts = collectPrepFilterOptions();
+  const submeta = {
+    bookingState: { label: 'Booking State', set: prepFilters.bookingStates, values: opts.bookingState },
+    bookingTypes: { label: 'Booking types', set: prepFilters.bookingTypes, values: opts.bookingTypes },
+    clients: { label: 'Clients', set: prepFilters.clients, values: opts.clients },
+    keyPersonnel: { label: 'Key Personnel', set: prepFilters.keyPersonnel, values: opts.keyPersonnel }
+  };
+
+  function groupTitle(key, label) {
+    const open = !!prepFilters.openGroups[key];
+    return (
+      '<button type="button" class="PrepFilters-groupTitle" data-prep-filter-group="' + key + '" aria-expanded="' + (open ? 'true' : 'false') + '">' +
+        '<i class="fa-solid fa-chevron-' + (open ? 'down' : 'right') + '" aria-hidden="true"></i>' +
+        '<span>' + label + '</span>' +
+      '</button>'
+    );
+  }
+
+  function subitem(key) {
+    const meta = submeta[key];
+    if (!meta) return '';
+    const count = meta.set.size;
+    const activeSub = prepFilters.submenu === key;
+    if (prepFilters.showSelected && !count) return '';
+    return (
+      '<button type="button" class="PrepFilters-subitem' + (activeSub ? ' is-active' : '') + '" data-prep-filter-sub="' + key + '">' +
+        '<span>' + meta.label + '</span>' +
+        (count ? '<span class="PrepFilters-subCount">' + count + '</span>' : '') +
+        '<i class="fa-solid fa-angle-right" aria-hidden="true"></i>' +
+      '</button>'
+    );
+  }
+
+  const workOpen = !!prepFilters.openGroups.work;
+  const bookingOpen = !!prepFilters.openGroups.booking;
+  const engagementOpen = !!prepFilters.openGroups.engagement;
+  const flyout = prepFilters.submenu && submeta[prepFilters.submenu]
+    ? renderPrepFlyoutHtml(prepFilters.submenu, opts)
+    : '';
+
+  return (
+    '<div class="PrepFilters is-open" id="prepFiltersPanel" role="menu">' +
+      flyout +
+      '<div class="PrepFilters-body">' +
+        '<div class="PrepFilters-search">' +
+          '<input type="search" id="prepFilterSearch" placeholder="Search company or engagement" value="' + (prepFilters.search || '').replace(/"/g, '&quot;') + '" aria-label="Search To Do" />' +
+        '</div>' +
+        '<div class="PrepFilters-top">' +
+          '<button type="button" class="PrepFilters-toggle' + (prepFilters.showSelected ? ' is-on' : '') + '" data-prep-filter-show-selected aria-pressed="' + (prepFilters.showSelected ? 'true' : 'false') + '" aria-label="Show selected filter values only"></button>' +
+          '<button type="button" class="PrepFilters-clear' + (active ? ' is-active' : '') + '" data-prep-filter-clear' + (active ? '' : ' disabled') + '>Clear all</button>' +
+        '</div>' +
+        '<section class="PrepFilters-group">' +
+          groupTitle('work', 'Work') +
+          (workOpen
+            ? ('<div class="PrepFilters-options">' +
+                '<label class="PrepFilters-check"><input type="checkbox" id="prepFilterPriority"' + (prepFilters.priorityOnly ? ' checked' : '') + ' /> Priority only</label>' +
+                '<label class="PrepFilters-check"><input type="checkbox" id="prepFilterReady"' + (prepFilters.readyOnly ? ' checked' : '') + ' /> Ready only</label>' +
+              '</div>')
+            : '') +
+        '</section>' +
+        '<section class="PrepFilters-group">' +
+          groupTitle('booking', 'Booking') +
+          (bookingOpen
+            ? ('<div class="PrepFilters-options">' + subitem('bookingState') + subitem('bookingTypes') + '</div>')
+            : '') +
+        '</section>' +
+        '<section class="PrepFilters-group">' +
+          groupTitle('engagement', 'Engagement') +
+          (engagementOpen
+            ? ('<div class="PrepFilters-options">' + subitem('clients') + subitem('keyPersonnel') + '</div>')
+            : '') +
+        '</section>' +
+      '</div>' +
+    '</div>'
+  );
 }
 
 function sectionSep(label, count, collapsed, help) {
@@ -7148,7 +7870,18 @@ function closeCapacityPopoverSoon() {
   capacityHoverTimer = setTimeout(() => setCapacityPopoverOpen(false), 120);
 }
 
-function renderBoard() {
+function renderBoard(opts) {
+  opts = opts || {};
+  const preservePrep = !!opts.preservePrepFilters && prepFilters.open;
+  let prepScrollTop = 0;
+  let flyoutScrollTop = 0;
+  if (preservePrep) {
+    const body = document.querySelector('#prepFiltersPanel .PrepFilters-body');
+    const flyoutVals = document.querySelector('#prepFiltersFlyout .PrepFilters-flyoutValues');
+    if (body) prepScrollTop = body.scrollTop;
+    if (flyoutVals) flyoutScrollTop = flyoutVals.scrollTop;
+  }
+
   const weekISO = getWeekISO(state.weekOffset);
   document.getElementById('weekLabel').textContent = getWeekLabel(state.weekOffset);
   const weekTodayBtn = document.getElementById('weekToday');
@@ -7166,7 +7899,8 @@ function renderBoard() {
   document.getElementById('board').innerHTML = cols.map(col => {
     let actions = '';
     if (col.id === 'to-do') {
-      actions += '<button type="button" class="ColFilter" title="Filter" aria-label="Filter" data-prep-filter-toggle="1"><i class="fa-solid fa-filter"></i></button>';
+      const filterActive = prepFilterActiveCount() > 0;
+      actions += '<button type="button" class="ColFilter' + (filterActive || prepFilters.open ? ' is-active' : '') + '" title="Filter" aria-label="Filter" aria-expanded="' + (prepFilters.open ? 'true' : 'false') + '" data-prep-filter-toggle="1"><i class="fa-solid fa-filter"></i></button>';
     }
     if (col.id === 'in-progress') {
       const hrs = Math.round(bookingHoursForWeek(col.tasks, weekISO) * 10) / 10;
@@ -7201,14 +7935,6 @@ function renderBoard() {
         : columnEmptyState(col.id);
     }
 
-    const filters = col.id === 'to-do'
-      ? ('<div class="PrepFilters' + (prepFilters.open ? ' is-open' : '') + '" id="prepFiltersPanel">' +
-          '<label>Search<input type="search" id="prepFilterSearch" placeholder="Company or engagement" value="' + (prepFilters.search || '').replace(/"/g, '&quot;') + '" /></label>' +
-          '<label class="FilterCheck"><input type="checkbox" id="prepFilterPriority"' + (prepFilters.priorityOnly ? ' checked' : '') + ' /> Priority only</label>' +
-          '<label class="FilterCheck"><input type="checkbox" id="prepFilterReady"' + (prepFilters.readyOnly ? ' checked' : '') + ' /> Ready only</label>' +
-        '</div>')
-      : '';
-
     const footer = col.id === 'in-progress'
       ? '<div class="column-footer"><button type="button" class="column-footer-btn" data-open-create-booking="1"><span class="plus"><i class="fa-solid fa-plus"></i></span> Create booking</button></div>'
       : '';
@@ -7218,16 +7944,35 @@ function renderBoard() {
           '<div class="column-title"><span class="dot" style="background:' + col.color + '"></span>' + col.title + '</div>' +
           '<div class="column-actions">' + actions + '</div>' +
         '</div>' +
-        filters +
         '<div class="column-body" data-column-id="' + col.id + '">' + body + '</div>' +
         footer +
       '</section>'
     );
   }).join('');
 
+  const existingPrep = document.getElementById('prepFiltersPanel');
+  if (existingPrep) existingPrep.remove();
+  if (prepFilters.open) {
+    document.body.insertAdjacentHTML('beforeend', renderPrepFiltersPanelHtml());
+  }
+
   requestAnimationFrame(function () {
     layoutAllCardTraits();
+    positionPrepFiltersPanel();
+    document.querySelectorAll('#prepFiltersFlyout input[data-indeterminate="1"]').forEach(function (el) {
+      el.indeterminate = true;
+    });
+    if (preservePrep) {
+      const body = document.querySelector('#prepFiltersPanel .PrepFilters-body');
+      const flyoutVals = document.querySelector('#prepFiltersFlyout .PrepFilters-flyoutValues');
+      if (body) body.scrollTop = prepScrollTop;
+      if (flyoutVals) flyoutVals.scrollTop = flyoutScrollTop;
+    }
   });
+}
+
+function renderBoardKeepPrepFilters() {
+  renderBoard({ preservePrepFilters: true });
 }
 
 function clearDropHighlights() {
@@ -10912,33 +11657,157 @@ document.getElementById('board').addEventListener('click', (e) => {
   if (filterBtn) {
     e.stopPropagation();
     prepFilters.open = !prepFilters.open;
+    if (!prepFilters.open) closePrepFilterSubmenu(false);
     renderBoard();
     return;
   }
 });
 
-document.getElementById('board').addEventListener('input', (e) => {
+function handlePrepFiltersClick(e) {
+  const filterPanel = e.target.closest('#prepFiltersPanel');
+  if (!filterPanel) return false;
+  e.stopPropagation();
+  const groupBtn = e.target.closest('[data-prep-filter-group]');
+  if (groupBtn) {
+    const key = groupBtn.getAttribute('data-prep-filter-group');
+    prepFilters.openGroups[key] = !prepFilters.openGroups[key];
+    if (!prepFilters.openGroups[key] && (key === 'booking' || key === 'engagement')) {
+      closePrepFilterSubmenu(false);
+    }
+    renderBoardKeepPrepFilters();
+    return true;
+  }
+  if (e.target.closest('[data-prep-filter-show-selected]')) {
+    prepFilters.showSelected = !prepFilters.showSelected;
+    renderBoardKeepPrepFilters();
+    return true;
+  }
+  if (e.target.closest('[data-prep-filter-clear]')) {
+    clearPrepFilters();
+    renderBoardKeepPrepFilters();
+    return true;
+  }
+  const subBtn = e.target.closest('[data-prep-filter-sub]');
+  if (subBtn) {
+    const key = subBtn.getAttribute('data-prep-filter-sub');
+    if (prepFilters.submenu === key) closePrepFilterSubmenu(false);
+    else openPrepFilterSubmenu(key);
+    renderBoardKeepPrepFilters();
+    return true;
+  }
+  if (e.target.closest('[data-prep-flyout-clear-search]')) {
+    prepFilters.flyoutQuery = '';
+    renderBoardKeepPrepFilters();
+    const again = document.getElementById('prepFlyoutSearch');
+    if (again) again.focus({ preventScroll: true });
+    return true;
+  }
+  if (e.target.closest('[data-prep-flyout-cancel]')) {
+    closePrepFilterSubmenu(false);
+    renderBoardKeepPrepFilters();
+    return true;
+  }
+  if (e.target.closest('[data-prep-flyout-apply]')) {
+    closePrepFilterSubmenu(true);
+    renderBoardKeepPrepFilters();
+    return true;
+  }
+  const toggleBtn = e.target.closest('[data-prep-tree-toggle]');
+  if (toggleBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    const label = toggleBtn.getAttribute('data-prep-tree-toggle');
+    if (prepFilters.expanded.has(label)) prepFilters.expanded.delete(label);
+    else prepFilters.expanded.add(label);
+    renderBoardKeepPrepFilters();
+    return true;
+  }
+  const parentBtn = e.target.closest('[data-prep-tree-parent]');
+  if (parentBtn) {
+    const label = parentBtn.getAttribute('data-prep-tree-parent');
+    const opts = collectPrepFilterOptions();
+    const tree = prepFilterTree(prepFilters.submenu, opts);
+    const node = tree.find(function (n) { return n.label === label; });
+    const children = (node && node.children) || [];
+    if (!prepFilters.draft) prepFilters.draft = new Set();
+    const picked = children.filter(function (c) { return prepFilters.draft.has(c.value); }).length;
+    const turnOn = picked < children.length;
+    children.forEach(function (c) {
+      if (turnOn) prepFilters.draft.add(c.value);
+      else prepFilters.draft.delete(c.value);
+    });
+    renderBoardKeepPrepFilters();
+    return true;
+  }
+  const valueBtn = e.target.closest('[data-prep-filter-value]');
+  if (valueBtn) {
+    if (!prepFilters.draft) prepFilters.draft = new Set();
+    const value = valueBtn.getAttribute('data-prep-filter-value');
+    if (value != null) {
+      if (prepFilters.draft.has(value)) prepFilters.draft.delete(value);
+      else prepFilters.draft.add(value);
+      renderBoardKeepPrepFilters();
+    }
+    return true;
+  }
+  return true;
+}
+
+document.addEventListener('click', function (e) {
+  if (handlePrepFiltersClick(e)) return;
+  if (!prepFilters.open) return;
+  if (e.target.closest('[data-prep-filter-toggle]')) return;
+  prepFilters.open = false;
+  closePrepFilterSubmenu(false);
+  renderBoard();
+});
+
+document.addEventListener('input', function (e) {
   if (e.target.id === 'prepFilterSearch') {
     prepFilters.search = e.target.value;
-    // re-render would lose focus — filter in place by re-calling with debounce-less soft update
-    const open = prepFilters.open;
-    const val = e.target.value;
     const selStart = e.target.selectionStart;
-    renderBoard();
-    prepFilters.open = open;
+    renderBoardKeepPrepFilters();
     const again = document.getElementById('prepFilterSearch');
-    if (again) { again.focus(); again.setSelectionRange(selStart, selStart); }
+    if (again) {
+      again.focus({ preventScroll: true });
+      again.setSelectionRange(selStart, selStart);
+    }
+    return;
+  }
+  if (e.target.id === 'prepFlyoutSearch') {
+    prepFilters.flyoutQuery = e.target.value;
+    const selStart = e.target.selectionStart;
+    renderBoardKeepPrepFilters();
+    const again = document.getElementById('prepFlyoutSearch');
+    if (again) {
+      again.focus({ preventScroll: true });
+      again.setSelectionRange(selStart, selStart);
+    }
   }
 });
-document.getElementById('board').addEventListener('change', (e) => {
+
+document.addEventListener('change', function (e) {
   if (e.target.id === 'prepFilterPriority') {
-    prepFilters.priorityOnly = e.target.checked;
-    renderBoard();
+    prepFilters.priorityOnly = !!e.target.checked;
+    renderBoardKeepPrepFilters();
+    return;
   }
   if (e.target.id === 'prepFilterReady') {
-    prepFilters.readyOnly = e.target.checked;
-    renderBoard();
+    prepFilters.readyOnly = !!e.target.checked;
+    renderBoardKeepPrepFilters();
   }
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape' || !prepFilters.open) return;
+  if (prepFilters.submenu) {
+    closePrepFilterSubmenu(false);
+    renderBoardKeepPrepFilters();
+    return;
+  }
+  prepFilters.open = false;
+  closePrepFilterSubmenu(false);
+  renderBoard();
 });
 
 document.getElementById('drawerBackdrop').addEventListener('click', closeDrawer);
@@ -11461,6 +12330,7 @@ window.addEventListener('resize', function () {
   cardTraitsResizeTimer = setTimeout(function () {
     hideCardOverflowTip();
     layoutAllCardTraits();
+    positionPrepFiltersPanel();
     syncDrawerOverlayScrollbar();
   }, 100);
 });

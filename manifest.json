@@ -5,7 +5,7 @@
     "description": "Tax practitioner board — bookings, defer, capacity, week check-in.",
     "path": "mocks/practitioner-kanban.html",
     "status": "active",
-    "updated": "2026-08-06"
+    "updated": "2026-11-03"
   },
   {
     "id": "demand-templates",
@@ -41,12 +41,20 @@
     "updated": "2026-09-28"
   },
   {
+    "id": "job-editor-phase-selector-sms",
+    "title": "Job editor phase selector (SMS deep link)",
+    "description": "Job editor phase selector opened from a Sync Management deep link.",
+    "path": "mocks/job-editor-phase-selector-sms.html",
+    "status": "draft",
+    "updated": "2026-11-03"
+  },
+  {
     "id": "gantt-resource-breakdown",
     "title": "Gantt resource breakdown",
     "description": "Break Gantt resource rows down by Role, Phase, Engagement or Client — aggregated demand, per-bucket hour totals, Other row, locked slim availability, quick add and multi-select.",
     "path": "mocks/gantt-resource-breakdown.html",
     "status": "active",
-    "updated": "2026-10-09"
+    "updated": "2026-11-03"
   },
   {
     "id": "portfolios-v3",
@@ -54,7 +62,7 @@
     "description": "Portfolio Views — dynamic filters, Performance economics, and a Daylight-aligned Team Gantt with availability views, booking side panel, sticky controls, and unassigned requirements.",
     "path": "mocks/portfolios-v3.html",
     "status": "in-development",
-    "updated": "2026-10-13"
+    "updated": "2026-11-03"
   },
   {
     "id": "high-volume-focus",
@@ -62,15 +70,31 @@
     "description": "What design can answer from the 30 Sep focus session and the 2 Oct review: clickable concepts, a release line from 26.6, and the open questions still sitting across Kanban, templating, and portfolio.",
     "path": "mocks/high-volume-focus.html",
     "status": "draft",
-    "updated": "2026-10-05"
+    "updated": "2026-11-03"
   },
   {
     "id": "kanban-sidebar-scenarios",
     "title": "Kanban Sidebar Scenarios",
-    "description": "Sidebar Stories gallery plus a Dev handoff for implementing the UX in Dayshape appTax / Stramash (CONTEXT, taxapp instructions, file map, checklist).",
+    "description": "Sidebar Stories gallery with Kanban ↔ Gantt sidebar switcher, plus a Dev handoff for Dayshape appTax / Stramash.",
     "path": "mocks/kanban-sidebar-scenarios.html",
     "status": "draft",
-    "updated": "2026-10-13"
+    "updated": "2026-10-14"
+  },
+  {
+    "id": "sidebar-comparison",
+    "title": "Sidebar comparison — Kanban vs Gantt",
+    "description": "Side-by-side populated Kanban TaskDrawer and Gantt booking panel — no scenarios, just chrome for comparison.",
+    "path": "mocks/sidebar-comparison.html",
+    "status": "draft",
+    "updated": "2026-11-03"
+  },
+  {
+    "id": "dashboard-main-prototype",
+    "title": "Dashboard",
+    "description": "Dayshape dashboard with schedule, tasks, and capacity.",
+    "path": "mocks/dashboard-main-prototype.html",
+    "status": "draft",
+    "updated": "2026-11-03"
   }
 ]
 
