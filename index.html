@@ -346,7 +346,7 @@
       font-size: 14px;
       color: var(--text-default);
     }
-    .ds .Btn, .ds .BtnGroup > button {
+    .ds .Btn:not(.btn), .ds .BtnGroup > button {
       min-height: 35px;
       padding: 7px 14px;
       border: 1px solid var(--border-default);
@@ -424,56 +424,90 @@
     .ds .Badge--hoverable:hover { filter: brightness(0.92); }
     .ds .kit-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .ds .kit-stack { display: grid; gap: 10px; width: min(440px, 100%); text-align: left; }
-    .ds .btn-primary { border-color: var(--surface-primary); background: var(--surface-primary); color: var(--text-inverse); }
-    .ds .btn-outline-primary { border-color: var(--border-primary); background: var(--surface-default); color: var(--text-primary); }
-    .ds .btn-outline-secondary { border-color: var(--border-default); background: var(--surface-default); color: var(--text-default); }
-    .ds .btn-light { border-color: var(--border-subtle); background: var(--surface-subtle-dark); color: var(--text-primary); }
-    .ds .btn-outline-danger { border-color: var(--surface-danger); background: var(--surface-default); color: var(--text-danger); }
-    .ds .btn-link { border-color: transparent; background: transparent; color: var(--text-primary); min-height: 0; padding: 0; }
-    .ds .btn-group { display: inline-flex; }
-    .ds .btn-group .btn { position: relative; min-height: 35px; padding: 7px 14px; border: 1px solid var(--border-default); background: var(--surface-default); color: var(--text-default); font: 600 14px/1.2 "Open Sans", sans-serif; }
-    .ds .GanttSidebarSection-content p { margin: 0; color: var(--text-subtle); }
-    .ds .btn-group .btn + .btn { margin-left: -1px; }
-    .ds .btn-group .btn:first-child { border-radius: 4px 0 0 4px; }
-    .ds .btn-group .btn:last-child { border-radius: 0 4px 4px 0; }
-    .ds .btn-group .btn.active { background: var(--surface-emphasis); border-color: var(--surface-emphasis); color: var(--text-inverse); }
+    .ds .btn {
+      display: inline-block;
+      min-height: 0;
+      padding: 0.375rem 0.75rem;
+      border: 1px solid transparent;
+      border-radius: 0.25rem;
+      background: transparent;
+      font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      white-space: nowrap;
+      text-align: center;
+      cursor: pointer;
+    }
+    .ds .btn-primary { color: #fff; background-color: #4f3fa0; border-color: #4f3fa0; }
+    .ds .btn-primary:hover { color: #fff; background-color: #413485; border-color: #3d317b; }
+    .ds .btn-outline-primary { color: #4f3fa0; background: transparent; border-color: #4f3fa0; }
+    .ds .btn-outline-primary:hover { color: #fff; background-color: #4f3fa0; border-color: #4f3fa0; }
+    .ds .btn-outline-secondary { color: #4c5172; background: transparent; border-color: #4c5172; }
+    .ds .btn-outline-secondary:hover,
+    .ds .btn-group .btn-outline-secondary.active { color: #fff; background-color: #4c5172; border-color: #4c5172; }
+    .ds .btn-light { color: #212529; background-color: #f8f8f8; border-color: #f8f8f8; }
+    .ds .btn-light:hover { color: #212529; background-color: #e5e5e5; border-color: #dfdfdf; }
+    .ds .btn-outline-danger { color: #a3003c; background: transparent; border-color: #a3003c; }
+    .ds .btn-outline-danger:hover { color: #fff; background-color: #a3003c; border-color: #a3003c; }
+    .ds .btn-group { position: relative; display: inline-flex; vertical-align: middle; }
+    .ds .btn-group > .btn { position: relative; flex: 1 1 auto; }
+    .ds .btn-group > .btn:not(:first-child) { margin-left: -1px; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+    .ds .btn-group > .btn:not(:last-child) { border-top-right-radius: 0; border-bottom-right-radius: 0; }
     .ds .btn-group input { position: absolute; opacity: 0; pointer-events: none; }
-    .ds .dropdown { display: grid; gap: 6px; justify-items: start; }
-    .ds .dropdown-menu { display: grid; min-width: 180px; padding: 4px; border: 1px solid var(--border-subtle); border-radius: 4px; background: var(--surface-default); box-shadow: 0 8px 20px rgba(34, 36, 48, .12); }
-    .ds .dropdown-item { padding: 8px 10px; border: 0; border-radius: 4px; background: transparent; color: var(--text-default); font: 400 14px/1.3 "Open Sans", sans-serif; text-align: left; }
-    .ds .dropdown-item:hover, .ds .dropdown-item.is-selected { background: var(--surface-primary-subtle); }
-    .ds .Modal-header, .ds .Modal-body { padding: 16px; }
-    .ds .Modal-header { border-bottom: 1px solid var(--border-default); }
-    .ds .Modal-header h2, .ds .Sidebar-header h3, .ds .WidgetContainer-heading { margin: 0; font-size: 1rem; }
-    .ds .Modal-body p, .ds .Tab-pane, .ds .CollapsibleSection-body, .ds .Sidebar-content p { margin: 0; color: var(--text-subtle); }
+    .ds .dropdown { position: relative; display: inline-block; text-align: left; }
+    .ds .dropdown-toggle::after { display: inline-block; margin-left: 0.255em; vertical-align: 0.255em; content: ""; border-top: 0.3em solid; border-right: 0.3em solid transparent; border-bottom: 0; border-left: 0.3em solid transparent; }
+    .ds .dropdown-menu { position: static; display: block; min-width: 10rem; margin: 0.125rem 0 0; padding: 0.5rem 0; border: 1px solid rgba(0, 0, 0, 0.15); border-radius: 0.25rem; background: #fff; color: #212529; font-size: 0.875rem; }
+    .ds .dropdown-item { display: block; width: 100%; padding: 0.25rem 1.5rem; border: 0; background: transparent; color: #212529; font-weight: 400; font-size: 0.875rem; line-height: 1.5; text-align: left; white-space: nowrap; }
+    .ds .dropdown-item:hover { color: #16181b; background-color: #e9ecef; }
+    .ds .dropdown-item.active, .ds .dropdown-item.is-selected { color: #fff; background-color: #4f3fa0; }
+    .ds .Modal-header, .ds .Modal-body { padding: 1rem; }
+    .ds .Modal-header { display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid #babfd1; }
+    .ds .Modal-header h2 { margin: 0; font-size: 1rem; font-weight: 400; line-height: 1.5; }
+    .ds .Modal-body p, .ds .Tab-pane, .ds .Sidebar-content p { margin: 0; color: #212529; }
     .ds .Steps { display: flex; gap: 8px; margin: 0 0 12px; padding: 0; list-style: none; }
     .ds .Steps li { padding: 4px 8px; border-radius: 999px; background: var(--surface-subtle-dark); color: var(--text-subtle); font-size: 12px; font-weight: 700; }
     .ds .Steps .is-current { background: var(--surface-primary); color: var(--text-inverse); }
-    .ds .Sidebar, .ds .WidgetContainer-card, .ds .BlankSlate, .ds .toast, .ds .GanttSidebarSection, .ds .ColumnPicker { border: 1px solid var(--border-subtle); border-radius: 4px; background: var(--surface-default); }
-    .ds .Sidebar { width: min(280px, 100%); }
-    .ds .Sidebar-header, .ds .GanttSidebarSection-header, .ds .CollapsibleSection-header { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--border-subtle); font-weight: 700; }
-    .ds .Sidebar-content, .ds .GanttSidebarSection-content, .ds .CollapsibleSection-body, .ds .Tab-pane, .ds .BlankSlate, .ds .WidgetContainer-card { padding: 14px; }
+    .ds .GanttSidebarSection { padding: 10px; background: #fff; }
+    .ds .GanttSidebarSection-header { display: flex; align-items: center; justify-content: space-between; }
+    .ds .GanttSidebarSection-headerText { margin: 0 5px 0 0; font-size: 1em; font-weight: 700; }
+    .ds .GanttSidebarSection-content p { margin: 0; color: #6c757d; }
+    .ds .ColumnPicker, .ds .BlankSlate--lightGrey { border: 1px solid var(--border-subtle); border-radius: 4px; background: var(--surface-subtle-light); }
+    .ds .Sidebar { width: min(280px, 100%); background: #fff; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); }
+    .ds .Sidebar-header { background: rgb(0 0 0 / 5%); padding: 0.5rem 1rem; }
+    .ds .Sidebar-header h3 { margin: 0 0 -3px 20px; padding-top: 3px; font-size: 14px; font-weight: 400; }
+    .ds .Sidebar-content { padding: 15px 15px 0; }
+    .ds .CollapsibleSection { border: 1px solid #ced4da; border-radius: 4px; background: #fff; text-align: left; }
+    .ds .CollapsibleSection-header { display: flex; align-items: center; justify-content: space-between; padding: 15px; }
+    .ds .CollapsibleSection-header.is-enabled { cursor: pointer; }
+    .ds .CollapsibleSection-body { padding: 0 15px 15px; color: #212529; }
     .ds .Tabs { width: min(420px, 100%); text-align: left; }
-    .ds .Tab-navBar { display: flex; gap: 4px; border-bottom: 1px solid var(--border-default); }
-    .ds .Tab-navItem { padding: 8px 12px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--text-subtle); font: 600 14px/1.2 "Open Sans", sans-serif; }
-    .ds .Tab-navItem--active { border-bottom-color: var(--surface-primary); color: var(--text-primary); }
+    .ds .Tab-navBar { display: flex; align-items: flex-end; gap: 16px; padding: 0 1.5rem; border-bottom: 1px solid var(--border-subtle); }
+    .ds .Tab-navItems { display: flex; flex: 1 1 auto; gap: 16px; margin: 0; padding: 0; list-style: none; }
+    .ds .Tab-navItems .nav-item { position: relative; flex-shrink: 0; }
+    .ds .Tab-navItems .nav-link { display: flex; align-items: center; margin-bottom: 3px; padding: 5px 0.5rem; border: 2px solid transparent; background: transparent; color: var(--text-accent); font-size: 0.875rem; font-weight: 600; line-height: 150%; text-decoration: none; }
+    .ds .Tab-navItem--active.nav-link { border: none; color: var(--text-accent); }
+    .ds .Tab-navItem--active::after { content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; border-radius: 2px; background: #4f3fa0; }
+    .ds .Tab-pane { padding: 12px 1.5rem 0; }
     .ds .Dayshape-spinner { width: 32px; height: 32px; border: 3px solid var(--primary-accent); border-top-color: var(--primary); border-radius: 50%; animation: kit-spin .8s linear infinite; }
     @keyframes kit-spin { to { transform: rotate(360deg); } }
-    .ds .toast { width: min(320px, 100%); overflow: hidden; text-align: left; }
-    .ds .toast-header, .ds .toast-body { padding: 10px 12px; }
-    .ds .toast-header { border-bottom: 1px solid var(--border-subtle); }
+    .ds .toast { display: block; width: 350px; max-width: 100%; overflow: hidden; text-align: left; font-size: 0.875rem; background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 0.25rem; box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1); opacity: 1; }
+    .ds .toast-header { display: flex; align-items: center; padding: 0.25rem 0.75rem; color: #6c757d; background: rgba(255, 255, 255, 0.85); border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+    .ds .toast-body { padding: 0.75rem; }
     .ds .SavingToast-body { display: flex; align-items: center; gap: 8px; }
-    .ds .form-control, .ds .custom-range { width: 100%; min-height: 35px; padding: 7px 10px; border: 1px solid var(--border-default); border-radius: 4px; background: var(--surface-default); color: var(--text-default); font: 400 14px/1.2 "Open Sans", sans-serif; }
-    .ds textarea.form-control { min-height: 72px; }
-    .ds .form-label { font-weight: 600; font-size: 12px; }
+    .ds .form-control { display: block; width: 100%; height: calc(1.5em + 0.75rem + 2px); padding: 0.375rem 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem; background-color: #fff; color: #495057; font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.875rem; font-weight: 400; line-height: 1.5; }
+    .ds .form-control:focus { color: #495057; background-color: #fff; border-color: #988dd2; outline: 0; box-shadow: 0 0 0 0.2rem rgba(79, 63, 160, 0.25); }
+    .ds textarea.form-control { height: auto; min-height: 72px; }
+    .ds .custom-range { width: 100%; }
+    .ds label, .ds .form-label { font-weight: 600; font-size: 0.875rem; }
     .ds .check, .ds .Tooltip { display: flex; align-items: center; gap: 8px; }
     .ds .Tooltip-bubble, .ds .Popover { max-width: 220px; padding: 8px 10px; border-radius: 4px; background: var(--surface-emphasis); color: var(--text-inverse); font-size: 12px; }
     .ds .AvatarStack { display: flex; }
-    .ds .AvatarStack .Avatar { width: 35px; height: 35px; margin-left: -8px; border: 2px solid var(--surface-default); font-size: 12px; }
+    .ds .AvatarStack .Avatar { width: 35px; height: 35px; margin-left: -10px; border: 2px solid #fff; font-size: 14px; }
     .ds .AvatarStack .Avatar:first-child { margin-left: 0; }
-    .ds .Avatar.is-multiName { background: var(--surface-subtle-dark); color: var(--text-accent); }
-    .ds .EntityIcon-badge { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #2f6fed; color: var(--text-inverse); }
-    .ds .BlankSlate { text-align: center; }
+    .ds .Avatar.is-multiName { background: var(--surface-accent, #edf0f8); color: var(--text-accent); }
+    .ds .EntityIcon-badge { width: 2.5rem; height: 2.5rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 10rem; background: #6881c5; color: #fff; }
+    .ds .BlankSlate { max-width: 700px; margin: 0 auto; padding: 14px; text-align: center; }
     .ds .BlankSlate-text { margin: 0 0 8px; font-size: 1.05rem; }
     .ds .BlankSlate-subText { margin: 0 0 12px; color: var(--text-subtle); }
     .ds .Counter { min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; border-radius: 999px; background: var(--surface-primary); color: var(--text-inverse); font-size: 12px; font-weight: 700; }
@@ -483,15 +517,16 @@
     .ds .Stepper-step.is-current { border-top-color: var(--surface-primary); color: var(--text-primary); }
     .ds .Donut { width: 88px; height: 88px; display: grid; place-items: center; border-radius: 50%; background: conic-gradient(var(--surface-primary) 0 72%, var(--surface-subtle-dark) 72% 100%); }
     .ds .Donut span { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%; background: var(--surface-default); font-weight: 700; }
-    .ds table.table { width: min(520px, 100%); border-collapse: collapse; background: var(--surface-default); font-size: 13px; }
-    .ds table.table th, .ds table.table td { padding: 8px 10px; border-bottom: 1px solid var(--border-subtle); text-align: left; }
-    .ds table.table th { color: var(--text-subtle); font-size: 12px; }
+    .ds table.table { width: min(520px, 100%); margin: 0; border-collapse: collapse; color: #212529; background: #fff; font-size: 0.875rem; }
+    .ds table.table th, .ds table.table td { padding: 0.75rem; vertical-align: top; border-top: 1px solid #babfd1; text-align: left; }
+    .ds table.table thead th { vertical-align: bottom; border-bottom: 2px solid #babfd1; font-weight: 700; }
     .ds .ColumnPicker { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; }
     .ds .ColumnPicker h3 { margin: 0 0 8px; font-size: 12px; }
     .ds .ColumnPicker li { padding: 6px 0; list-style: none; }
     .ds .ColumnPicker ul { margin: 0; padding: 0; }
     .ds .WidgetContainer { width: min(360px, 100%); text-align: left; }
-    .ds .WidgetContainer-heading { margin-bottom: 8px; }
+    .ds .WidgetContainer-heading { margin: 0 0 0.75rem; font-size: 1rem; font-weight: 400; }
+    .ds .WidgetContainer-card { padding: 1rem; border: 0; border-radius: 8px; background: #fff; border-left: 2px solid #ff8d6c; box-shadow: 0 2px 6px 3.2px rgb(171 171 171 / 15%); }
     .ds .EditorHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: min(520px, 100%); padding: 12px 14px; border: 1px solid var(--border-subtle); border-radius: 4px; background: var(--surface-default); }
     .ds .FilterLogic { display: flex; align-items: center; gap: 8px; }
     .ds .FilterLogic-item { padding: 8px 10px; border: 1px solid var(--border-subtle); border-radius: 4px; background: var(--surface-default); }
@@ -521,19 +556,19 @@
     .ds .Hours { width: 91px; padding: 7px 8px; }
     .ds .Modal {
       width: min(440px, 100%);
-      border: 1px solid var(--border-subtle);
-      border-radius: 4px;
-      background: var(--surface-default);
-      box-shadow: 0 12px 28px rgba(34, 36, 48, .12);
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 0.3rem;
+      background: #fff;
     }
     .ds .Modal-footer {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: flex-end;
-      gap: 8px;
-      padding: 12px 16px;
-      border-top: 1px solid var(--border-default);
+      padding: 0.75rem;
+      border-top: 1px solid #babfd1;
     }
+    .ds .Modal-footer > * { margin: 0.25rem; }
     .ds .Modal-footerSummary { margin-right: auto; color: var(--text-subtle); font-size: 12px; }
     .wrap {
       width: min(1180px, calc(100% - 112px));
@@ -1367,7 +1402,7 @@
         { group: 'Common patterns', id: 'multi-step-modal', title: 'Multi step modal', docs: 'components-common-patterns-multi-step-modal--docs', note: 'The same modal chrome, with the step marked in the body.', frame: true, html: '<div class="Modal"><div class="Modal-header"><h2>Add to portfolio</h2></div><div class="Modal-body"><ol class="Steps"><li class="is-current">1 Filters</li><li>2 Review</li></ol><p>Choose which engagements belong in this portfolio.</p></div><div class="Modal-footer"><button type="button" class="Btn btn btn-outline-primary">Cancel</button><button type="button" class="Btn btn btn-primary">Next</button></div></div>' },
         { group: 'Common patterns', id: 'radio-button-group', title: 'Radio button group', docs: 'components-common-patterns-radio-button-button-group--docs', note: 'A button group used as radio buttons. One option is active.', html: '<div class="btn-group btn-group-toggle"><label class="btn btn-outline-secondary active"><input type="radio" name="entry" checked> Date picker</label><label class="btn btn-outline-secondary"><input type="radio" name="entry"> Text input</label></div>' },
         { group: 'Common patterns', id: 'sidebar', title: 'Sidebar', docs: 'components-common-patterns-sidebar--docs', note: 'Right-hand sidebar. Title in the header, content underneath.', html: '<aside class="Sidebar"><div class="Sidebar-header"><h3>Engagement</h3></div><div class="Sidebar-content"><p>Year end audit</p></div></aside>' },
-        { group: 'Common patterns', id: 'pattern-tabs', title: 'Tabs', docs: 'components-common-patterns-tabs--docs', note: 'The common-patterns tabs. The active tab uses the primary underline.', html: '<div class="Tabs"><div class="Tab-navBar"><button type="button" class="Tab-navItem Tab-navItem--active">Details</button><button type="button" class="Tab-navItem">Team</button><button type="button" class="Tab-navItem">Performance</button></div><div class="Tab-pane">Dates and effort for this engagement.</div></div>' },
+        { group: 'Common patterns', id: 'pattern-tabs', title: 'Tabs', docs: 'components-common-patterns-tabs--docs', note: 'The common-patterns tabs. The active tab uses the primary underline.', html: '<div class="Tabs"><div class="Tab-navBar"><ul class="Tab-navItems"><li class="nav-item"><a class="nav-link Tab-navItem--active" href="#details">Details</a></li><li class="nav-item"><a class="nav-link" href="#team">Team</a></li><li class="nav-item"><a class="nav-link" href="#performance">Performance</a></li></ul></div><div class="Tab-pane">Dates and effort for this engagement.</div></div>' },
         { group: 'Common patterns', id: 'collapsible', title: 'Collapsible sections', docs: 'components-common-patterns-collapsible-sections--docs', note: 'Expanded default section. Add CollapsibleSection-sidebar for the sidebar variant.', html: '<div class="CollapsibleSection CollapsibleSection-expanded CollapsibleSection-default"><div class="CollapsibleSection-header is-enabled"><span class="CollapsibleSection-headerText">Phase order</span></div><div class="CollapsibleSection-body">Bounds come from the bookings.</div></div>' },
         { group: 'Common patterns', id: 'confirm-modal', title: 'ConfirmModal', note: 'Confirm on the right, cancel as the secondary button.', frame: true, html: '<div class="Modal"><div class="Modal-header"><h2>Confirm</h2></div><div class="Modal-body"><p>Put this engagement on hold?</p></div><div class="Modal-footer"><button type="button" class="Btn btn btn-outline-primary">Cancel</button><button type="button" class="Btn btn btn-primary">Confirm</button></div></div>' },
         { group: 'Common patterns', id: 'spinner', title: 'Dayshape spinner', docs: 'components-common-patterns-dayshape-spinner--docs', note: 'The loading mark. Storybook sizes it with width and height. 32px is the small size.', html: '<span class="Dayshape-spinner" role="status" aria-label="Loading"></span>' },
@@ -1395,7 +1430,7 @@
         { group: 'Content', id: 'stepper', title: 'Stepper', docs: 'components-stepper--docs', note: 'Complete, current, and a step still ahead.', html: '<ol class="Stepper"><li class="Stepper-step is-complete">Filters</li><li class="Stepper-step is-current">Review</li><li class="Stepper-step">Save</li></ol>' },
         { group: 'Content', id: 'charts', title: 'Charts', docs: 'components-charts-percentagedonutchart--docs', note: 'Percentage donut. The number is the value, with or without a percent sign.', html: '<div class="Donut" role="img" aria-label="72 percent"><span>72%</span></div>' },
         { group: 'Content', id: 'tables', title: 'Tables', docs: 'components-tables-generic-table--docs', note: 'A simple generic table. Header, then one row per record.', html: '<table class="table"><thead><tr><th>Engagement</th><th>Hours</th><th>Status</th></tr></thead><tbody><tr><td>Year end audit</td><td>6</td><td>Ready</td></tr><tr><td>Corporate tax</td><td>4</td><td>Due soon</td></tr></tbody></table>' },
-        { group: 'Content', id: 'tabs', title: 'Tabs', docs: 'components-tabs--docs', note: 'The top-level Tabs component. Same nav as the common-patterns tabs.', html: '<div class="Tabs"><div class="Tab-navBar"><button type="button" class="Tab-navItem Tab-navItem--active">First tab</button><button type="button" class="Tab-navItem">Second tab</button><button type="button" class="Tab-navItem">Third tab</button></div><div class="Tab-pane">Content for the first tab.</div></div>' },
+        { group: 'Content', id: 'tabs', title: 'Tabs', docs: 'components-tabs--docs', note: 'The top-level Tabs component. Same nav as the common-patterns tabs.', html: '<div class="Tabs"><div class="Tab-navBar"><ul class="Tab-navItems"><li class="nav-item"><a class="nav-link Tab-navItem--active" href="#first">First tab</a></li><li class="nav-item"><a class="nav-link" href="#second">Second tab</a></li><li class="nav-item"><a class="nav-link" href="#third">Third tab</a></li></ul></div><div class="Tab-pane">Content for the first tab.</div></div>' },
         { group: 'Overlay', id: 'popovers', title: 'Popovers', docs: 'components-popovers--docs', note: 'A control, with the popover content beside it.', html: '<div class="kit-stack"><button type="button" class="Btn btn btn-outline-secondary">Details</button><div class="Popover">3 bookings this week</div></div>' },
         { group: 'Entity editors', id: 'entity-editors', title: 'Entity editors', docs: 'components-entity-editors-editor-header--docs', note: 'Editor header with the save action, and one filter rule underneath.', html: '<div class="kit-stack"><div class="EditorHeader"><strong>Engagements</strong><button type="button" class="Btn btn btn-primary">Save</button></div><div class="FilterLogic"><span class="FilterLogic-item">Office = London</span><button type="button" class="Btn btn btn-outline-secondary">And</button></div></div>' },
         { group: 'Dashboard', id: 'dashboard', title: 'Dashboard', docs: 'components-dashboard-widgetcontainer--docs', note: 'Widget container. The heading sits outside the card.', html: '<section class="WidgetContainer"><h2 class="WidgetContainer-heading">Capacity this week</h2><div class="WidgetContainer-card"><p>18 hours still free.</p></div></section>' },
