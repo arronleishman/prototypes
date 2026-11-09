@@ -371,6 +371,19 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .CountBadge { box-sizing: border-box; display: inline-flex; flex-direction: row; align-items: center; gap: 4px; min-width: 24px; height: 24px; padding: 0 8px; background: var(--surface-default); color: var(--text-info-dark); border: 1px solid var(--border-info-subtle); border-radius: var(--border-radius-circle); font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold); white-space: nowrap; flex: none; }
 .CountBadge i { font-size: 10px; color: var(--text-info-dark); flex: none; }
 .CountBadge-icon { flex: none; width: 10px; height: 10px; color: var(--text-info-dark); }
+.CountBadge.is-overLimit { background: var(--surface-warning-subtle); color: var(--text-warning-strong); border-color: var(--border-warning-subtle); }
+.CountBadge.is-overLimit .CountBadge-icon,
+.CountBadge.is-overLimit i { color: currentColor; }
+#view-detail.is-over-limit .Tab-navBar,
+#view-detail.is-over-limit .tabpane { display: none !important; }
+.PfLimit { display: flex; flex: 1 1 auto; align-items: center; justify-content: center; padding: 48px 24px; }
+.PfLimit[hidden] { display: none !important; }
+.PfLimit-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 440px; max-width: 100%; }
+.PfLimit-title { margin: 0; font-size: var(--font-size-h2); font-weight: var(--font-weight-regular); line-height: 27px; color: var(--text-default); }
+.PfLimit-copy { margin: 0; font-size: var(--font-size-medium); line-height: 20px; color: var(--text-subtle); }
+.PfLimitNote { display: flex; align-items: flex-start; gap: 8px; flex: none; margin: 0; padding: 10px 16px; background: var(--surface-warning-subtle); border-bottom: 1px solid var(--border-warning-subtle); color: var(--text-warning-strong); font-size: var(--font-size-small); line-height: 18px; }
+.PfLimitNote[hidden] { display: none !important; }
+.PfLimitNote i { margin-top: 2px; color: var(--text-warning); }
 
 /* ---- Pagination (GenericTable footer + PaginationControls) ---- */
 .GenericTable-footer { display: flex; justify-content: flex-end; align-items: center; gap: 12px; flex-shrink: 0; padding: 10px 12px 8px; background: var(--surface-default); border-top: 1px solid var(--border-subtle); pointer-events: none; }
@@ -2808,6 +2821,14 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <span class="Tab-viewOnly BtnTooltipWrap BtnTooltipWrap--float" tabindex="0" data-tooltip="This is currently a read-only view of assigned work within your portfolio for informational purpose only. If you need to make any edits, this can be done on the main Gantt or Engagement page in line with your permission set. Edits in this view will be permitted in a future release."><i class="fa-regular fa-eye" aria-hidden="true"></i>Read only</span>
             </div>
 
+            <div class="PfLimit" id="pfLimit" hidden>
+                <div class="PfLimit-body">
+                    <p class="PfLimit-title" id="pfLimitTitle"></p>
+                    <p class="PfLimit-copy" id="pfLimitCopy"></p>
+                    <button type="button" class="Btn Btn--primary" onclick="openEditModal()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters</button>
+                </div>
+            </div>
+
             <div id="tab-board" class="tabpane">
                 <div class="AllocBoard">
                     <div class="AllocBoard-bar">
@@ -2952,6 +2973,10 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
         </div>
 
         <div class="Modal-body">
+            <div class="PfLimitNote" id="pfLimitNote" hidden>
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                <span id="pfLimitNoteText"></span>
+            </div>
             <!-- Step 1: ReportQueryBuilder filters (FilterMenuCard + FilterCard) -->
             <div id="modalStepFilters" class="Modal-step Modal-step--filters">
                 <div class="Modal-resultsBar" id="editFilterToolbarBar" hidden>
@@ -3439,7 +3464,9 @@ const STATUS = { Draft: "secondary", Submitted: "warning", Approved: "success", 
 const portfolios = {
     starred: [],
     browse: [
-        { name: "UK Assurance — London Office", engagements: 42, totalHours: 14200, pctScheduled: 76, starred: false, active: true }
+        { name: "UK Assurance — London Office", engagements: 42, totalHours: 14200, pctScheduled: 76, starred: false, active: true },
+        { name: "Corporate Tax — Year end", engagements: 800, totalHours: 18640, pctScheduled: 64, starred: false, active: true },
+        { name: "UK Assurance — All offices", engagements: 6420, totalHours: null, pctScheduled: null, starred: false, active: true, dynamic: true }
     ],
     archive: []
 };
@@ -3450,6 +3477,11 @@ function esc(s) { return s.replace(/'/g, "\\'"); }
 const ENGAGEMENTS_BADGE_ICON = '<svg class="CountBadge-icon" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true" focusable="false"><path d="M8.30371 8.75L8.30371 3.75H6.11621C5.59863 3.75 5.17871 3.33008 5.17871 2.8125V0.625L2.67871 0.625C2.33301 0.625 2.05371 0.904297 2.05371 1.25L2.05371 8.75C2.05371 9.0957 2.33301 9.375 2.67871 9.375L7.67871 9.375C8.02441 9.375 8.30371 9.0957 8.30371 8.75ZM8.29395 3.125C8.28027 3.07031 8.25293 3.01953 8.21191 2.98047L5.94824 0.716797C5.90723 0.675781 5.8584 0.648437 5.80371 0.634766L5.80371 2.8125C5.80371 2.98438 5.94434 3.125 6.11621 3.125H8.29395ZM1.42871 1.25C1.42871 0.560547 1.98926 0 2.67871 0L5.72754 0C5.97559 0 6.21387 0.0996094 6.38965 0.275391L8.65332 2.53711C8.8291 2.71289 8.92871 2.95117 8.92871 3.19922L8.92871 8.75C8.92871 9.43945 8.36816 10 7.67871 10L2.67871 10C1.98926 10 1.42871 9.43945 1.42871 8.75L1.42871 1.25Z" fill="currentColor"/></svg>';
 function fmt(n) { return n.toLocaleString("en-GB"); }
 function fmtPct(n) { return n + "%"; }
+const PORTFOLIO_ENGAGEMENT_LIMIT = 800;
+function findPortfolio(name) {
+    return ["starred", "browse", "archive"].map(key => portfolios[key].find(item => item.name === name)).find(Boolean) || null;
+}
+function portfolioOverLimit(count) { return count > PORTFOLIO_ENGAGEMENT_LIMIT; }
 
 /* ---- Portfolio list ---- */
 const sortState = {};
@@ -3615,7 +3647,7 @@ function renderSections() {
                         <colgroup>
                             <col style="width:44px" />
                             <col style="width:auto" />
-                            <col style="width:170px" />
+                            <col style="width:200px" />
                             <col style="width:120px" />
                             <col style="width:130px" />
                             <col style="width:64px" />
@@ -3653,13 +3685,15 @@ function pageRows(key) {
 
 function rowHtml(p, key, i) {
     const inactive = !p.active;
+    const over = portfolioOverLimit(p.engagements);
+    const badgeTitle = over ? ` title="Views can show up to ${PORTFOLIO_ENGAGEMENT_LIMIT} engagements"` : "";
     return `
         <tr class="${inactive ? "is-inactive" : ""}" onclick="openPortfolio('${esc(p.name)}')">
             <td class="col-star"><i class="fa-solid fa-star star-toggle ${p.starred ? "is-starred" : ""}" title="${p.starred ? "Unstar" : "Star"}" onclick="event.stopPropagation(); toggleStar('${key}', ${i}, this)"></i></td>
             <td><span class="cell-name">${p.name}</span>${inactive ? ' <span class="Pill Pill--secondary">Inactive</span>' : ""}</td>
-            <td><span class="CountBadge">${ENGAGEMENTS_BADGE_ICON}${p.engagements} Engagements</span></td>
-            <td class="cell-muted num">${fmt(p.totalHours)}</td>
-            <td class="cell-muted num">${fmtPct(p.pctScheduled)}</td>
+            <td><span class="CountBadge${over ? " is-overLimit" : ""}"${badgeTitle}>${ENGAGEMENTS_BADGE_ICON}${fmt(p.engagements)} Engagements</span></td>
+            <td class="cell-muted num">${p.totalHours == null ? "—" : fmt(p.totalHours)}</td>
+            <td class="cell-muted num">${p.pctScheduled == null ? "—" : fmtPct(p.pctScheduled)}</td>
             <td class="col-actions">
                 <div class="RowMenu" onclick="event.stopPropagation();">
                     <button class="RowMenu-toggle" title="Actions" onclick="toggleRowMenu(this)"><i class="fa-solid fa-ellipsis-vertical"></i></button>
@@ -3790,14 +3824,34 @@ function persistState() {
         tab: currentTab
     }));
 }
+function applyPortfolioLimit(name) {
+    const portfolio = findPortfolio(name);
+    const over = !!(portfolio && portfolioOverLimit(portfolio.engagements));
+    const view = document.getElementById("view-detail");
+    view.classList.toggle("is-over-limit", over);
+    const gate = document.getElementById("pfLimit");
+    if (gate) gate.hidden = !over;
+    if (over) {
+        document.getElementById("pfLimitTitle").textContent = fmt(portfolio.engagements) + " engagements match this portfolio.";
+        document.getElementById("pfLimitCopy").textContent = "Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ". Narrow the filters to open List, Board, Performance and Team.";
+    }
+    const editBtn = view.querySelector(".TopBar .Btn--primary");
+    if (editBtn) editBtn.innerHTML = over
+        ? '<i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters'
+        : '<i class="fa-solid fa-pen" aria-hidden="true"></i> Edit';
+    return over;
+}
 function openPortfolio(name, skipPersist) {
     document.getElementById("detailTitle").textContent = name;
     document.getElementById("view-list").classList.remove("is-active");
     document.getElementById("view-detail").classList.add("is-active");
+    const over = applyPortfolioLimit(name);
     updateStickyOffsets();
-    switchTab(currentTab && skipPersist ? currentTab : "performance", skipPersist);
-    renderPerfTable();
-    renderMetricsTable();
+    switchTab(currentTab && skipPersist ? currentTab : "performance", true);
+    if (!over) {
+        renderPerfTable();
+        renderMetricsTable();
+    }
     window.scrollTo(0, 0);
     if (!skipPersist) persistState();
 }
@@ -4664,6 +4718,10 @@ function switchTab(tab, skipPersist) {
     document.getElementById("tab-team").classList.toggle("is-active", tab === "team");
     document.getElementById("tab-list").classList.toggle("is-active", tab === "list");
     document.getElementById("tab-board").classList.toggle("is-active", tab === "board");
+    if (document.getElementById("view-detail").classList.contains("is-over-limit")) {
+        if (!skipPersist) persistState();
+        return;
+    }
     if (tab === "list") renderPfList();
     if (tab === "board") renderPfBoard();
     if (tab === "team") renderGantt();
@@ -4687,7 +4745,8 @@ window.addEventListener("resize", () => {
     if (document.getElementById("view-detail").classList.contains("is-active") && currentTab === "performance") {
         applyPerfStickyOffsets();
     }
-    if (currentTab !== "team" || !document.getElementById("view-detail").classList.contains("is-active")) return;
+    const detailView = document.getElementById("view-detail");
+    if (currentTab !== "team" || !detailView.classList.contains("is-active") || detailView.classList.contains("is-over-limit")) return;
     cancelAnimationFrame(ganttResizeRaf);
     ganttResizeRaf = requestAnimationFrame(renderGantt);
 });
@@ -4901,7 +4960,8 @@ const modalState = {
     filterSearch: "",
     nameTouched: false,
     nameEditing: false,
-    originalName: ""
+    originalName: "",
+    reportedCount: null
 };
 let ruleSeq = 0;
 const RULE_DATE_LABEL = "1 Jun 2026 – 1 Jun 2027";
@@ -5148,6 +5208,20 @@ function effectiveMembershipCodes() {
     return s;
 }
 function effectiveMembershipSize() { return effectiveMembershipCodes().size; }
+function resolvedViewCount() {
+    if (modalState.reportedCount == null) return effectiveMembershipSize();
+    if (!modalState.baseline || modalSignature() === modalState.baseline) return modalState.reportedCount;
+    return effectiveMembershipSize();
+}
+function updateLimitNote() {
+    const note = document.getElementById("pfLimitNote");
+    if (!note) return;
+    const count = resolvedViewCount();
+    const over = portfolioOverLimit(count);
+    note.hidden = !over;
+    const text = document.getElementById("pfLimitNoteText");
+    if (over && text) text.textContent = fmt(count) + " engagements match this portfolio. Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ". Narrow the filters before adding engagements.";
+}
 function activeExclusions() {
     // only count exclusions that a rule would otherwise include
     const matched = new Set();
@@ -5990,7 +6064,13 @@ function renderResultsTable() {
 
     // Tab counts (always reflect current effective membership)
     document.getElementById("searchResultsCount").textContent = modalState.applied ? `(${filteredEngagements().length})` : "";
-    document.getElementById("portfolioTabCount").textContent = `(${effectiveMembershipSize()})`;
+    document.getElementById("portfolioTabCount").textContent = `(${fmt(resolvedViewCount())})`;
+    const addBtn = document.getElementById("addToPortfolioBtn");
+    const addWrap = document.getElementById("addToPortfolioBtnWrap");
+    const overLimit = portfolioOverLimit(resolvedViewCount());
+    addBtn.disabled = !modalState.tableSel.size || overLimit;
+    if (overLimit) addWrap.dataset.tooltip = "Narrow the filters before adding engagements.";
+    else delete addWrap.dataset.tooltip;
 
     if (!isSearch) {
         table.hidden = true;
@@ -6043,7 +6123,6 @@ function renderResultsTable() {
         toggleAll.checked = pageRows.length > 0 && selectedOnPage === pageRows.length;
         toggleAll.indeterminate = selectedOnPage > 0 && selectedOnPage < pageRows.length;
     }
-    document.getElementById("addToPortfolioBtn").disabled = !selected;
     updateResultsActionButtons();
 }
 
@@ -6238,11 +6317,12 @@ function closeDynamicFilterConfirm(opts) {
     }
 }
 function updateMembershipUI() {
-    const n = effectiveMembershipSize();
+    const n = resolvedViewCount();
     const searchCount = document.getElementById("searchResultsCount");
     const portfolioCount = document.getElementById("portfolioTabCount");
     if (searchCount && modalState.applied) searchCount.textContent = `(${filteredEngagements().length})`;
-    if (portfolioCount) portfolioCount.textContent = `(${n})`;
+    if (portfolioCount) portfolioCount.textContent = `(${fmt(n)})`;
+    updateLimitNote();
     const back = document.getElementById("backToPortfolioBtn");
     if (back) {
         back.hidden = n === 0;
@@ -6348,6 +6428,7 @@ function resetModalState(preselectCodes, applied) {
     modalState.declinedDynamicForResults = false;
     modalState.valueSearch = {};
     modalState.filterSearch = "";
+    modalState.reportedCount = null;
     modalState.nameTouched = false;
     modalState.nameEditing = false;
     modalState.originalName = "";
@@ -6361,6 +6442,7 @@ function buildModal() {
     updateMembershipUI();
     updateFiltersBar();
     modalState.baseline = modalSignature();
+    updateLimitNote();
 }
 function modalSignature() {
     return JSON.stringify({
@@ -6398,6 +6480,7 @@ function openEditModal(name) {
     modalMode = "edit";
     document.getElementById("modalPrimary").textContent = "Update";
     const portfolioName = name || document.getElementById("detailTitle").textContent.trim();
+    const portfolio = findPortfolio(portfolioName);
     setPortfolioNameValue(portfolioName);
     // Seed a hybrid membership so editing demonstrates both sections:
     // a dynamic filter rule ("From filters") plus a couple of hand-picked engagements.
@@ -6408,6 +6491,7 @@ function openEditModal(name) {
     const manualCodes = ENGAGEMENTS.filter(e => !ruleCodes.includes(e.code)).slice(0, 2).map(e => e.code);
     resetModalState(manualCodes, true);
     modalState.originalName = portfolioName;
+    modalState.reportedCount = portfolio && portfolioOverLimit(portfolio.engagements) ? portfolio.engagements : null;
     modalState.nameEditing = false;
     if (ruleUnit) {
         modalState.rules = [{ id: ++ruleSeq, name: "Technology & Media", sel: { jobFunctionalUnitId: new Set([ruleUnit]) }, dateLabel: RULE_DATE_LABEL, evaluatedAt: Date.now() - 3 * 60 * 1000 }];
@@ -6467,11 +6551,24 @@ document.getElementById("unaddedSelectionConfirm").addEventListener("keydown", f
 function commitPortfolioSave() {
     const mode = modalMode;
     const name = portfolioNameValue();
+    const original = modalState.originalName;
+    const narrowed = modalState.reportedCount != null && modalSignature() !== modalState.baseline;
+    const nextCount = narrowed ? effectiveMembershipSize() : null;
     closeCreateModal({ force: true });
     if (mode === "create") {
         openPortfolio(name); // creating takes you straight onto the new portfolio's page
-    } else if (document.getElementById("view-detail").classList.contains("is-active")) {
-        document.getElementById("detailTitle").textContent = name; // reflect any rename
+    } else {
+        const existing = findPortfolio(original) || findPortfolio(name);
+        if (existing) {
+            if (name) existing.name = name;
+            if (nextCount != null) {
+                existing.engagements = nextCount;
+                existing.totalHours = nextCount * 40;
+                existing.pctScheduled = 70;
+            }
+        }
+        renderSections();
+        if (document.getElementById("view-detail").classList.contains("is-active")) openPortfolio(name, true);
     }
 }
 function portfolioHasProgress() {
@@ -6919,6 +7016,8 @@ const PF_WORKER_SPECS = [
         ["Fair Value Review — Crestbridge Assets", "CBA-77", "Second Review", "Partner", "Audit", "PTR / Assurance / London", 30, 3, 8],
         ["Debt Covenant Review — FinServe Digital", "FSD-412", "First Review", "Partner", "Audit", "PTR / Assurance / London", 38, 4, 7],
         ["Completion Memo — Calder Ceramics", "CCR-CM", "Second Review", "Partner", "Audit", "PTR / Assurance / London", 46, 3, 6],
+        ["Statutory Audit — Thames Water Utilities", "TWU-330", "Second Review", "Partner", "Audit", "PTR / Assurance / London", 42, 3, 6],
+        ["Cash Confirmation — Sterling Capital", "STC-CC", "First Review", "Partner", "Audit", "PTR / Assurance / London", 43, 2, 4],
         ["Annual leave", "", null, null, null, null, 20, 2, 7.5, "unavailability"]
     ]},
     { id: "w-marcus", name: "Marcus Webb", grade: "DIR", cap: 37.5, items: [
@@ -6928,6 +7027,7 @@ const PF_WORKER_SPECS = [
         ["Consolidation Review — Westbridge Group", "WBG-201", "Second Review", "Director", "Audit", "DIR / Assurance / London", 24, 4, 8],
         ["Subsequent Events — Apex Holdings plc", "AHP-SE", "Second Review", "Director", "Audit", "DIR / Assurance / London", 34, 3, 10],
         ["Impairment Review — BrightPath Retail", "BPR-IMP", "First Review", "Director", "Audit", "DIR / Assurance / London", 42, 4, 9],
+        ["Group Audit — Apex Holdings plc", "AHP-4410", "Second Review", "Director", "Audit", "DIR / Assurance / London", 43, 2, 8],
         ["Year-end Audit — Calder Ceramics", "CCR-YE", "Second Review", "Director", "Audit", "DIR / Assurance / London", 48, 3, 8]
     ]},
     { id: "w-olivia", name: "Olivia Chen", grade: "SRM", cap: 37.5, items: [
@@ -6937,6 +7037,8 @@ const PF_WORKER_SPECS = [
         ["Subsequent Events — Apex Holdings plc", "AHP-SE", "Second Review", "Senior Manager", "Audit", "SRM / Assurance / London", 23, 3, 10],
         ["Lease Accounting — Urban Space REIT", "USR-88", "First Review", "Senior Manager", "Audit", "SRM / Assurance / London", 31, 4, 14],
         ["Contingent Liabilities — Cloudspan Software", "CSS-CL", "First Review", "Senior Manager", "Audit", "SRM / Assurance / London", 39, 4, 12],
+        ["SOX Controls Testing — BrightPath Retail", "BPR-55", "First Review", "Senior Manager", "Regulatory Review", "SRM / Assurance / London", 42, 3, 10],
+        ["Inventory Observation — Northern Foods Ltd", "NFL-IO", "Preparation", "Senior Manager", "Audit", "SRM / Assurance / London", 43, 2, 8],
         ["Study leave", "", null, null, null, null, 12, 1, 7.5, "unavailability"]
     ]},
     { id: "w-priya", name: "Priya Patel", grade: "MAN", cap: 37.5, items: [
@@ -6946,6 +7048,8 @@ const PF_WORKER_SPECS = [
         ["Tax Provision Support — NovaTech Manufacturing", "NTM-TX", "First Review", "Manager", "Tax Advisory", "MAN / Assurance / London", 22, 4, 12],
         ["Completion Memo — Calder Ceramics", "CCR-CM", "Second Review", "Manager", "Audit", "MAN / Assurance / London", 30, 3, 8],
         ["Group Audit — Apex Holdings plc", "AHP-4410", "First Review", "Manager", "Audit", "MAN / Assurance / London", 36, 5, 16],
+        ["Year-end Audit — Calder Ceramics", "CCR-YE", "First Review", "Manager", "Audit", "MAN / Assurance / London", 41, 3, 12],
+        ["Tax Provision Support — NovaTech Manufacturing", "NTM-TX", "Second Review", "Manager", "Tax Advisory", "MAN / Assurance / London", 43, 2, 8],
         ["Provisions Testing — Orion Pensions", "ORP-PR", "First Review", "Manager", "Audit", "MAN / Assurance / London", 44, 4, 14]
     ]},
     { id: "w-emma", name: "Emma Johnson", grade: "MAN", cap: 37.5, items: [
@@ -6955,6 +7059,8 @@ const PF_WORKER_SPECS = [
         ["Impairment Review — BrightPath Retail", "BPR-IMP", "Second Review", "Manager", "Audit", "MAN / Assurance / London", 25, 4, 12],
         ["Provisions Testing — Orion Pensions", "ORP-PR", "First Review", "Manager", "Audit", "MAN / Assurance / London", 33, 3, 10],
         ["Cash Confirmation — Sterling Capital", "STC-CC", "Preparation", "Manager", "Audit", "MAN / Assurance / London", 40, 4, 12],
+        ["Cut-off Testing — Meridian Bank", "MBK-CO", "Preparation", "Manager", "Audit", "MAN / Assurance / London", 43, 2, 10],
+        ["Interim Review — Sterling Capital", "STC-19", "First Review", "Manager", "Audit", "MAN / Assurance / London", 43, 2, 8],
         ["Bank Confirmation — Harbour Estates", "HBE-BC", "First Review", "Manager", "Audit", "MAN / Assurance / London", 47, 3, 10]
     ]},
     { id: "w-tom", name: "Tom Becker", grade: "MAN", cap: 37.5, items: [
@@ -6964,6 +7070,7 @@ const PF_WORKER_SPECS = [
         ["Bank Confirmation — Harbour Estates", "HBE-BC", "Preparation", "Manager", "Audit", "MAN / Assurance / London", 26, 3, 10],
         ["Journal Entry Testing — Metro Logistics", "MLG-JE", "Preparation", "Manager", "Audit", "MAN / Assurance / London", 32, 4, 8],
         ["Going Concern Assessment — Metro Logistics", "MLG-118", "First Review", "Manager", "Audit", "MAN / Assurance / London", 40, 4, 12],
+        ["Related Party Review — Harbour Estates", "HBE-12", "First Review", "Manager", "Audit", "MAN / Assurance / London", 42, 3, 8],
         ["ESG Assurance — Greenfield Energy", "GFE-90", "First Review", "Manager", "Regulatory Review", "MAN / Assurance / London", 48, 3, 10]
     ]},
     { id: "w-sofia", name: "Sofia Rossi", grade: "SA", cap: 37.5, items: [
@@ -6973,6 +7080,9 @@ const PF_WORKER_SPECS = [
         ["Component Audit — Alpine Components", "ALC-22", "First Review", "Senior Associate", "Audit", "SA / Assurance / London", 22, 5, 20],
         ["Payroll Substantive — Urban Space REIT", "USR-PR", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 30, 4, 16],
         ["Revenue Recognition Review — Cloudspan Software", "CSS-301", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 38, 5, 22],
+        ["Component Audit — Alpine Components", "ALC-22", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 42, 3, 18],
+        ["Journal Entry Testing — Metro Logistics", "MLG-JE", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 43, 2, 16],
+        ["Payroll Substantive — Urban Space REIT", "USR-PR", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 43, 2, 14],
         ["ITGC Assessment — FinServe Digital", "FSD-IT", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 46, 4, 18]
     ]},
     { id: "w-mia", name: "Mia Fernandez", grade: "SA", cap: 37.5, items: [
@@ -6982,6 +7092,7 @@ const PF_WORKER_SPECS = [
         ["Contingent Liabilities — Cloudspan Software", "CSS-CL", "First Review", "Senior Associate", "Audit", "SA / Assurance / London", 24, 4, 14],
         ["Consolidation Review — Westbridge Group", "WBG-201", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 32, 5, 20],
         ["Debt Covenant Review — FinServe Digital", "FSD-412", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 40, 4, 16],
+        ["Statutory Audit — Thames Water Utilities", "TWU-330", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 43, 3, 14],
         ["Public holiday", "", null, null, null, null, 28, 1, 7.5, "unavailability"]
     ]},
     { id: "w-harry", name: "Harry Collins", grade: "SA", cap: 37.5, items: [
@@ -6991,6 +7102,7 @@ const PF_WORKER_SPECS = [
         ["Consolidation Review — Westbridge Group", "WBG-201", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 26, 4, 18],
         ["Completion Memo — Calder Ceramics", "CCR-CM", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 34, 3, 12],
         ["Related Party Review — Harbour Estates", "HBE-12", "First Review", "Senior Associate", "Audit", "SA / Assurance / London", 41, 4, 16],
+        ["Fair Value Review — Crestbridge Assets", "CBA-77", "Preparation", "Senior Associate", "Audit", "SA / Assurance / London", 43, 2, 10],
         ["Year-end Audit — Calder Ceramics", "CCR-YE", "First Review", "Senior Associate", "Audit", "SA / Assurance / London", 48, 3, 14]
     ]},
     { id: "w-noah", name: "Noah Williams", grade: "A2", cap: 37.5, items: [
@@ -7013,7 +7125,8 @@ const PF_WORKER_SPECS = [
         ["Completion Memo — Calder Ceramics", "CCR-CM", "Second Review", "Associate", "Audit", "A2 / Assurance / London", 8, 2, 3],
         /* Quieter rest of year so the stack stands out */
         ["Interim Review — Sterling Capital", "STC-19", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 28, 4, 22],
-        ["ITGC Assessment — FinServe Digital", "FSD-IT", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 40, 4, 18]
+        ["ITGC Assessment — FinServe Digital", "FSD-IT", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 40, 4, 18],
+        ["Payroll Substantive — Urban Space REIT", "USR-PR", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 42, 3, 12]
     ]},
     { id: "w-jordan", name: "Jordan Blake", grade: "A2", cap: 37.5, items: [
         ["Pension Scheme Audit — Orion Pensions", "ORP-44", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 1, 6, 28],
@@ -7023,6 +7136,7 @@ const PF_WORKER_SPECS = [
         ["Training day", "TRN-01", null, null, "Training", null, 14, 1, 7.5],
         ["SOX Controls Testing — BrightPath Retail", "BPR-55", "Preparation", "Associate", "Regulatory Review", "A2 / Assurance / London", 34, 5, 24],
         ["Impairment Review — BrightPath Retail", "BPR-IMP", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 42, 4, 20],
+        ["Pension Scheme Audit — Orion Pensions", "ORP-44", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 43, 2, 14],
         ["Cash Confirmation — Sterling Capital", "STC-CC", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 48, 3, 18]
     ]},
     { id: "w-aisha", name: "Aisha Khan", grade: "A2", cap: 37.5, items: [
@@ -7033,7 +7147,12 @@ const PF_WORKER_SPECS = [
         ["ITGC Assessment — FinServe Digital", "FSD-IT", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 14, 4, 16],
         ["Interim Review — Sterling Capital", "STC-19", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 34, 5, 24],
         ["Financial Statement Audit — NovaTech Manufacturing", "NTM-2601", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 42, 5, 26],
+        ["Revenue Recognition Review — Cloudspan Software", "CSS-301", "First Review", "Associate", "Audit", "A2 / Assurance / London", 43, 2, 16],
         ["Completion Memo — Calder Ceramics", "CCR-CM", "Preparation", "Associate", "Audit", "A2 / Assurance / London", 49, 2, 14]
+    ]},
+    { id: "w-unassigned", name: null, unassigned: true, grade: null, cap: null, items: [
+        ["Going Concern Assessment — Metro Logistics", "MLG-118", "Preparation", null, "Audit", null, 42, 3, 10],
+        ["Bank Confirmation — Harbour Estates", "HBE-BC", "Preparation", null, "Audit", null, 43, 2, 8]
     ]}
 ];
 
