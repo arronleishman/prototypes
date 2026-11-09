@@ -378,6 +378,13 @@
     .ds .Pill--danger { background: var(--surface-danger-subtle); color: var(--text-danger); }
     .ds {
       --surface-eng-01: #0295b2;
+      --surface-success: #078138;
+      --warning: #e27209;
+      --text-accent: #4c5172;
+      --primary-accent: #dedaf4;
+      --border-warning-subtle: #ffd9ad;
+      --border-danger-subtle: #f787b0;
+      --border-success-subtle: #c9efd8;
       --font-size-extra-small: 0.6875rem;
       --font-size-small: 12px;
       --font-weight-bold: 700;
@@ -398,11 +405,22 @@
     }
     .ds .Badge--sm { min-height: 18px; padding: 2px 6px; font-size: var(--font-size-extra-small); }
     .ds .Badge--md { min-height: 22px; padding: var(--padding-xxs) 8px; font-size: var(--font-size-small); }
+    .ds .Badge--neutral { background: var(--surface-subtle-dark); color: var(--text-accent); border-color: var(--border-subtle); }
+    .ds .Badge--primary { background: var(--surface-primary-subtle); color: var(--text-primary); border-color: var(--primary-accent); }
+    .ds .Badge--success { background: var(--surface-success-subtle); color: var(--text-success); border-color: var(--border-success-subtle); }
+    .ds .Badge--warning { background: var(--surface-warning); color: var(--text-warning); border-color: var(--border-warning-subtle); }
+    .ds .Badge--danger { background: var(--surface-danger-subtle); color: var(--text-danger); border-color: var(--border-danger-subtle); }
     .ds .Badge--info { background: #e8f7fa; color: var(--surface-eng-01); border-color: #9ad5e2; }
+    .ds .Badge--neutral.Badge--strong { background: #e2e3e9; color: var(--text-accent); border-color: #e2e3e9; }
+    .ds .Badge--primary.Badge--strong { background: var(--surface-primary); color: var(--text-inverse); border-color: var(--surface-primary); }
+    .ds .Badge--success.Badge--strong { background: var(--surface-success); color: var(--text-inverse); border-color: var(--surface-success); }
+    .ds .Badge--warning.Badge--strong { background: var(--warning); color: var(--text-inverse); border-color: var(--warning); }
+    .ds .Badge--danger.Badge--strong { background: var(--surface-danger); color: var(--text-inverse); border-color: var(--surface-danger); }
     .ds .Badge--info.Badge--strong { background: var(--surface-eng-01); color: var(--text-inverse); border-color: var(--surface-eng-01); }
     .ds .text-uppercase { text-transform: uppercase; }
     .ds .Badge--hoverable { cursor: pointer; }
-    .ds .Badge--info.Badge--strong.Badge--hoverable:hover { filter: brightness(0.92); }
+    .ds .Badge--hoverable:hover { filter: brightness(0.92); }
+    .ds .kit-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .ds .Avatar {
       width: 28px;
       height: 28px;
@@ -1039,7 +1057,7 @@
             <span>Storybook kit</span>
           </div>
           <h1 class="brand">Components</h1>
-          <p class="tagline">The pieces a mock can paste. Each one uses the same class names as its Storybook story.</p>
+          <p class="tagline">The Storybook components library. Beta tag and Badge can be pasted as HTML. The rest open in Storybook.</p>
         </div>
       </div>
       <div class="kit">
@@ -1267,21 +1285,47 @@
         'gantt-resource-breakdown': 'portfolio',
       };
       var kitStories = [
-        { group: 'Common patterns', id: 'beta-tag', title: 'Beta tag', story: 'components-common-patterns-beta-tag--default', docs: 'components-common-patterns-beta-tag--docs', note: 'The docs default. Small, info, strong. The label is the localised string common:beta.', html: '<span class="Badge Badge--sm Badge--info Badge--strong text-uppercase">Beta</span>' },
+        { group: 'Common patterns', id: 'beta-tag', title: 'Beta tag', story: 'components-common-patterns-beta-tag--default', docs: 'components-common-patterns-beta-tag--docs', note: 'Docs default. Small, info, strong. The label is the localised string common:beta.', html: '<span class="Badge Badge--sm Badge--info Badge--strong text-uppercase">Beta</span>' },
         { group: 'Common patterns', id: 'beta-tag-md', title: 'Beta tag, medium', story: 'components-common-patterns-beta-tag--default', docs: 'components-common-patterns-beta-tag--docs', note: 'Size md. Match the badge to the surrounding text.', html: '<span class="Badge Badge--md Badge--info Badge--strong text-uppercase">Beta</span>' },
         { group: 'Common patterns', id: 'beta-tag-quiet', title: 'Beta tag, quiet', story: 'components-common-patterns-beta-tag--default', docs: 'components-common-patterns-beta-tag--docs', note: 'Strong is off. The tinted info badge, not the filled one.', html: '<span class="Badge Badge--sm Badge--info text-uppercase">Beta</span>' },
         { group: 'Common patterns', id: 'beta-tag-hover', title: 'Beta tag, hoverable', story: 'components-common-patterns-beta-tag--default', docs: 'components-common-patterns-beta-tag--docs', note: 'Hoverable is only for a badge that is part of a control.', html: '<button type="button" class="Badge Badge--sm Badge--info Badge--strong Badge--hoverable text-uppercase">Beta</button>' },
-        { group: 'Buttons', id: 'btn-primary', title: 'Primary', story: 'components-btn--primary', note: 'The one action that advances the flow.', html: '<button class="Btn Btn--primary" type="button">Save</button>' },
-        { group: 'Buttons', id: 'btn-secondary', title: 'Secondary', story: 'components-btn--secondary', note: 'Cancel in a modal footer. Purple outline, not the grey default.', html: '<button class="Btn Btn--secondary" type="button">Cancel</button>' },
-        { group: 'Buttons', id: 'btn-default', title: 'Default', story: 'components-btn--default', note: 'Toolbar and page actions.', html: '<button class="Btn" type="button">Modify filters</button>' },
-        { group: 'Buttons', id: 'btn-group', title: 'Button group', story: 'components-btngroup--week', note: 'One choice in a row. The active segment is filled.', html: '<div class="BtnGroup" role="group" aria-label="Week"><button type="button">This week</button><button type="button" class="is-active">Next week</button></div>' },
-        { group: 'Badge', id: 'badge-success', title: 'Success', story: 'components-badge--success', note: 'Done or healthy. A status label, not a button.', html: '<span class="Pill Pill--success">Ready</span>' },
-        { group: 'Badge', id: 'badge-warning', title: 'Warning', story: 'components-badge--warning', note: 'Due soon.', html: '<span class="Pill Pill--warning">Due soon</span>' },
-        { group: 'Badge', id: 'badge-danger', title: 'Danger', story: 'components-badge--danger', note: 'Overdue or on hold.', html: '<span class="Pill Pill--danger">On hold</span>' },
-        { group: 'Identity', id: 'avatar', title: 'Avatar', story: 'components-avatar--initials', note: '28px initials. One size in a list.', html: '<span class="Avatar">AL</span>' },
-        { group: 'Form', id: 'text-input', title: 'Text input', story: 'components-input--text', note: '35px field. The label sits above it.', html: '<label class="Field"><span>Engagement</span><input class="TextInput" type="text" value="Year end audit" /></label>' },
-        { group: 'Form', id: 'hours', title: 'Hours and minutes', story: 'components-input--hours', note: '91 by 35. Do not invent a third size.', html: '<label class="Field"><span>Effort</span><span class="Hours-row"><input class="Hours" type="text" value="6" aria-label="Hours" /><input class="Hours" type="text" value="30" aria-label="Minutes" /></span></label>' },
-        { group: 'Overlay', id: 'modal-footer', title: 'Modal footer', story: 'components-modal--footer', note: 'Summary on the left. Secondary cancel, then the primary action.', frame: true, html: '<div class="Modal"><div class="Modal-footer"><span class="Modal-footerSummary">2 bookings affected</span><button class="Btn Btn--secondary" type="button">Cancel</button><button class="Btn Btn--primary" type="button">Put on hold</button></div></div>' },
+        { group: 'Common patterns', id: 'dropdown', title: 'Dropdown', docs: 'components-common-patterns-dropdown--docs', note: 'Stories: Basic, selectable items, sections, nested, plus Secondary dropdown and Selectable dropdown item.' },
+        { group: 'Common patterns', id: 'modal', title: 'Modal', docs: 'components-common-patterns-modal--docs', note: 'Example story. A separate ConfirmModal folder sits beside this one in the live sidebar.' },
+        { group: 'Common patterns', id: 'multi-step-modal', title: 'Multi step modal', docs: 'components-common-patterns-multi-step-modal--docs', note: 'Example story.' },
+        { group: 'Common patterns', id: 'radio-button-group', title: 'Radio button group', docs: 'components-common-patterns-radio-button-button-group--docs', note: 'Default story.' },
+        { group: 'Common patterns', id: 'sidebar', title: 'Sidebar', docs: 'components-common-patterns-sidebar--docs', note: 'Example story.' },
+        { group: 'Common patterns', id: 'pattern-tabs', title: 'Tabs', docs: 'components-common-patterns-tabs--docs', note: 'Default, success, error, disabled, and lazy. Sub tabs are a child of this folder. A newer Tabs component also sits at the top level.' },
+        { group: 'Common patterns', id: 'collapsible', title: 'Collapsible sections', docs: 'components-common-patterns-collapsible-sections--docs', note: 'Collapsed, expanded, disabled, and a header slot. A sidebar variant sits under the same folder.' },
+        { group: 'Common patterns', id: 'confirm-modal', title: 'ConfirmModal', note: 'In the live sidebar, next to Collapsible sections. Its docs page is not copied here yet.' },
+        { group: 'Common patterns', id: 'spinner', title: 'Dayshape spinner', docs: 'components-common-patterns-dayshape-spinner--docs', note: 'Default, small, and large.' },
+        { group: 'Common patterns', id: 'saving-toast', title: 'Saving toast', docs: 'components-common-patterns-saving-toast--docs', note: 'Default, in progress, success, and error.' },
+        { group: 'Common patterns', id: 'toast', title: 'Toast', docs: 'components-common-patterns-toast--docs', note: 'Default story.' },
+        { group: 'Badge', id: 'badge-default', title: 'Default', story: 'components-badge--default', docs: 'components-badge--docs', note: 'Medium, neutral. The docs demo label is Sample. Variants are neutral, primary, success, warning, danger, info, and active.', html: '<span class="Badge Badge--md Badge--neutral">Sample</span>' },
+        { group: 'Badge', id: 'badge-variants', title: 'Variants', story: 'components-badge--variants', docs: 'components-badge--docs', note: 'Quiet variants. Active is a seventh variant on the docs page; its colour is not copied here yet.', html: '<span class="kit-row"><span class="Badge Badge--md Badge--neutral">Neutral</span><span class="Badge Badge--md Badge--primary">Primary</span><span class="Badge Badge--md Badge--success">Success</span><span class="Badge Badge--md Badge--warning">Warning</span><span class="Badge Badge--md Badge--danger">Danger</span><span class="Badge Badge--md Badge--info">Info</span></span>' },
+        { group: 'Badge', id: 'badge-strong', title: 'Strong variants', story: 'components-badge--strong-variants', docs: 'components-badge--docs', note: 'The filled version. Use it sparingly.', html: '<span class="kit-row"><span class="Badge Badge--md Badge--neutral Badge--strong">Neutral</span><span class="Badge Badge--md Badge--primary Badge--strong">Primary</span><span class="Badge Badge--md Badge--success Badge--strong">Success</span><span class="Badge Badge--md Badge--warning Badge--strong">Warning</span><span class="Badge Badge--md Badge--danger Badge--strong">Danger</span><span class="Badge Badge--md Badge--info Badge--strong">Info</span></span>' },
+        { group: 'Badge', id: 'badge-sizes', title: 'Sizes', story: 'components-badge--sizes', docs: 'components-badge--docs', note: 'sm and md. Match the badge to the surrounding text.', html: '<span class="kit-row"><span class="Badge Badge--sm Badge--neutral">Small</span><span class="Badge Badge--md Badge--neutral">Medium</span></span>' },
+        { group: 'Badge', id: 'badge-hover', title: 'Hoverable', story: 'components-badge--hoverable', docs: 'components-badge--docs', note: 'Only when the badge is part of a control. With icon is a separate story.', html: '<button type="button" class="Badge Badge--md Badge--neutral Badge--hoverable">Sample</button>' },
+        { group: 'Buttons', id: 'buttons', title: 'Buttons', docs: 'components-buttons--docs', note: 'Live stories: Default, Primary, Secondary, Tertiary, Danger, Success, Contained on hover, Icon only, Overflow label, Link, Link outline, Button content guidance, Special cases, All appearances, and the same set on dark.' },
+        { group: 'Buttons', id: 'button-group', title: 'Button group', note: 'Its own folder in the live sidebar, after Buttons. Docs not copied yet.' },
+        { group: 'Inputs', id: 'inputs', title: 'Inputs', note: 'Folder in the live sidebar. Children include text, number, select, checkbox, radio, textarea, date time, tags, typeahead, file upload, colour, range, star rating, and toggle switch.' },
+        { group: 'Forms', id: 'forms', title: 'Forms', docs: 'components-forms-form-group--docs', note: 'Form group, form fieldset, and fieldset.' },
+        { group: 'Tooltip', id: 'tooltip', title: 'Tooltip', docs: 'components-tooltip--docs', note: 'Default story.' },
+        { group: 'Gantt', id: 'gantt', title: 'Gantt', docs: 'components-gantt-gantt-sidebar-section--docs', note: 'Gantt sidebar section, and ODA summary metric.' },
+        { group: 'Report', id: 'report', title: 'Report', docs: 'components-report-columnpicker--docs', note: 'Column picker and drag-and-drop card.' },
+        { group: 'Scheduled prompts', id: 'scheduled-prompts', title: 'ScheduledPrompts', note: 'Folder in the live sidebar. Docs not copied yet.' },
+        { group: 'Identity', id: 'avatar', title: 'Avatar', docs: 'components-avatar--docs', note: 'Single name, single word, multiple names, and a name in an array.' },
+        { group: 'Identity', id: 'avatar-stack', title: 'Avatar stack', docs: 'components-avatarstack--docs', note: 'Few, five, six, many, and a single name.' },
+        { group: 'Identity', id: 'entity-icon', title: 'Entity icon', docs: 'components-entityicon--docs', note: 'Stories: task, job, job group, with indicator, unavailability, and not active.' },
+        { group: 'Content', id: 'blank-slate', title: 'Blank slate', docs: 'components-blankslate--docs', note: 'Default and a light grey variant.' },
+        { group: 'Content', id: 'pill', title: 'Pill', note: 'Folder in the live sidebar. Docs not copied yet.' },
+        { group: 'Content', id: 'counter', title: 'Counter', note: 'Folder in the live sidebar. Docs not copied yet.' },
+        { group: 'Content', id: 'stepper', title: 'Stepper', docs: 'components-stepper--docs', note: 'Playground, vertical, horizontal, first step, in progress, complete, error, long content, and all variants.' },
+        { group: 'Content', id: 'charts', title: 'Charts', docs: 'components-charts-percentagedonutchart--docs', note: 'Percentage donut, as progress and as a percentage.' },
+        { group: 'Content', id: 'tables', title: 'Tables', docs: 'components-tables-generic-table--docs', note: 'Generic table: simple, bordered, card, loading, selection, filters, edits, and pagination.' },
+        { group: 'Content', id: 'tabs', title: 'Tabs', docs: 'components-tabs--docs', note: 'The top-level Tabs component. Default, badge, validation dot, tooltip, overflow, slots, and vertical.' },
+        { group: 'Overlay', id: 'popovers', title: 'Popovers', docs: 'components-popovers--docs', note: 'Default, hover on each side, and click.' },
+        { group: 'Entity editors', id: 'entity-editors', title: 'Entity editors', docs: 'components-entity-editors-editor-header--docs', note: 'Editor header, filter logic, tree selector, and a multiple-entity example.' },
+        { group: 'Dashboard', id: 'dashboard', title: 'Dashboard', docs: 'components-dashboard-widgetcontainer--docs', note: 'Date stepper, day bubble, filter button, icon badge, progress arc, saved view button, and widget container.' },
       ];
       var teamPlans = {
         'high-volume': {
@@ -1401,10 +1445,10 @@
         activeStoryId = story.id;
         var canvas = document.getElementById('kitCanvas');
         canvas.classList.toggle('is-frame', !!story.frame);
-        canvas.innerHTML = story.html;
+        canvas.innerHTML = story.html || '<p class="kit-note">Open this component in Storybook for its template. The HTML has not been copied into the hub yet.</p>';
         document.getElementById('kitStory').textContent = story.group + ' / ' + story.title;
         document.getElementById('kitNote').textContent = story.note;
-        document.getElementById('kitCode').textContent = story.html;
+        document.getElementById('kitCode').textContent = story.html || '';
         renderKitNav();
       }
 
@@ -1583,7 +1627,7 @@
       document.getElementById('kitStorybook').addEventListener('click', function () {
         var story = currentStory();
         if (!story.docs) {
-          document.getElementById('kitNote').textContent = 'This preview is not a Storybook story yet. The Beta tag is the one taken from Storybook.';
+          document.getElementById('kitNote').textContent = 'This folder is in the live Storybook sidebar. Its docs address is not copied here yet.';
           return;
         }
         window.open(STORYBOOK_ORIGIN.replace(/\/$/, '') + '/?path=/docs/' + encodeURIComponent(story.docs), '_blank', 'noopener');
