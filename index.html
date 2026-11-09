@@ -1271,7 +1271,6 @@
       var STORYBOOK_ORIGIN = 'https://storybook.dayshapedev.app';
       var baseTeams = [
         { id: 'high-volume', name: 'High Volume', short: 'HV' },
-        { id: 'portfolio', name: 'Portfolio', short: 'PF' },
       ];
       var prototypeTeams = {
         'practitioner-kanban': 'high-volume',
@@ -1283,8 +1282,8 @@
         'kanban-sidebar-scenarios': 'high-volume',
         'sidebar-comparison': 'high-volume',
         'dashboard-main-prototype': 'high-volume',
-        'portfolios-v3': 'portfolio',
-        'gantt-resource-breakdown': 'portfolio',
+        'portfolios-v3': 'high-volume',
+        'gantt-resource-breakdown': 'high-volume',
       };
       var kitStories = [
         { group: 'Common patterns', id: 'beta-tag', title: 'Beta tag', story: 'components-common-patterns-beta-tag--default', docs: 'components-common-patterns-beta-tag--docs', note: 'Docs default. Small, info, strong. The label is the localised string common:beta.', html: '<span class="Badge Badge--sm Badge--info Badge--strong text-uppercase">Beta</span>' },
@@ -1349,28 +1348,13 @@
             { id: 'pools', status: 'Open', title: 'Pools', summary: 'Laura uses a fake job and an overseer. Ligia assigns by skill.', detail: 'Neither wants a practitioner to pull the work. “The pool” is the wrong noun for both models.' },
           ],
         },
-        'portfolio': {
-          updated: 'Taken from the Portfolio Views UAT map and the Gantt first-cut plan.',
-          fileHref: 'mocks/portfolios-v3.html',
-          fileLabel: 'Open Portfolio Views',
-          fileNote: 'The prototype is the place the team can click through. The written plan stays in the UAT map and the Gantt first-cut plan, and this page is where that picture is read.',
-          columns: [
-            { status: 'Shipped', title: 'In customers’ hands', body: 'Portfolio management, the team, and the economic view shipped in 26.6. The Gantt is read-only, because of permissions and because suggestions are not there yet.' },
-            { status: 'Now', title: 'First cut still open', body: 'Remove Team Skills from the Portfolio Gantt. Keep availability and zoom. Reuse the settings menu from the Gantt aggregation mock instead of drawing a second one.' },
-            { status: 'Waiting', title: 'Not specified', body: 'Save, Add to Portfolio, and Search Results still need one meaning. Manual and dynamic membership are not yet separate, inspectable groups. Roll-up and relative dates are open.' },
-          ],
-          items: [
-            { id: 'membership', status: 'Open', title: 'Membership persistence', summary: 'The local mock loses dynamic and manual membership on save, and can duplicate rule cards.', detail: 'Glaikit production behaviour is still unverified. Do not treat the mock’s loss as the product’s behaviour.' },
-            { id: 'save', status: 'Open', title: 'Save and add', summary: 'Save, Add to Portfolio, Search Results, and Portfolio actions need one meaning and one place.', detail: 'Dayshape’s existing Save placement stays unless a decision says otherwise.' },
-            { id: 'gantt', status: 'Now', title: 'Gantt first cut', summary: 'Availability stays. Team Skills comes off this Gantt. Breakdown only if aggregation is in the release.', detail: 'The settings menu follows mocks/gantt-resource-breakdown.html: horizon, availability, suitability, and breakdown as sections of one menu.' },
-            { id: 'suggestions', status: 'Waiting', title: 'Suggestions', summary: 'Editing from the portfolio Gantt waits for the Job Edit Gantt.', detail: 'Unassigned requests can be designed on the read-only schedule. Suggestions are a later chain.' },
-          ],
-        },
       };
 
       function savedTeams() {
         try {
-          return JSON.parse(localStorage.getItem('prototypes.teams') || '[]');
+          return JSON.parse(localStorage.getItem('prototypes.teams') || '[]').filter(function (team) {
+          return team && team.id !== 'portfolio';
+        });
         } catch (e) {
           return [];
         }
@@ -1499,7 +1483,7 @@
         var parts = (location.hash || '').replace(/^#/, '').split('/');
         if (parts[0] === 'teams' && parts[1]) {
           appMode = 'team';
-          activeTeamId = parts[1];
+          activeTeamId = teams().some(function (team) { return team.id === parts[1]; }) ? parts[1] : 'high-volume';
           teamSection = parts[2] === 'prototypes' ? 'prototypes' : 'plan';
           return;
         }
