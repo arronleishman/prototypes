@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>High Volume Prototypes</title>
+  <title>Dayshape Prototypes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
     @view-transition { navigation: auto; }
@@ -65,12 +65,12 @@
     }
     .team-rail-list {
       display: flex;
-      flex: 1;
       width: 100%;
       flex-direction: column;
       align-items: center;
       gap: 10px;
     }
+    .team-context-avatar i { font-size: .7rem; }
     .team-button,
     .team-add {
       position: relative;
@@ -133,6 +133,289 @@
       width: 32px;
       border-top: 1px solid var(--line);
     }
+    .rail-label {
+      margin: 2px 0 0;
+      max-width: 68px;
+      color: var(--muted);
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1.15;
+      text-align: center;
+    }
+    .team-views {
+      display: flex;
+      gap: 8px;
+      margin: 0 0 18px;
+    }
+    .team-views button {
+      min-height: 35px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--panel);
+      color: var(--ink);
+      cursor: pointer;
+      font: 600 .84rem/1 "DM Sans", system-ui, sans-serif;
+    }
+    .team-views button[aria-selected="true"] {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+    .plan-source {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    .plan-source a { color: var(--accent); }
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 16px;
+    }
+    .plan-card, .plan-file {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+    }
+    .plan-card h2, .plan-file h2 {
+      margin: 8px 0 6px;
+      font-size: 1rem;
+    }
+    .plan-card p, .plan-file p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .86rem;
+      line-height: 1.45;
+    }
+    .plan-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .plan-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+    }
+    .plan-row:hover { background: #fff; }
+    .plan-row.is-open { align-items: start; }
+    .plan-row strong, .plan-row span { display: block; }
+    .plan-row strong { font-size: .92rem; }
+    .plan-copy { color: var(--muted); font-size: .8rem; line-height: 1.4; margin-top: 2px; }
+    .plan-num {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: .75rem;
+      font-weight: 800;
+    }
+    .plan-detail {
+      grid-column: 2 / -1;
+      margin: 2px 0 0;
+      color: var(--ink);
+      font-size: .84rem;
+      line-height: 1.45;
+    }
+    .plan-file { margin-top: 16px; }
+    .plan-file .hub-action { margin-top: 12px; }
+    .kit {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .kit-nav {
+      position: sticky;
+      top: 16px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+    }
+    .kit-group {
+      margin: 10px 8px 4px;
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 700;
+    }
+    .kit-group:first-child { margin-top: 4px; }
+    .kit-nav button {
+      width: 100%;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      font: 600 .86rem/1 "DM Sans", system-ui, sans-serif;
+    }
+    .kit-nav button:hover { background: var(--accent-soft); }
+    .kit-nav button[aria-current="page"] {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .kit-stage {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      overflow: hidden;
+    }
+    .kit-canvas {
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.4), rgba(255,255,255,.4)),
+        repeating-linear-gradient(0deg, transparent, transparent 15px, rgba(226, 227, 233, .45) 16px),
+        repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(226, 227, 233, .45) 16px);
+    }
+    .kit-canvas.is-frame .Modal { width: min(440px, 100%); }
+    .kit-foot {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border-top: 1px solid var(--line);
+    }
+    .kit-story { margin: 0 0 4px; font-weight: 700; font-size: .9rem; }
+    .kit-note { margin: 0; color: var(--muted); font-size: .8rem; line-height: 1.45; max-width: 46em; }
+    .kit-code {
+      margin: 0;
+      padding: 14px 16px;
+      border-top: 1px solid var(--line);
+      background: #1a1d26;
+      color: #f7f6f2;
+      font-size: .78rem;
+      line-height: 1.5;
+      overflow-x: auto;
+    }
+    .ds {
+      --surface-primary: #4f3fa0;
+      --surface-default: #fff;
+      --surface-subtle-dark: #f1f1f4;
+      --surface-subtle-light: #f8f8f8;
+      --surface-primary-subtle: #f0effb;
+      --surface-emphasis: #4c5172;
+      --surface-danger: #a3003c;
+      --surface-success-subtle: #e1faeb;
+      --surface-warning: #fff0e0;
+      --surface-danger-subtle: #feecf2;
+      --surface-info-subtle: #edf0f8;
+      --text-default: #222430;
+      --text-primary: #4f3fa0;
+      --text-inverse: #fff;
+      --text-subtle: #6a708f;
+      --text-danger: #a3003c;
+      --text-success: #078138;
+      --text-warning: #b65800;
+      --border-default: #babfd1;
+      --border-primary: #4f3fa0;
+      --border-subtle: #e2e3e9;
+      --primary: #4f3fa0;
+      font-family: "Open Sans", sans-serif;
+      font-size: 14px;
+      color: var(--text-default);
+    }
+    .ds .Btn, .ds .BtnGroup > button {
+      min-height: 35px;
+      padding: 7px 14px;
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      background: var(--surface-default);
+      color: var(--text-default);
+      font: 600 14px/1.2 "Open Sans", sans-serif;
+    }
+    .ds .Btn--primary { border-color: var(--surface-primary); background: var(--surface-primary); color: var(--text-inverse); }
+    .ds .Btn--secondary { border-color: var(--border-primary); color: var(--text-primary); }
+    .ds .Btn--danger { border-color: var(--surface-danger); color: var(--text-danger); }
+    .ds .BtnGroup { display: inline-flex; }
+    .ds .BtnGroup > button { border-color: var(--surface-emphasis); color: var(--surface-emphasis); border-radius: 0; }
+    .ds .BtnGroup > button:first-child { border-radius: 4px 0 0 4px; }
+    .ds .BtnGroup > button:last-child { border-radius: 0 4px 4px 0; }
+    .ds .BtnGroup > button + button { margin-left: -1px; }
+    .ds .BtnGroup > button.is-active { background: var(--surface-emphasis); color: var(--text-inverse); }
+    .ds .Pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--surface-subtle-dark);
+      color: var(--text-default);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .ds .Pill--success { background: var(--surface-success-subtle); color: var(--text-success); }
+    .ds .Pill--warning { background: var(--surface-warning); color: var(--text-warning); }
+    .ds .Pill--danger { background: var(--surface-danger-subtle); color: var(--text-danger); }
+    .ds .Avatar {
+      width: 28px;
+      height: 28px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--primary);
+      color: var(--text-inverse);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .ds .Field { display: grid; gap: 6px; width: min(280px, 100%); }
+    .ds .Field span { font-weight: 600; }
+    .ds .TextInput, .ds .Hours {
+      min-height: 35px;
+      border: 1px solid var(--border-default);
+      border-radius: 4px;
+      background: var(--surface-default);
+      color: var(--text-default);
+      font: 400 14px/1.2 "Open Sans", sans-serif;
+    }
+    .ds .TextInput { width: 100%; padding: 7px 10px; }
+    .ds .Hours-row { display: flex; gap: 8px; }
+    .ds .Hours { width: 91px; padding: 7px 8px; }
+    .ds .Modal {
+      width: min(440px, 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      background: var(--surface-default);
+      box-shadow: 0 12px 28px rgba(34, 36, 48, .12);
+    }
+    .ds .Modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border-default);
+    }
+    .ds .Modal-footerSummary { margin-right: auto; color: var(--text-subtle); font-size: 12px; }
     .wrap {
       width: min(1180px, calc(100% - 112px));
       margin: 0 0 0 max(88px, calc(72px + (100vw - 72px - 1180px) / 2));
@@ -519,6 +802,8 @@
     @media (max-width: 860px) {
       .list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .subs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .plan-grid, .kit { grid-template-columns: 1fr; }
+      .kit-nav { position: static; }
     }
     @media (max-width: 640px) {
       .team-rail { width: 58px; }
@@ -702,19 +987,54 @@
   </style>
 </head>
 <body>
-  <aside class="team-rail" aria-label="Teams">
+  <aside class="team-rail" aria-label="Dayshape prototypes">
     <div class="site-logo">
       <img src="assets/dayshape-logo-mark.png" alt="Dayshape" />
     </div>
+    <p class="rail-label">Components</p>
+    <button type="button" class="team-button" id="componentsNav" aria-label="Components" title="Components">
+      <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+    </button>
     <div class="team-rail-divider" aria-hidden="true"></div>
+    <p class="rail-label">Teams</p>
     <div class="team-rail-list" id="teamRail" role="toolbar" aria-label="Team spaces" aria-orientation="vertical"></div>
-    <div class="team-rail-divider" aria-hidden="true"></div>
     <button type="button" class="team-add" id="addTeamBtn" aria-label="Add team" title="Add team">
       <i class="fa-solid fa-plus" aria-hidden="true"></i>
     </button>
   </aside>
 
   <main class="wrap">
+    <div id="componentsView">
+      <div class="hub-head">
+        <div>
+          <div class="team-page-context">
+            <span class="team-context-avatar"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
+            <span>Storybook kit</span>
+          </div>
+          <h1 class="brand">Components</h1>
+          <p class="tagline">The pieces a mock can paste. Each one uses the same class names as its Storybook story.</p>
+        </div>
+      </div>
+      <div class="kit">
+        <nav class="kit-nav" id="kitNav" aria-label="Components"></nav>
+        <div class="kit-stage">
+          <div class="kit-canvas ds" id="kitCanvas"></div>
+          <div class="kit-foot">
+            <div>
+              <p class="kit-story" id="kitStory"></p>
+              <p class="kit-note" id="kitNote"></p>
+            </div>
+            <div class="hub-actions">
+              <button type="button" class="hub-action" id="kitCopy"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copy HTML</button>
+              <button type="button" class="hub-action is-primary" id="kitStorybook"><i class="fa-solid fa-book-open" aria-hidden="true"></i> Open in Storybook</button>
+            </div>
+          </div>
+          <pre class="kit-code" id="kitCode"></pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="teamView" hidden>
     <div class="hub-head">
       <div>
         <div class="team-page-context">
@@ -732,6 +1052,12 @@
         <button type="button" id="shareHubBtn" class="hub-action"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Share hub link</button>
       </div>
     </div>
+    <div class="team-views" role="tablist" aria-label="This team">
+      <button type="button" id="teamPlanTab" role="tab" aria-selected="true">Plan</button>
+      <button type="button" id="teamPrototypesTab" role="tab" aria-selected="false">Prototypes</button>
+    </div>
+    <div id="teamPlan"></div>
+    <div id="teamPrototypes">
     <div class="hint" id="hubShareRow">
       <span><i class="fa-solid fa-share-nodes"></i> Internal hub link (team only)</span>
     </div>
@@ -741,6 +1067,8 @@
     <footer>
       Use <strong>Add prototype</strong> to upload a shared HTML mock, then add developer resources from its workspace.
     </footer>
+    </div>
+    </div>
   </main>
 
   <div class="share-modal" id="shareModal" hidden>
@@ -888,10 +1216,80 @@
       var list = document.getElementById('mockList');
       var teamRail = document.getElementById('teamRail');
       var allItems = [];
+      var appMode = 'components';
+      var teamSection = 'plan';
       var activeTeamId = 'high-volume';
+      var activeStoryId = 'btn-primary';
+      var openPlanItem = '';
+      var STORYBOOK_ORIGIN = '';
       var baseTeams = [
         { id: 'high-volume', name: 'High Volume', short: 'HV' },
+        { id: 'portfolio', name: 'Portfolio', short: 'PF' },
       ];
+      var prototypeTeams = {
+        'practitioner-kanban': 'high-volume',
+        'demand-profile-templates': 'high-volume',
+        'job-editor-apply-template': 'high-volume',
+        'job-editor-phase-selector': 'high-volume',
+        'job-editor-phase-selector-sms': 'high-volume',
+        'high-volume-focus': 'high-volume',
+        'kanban-sidebar-scenarios': 'high-volume',
+        'sidebar-comparison': 'high-volume',
+        'dashboard-main-prototype': 'high-volume',
+        'portfolios-v3': 'portfolio',
+        'gantt-resource-breakdown': 'portfolio',
+      };
+      var kitStories = [
+        { group: 'Buttons', id: 'btn-primary', title: 'Primary', story: 'components-btn--primary', note: 'The one action that advances the flow.', html: '<button class="Btn Btn--primary" type="button">Save</button>' },
+        { group: 'Buttons', id: 'btn-secondary', title: 'Secondary', story: 'components-btn--secondary', note: 'Cancel in a modal footer. Purple outline, not the grey default.', html: '<button class="Btn Btn--secondary" type="button">Cancel</button>' },
+        { group: 'Buttons', id: 'btn-default', title: 'Default', story: 'components-btn--default', note: 'Toolbar and page actions.', html: '<button class="Btn" type="button">Modify filters</button>' },
+        { group: 'Buttons', id: 'btn-group', title: 'Button group', story: 'components-btngroup--week', note: 'One choice in a row. The active segment is filled.', html: '<div class="BtnGroup" role="group" aria-label="Week"><button type="button">This week</button><button type="button" class="is-active">Next week</button></div>' },
+        { group: 'Badge', id: 'badge-success', title: 'Success', story: 'components-badge--success', note: 'Done or healthy. A status label, not a button.', html: '<span class="Pill Pill--success">Ready</span>' },
+        { group: 'Badge', id: 'badge-warning', title: 'Warning', story: 'components-badge--warning', note: 'Due soon.', html: '<span class="Pill Pill--warning">Due soon</span>' },
+        { group: 'Badge', id: 'badge-danger', title: 'Danger', story: 'components-badge--danger', note: 'Overdue or on hold.', html: '<span class="Pill Pill--danger">On hold</span>' },
+        { group: 'Identity', id: 'avatar', title: 'Avatar', story: 'components-avatar--initials', note: '28px initials. One size in a list.', html: '<span class="Avatar">AL</span>' },
+        { group: 'Form', id: 'text-input', title: 'Text input', story: 'components-input--text', note: '35px field. The label sits above it.', html: '<label class="Field"><span>Engagement</span><input class="TextInput" type="text" value="Year end audit" /></label>' },
+        { group: 'Form', id: 'hours', title: 'Hours and minutes', story: 'components-input--hours', note: '91 by 35. Do not invent a third size.', html: '<label class="Field"><span>Effort</span><span class="Hours-row"><input class="Hours" type="text" value="6" aria-label="Hours" /><input class="Hours" type="text" value="30" aria-label="Minutes" /></span></label>' },
+        { group: 'Overlay', id: 'modal-footer', title: 'Modal footer', story: 'components-modal--footer', note: 'Summary on the left. Secondary cancel, then the primary action.', frame: true, html: '<div class="Modal"><div class="Modal-footer"><span class="Modal-footerSummary">2 bookings affected</span><button class="Btn Btn--secondary" type="button">Cancel</button><button class="Btn Btn--primary" type="button">Put on hold</button></div></div>' },
+      ];
+      var teamPlans = {
+        'high-volume': {
+          updated: 'Taken from the High Volume focus page, updated 9 November 2026.',
+          fileHref: 'mocks/high-volume-focus.html',
+          fileLabel: 'Open the focus page',
+          fileNote: 'That page is the file this team keeps up to date: what is shipping, what is being designed, and what the last session left open.',
+          columns: [
+            { status: 'Shipped', title: 'Going out', body: 'Portfolio views shipped in 26.6, with a read-only Gantt. Practitioner Kanban goes to GT US and Bishop Fleming lower environments in 26.6.1. Totals on the Gantt do not start.' },
+            { status: 'Now', title: 'Being designed', body: 'Unassigned requests are the next portfolio slice. Phase is its own concept, with due dates and order on the job. Client delivery deadline is the date Steven is most set on. Sidebar and readiness are still being aligned.' },
+            { status: 'Waiting', title: 'Needs a conversation', body: 'Follow-on work is not chosen. Pools are two different models, and neither is self-serve. Overlap and overtake still need a demo before they are settled.' },
+          ],
+          items: [
+            { id: 'templates', status: 'Open', title: 'Templates', summary: 'Dates only stay true if a template or the integration updates them.', detail: 'Sally Pearce’s point from the focus page. Demand templating is still its own decision, not a settled build.' },
+            { id: 'phases', status: 'Now', title: 'Phase links', summary: 'Shipping as its own concept. Due dates and order are on the job.', detail: 'Bounds today come from the bookings. Overlap is allowed. Overtake should be a signal, not a block.' },
+            { id: 'portfolio', status: 'Shipped', title: 'Portfolio views', summary: 'Shipped in 26.6. The Gantt is read-only.', detail: 'Suggestions wait until the team that owns the Job Edit Gantt has them, and that has been tried.' },
+            { id: 'unassigned', status: 'Now', title: 'Unassigned panel', summary: 'The next slice. Resource managers review the side-by-side.', detail: 'Design the requests on a read-only schedule. Do not design portfolio editing as part of this slice.' },
+            { id: 'kanban', status: 'Waiting', title: 'Practitioner Kanban', summary: 'Internal UAT the week of 26 October. On hold does not stick.', detail: 'Complete does not offer the estimate. Filters only search To do. The board is for lower environments, not a production launch.' },
+            { id: 'pools', status: 'Open', title: 'Pools', summary: 'Laura uses a fake job and an overseer. Ligia assigns by skill.', detail: 'Neither wants a practitioner to pull the work. “The pool” is the wrong noun for both models.' },
+          ],
+        },
+        'portfolio': {
+          updated: 'Taken from the Portfolio Views UAT map and the Gantt first-cut plan.',
+          fileHref: 'mocks/portfolios-v3.html',
+          fileLabel: 'Open Portfolio Views',
+          fileNote: 'The prototype is the place the team can click through. The written plan stays in the UAT map and the Gantt first-cut plan, and this page is where that picture is read.',
+          columns: [
+            { status: 'Shipped', title: 'In customers’ hands', body: 'Portfolio management, the team, and the economic view shipped in 26.6. The Gantt is read-only, because of permissions and because suggestions are not there yet.' },
+            { status: 'Now', title: 'First cut still open', body: 'Remove Team Skills from the Portfolio Gantt. Keep availability and zoom. Reuse the settings menu from the Gantt aggregation mock instead of drawing a second one.' },
+            { status: 'Waiting', title: 'Not specified', body: 'Save, Add to Portfolio, and Search Results still need one meaning. Manual and dynamic membership are not yet separate, inspectable groups. Roll-up and relative dates are open.' },
+          ],
+          items: [
+            { id: 'membership', status: 'Open', title: 'Membership persistence', summary: 'The local mock loses dynamic and manual membership on save, and can duplicate rule cards.', detail: 'Glaikit production behaviour is still unverified. Do not treat the mock’s loss as the product’s behaviour.' },
+            { id: 'save', status: 'Open', title: 'Save and add', summary: 'Save, Add to Portfolio, Search Results, and Portfolio actions need one meaning and one place.', detail: 'Dayshape’s existing Save placement stays unless a decision says otherwise.' },
+            { id: 'gantt', status: 'Now', title: 'Gantt first cut', summary: 'Availability stays. Team Skills comes off this Gantt. Breakdown only if aggregation is in the release.', detail: 'The settings menu follows mocks/gantt-resource-breakdown.html: horizon, availability, suitability, and breakdown as sections of one menu.' },
+            { id: 'suggestions', status: 'Waiting', title: 'Suggestions', summary: 'Editing from the portfolio Gantt waits for the Job Edit Gantt.', detail: 'Unassigned requests can be designed on the read-only schedule. Suggestions are a later chain.' },
+          ],
+        },
+      };
 
       function savedTeams() {
         try {
@@ -925,23 +1323,133 @@
 
       function renderTeamContext() {
         var team = currentTeam();
+        var onPlan = teamSection === 'plan';
         document.getElementById('activeTeamName').textContent = team.name;
         document.getElementById('teamContextAvatar').innerHTML = teamAvatarMarkup(team);
-        document.getElementById('siteName').textContent = team.name + ' Prototypes';
-        document.title = team.name + ' Prototypes';
+        document.getElementById('siteName').textContent = onPlan ? team.name : team.name + ' Prototypes';
+        document.getElementById('siteTagline').textContent = onPlan
+          ? 'The picture this team is working from.'
+          : (cfg.siteTagline || 'Click a mock, share the link, leave feedback.');
+        document.title = document.getElementById('siteName').textContent;
       }
 
       function teamForItem(item) {
         if (item.team) return item.team;
-        return 'high-volume';
+        return prototypeTeams[item.id] || 'high-volume';
       }
 
       function renderTeamRail() {
+        var inTeam = appMode === 'team';
         teamRail.innerHTML = teams().map(function (team) {
           var icon = teamAvatarMarkup(team);
-          return '<button type="button" class="team-button' + (team.id === activeTeamId ? ' is-active' : '') + '" data-team-id="' + escapeAttr(team.id) + '" aria-label="' + escapeAttr(team.name) + '" title="' + escapeAttr(team.name) + '">' + icon + '</button>';
+          var active = inTeam && team.id === activeTeamId;
+          return '<button type="button" class="team-button' + (active ? ' is-active' : '') + '" data-team-id="' + escapeAttr(team.id) + '" aria-label="' + escapeAttr(team.name) + '" title="' + escapeAttr(team.name) + '"' + (active ? ' aria-current="page"' : '') + '>' + icon + '</button>';
         }).join('');
-        renderTeamContext();
+      }
+
+      function currentStory() {
+        return kitStories.find(function (story) { return story.id === activeStoryId; }) || kitStories[0];
+      }
+
+      function renderKitNav() {
+        var story = currentStory();
+        var html = '';
+        var group = '';
+        kitStories.forEach(function (item) {
+          if (item.group !== group) {
+            group = item.group;
+            html += '<p class="kit-group">' + escapeHtml(group) + '</p>';
+          }
+          html += '<button type="button" data-story-id="' + escapeAttr(item.id) + '"' + (item.id === story.id ? ' aria-current="page"' : '') + '>' + escapeHtml(item.title) + '</button>';
+        });
+        document.getElementById('kitNav').innerHTML = html;
+      }
+
+      function renderStory() {
+        var story = currentStory();
+        activeStoryId = story.id;
+        var canvas = document.getElementById('kitCanvas');
+        canvas.classList.toggle('is-frame', !!story.frame);
+        canvas.innerHTML = story.html;
+        document.getElementById('kitStory').textContent = story.group + ' / ' + story.title;
+        document.getElementById('kitNote').textContent = story.note;
+        document.getElementById('kitCode').textContent = story.html;
+        renderKitNav();
+      }
+
+      function planPill(status) {
+        var kind = status === 'Open' || status === 'Waiting' ? ' is-draft' : (status === 'Now' ? ' is-dev' : '');
+        return '<span class="pill' + kind + '">' + escapeHtml(status) + '</span>';
+      }
+
+      function renderPlan() {
+        var team = currentTeam();
+        var plan = teamPlans[team.id];
+        var root = document.getElementById('teamPlan');
+        if (!plan) {
+          root.innerHTML = '<p class="plan-source">No plan file for ' + escapeHtml(team.name) + ' yet.</p>' +
+            '<article class="plan-file"><h2>Start a plan</h2><p>High Volume keeps a focus page, and this space is where the team reads it. Add a file like that when this team has a picture worth keeping current.</p></article>';
+          return;
+        }
+        root.innerHTML = '<p class="plan-source">' + escapeHtml(plan.updated) + '</p>' +
+          '<div class="plan-grid">' + plan.columns.map(function (column) {
+            return '<article class="plan-card">' + planPill(column.status) + '<h2>' + escapeHtml(column.title) + '</h2><p>' + escapeHtml(column.body) + '</p></article>';
+          }).join('') + '</div>' +
+          '<ol class="plan-list">' + plan.items.map(function (item, index) {
+            var open = openPlanItem === item.id;
+            return '<li><button type="button" class="plan-row' + (open ? ' is-open' : '') + '" data-plan-item="' + escapeAttr(item.id) + '" aria-expanded="' + (open ? 'true' : 'false') + '">' +
+              '<span class="plan-num">' + (index + 1) + '</span>' +
+              '<span><strong>' + escapeHtml(item.title) + '</strong><span class="plan-copy">' + escapeHtml(item.summary) + '</span></span>' +
+              planPill(item.status) +
+              (open ? '<span class="plan-detail">' + escapeHtml(item.detail) + '</span>' : '') +
+            '</button></li>';
+          }).join('') + '</ol>' +
+          '<article class="plan-file"><h2>The file</h2><p>' + escapeHtml(plan.fileNote) + '</p>' +
+            '<a class="hub-action" href="' + escapeAttr(plan.fileHref) + '">' + escapeHtml(plan.fileLabel) + '</a></article>';
+      }
+
+      function routeHash() {
+        if (appMode === 'components') return '#components/' + activeStoryId;
+        return '#teams/' + activeTeamId + '/' + teamSection;
+      }
+
+      function writeRoute() {
+        var next = routeHash();
+        if (location.hash !== next) history.replaceState(null, '', next);
+      }
+
+      function readRoute() {
+        var parts = (location.hash || '').replace(/^#/, '').split('/');
+        if (parts[0] === 'teams' && parts[1]) {
+          appMode = 'team';
+          activeTeamId = parts[1];
+          teamSection = parts[2] === 'prototypes' ? 'prototypes' : 'plan';
+          return;
+        }
+        appMode = 'components';
+        if (parts[0] === 'components' && parts[1]) activeStoryId = parts[1];
+      }
+
+      function showShell() {
+        var components = appMode === 'components';
+        document.getElementById('componentsView').hidden = !components;
+        document.getElementById('teamView').hidden = components;
+        document.getElementById('componentsNav').classList.toggle('is-active', components);
+        if (components) document.getElementById('componentsNav').setAttribute('aria-current', 'page');
+        else document.getElementById('componentsNav').removeAttribute('aria-current');
+        document.getElementById('teamPlan').hidden = teamSection !== 'plan';
+        document.getElementById('teamPrototypes').hidden = teamSection !== 'prototypes';
+        document.getElementById('teamPlanTab').setAttribute('aria-selected', teamSection === 'plan' ? 'true' : 'false');
+        document.getElementById('teamPrototypesTab').setAttribute('aria-selected', teamSection === 'prototypes' ? 'true' : 'false');
+        if (components) {
+          document.title = 'Components';
+          renderStory();
+        } else {
+          renderTeamContext();
+          renderPlan();
+          if (allItems.length) renderList(itemsForActiveTeam());
+        }
+        writeRoute();
       }
 
       function itemsForActiveTeam() {
@@ -983,20 +1491,76 @@
             return;
           }
           allItems = items;
-          renderTeamRail();
-          renderList(itemsForActiveTeam());
+          if (appMode === 'team') renderList(itemsForActiveTeam());
         })
         .catch(function () {
           list.innerHTML = '<li class="err">Couldn’t load <code>manifest.json</code>. Serve this folder over HTTP (not as a file:// page).</li>';
         });
 
+      readRoute();
       renderTeamRail();
+      showShell();
+
+      document.getElementById('componentsNav').addEventListener('click', function () {
+        appMode = 'components';
+        renderTeamRail();
+        showShell();
+      });
       teamRail.addEventListener('click', function (event) {
         var button = event.target.closest('[data-team-id]');
         if (!button) return;
+        appMode = 'team';
         activeTeamId = button.getAttribute('data-team-id') || 'high-volume';
+        openPlanItem = '';
         renderTeamRail();
-        renderList(itemsForActiveTeam());
+        showShell();
+      });
+      document.getElementById('teamPlanTab').addEventListener('click', function () {
+        teamSection = 'plan';
+        showShell();
+      });
+      document.getElementById('teamPrototypesTab').addEventListener('click', function () {
+        teamSection = 'prototypes';
+        showShell();
+      });
+      document.getElementById('teamPlan').addEventListener('click', function (event) {
+        var row = event.target.closest('[data-plan-item]');
+        if (!row) return;
+        var id = row.getAttribute('data-plan-item');
+        openPlanItem = openPlanItem === id ? '' : id;
+        renderPlan();
+      });
+      document.getElementById('kitNav').addEventListener('click', function (event) {
+        var button = event.target.closest('[data-story-id]');
+        if (!button) return;
+        activeStoryId = button.getAttribute('data-story-id');
+        showShell();
+      });
+      document.getElementById('kitCopy').addEventListener('click', function () {
+        var html = currentStory().html;
+        var button = document.getElementById('kitCopy');
+        function done() {
+          var label = button.innerHTML;
+          button.innerHTML = 'Copied';
+          setTimeout(function () { button.innerHTML = label; }, 1400);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(html).then(done).catch(function () {});
+          return;
+        }
+      });
+      document.getElementById('kitStorybook').addEventListener('click', function () {
+        var story = currentStory();
+        if (!STORYBOOK_ORIGIN) {
+          document.getElementById('kitNote').textContent = 'Storybook is not connected yet. This story’s id is ' + story.story + '.';
+          return;
+        }
+        window.open(STORYBOOK_ORIGIN.replace(/\/$/, '') + '/iframe.html?id=' + encodeURIComponent(story.story), '_blank', 'noopener');
+      });
+      window.addEventListener('hashchange', function () {
+        readRoute();
+        renderTeamRail();
+        showShell();
       });
 
       var shareModal = document.getElementById('shareModal');
@@ -1099,7 +1663,7 @@
         });
         localStorage.setItem('prototypes.teams', JSON.stringify(next));
         renderTeamRail();
-        renderList(itemsForActiveTeam());
+        showShell();
         closeTeamSettings();
       }
 
@@ -1180,9 +1744,12 @@
           var next = savedTeams().filter(function (team) { return team.id !== id; });
           next.push({ id: id, name: name, short: short, avatar: avatar || '' });
           localStorage.setItem('prototypes.teams', JSON.stringify(next));
+          appMode = 'team';
+          teamSection = 'plan';
           activeTeamId = id;
+          openPlanItem = '';
           renderTeamRail();
-          renderList(itemsForActiveTeam());
+          showShell();
           closeTeamModal();
         }
         if (!file) {
