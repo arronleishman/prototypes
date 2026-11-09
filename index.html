@@ -376,6 +376,33 @@
     .ds .Pill--success { background: var(--surface-success-subtle); color: var(--text-success); }
     .ds .Pill--warning { background: var(--surface-warning); color: var(--text-warning); }
     .ds .Pill--danger { background: var(--surface-danger-subtle); color: var(--text-danger); }
+    .ds {
+      --surface-eng-01: #0295b2;
+      --font-size-extra-small: 0.6875rem;
+      --font-size-small: 12px;
+      --font-weight-bold: 700;
+      --padding-xxs: 0.25rem;
+      --border-xs: 1px;
+    }
+    .ds .Badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      border: var(--border-xs) solid transparent;
+      border-radius: 4px;
+      font-weight: var(--font-weight-bold);
+      line-height: 1;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+    .ds .Badge--sm { min-height: 18px; padding: 2px 6px; font-size: var(--font-size-extra-small); }
+    .ds .Badge--md { min-height: 22px; padding: var(--padding-xxs) 8px; font-size: var(--font-size-small); }
+    .ds .Badge--info { background: #e8f7fa; color: var(--surface-eng-01); border-color: #9ad5e2; }
+    .ds .Badge--info.Badge--strong { background: var(--surface-eng-01); color: var(--text-inverse); border-color: var(--surface-eng-01); }
+    .ds .text-uppercase { text-transform: uppercase; }
+    .ds .Badge--hoverable { cursor: pointer; }
+    .ds .Badge--info.Badge--strong.Badge--hoverable:hover { filter: brightness(0.92); }
     .ds .Avatar {
       width: 28px;
       height: 28px;
@@ -1219,9 +1246,9 @@
       var appMode = 'components';
       var teamSection = 'plan';
       var activeTeamId = 'high-volume';
-      var activeStoryId = 'btn-primary';
+      var activeStoryId = 'beta-tag';
       var openPlanItem = '';
-      var STORYBOOK_ORIGIN = '';
+      var STORYBOOK_ORIGIN = 'https://storybook.dayshapedev.app';
       var baseTeams = [
         { id: 'high-volume', name: 'High Volume', short: 'HV' },
         { id: 'portfolio', name: 'Portfolio', short: 'PF' },
@@ -1240,6 +1267,10 @@
         'gantt-resource-breakdown': 'portfolio',
       };
       var kitStories = [
+        { group: 'Common patterns', id: 'beta-tag', title: 'Beta tag', story: 'components-common-patterns-beta-tag--default', docs: 'components-common-patterns-beta-tag--docs', note: 'The docs default. Small, info, strong. The label is the localised string common:beta.', html: '<span class="Badge Badge--sm Badge--info Badge--strong text-uppercase">Beta</span>' },
+        { group: 'Common patterns', id: 'beta-tag-md', title: 'Beta tag, medium', story: 'components-common-patterns-beta-tag--default', docs: 'components-common-patterns-beta-tag--docs', note: 'Size md. Match the badge to the surrounding text.', html: '<span class="Badge Badge--md Badge--info Badge--strong text-uppercase">Beta</span>' },
+        { group: 'Common patterns', id: 'beta-tag-quiet', title: 'Beta tag, quiet', story: 'components-common-patterns-beta-tag--default', docs: 'components-common-patterns-beta-tag--docs', note: 'Strong is off. The tinted info badge, not the filled one.', html: '<span class="Badge Badge--sm Badge--info text-uppercase">Beta</span>' },
+        { group: 'Common patterns', id: 'beta-tag-hover', title: 'Beta tag, hoverable', story: 'components-common-patterns-beta-tag--default', docs: 'components-common-patterns-beta-tag--docs', note: 'Hoverable is only for a badge that is part of a control.', html: '<button type="button" class="Badge Badge--sm Badge--info Badge--strong Badge--hoverable text-uppercase">Beta</button>' },
         { group: 'Buttons', id: 'btn-primary', title: 'Primary', story: 'components-btn--primary', note: 'The one action that advances the flow.', html: '<button class="Btn Btn--primary" type="button">Save</button>' },
         { group: 'Buttons', id: 'btn-secondary', title: 'Secondary', story: 'components-btn--secondary', note: 'Cancel in a modal footer. Purple outline, not the grey default.', html: '<button class="Btn Btn--secondary" type="button">Cancel</button>' },
         { group: 'Buttons', id: 'btn-default', title: 'Default', story: 'components-btn--default', note: 'Toolbar and page actions.', html: '<button class="Btn" type="button">Modify filters</button>' },
@@ -1551,11 +1582,11 @@
       });
       document.getElementById('kitStorybook').addEventListener('click', function () {
         var story = currentStory();
-        if (!STORYBOOK_ORIGIN) {
-          document.getElementById('kitNote').textContent = 'Storybook is not connected yet. This story’s id is ' + story.story + '.';
+        if (!story.docs) {
+          document.getElementById('kitNote').textContent = 'This preview is not a Storybook story yet. The Beta tag is the one taken from Storybook.';
           return;
         }
-        window.open(STORYBOOK_ORIGIN.replace(/\/$/, '') + '/iframe.html?id=' + encodeURIComponent(story.story), '_blank', 'noopener');
+        window.open(STORYBOOK_ORIGIN.replace(/\/$/, '') + '/?path=/docs/' + encodeURIComponent(story.docs), '_blank', 'noopener');
       });
       window.addEventListener('hashchange', function () {
         readRoute();
