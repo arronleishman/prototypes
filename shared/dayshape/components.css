@@ -1,4 +1,4 @@
-﻿/* @define Btn */
+/* @define Btn */
 
 .Btn.is-small {
     font-size: 0.75rem;
@@ -702,7 +702,7 @@
 .CollapsibleSection-sidebar .CollapsibleSection-body {
     padding: 0;
 }
-﻿.Sidebar-header {
+.Sidebar-header {
     background-color: rgb(0 0 0 / 5%);
 }
 
@@ -1105,7 +1105,7 @@
 .EntityIcon--notActive {
     background-color: var(--icon-disabled);
 }
-﻿/* @define SavingToast */
+/* @define SavingToast */
 .SavingToast-body {
     display: flex;
     align-items: center;
@@ -1335,7 +1335,7 @@
     border-top-right-radius: 0.25rem !important;
     border-bottom-right-radius: 0.25rem !important;
 }
-﻿.Header-main {
+.Header-main {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1561,4 +1561,199 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+/* @define DragAndDropCard; weak */
+.DragAndDropCard {
+    margin: 0;
+}
+
+.DragAndDropCard-header {
+    background-color: #f4f4f4;
+}
+
+.DragAndDropCard-title {
+    padding: 10px;
+    flex-grow: 1;
+    width: 460px;
+}
+
+.DragAndDropCard-itemListContainer {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+/* Item selectors */
+.DragAndDropCard-itemList {
+    min-height: 100%;
+    list-style: none;
+    padding: 15px;
+    margin: 0;
+}
+
+/* sortable-ghost is a class from sortable.js, but maybe we can modify it via config. */
+.DragAndDropCard--sortable li.sortable-ghost {
+    background-color: rgb(194 213 238 / 25%);
+    display: block;
+    min-height: 33px;
+}
+
+/* sortable-ghost is a class from sortable.js, but maybe we can modify it via config. */
+/* stylelint-disable-next-line */
+.sortable-ghost *,
+.DragAndDropCard--unsortable li.sortable-ghost {
+    display: none !important;
+}
+
+/* sortable-ghost is a class from sortable.js, but maybe we can modify it via config. */
+.DragAndDropCard--unsortable:has(.sortable-ghost) {
+    background-color: rgb(194 213 238 / 25%);
+}
+
+/* sortable-ghost is a class from sortable.js, but maybe we can modify it via config. */
+.DragAndDropCard-item:not(.sortable-ghost) {
+    background: #efefef;
+    border: 1px solid #ddd;
+    box-shadow: 3px 3px rgb(0 0 0 / 2%);
+    border-radius: 3px;
+    display: flex;
+    cursor: move;
+}
+
+.DragAndDropCard-cardText {
+    position: relative;
+    width: 100%;
+}
+
+.DragAndDropCard-guidance {
+    margin: 20px;
+}
+
+.DragAndDropCard-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 40px);
+}
+/* @define FormGroup */
+.FormGroup {
+    margin-bottom: 0.5rem;
+}
+
+.FormGroup-label {
+    display: flex;
+    align-items: center;
+}
+
+.FormGroup-labelText {
+    max-width: calc(100% - 1em);
+}
+
+.FormGroup-label.is-hidden {
+    border: 0;
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+/* stylelint-disable */
+.FormGroup-label.is-hidden {
+    clip: rect(0 0 0 0);
+}
+
+.FormGroup.is-notMandatory .FormGroup-labelText,
+.FormGroup.is-valid .FormGroup-labelText {
+    margin-right: 0.78em;
+}
+
+.FormGroup.is-withTooltipIcon .FormGroup-labelText {
+    margin-right: 0;
+}
+
+.FormGroup-mandatory {
+    width: 0.5em;
+    display: inline-block;
+}
+
+.FormGroup-body {
+    /* This margin is to account for the height of the invalid feedback row.
+     * It's purpose is to avoid the form jumping around when validation feedback
+     * toggles between being shown and not being shown. */
+    margin-bottom: 1.45rem;
+}
+
+.FormGroup-bodyNoMargin {
+    margin-bottom: 0;
+}
+
+.FormGroup.is-invalid .FormGroup-body,
+.FormGroup.is-withoutFeedback .FormGroup-body {
+    margin-bottom: 0;
+}
+
+.FormGroup-invalidFeedback {
+    display: none;
+}
+
+.FormGroup-description,
+.FormGroup-warningText,
+.FormGroup-invalidFeedback {
+    font-size: 0.8rem;
+}
+
+.FormGroup.is-invalid .FormGroup-invalidFeedback {
+    display: -webkit-box;
+}
+
+.FormGroup-labelTooltipIcon {
+    color: var(--text-primary);
+    cursor: pointer;
+    width: 24px;
+    aspect-ratio: 1;
+    display: grid;
+    place-content: center;
+}
+
+.FormGroup-lockIcon {
+    color: var(--icon-subtle);
+    cursor: default;
+    margin-right: 0.4rem;
+}
+/*
+ /* AR 11/08/2022 */
+
+/* FOR STORYBOOK PRESENTATION ONLY - NOT PRECIOUS */
+
+/* Due to the GanttSidebarSection component making heavy use of slots, */
+
+/* we are passing a lot of content with styles scoped to a parent component */
+
+/* I'm copy/pasting the relevant styles for the Storybook stories here */
+
+/* to avoid importing the whole gantt.css monolith */
+
+/* In time, these will hopefully be more nicely scoped to */
+
+/* e.g. a GanttSidebar.css file which we can import  */
+
+/* in the .stories.js in place of this. */
+
+.GanttSidebarSection--storybook .row {
+    margin: 2px 0 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: start;
+    flex-flow: row wrap;
+}
+
+.GanttSidebarSection--storybook .bullet-icon {
+    margin-right: 10px;
+}
+
+.GanttSidebarSection--storybook .flex-align-right {
+    justify-content: flex-end;
 }
