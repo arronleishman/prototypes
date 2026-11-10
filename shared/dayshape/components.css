@@ -1,0 +1,1564 @@
+﻿/* @define Btn */
+
+.Btn.is-small {
+    font-size: 0.75rem;
+    padding: 2px 4px;
+}
+
+.Btn-close:hover {
+    background: rgb(0 0 0 / 20%);
+}
+
+.Btn-link {
+    user-select: text;
+}
+
+.Btn-link:hover,
+.Btn-link:active {
+    color: var(--primary) !important;
+    text-decoration: underline;
+}
+
+.Btn--linkOutline {
+    border: 1px solid var(--border-subtle);
+}
+
+/* Using !important so that custom styles are not overridden by dayshape-bootstrap.css */
+.Btn--linkOutline:hover,
+.Btn--linkOutline:focus,
+.Btn--linkOutline:active {
+    background-color: var(--white) !important;
+    border: 1px solid var(--primary) !important;
+    color: var(--primary) !important;
+}
+/* @define Avatar */
+
+.Avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: var(--primary);
+    font-size: 14px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-inverse);
+    cursor: pointer;
+}
+
+.Avatar.is-multiName {
+    background: var(--surface-accent);
+    color: var(--text-accent);
+}
+/* @define AvatarStack */
+
+.AvatarStack {
+    display: flex;
+    align-items: center;
+}
+
+.AvatarStack-avatar {
+    border: 2px solid var(--text-inverse);
+}
+
+.AvatarStack-avatar:not(:first-child) {
+    margin-left: -10px;
+}
+.BlankSlate {
+    max-width: 700px;
+    margin: 0 auto;
+    max-height: 100%;
+}
+
+.BlankSlate-image {
+    width: 200px;
+    height: 170px;
+    margin: 0 auto;
+    display: block;
+}
+
+.BlankSlate-subText {
+    color: var(--text-subtle);
+    margin-top: 12px;
+}
+
+.BlankSlate-action {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.BlankSlate--lightGrey {
+    background-color: var(--surface-subtle-light);
+    border: solid 1px var(--border-subtle);
+}
+/* @define Badge */
+
+/* The custom properties below opt out of plugin/selector-bem-pattern, which expects the capitalised "Badge" prefix that the lowercase custom-property-pattern rule rejects (see CurrencyCodeInput.css). */
+
+/* stylelint-disable plugin/selector-bem-pattern */
+.Badge {
+    border-width: var(--border-xs);
+    border-radius: var(--border-radius-default);
+    border-style: solid;
+    place-content: center;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-bold);
+}
+/* stylelint-enable plugin/selector-bem-pattern */
+
+/* Variants */
+
+.Badge-neutral {
+    background-color: var(--surface-default);
+    border-color: var(--border-subtle);
+    color: var(--text-subtle);
+}
+
+.Badge-neutral--hover:hover {
+    background-color: var(--surface-container-hover);
+    border-color: transparent;
+    color: var(--text-accent);
+}
+
+.Badge-neutral--strong {
+    background-color: var(--surface-subtle-dark);
+    border-color: transparent;
+    color: var(--text-accent);
+}
+
+.Badge-neutral--strongHover:hover {
+    background-color: var(--surface-accent);
+    border-color: transparent;
+    color: var(--text-emphasis);
+}
+
+.Badge-success {
+    background-color: var(--surface-success-subtle);
+    border-color: var(--border-success-subtle);
+    color: var(--text-success);
+}
+
+.Badge-success--hover:hover {
+    background-color: var(--surface-success-accent);
+    border-color: transparent;
+    color: var(--text-success-dark);
+}
+
+.Badge-success--strong {
+    background-color: var(--surface-success);
+    border-color: transparent;
+    color: var(--text-inverse);
+}
+
+.Badge-success--strongHover:hover {
+    background-color: var(--surface-success-strong);
+    border-color: transparent;
+    color: var(--text-inverse);
+}
+
+.Badge-warning {
+    background-color: var(--surface-warning-subtle);
+    border-color: var(--border-warning-subtle);
+    color: var(--text-warning);
+}
+
+.Badge-warning--hover:hover {
+    background-color: var(--surface-warning-accent);
+    border-color: transparent;
+    color: var(--text-warning-strong);
+}
+
+.Badge-warning--strong {
+    background-color: var(--surface-warning);
+    border-color: transparent;
+    color: var(--text-inverse);
+}
+
+.Badge-warning--strongHover:hover {
+    background-color: var(--surface-warning-strong);
+    border-color: transparent;
+    color: var(--text-inverse);
+}
+
+.Badge-danger {
+    background-color: var(--surface-danger-subtle);
+    border-color: var(--border-danger-subtle);
+    color: var(--text-danger);
+}
+
+.Badge-danger--hover:hover {
+    background-color: var(--surface-danger-subtle-accent);
+    border-color: transparent;
+    color: var(--text-danger-strong);
+}
+
+.Badge-danger--strong {
+    background-color: var(--surface-danger);
+    border-color: transparent;
+    color: var(--text-inverse);
+}
+
+.Badge-danger--strongHover:hover {
+    background-color: var(--surface-danger-strong);
+    border-color: transparent;
+    color: var(--text-inverse);
+}
+
+.Badge-primary {
+    background-color: var(--surface-primary-subtle);
+    border-color: var(--border-primary-subtle);
+    color: var(--text-primary);
+}
+
+.Badge-primary--hover:hover {
+    background-color: var(--surface-primary-accent);
+    border-color: transparent;
+    color: var(--text-primary-emphasis);
+}
+
+.Badge-primary--strong {
+    background-color: var(--surface-primary);
+    border-color: transparent;
+    color: var(--text-inverse);
+}
+
+.Badge-primary--strongHover:hover {
+    background-color: var(--surface-primary-strong);
+    border-color: transparent;
+    color: var(--text-inverse);
+}
+
+.Badge-info {
+    background-color: var(--surface-info-subtle);
+    border-color: var(--border-info-subtle);
+    color: var(--text-info);
+}
+
+.Badge-info--hover:hover {
+    background-color: var(--surface-info-accent);
+    border-color: transparent;
+    color: var(--text-info-dark);
+}
+
+.Badge-info--strong {
+    background-color: var(--surface-info);
+    border-color: transparent;
+    color: var(--text-inverse);
+}
+
+.Badge-info--strongHover:hover {
+    background-color: var(--surface-info-strong);
+    border-color: transparent;
+    color: var(--text-inverse);
+}
+
+/* Sizes */
+.Badge-sm {
+    padding: var(--padding-xxs);
+}
+
+.Badge-md {
+    padding: var(--padding-xs);
+}
+/* @define Pill */
+
+.Pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: var(--border-radius-circle);
+    border: var(--border-xs) solid transparent;
+    font-weight: var(--font-weight-regular);
+    line-height: 100%;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.Pill:focus::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: var(--border-sm) solid;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.Pill-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    line-height: 1;
+}
+
+.Pill-label {
+    display: inline-block;
+    line-height: 1;
+}
+
+/* ---------- Sizes ---------- */
+
+.Pill--sm {
+    font-size: var(--font-size-body-small);
+    padding: var(--padding-xs);
+    min-height: var(--sizes-button-mini);
+}
+
+.Pill--md {
+    font-size: var(--font-size-h6);
+    padding: var(--padding-xs);
+    min-height: var(--sizes-button-small);
+}
+
+.Pill--lg {
+    font-size: var(--font-size-medium);
+    padding: var(--padding-sm);
+    min-height: var(--sizes-button-default);
+}
+
+.Pill--sm .Pill-icon {
+    font-size: var(--font-size-body-small);
+}
+
+.Pill--md .Pill-icon {
+    font-size: var(--font-size-small);
+}
+
+.Pill--lg .Pill-icon {
+    font-size: var(--font-size-medium);
+}
+
+/* ---------- Variants ---------- */
+
+/* ---------- Variants: Subtle appearance (default) ---------- */
+
+/* Info */
+.Pill--info {
+    background-color: var(--surface-info-subtle);
+    border-color: var(--border-info-subtle);
+    color: var(--text-info);
+}
+
+.Pill--info:hover {
+    background-color: var(--surface-info-accent);
+    color: var(--text-info-dark);
+}
+
+.Pill--info:focus {
+    background-color: var(--surface-info-accent);
+    color: var(--text-emphasis);
+}
+
+.Pill--info:focus::after {
+    border-color: var(--border-info);
+}
+
+/* Success */
+.Pill--success {
+    background-color: var(--surface-success-subtle);
+    border-color: var(--border-success-subtle);
+    color: var(--text-success);
+}
+
+.Pill--success:hover {
+    background-color: var(--surface-success-accent);
+    color: var(--text-success-dark);
+}
+
+.Pill--success:focus {
+    background-color: var(--surface-success-accent);
+    color: var(--text-success-dark);
+}
+
+.Pill--success:focus::after {
+    border-color: var(--border-success);
+}
+
+/* Warning */
+.Pill--warning {
+    background-color: var(--surface-warning-subtle);
+    border-color: var(--border-warning-subtle);
+    color: var(--text-warning);
+}
+
+.Pill--warning:hover {
+    background-color: var(--surface-warning-accent);
+    color: var(--text-warning-strong);
+}
+
+.Pill--warning:focus {
+    background-color: var(--surface-warning-accent);
+    color: var(--text-warning-strong);
+}
+
+.Pill--warning:focus::after {
+    border-color: var(--border-warning);
+}
+
+/* Danger */
+.Pill--danger {
+    background-color: var(--surface-danger-subtle);
+    border-color: var(--border-danger-subtle);
+    color: var(--text-danger);
+}
+
+.Pill--danger:hover {
+    background-color: var(--surface-danger-subtle-accent);
+    color: var(--text-danger-strong);
+}
+
+.Pill--danger:focus {
+    background-color: var(--surface-danger-subtle-accent);
+    color: var(--text-danger-strong);
+}
+
+.Pill--danger:focus::after {
+    border-color: var(--border-danger);
+}
+
+/* Neutral */
+.Pill--neutral {
+    background-color: var(--surface-default);
+    border-color: var(--border-subtle);
+    color: var(--text-accent);
+}
+
+.Pill--neutral:hover {
+    background-color: var(--surface-container-hover);
+    color: var(--text-emphasis);
+}
+
+.Pill--neutral:focus {
+    background-color: var(--surface-container-hover);
+    color: var(--text-emphasis);
+}
+
+.Pill--neutral:focus::after {
+    border-color: var(--border-default);
+}
+
+/* Primary */
+.Pill--primary {
+    background-color: var(--surface-primary-subtle);
+    border-color: var(--border-primary-subtle);
+    color: var(--text-primary);
+}
+
+.Pill--primary:hover {
+    background-color: var(--surface-primary-accent);
+    color: var(--text-primary-emphasis);
+}
+
+.Pill--primary:focus {
+    background-color: var(--surface-primary-accent);
+    color: var(--text-primary-emphasis);
+}
+
+.Pill--primary:focus::after {
+    border-color: var(--border-primary-focus);
+}
+
+/* ---------- Variants: Strong appearance ---------- */
+
+/* Info (strong) */
+.Pill--strong.Pill--info {
+    background-color: var(--surface-info);
+    color: var(--text-inverse);
+}
+
+.Pill--strong.Pill--info:hover {
+    background-color: var(--surface-info-strong);
+    color: var(--text-inverse);
+}
+
+.Pill--strong.Pill--info:focus {
+    background-color: var(--surface-info-strong);
+    color: var(--text-inverse);
+    border-color: var(--border-info);
+}
+
+/* Success (strong) */
+.Pill--strong.Pill--success {
+    background-color: var(--surface-success);
+    color: var(--text-inverse);
+}
+
+.Pill--strong.Pill--success:hover {
+    background-color: var(--surface-success-strong);
+    color: var(--text-inverse);
+}
+
+.Pill--strong.Pill--success:focus {
+    background-color: var(--surface-success-strong);
+    color: var(--text-inverse);
+    border-color: var(--border-success);
+}
+
+/* Warning (strong) */
+.Pill--strong.Pill--warning {
+    background-color: var(--surface-warning);
+    color: var(--text-inverse);
+}
+
+.Pill--strong.Pill--warning:hover {
+    background-color: var(--surface-warning-strong);
+    color: var(--text-inverse);
+}
+
+.Pill--strong.Pill--warning:focus {
+    background-color: var(--surface-warning-strong);
+    color: var(--text-inverse);
+    border-color: var(--border-warning-subtle);
+}
+
+/* Danger (strong) */
+.Pill--strong.Pill--danger {
+    background-color: var(--surface-danger);
+    color: var(--text-inverse);
+}
+
+.Pill--strong.Pill--danger:hover {
+    background-color: var(--surface-danger-strong);
+    color: var(--text-inverse);
+}
+
+.Pill--strong.Pill--danger:focus {
+    background-color: var(--surface-danger-strong);
+    color: var(--text-inverse);
+    border-color: var(--border-danger);
+}
+
+/* Neutral (strong) */
+.Pill--strong.Pill--neutral {
+    background-color: var(--surface-subtle-dark);
+    color: var(--text-accent);
+}
+
+.Pill--strong.Pill--neutral:hover {
+    background-color: var(--surface-accent);
+    color: var(--text-emphasis);
+}
+
+.Pill--strong.Pill--neutral:focus {
+    background-color: var(--surface-accent);
+    border-color: var(--border-default);
+    color: var(--text-emphasis);
+}
+
+/* Primary (strong) */
+.Pill--strong.Pill--primary {
+    background-color: var(--surface-primary);
+    color: var(--text-inverse);
+}
+
+.Pill--strong.Pill--primary:hover {
+    background-color: var(--primary-strong);
+    color: var(--text-inverse);
+}
+
+.Pill--strong.Pill--primary:focus {
+    background-color: var(--primary-strong);
+    color: var(--text-inverse);
+    border-color: var(--border-primary-focus);
+}
+/* @define CollapsibleSection */
+.CollapsibleSection {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.CollapsibleSection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+}
+
+.CollapsibleSection-header.is-enabled {
+    cursor: pointer;
+}
+
+.CollapsibleSection-sectionHeaderLeft {
+    display: flex;
+    align-items: center;
+}
+
+.CollapsibleSection-expanderButton,
+.CollapsibleSection-expanderButton:hover,
+.CollapsibleSection-expanderButton:active {
+    color: inherit !important; /* Would otherwise be overridden by Btn.css */
+    padding: 3px 0 0;
+    flex-shrink: 0;
+}
+
+.CollapsibleSection-chevron {
+    font-size: 19px;
+    transform: rotate(0);
+    transition: transform 0.2s;
+}
+
+.CollapsibleSection-expanded .CollapsibleSection-chevron {
+    transform: rotate(90deg);
+}
+
+.CollapsibleSection-headerText {
+    margin: 0 0 0 5px;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-wrap: wrap;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.CollapsibleSection-sectionHeaderRight {
+    cursor: default;
+    flex-shrink: 0;
+}
+
+.CollapsibleSection-body {
+    padding: 0 15px 15px;
+}
+
+/** Card variant overrides **/
+.CollapsibleSection-card {
+    background-color: var(--surface-default);
+    border-color: var(--border-subtle);
+    border-left: var(--border-sm) solid var(--border-dayshape);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+}
+
+/* CSS-only flex reorder — chevron visually appears on the RIGHT of the header
+   text for the card variant. DOM structure is unchanged so existing tests and
+   accessibility semantics are preserved. The sectionHeaderRight slot is a
+   sibling of sectionHeaderLeft and is unaffected. */
+.CollapsibleSection-card .CollapsibleSection-sectionHeaderLeft {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    flex: 1;
+}
+
+/* With row-reverse the headerText sits visually to the LEFT of the chevron,
+   so flip the existing left margin onto the right side to preserve spacing. */
+.CollapsibleSection-card .CollapsibleSection-headerText {
+    margin: 0 5px 0 0;
+}
+
+/* Suppress the global rotate(90deg) for the card variant — the card uses
+   class-swap (fa-chevron-down / fa-chevron-up) for its expanded-state icon,
+   so the chevron element should never be rotated. */
+.CollapsibleSection-card .CollapsibleSection-chevron {
+    transform: none;
+}
+
+/** Sidebar variant overrides **/
+.CollapsibleSection-sidebar {
+    border-radius: 0;
+    margin-bottom: 0;
+    border-width: 1px 0 0;
+    border-color: var(--border-subtle);
+}
+
+.CollapsibleSection-sidebar:last-child {
+    border-bottom-width: 1px; /* gives the last list item a bottom border */
+}
+
+.CollapsibleSection-sidebar .CollapsibleSection-header {
+    padding: 12px 0.5rem;
+    align-items: baseline;
+    color: var(--text-accent);
+    text-transform: uppercase;
+}
+
+.CollapsibleSection-sidebar .CollapsibleSection-header.is-enabled:hover {
+    background-color: var(--border-subtle);
+}
+
+.CollapsibleSection-sidebar .CollapsibleSection-header:not(.is-enabled) {
+    background-color: var(--text-white);
+    color: var(--text-disabled);
+}
+
+.CollapsibleSection-sidebar .CollapsibleSection-sectionHeaderLeft {
+    align-items: baseline;
+}
+
+.CollapsibleSection-sidebar .CollapsibleSection-chevron {
+    font-size: 1rem;
+}
+
+.CollapsibleSection-sidebar .CollapsibleSection-header:not(.is-enabled) .CollapsibleSection-chevron {
+    visibility: hidden;
+}
+
+.CollapsibleSection-sidebar .CollapsibleSection-body {
+    padding: 0;
+}
+﻿.Sidebar-header {
+    background-color: rgb(0 0 0 / 5%);
+}
+
+.Sidebar-headerContainer {
+    white-space: nowrap;
+    display: flex;
+}
+
+.Sidebar-headerCloseContainer {
+    font-size: 14px;
+    padding: 10px 17px;
+    margin: -0.5rem -1rem;
+}
+
+.Sidebar-headerTitleContainer {
+    display: inline-block;
+    font-size: 14px;
+    margin-bottom: 0;
+    margin-left: 20px;
+}
+
+.Sidebar-headerCloseContainer:hover {
+    background-color: #dedede;
+}
+
+.Sidebar-headerTitle {
+    font-size: 14px;
+    padding-top: 3px;
+    margin-bottom: -3px;
+}
+
+.Sidebar-headerClose {
+    font-size: 14px;
+    color: #7f7f7f;
+}
+
+.Sidebar-content {
+    padding: 15px 15px 0;
+    height: 100%;
+}
+
+.Sidebar-footerContainer {
+    width: 100%;
+    padding: 15px 25px 20px;
+    float: right;
+}
+
+.Sidebar-outer--inContainer {
+    /* So the .Sidebar--inContainer height calc ignores this element */
+    display: contents;
+}
+
+.Sidebar--inContainer {
+    /* Override fixed positioning so we can position sidebar relative to closest ancestor with position: relative */
+    position: absolute;
+    height: 100%;
+    z-index: 1035; /* Copied from Bootstrap's .b-sidebar-outer, which won't take effect with the display:contents */
+}
+
+.Sidebar-outer--inContainer .b-sidebar-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 100; /* Below 100 fails for sidebars in Gantt/NJEG and above 999 brings ot over in-container sidebars */
+}
+/* @define Tab */
+
+.Tab-navBar {
+    display: flex;
+    align-items: flex-end;
+    padding: 0 var(--padding-lg);
+    gap: 16px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.Tab-navItems {
+    padding: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    border: none;
+    gap: 16px;
+    flex: 1 1 auto;
+}
+
+.Tab-validationState {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    align-self: self-start;
+    transform: translateY(-50%);
+}
+
+/* Dropdown menu styling for overflow tabs */
+.Tab-moreButtonWrapper {
+    flex-shrink: 0;
+    display: none;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+.Tab-dropdownItem {
+    border: none;
+    background: none;
+    position: relative;
+    padding-left: var(--padding-xxs);
+}
+
+.Tab-dropdownItem:hover {
+    background-color: transparent;
+}
+
+.Tab-dropdownItemLink {
+    gap: 4px;
+}
+
+/* stylelint-disable plugin/selector-bem-pattern */
+.Tab-dropdownItem--active .dropdown-item {
+    color: var(--primary-emphasis);
+}
+
+.Tab-navItems .nav-item {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.Tab-navItems .nav-item .nav-link.disabled {
+    color: var(--text-disabled);
+}
+
+.Tab-navItem--active.nav-link {
+    border: none;
+}
+
+.Tab-moreButtonWrapper .nav-link,
+.Tab-navItems .nav-item .nav-link {
+    font-weight: var(--font-weight-semibold);
+    padding: 5px var(--padding-xs);
+    border: 2px solid transparent;
+    line-height: 150%;
+    font-size: var(--font-size-medium);
+    color: var(--text-accent);
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: transparent;
+}
+
+.Tab-navItems .nav-item .nav-link:active {
+    color: var(--primary-emphasis);
+}
+
+.Tab-navItems .nav-item .nav-link:active::after,
+.Tab-navItems .nav-item .nav-link:hover::after,
+.Tab-navBar .Tab-moreButtonWrapper:hover::after,
+.Tab-navBar .Tab-moreButtonWrapper:has(.Tab-moreButton--active)::after,
+.Tab-navBar .Tab-moreButtonWrapper:has(.Tab-moreDropdown.show)::after,
+.Tab-navItem--active::after {
+    content: "";
+    width: 100%;
+    height: 2px;
+    background: var(--surface-primary);
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    border-radius: 2px;
+}
+
+.Tab-navItems .nav-item .nav-link:active::after {
+    background: var(--primary-emphasis);
+}
+
+.Tab-navItems .nav-item .nav-link:focus-visible {
+    outline: none;
+    border-radius: var(--border-radius-default);
+    border: 2px solid var(--border-primary-focus);
+}
+
+.Tab-moreDropdown .Tab-moreButton {
+    cursor: pointer;
+    text-decoration: none;
+    background-color: transparent;
+    border-radius: var(--border-radius-default);
+}
+
+.Tab-moreDropdown .btn:hover {
+    color: var(--text-primary);
+}
+
+.Tab-moreDropdown .dropdown-menu {
+    padding: 0;
+    min-width: 200px;
+    border-radius: var(--border-radius-default);
+    margin-top: var(--padding-xs);
+    border: 1px solid var(--border-subtle);
+
+    /* ELEVATION/Dropdown shadow */
+    box-shadow: 0 2px 4px 2px rgb(178 178 178 / 30%);
+}
+
+.Tab-moreDropdown .dropdown-menu.show {
+    padding: var(--padding-xs) var(--padding-xs) var(--padding-xs) 0;
+}
+
+.Tab-dropdownItem .dropdown-item {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-medium);
+    color: var(--text-accent);
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 7px var(--padding-xs);
+    background: none;
+    border: 2px solid transparent;
+}
+
+.Tab-dropdownItem--disabled,
+.Tab-dropdownItem--disabled .dropdown-item {
+    color: var(--text-disabled);
+    cursor: not-allowed;
+}
+
+.Tab-dropdownItem .dropdown-item:focus-visible {
+    outline: none;
+    border-radius: var(--border-radius-default);
+    border: 2px solid var(--border-primary-focus);
+}
+
+.Tab-dropdownItem .dropdown-item:hover {
+    background: none;
+}
+
+.Tab-dropdownItem:not(.Tab-dropdownItem--disabled):hover .dropdown-item {
+    color: var(--primary-emphasis);
+}
+
+/* Vertical tabs */
+.Tabs--vertical,
+.Tabs--vertical .col-auto {
+    height: 100%;
+}
+
+.Tabs--vertical .Tab-navBar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    gap: var(--padding-sm);
+    height: 100%;
+    border-bottom: none;
+    border-left: 1px solid var(--border-subtle);
+}
+
+.Tabs--vertical .Tab-navItems {
+    border-bottom: none;
+    padding: 0;
+    height: 100%;
+}
+
+.Tabs--vertical .Tab-navItems .nav-item .nav-link,
+.Tabs--vertical .Tab-moreButtonWrapper .Tab-moreDropdown .Tab-moreButton.nav-link {
+    margin-bottom: 0;
+    margin-left: 3px;
+}
+
+.Tabs--vertical .Tab-moreButtonWrapper {
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.Tab-dropdownItem .badge,
+.Tab-navItems .nav-item .nav-link .badge {
+    padding: var(--padding-xxs) var(--padding-xs);
+    font-size: var(--font-size-small);
+}
+
+.Tab-navItems .nav-item .nav-link:hover,
+.Tab-navItem--active.nav-link.active {
+    color: var(--text-primary);
+}
+
+.Tab-navItems .nav-item .nav-link:active::after,
+.Tab-navItems .nav-item .nav-link:hover::after,
+.Tab-navBar .Tab-moreButtonWrapper:hover::after,
+.Tabs--vertical .Tab-navBar .Tab-moreButtonWrapper:has(.Tab-moreButton--active)::after,
+.Tab-navBar .Tab-moreButtonWrapper:has(.Tab-moreDropdown.show)::after,
+.Tab-navItem--active::after {
+    content: "";
+    width: 100%;
+    height: 2px;
+    background: var(--surface-primary);
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    border-radius: 2px;
+}
+
+.Tab-moreButtonWrapper .Tab-moreDropdown .Tab-moreButton.nav-link:active,
+.Tab-moreButtonWrapper .Tab-moreDropdown .Tab-moreButton.nav-link:focus,
+.Tab-moreButtonWrapper .Tab-moreDropdown.show .Tab-moreButton.nav-link {
+    color: var(--primary-emphasis);
+    background-color: transparent;
+    box-shadow: none;
+    border: 2px solid var(--border-primary-focus);
+    outline: none;
+}
+
+.Tab-dropdownItem:not(.Tab-dropdownItem--disabled):hover::after,
+.Tab-dropdownItem--active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--surface-primary);
+    border-radius: 2px;
+}
+
+.Tabs--vertical .Tab-navItem--active::after,
+.Tabs--vertical .Tab-navItems .nav-item .nav-link:active::after,
+.Tabs--vertical .Tab-navBar .Tab-moreButtonWrapper:hover::after,
+.Tabs--vertical .Tab-navBar .Tab-moreButtonWrapper:has(.Tab-moreButton--active)::after,
+.Tabs--vertical .Tab-navBar .Tab-moreButtonWrapper:has(.Tab-moreDropdown.show)::after,
+.Tabs--vertical .Tab-navItems .nav-item .nav-link:hover::after {
+    width: 2px;
+    height: 100%;
+}
+
+/* stylelint-enable plugin/selector-bem-pattern */
+.EntityIcon-badge {
+    height: 2.5rem;
+    aspect-ratio: 1/1;
+    border-radius: 10rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    position: relative;
+}
+
+.EntityIcon-badge--task {
+    background-color: var(--data-blue-500);
+    color: white;
+}
+
+.EntityIcon-badge--job {
+    background-color: var(--data-blue-500);
+    color: white;
+}
+
+.EntityIcon-badge--worker {
+    background-color: var(--primary);
+    color: white;
+}
+
+.EntityIcon-badge--jobGroup--rank0 {
+    background-color: var(--surface-eng-00);
+    color: white;
+}
+
+.EntityIcon-badge--jobGroup--rank1 {
+    background-color: var(--surface-eng-01);
+    color: white;
+}
+
+.EntityIcon-badge--jobGroup--rank2 {
+    background-color: var(--surface-eng-02);
+    color: white;
+}
+
+.EntityIcon-badge--jobGroup--rank3 {
+    background-color: var(--surface-eng-03);
+}
+
+.EntityIcon-badge--jobGroup--rank4 {
+    background-color: var(--surface-eng-04);
+    color: white;
+}
+
+.EntityIcon-badge--unavailability {
+    background-color: var(--secondary-accent);
+}
+
+.EntityIcon-circleIndicator {
+    display: block;
+    width: 6px;
+    height: 6px;
+    outline: 1.5px solid white;
+    border-radius: 50%;
+    background-color: var(--danger);
+    position: absolute;
+    top: 2px;
+    right: 1px;
+    z-index: 999;
+}
+
+.EntityIcon--notActive {
+    background-color: var(--icon-disabled);
+}
+﻿/* @define SavingToast */
+.SavingToast-body {
+    display: flex;
+    align-items: center;
+}
+
+.SavingToast-icon {
+    font-size: 50px;
+    margin-right: 10px;
+}
+.FilterLogic-wrapper {
+    padding: 0;
+    margin: 0;
+    margin-top: var(--padding-md);
+}
+
+.FilterLogic-group {
+    border-radius: 0.25rem;
+    border: 1px solid var(--borders-border-default, #babfd1);
+    background: var(--surface-subtle-light);
+}
+/* define GenericTable */
+
+.GenericTable {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+}
+
+.GenericTable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.GenericTable-rowSummary {
+    align-self: flex-end;
+}
+
+.GenericTable-filters {
+    display: flex;
+    z-index: 100;
+    gap: 1rem;
+}
+
+.GenericTable-infoIcon {
+    margin-right: 20px;
+}
+
+.GenericTable-tableContainer {
+    overflow-y: auto;
+}
+
+.GenericTable-table--bordered {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.GenericTable-table--bordered td,
+.GenericTable-table--bordered th {
+    border-top: 0;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+}
+
+.GenericTable-table--bordered thead tr th {
+    border-top: 1px solid #dee2e6;
+}
+
+.GenericTable-table--bordered tr td:first-of-type,
+.GenericTable-table--bordered tr th:first-of-type {
+    border-left: 1px solid #dee2e6;
+}
+
+.GenericTable-table--card tr:first-child th:first-child {
+    border-top-left-radius: 4px;
+}
+
+.GenericTable-table--card tr:first-child th:last-child {
+    border-top-right-radius: 4px;
+}
+
+.GenericTable-table--card tr:last-child td:first-child {
+    border-bottom-left-radius: 4px;
+}
+
+.GenericTable-table--card tr:last-child td:last-child {
+    border-bottom-right-radius: 4px;
+}
+
+.GenericTable-tableContainer tbody tr:last-of-type {
+    border-bottom: 2px solid #dee2e6;
+}
+
+.GenericTable-table--fixed {
+    table-layout: fixed;
+}
+
+.GenericTable-tableHead {
+    z-index: 100;
+}
+
+.GenericTable-headerCell {
+    user-select: none;
+}
+
+.GenericTable-headerCellContent {
+    display: flex;
+    align-items: start;
+}
+
+.GenericTable-sortIcon {
+    margin-top: 0.25rem;
+    margin-right: 0.5rem;
+    width: unset;
+}
+
+.GenericTable-selectionHeaderCell {
+    width: 50px;
+}
+
+.GenericTable-actionsHeaderCell {
+    width: 64px;
+}
+
+.GenericTable-row.is-removed .GenericTable-cell {
+    text-decoration: line-through;
+}
+
+.GenericTable-validationIndicator {
+    display: inline-block;
+    margin-bottom: 2px;
+    margin-left: 2px;
+}
+
+.GenericTable-removeRowButton {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.GenericTable-noRowsToDisplay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+
+.GenericTable-noRowsToDisplay--card {
+    border: 1px solid #dee2e6;
+    border-top: 0;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.GenericTable-footer {
+    display: flex;
+    justify-content: center;
+}
+
+.GenericTable-footer--card {
+    justify-content: end;
+}
+
+.operation-insert-cell {
+    color: green;
+}
+
+.operation-update-cell {
+    color: blue;
+}
+
+.operation-delete-cell {
+    color: red;
+}
+
+.GenericTable-row-checkbox-always-visible {
+    position: sticky;
+    left: 0;
+    background-color: inherit;
+}
+
+.GenericTable-header-checkbox-always-visible {
+    position: sticky;
+    left: 0;
+}
+
+.GenericTable-headerTooltipIcon {
+    margin-left: 4px;
+    color: var(--text-primary);
+    cursor: pointer;
+    align-self: center;
+}
+
+.GenericTable-headerTooltipIcon:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+    border-radius: 50%;
+}
+
+.GenericTable-customButton {
+    display: grid;
+    align-items: end;
+}
+.DropdownButton .DropdownButton-button.disabled {
+    border-right-color: transparent;
+}
+
+.DropdownButtonItem-disabled > .dropdown-item {
+    pointer-events: auto;
+    cursor: not-allowed;
+}
+
+.DropdownButton .DropdownButton-toggle {
+    flex-grow: 0;
+}
+
+.DropdownButton--noToggle .DropdownButton-toggle {
+    display: none;
+}
+
+/* Remove border radius adjustment on primary button when toggle is hidden */
+.DropdownButton--noToggle .DropdownButton-button {
+    border-top-right-radius: 0.25rem !important;
+    border-bottom-right-radius: 0.25rem !important;
+}
+﻿.Header-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid rgb(0 0 0 / 10%);
+}
+
+.Header-mainHeading {
+    font-size: 19px;
+    margin: 0;
+}
+
+.Header-saveButton.is-invalid {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23ffffff' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23ffffff' stroke='none'/%3e%3c/svg%3e");
+    padding-right: calc(1.5em + 0.75rem);
+    background-repeat: no-repeat;
+    background-position: center right calc(0.375em + 0.1875rem);
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+/* @define WidgetContainer */
+
+.WidgetContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.WidgetContainer-heading {
+    color: var(--text-default);
+    font-size: 1.0625rem; /* this needs to be changed for screens larger than mobile ( >= 768 px ) */
+    font-style: normal;
+    font-weight: var(--font-weight-regular);
+    line-height: normal;
+    margin: 0;
+}
+
+.WidgetContainer-infotip {
+    font-size: 0.875rem;
+    color: var(--primary);
+}
+
+.WidgetContainer-card {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    border-radius: 8px;
+    background: var(--surface-default);
+    border-left: 2px solid var(--orange-marketing-400);
+    box-shadow: 0 2px 6px 3.2px rgb(171 171 171 / 15%);
+    overflow: auto;
+}
+
+/* On screen widths larger than mobile, we decrease the font size */
+@media (width >= 768px) {
+    .WidgetContainer-heading {
+        font-size: 1rem;
+    }
+}
+/* @define ColumnPicker */
+.ColumnPicker {
+    display: flex;
+    height: 100%;
+}
+
+.ColumnPicker-filterInputGroup {
+    max-width: 460px;
+    margin-bottom: 15px;
+}
+
+.ColumnPicker-filterInputContainer {
+    width: 100%;
+}
+
+/* Select all buttons in the middle */
+.ColumnPicker-bulkColumnSelectors {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.ColumnPicker-selectAllButton {
+    margin: 10px 20px;
+}
+
+/* Sort Button */
+.ColumnPicker-sortReportOnColumnButton {
+    opacity: 0;
+    margin: 3px;
+    width: 3rem;
+}
+
+/* stylelint-disable */
+/*.DragAndDropCard-item:hover .ColumnPicker-sortReportOnColumnButton,*/
+.ColumnPicker-sortReportOnColumnButton:focus,
+.ColumnPicker-sortReportOnColumnButton:hover,
+.ColumnPicker-sortReportOnColumnButton[data-sortState="0"]:hover,
+.ColumnPicker-sortReportOnColumnButton[data-sortState="1"],
+.ColumnPicker-sortReportOnColumnButton[data-sortState="2"] {
+    opacity: 1;
+}
+
+/* stylelint-enable */
+
+/* Other containers */
+
+.ColumnPicker-selectorContainer {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 2;
+    max-height: calc(100% - 50px);
+    min-height: 1vh;
+}
+
+.ColumnPicker-content {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0 10px 10px;
+}
+
+.ColumnPicker-selectedColumnName,
+.ColumnPicker-availableColumnName {
+    margin: auto 5px;
+    width: 100%;
+}
+
+.ColumnPicker-moveButton {
+    flex-grow: 0;
+    flex-shrink: 0;
+    border: none;
+    width: 2.3rem;
+}
+
+.ColumnPicker-moveColumnLeftButton {
+    border-radius: 3px 0 0 3px;
+    border-right: 1px solid #ddd;
+    padding: var(--padding-xs) 0;
+}
+
+.ColumnPicker-moveColumnRightButton {
+    border-radius: 0 3px 3px 0;
+    border-left: 1px solid #ddd;
+    padding: var(--padding-xs) 0;
+}
+
+.ColumnPicker-pivotTabDescription {
+    margin: 0 0 10px;
+}
+
+.ColumnPicker-filterColumns {
+    width: 490px;
+    margin-left: -15px;
+}
+.GanttSidebarSection {
+    padding: var(--padding-xs);
+}
+
+.GanttSidebarSection--withBorderBottom {
+    border-bottom: 1px solid #6c757d;
+}
+
+.GanttSidebarSection-header {
+    position: relative;
+    margin-bottom: var(--padding-xs);
+}
+
+.GanttSidebarSection--collapsible .GanttSidebarSection-header {
+    cursor: pointer;
+}
+
+.GanttSidebarSection--collapsible:not(.is-expanded) .GanttSidebarSection-header {
+    margin-bottom: 0;
+}
+
+.GanttSidebarSection-headerRight {
+    align-items: center;
+    display: flex;
+    gap: var(--padding-xxs);
+    justify-content: center;
+}
+
+.GanttSidebarSection-headerText--withHeaderRight {
+    /* buttons on top-right give the header enough extra height */
+    margin-bottom: 0;
+}
+
+/* AR: this targets slot content - we are intentionally avoiding our SUIT naming convention */
+.GanttSidebarSection .Btn {
+    height: 28px;
+    padding: 0 10px;
+}
+
+.GanttSidebarSection--collapsible.is-expanded .GanttSidebarSection-content {
+    padding-left: var(--padding-lg);
+}
+
+.GanttSidebarSection .GanttSidebarSection-collapseButton,
+.GanttSidebarSection .GanttSidebarSection-collapseButton:hover,
+.GanttSidebarSection .GanttSidebarSection-collapseButton:active {
+    background-color: transparent;
+    border-color: transparent;
+    color: inherit;
+    height: auto;
+    padding: 0;
+    width: 20px;
+}
+
+.GanttSidebarSection-headerText {
+    font-size: 1em;
+    font-weight: var(--font-weight-bold);
+    margin-bottom: 0;
+    margin-right: var(--padding-xxs);
+}
+
+.GanttSidebarSection-headerSubtitle {
+    flex: 1 0 0;
+    overflow: hidden;
+}
+
+.GanttSidebarSection-headerSubtitle-text {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

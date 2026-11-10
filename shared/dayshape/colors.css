@@ -1,0 +1,123 @@
+﻿/*
+    CSS color variables for the redesigned ODA palette
+    AR: I am preferring rgb colour format for the ease of adding opacity.
+    You can convert hex to rgb in Rider by clicking the colour square next to the line number.
+    AR: (7/4/25) the naming conventions have changed so many times in Figma and now this is completely out of whack. This needs a naming overhaul.
+ */
+:root {
+    /* colour definition for v-calendar */
+    --vc-primary-600: var(--primary);
+
+    /* Grays */
+    --basic-grey-12-base: 228 229 231; /* #E4E5E7 */
+    --tinted-grey-14-base: 248, 249, 251; /* #F8F9FB */
+    --neutral-grey-base: 192 194 206; /* #C0C2CE */
+    --neutral-grey-13-base: 241 241 244; /* #C0C2CE */
+    --neutral-grey-d5-base: 80 84 103; /* #505467 */
+    --neutral-grey-d3-base: 137 141 164; /* #898DA4 */
+    --neutral-grey-800-base: 112 116 143; /* #70748F */
+    --neutral-deep-grey-11-base: 106 98 151; /* #6A6297 */
+    --neutral-deep-grey-13-base: 180, 176, 203; /* #B4B0CB */
+    --neutral-deep-grey-14-base: 218, 216, 229; /* #DAD8E5 */
+    --neutral-deep-grey-15-base: 240, 239, 246; /* #F0EFF6 */
+    --neutral-deep-grey-d1-base: 70, 65, 100; /* #464164 */
+    --neutral-deep-grey-d2-base: 63 58 89; /* #3F3A59 */
+    --basic-grey-12: rgb(var(--basic-grey-12-base));
+    --tinted-grey-14: rgb(var(--tinted-grey-14-base));
+    --neutral-grey: rgb(var(--neutral-grey-base));
+    --neutral-grey-13: rgb(var(--neutral-grey-13-base));
+    --neutral-grey-d3: rgb(var(--neutral-grey-d3-base));
+    --neutral-grey-d5: rgb(var(--neutral-grey-d5-base));
+    --grey-400: rgba(186, 191, 209, 1);
+    --grey-200: rgb(241, 241, 244); /* #F1F1F4 */
+    --grey-600: rgb(106 112 143); /* #6A708F */
+    --neutral-grey-800: rgb(var(--neutral-grey-800-base));
+    --neutral-deep-grey-11: rgb(var(--neutral-deep-grey-11-base));
+    --neutral-deep-grey-13: rgb(var(--neutral-deep-grey-13-base));
+    --neutral-deep-grey-14: rgb(var(--neutral-deep-grey-14-base));
+    --neutral-deep-grey-15: rgb(var(--neutral-deep-grey-15-base));
+    --neutral-deep-grey-d1: rgb(var(--neutral-deep-grey-d1-base));
+    --neutral-deep-grey-d2: rgb(var(--neutral-deep-grey-d2-base));
+
+    /* Blacks */
+    --deep-black-base: 39 35 61; /* #27233D */
+    --neutral-black-11-base: 73 66 114; /* #494272 */
+    --deep-black: rgb(var(--deep-black-base));
+    --neutral-black-13: rgb(157 150 195); /* #9D96C3 */
+    --neutral-black-12: rgb(108 98 165); /* #6C62A5 */
+    --neutral-black-11: rgb(var(--neutral-black-11-base));
+    --neutral-black-14-base: 33 37 41;
+    --neutral-black-14: rgb(var(--neutral-black-14-base)); /* #212529 */
+
+    /* Greens */
+    --success-green-d3-base: 25 143 72; /* #198f48 */
+    --success-green-d3: rgb(var(--success-green-d3-base));
+
+    /* Teals */
+    --secondary-teal-base: 51 153 163; /* #3399A3 */
+    --secondary-teal-d2-base: 41 123 130;
+    --secondary-teal-d3-base: 36 107 114;
+    --secondary-teal-d5-base: 26 77 81;
+    --secondary-teal-11-base: 75 188 198;
+    --secondary-teal: rgb(var(--secondary-teal-base));
+    --secondary-teal-d2: rgb(var(--secondary-teal-d2-base));
+    --secondary-teal-d3: rgb(var(--secondary-teal-d3-base));
+    --secondary-teal-d5: rgb(var(--secondary-teal-d5-base));
+    --secondary-teal-11: rgb(var(--secondary-teal-11-base));
+
+    /* Blues */
+    --data-blue-100: rgb(237, 240, 248); /* #EDF0F8 */
+    --data-blue-500: rgb(104, 129, 197); /* #6881C5 */
+    --info-blue: rgb(68 98 178); /* #4462B2 */
+    --info-blue-subtle: rgba(226, 240, 255, 1); /* #E2F0FF */
+
+    /* Yellows */
+    --secondary-yellow-base: 252 222 110;
+    --secondary-yellow: rgb(var(--secondary-yellow-base));
+
+    /* Oranges */
+    --orange-marketing-400: rgb(255 141 108); /* #FF8D6C */
+    --orange-marketing-600: rgb(255, 89, 59); /* #FF593B */
+
+    /* Browns */
+    --neutral-brown-12-base: 232 225 248;
+    --neutral-brown-12: rgb(var(--neutral-brown-12-base));
+
+    /* Misc */
+    --text-white: rgb(248 248 248); /* #F8F8F8 */
+
+    /* Alerts */
+    --alert-error: rgb(242 53 121); /* #F23579 */
+    --alert-red-d1-base: 220 14 90; /* #DC0E5A */
+    --alert-red-d1: rgb(var(--alert-red-d1-base));
+
+    /* Interactive */
+    --interactive-primary-base: 95 76 194;
+    --interactive-primary-d2-base: 79 63 160;
+    --interactive-primary-13-base: 217 211 255;
+    --interactive-primary-15-base: 244 243 247;
+    --interactive-primary-200-base: 217 211 255;
+    --interactive-primary: rgb(var(--interactive-primary-base));
+    --interactive-primary-d2: rgb(var(--interactive-primary-d2-base));
+    --interactive-primary-13: rgb(var(--interactive-primary-13-base));
+    --interactive-primary-15: rgb(var(--interactive-primary-15-base));
+    --interactive-primary-200: rgb(var(--interactive-primary-200-base));
+
+    /* Accent */
+    --accent-11-base: 255 124 100;
+    --accent-11: rgb(var(--accent-11-base));
+
+    --border-color: rgb(222 226 230); /* #DEE2E6 */
+}
+
+.tabbed-sidebar {
+    /* AR: I intended to only have color palette variables in this file, but it seems like the spec for the summary screen uses colors not present in the palette Figma file
+        TODO - check with Lu whether the below colors should be global
+     */
+    --text-color: rgb(73 80 87); /* #495057 */
+    --text-white: rgb(248 248 248); /* #F8F8F8 */
+    --bg-color-light: rgb(229 231 234 / 70%); /* #E5E7EAB2 */
+    --bg-color-light-focus-ring: rgb(229 231 234); /* #E5E7EA */ /* AR: I made this up increasing opacity of the above - it's not from Lu */
+    --bg-color-dark: var(--neutral-deep-grey-d2);
+    --bg-color-dark-focus-ring: rgb(var(--neutral-deep-grey-d2-base) / 50%); /* AR: I made this up decreasing opacity of the above - it's not from Lu */
+}
