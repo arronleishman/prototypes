@@ -381,6 +381,12 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfLimit-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 440px; max-width: 100%; }
 .PfLimit-title { margin: 0; font-size: var(--font-size-h2); font-weight: var(--font-weight-regular); line-height: 27px; color: var(--text-default); }
 .PfLimit-copy { margin: 0; font-size: var(--font-size-medium); line-height: 20px; color: var(--text-subtle); }
+.PfLimit-example { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; margin-top: 4px; padding: 12px; background: var(--surface-default); border: 1px solid var(--border-subtle); border-radius: var(--border-radius-default); }
+.PfLimit-example[hidden] { display: none !important; }
+.PfLimit-exampleLabel { margin: 0; font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold); color: var(--text-subtle); }
+.PfLimit-exampleRule { margin: 0; font-size: var(--font-size-medium); line-height: 20px; color: var(--text-default); }
+.PfLimit-exampleCount { margin: 0; font-size: var(--font-size-small); line-height: 18px; color: var(--text-subtle); }
+.PfLimit-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .PfLimitNote { display: flex; align-items: flex-start; gap: 8px; flex: none; margin: 0; padding: 10px 16px; background: var(--surface-warning-subtle); border-bottom: 1px solid var(--border-warning-subtle); color: var(--text-warning-strong); font-size: var(--font-size-small); line-height: 18px; }
 .PfLimitNote[hidden] { display: none !important; }
 .PfLimitNote i { margin-top: 2px; color: var(--text-warning); }
@@ -2825,7 +2831,15 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <div class="PfLimit-body">
                     <p class="PfLimit-title" id="pfLimitTitle"></p>
                     <p class="PfLimit-copy" id="pfLimitCopy"></p>
-                    <button type="button" class="Btn Btn--primary" onclick="openEditModal()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters</button>
+                    <div class="PfLimit-example" id="pfLimitExample" hidden>
+                        <p class="PfLimit-exampleLabel">Example</p>
+                        <p class="PfLimit-exampleRule" id="pfLimitExampleRule"></p>
+                        <p class="PfLimit-exampleCount" id="pfLimitExampleCount"></p>
+                        <div class="PfLimit-actions">
+                            <button type="button" class="Btn Btn--primary" id="pfLimitExampleBtn" onclick="openPortfolioLimitExample()">Open example</button>
+                            <button type="button" class="Btn" onclick="openEditModal()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -3464,9 +3478,10 @@ const STATUS = { Draft: "secondary", Submitted: "warning", Approved: "success", 
 const portfolios = {
     starred: [],
     browse: [
-        { name: "UK Assurance — London Office", engagements: 42, totalHours: 14200, pctScheduled: 76, starred: false, active: true },
-        { name: "Corporate Tax — Year end", engagements: 800, totalHours: 18640, pctScheduled: 64, starred: false, active: true },
-        { name: "UK Assurance — All offices", engagements: 6420, totalHours: null, pctScheduled: null, starred: false, active: true, dynamic: true }
+        { name: "UK Assurance — London Office", match: { geographicalUnit: "London" }, totalHours: 14200, pctScheduled: 76, starred: false, active: true },
+        { name: "Corporate Tax — Year end", match: { functionalUnit: "Tax" }, totalHours: 18640, pctScheduled: 64, starred: false, active: true },
+        { name: "UK Assurance — All offices", match: "all", totalHours: null, pctScheduled: null, starred: false, active: true, dynamic: true, example: { name: "UK Assurance — Liam O'Connor", filter: "Engagement Partner / Engagement Manager", value: "Liam O'Connor" } },
+        { name: "UK Assurance — Liam O'Connor", match: { partner: "Liam O'Connor" }, totalHours: 11200, pctScheduled: 74, starred: false, active: true, dynamic: true }
     ],
     archive: []
 };
@@ -3482,6 +3497,38 @@ function findPortfolio(name) {
     return ["starred", "browse", "archive"].map(key => portfolios[key].find(item => item.name === name)).find(Boolean) || null;
 }
 function portfolioOverLimit(count) { return count > PORTFOLIO_ENGAGEMENT_LIMIT; }
+function portfolioMatchRows(p) {
+    if (!p || !p.match) return null;
+    if (p.match === "all") return ENGAGEMENTS;
+    if (p.match.partner) return ENGAGEMENTS.filter(e => peopleList(e.partner).includes(p.match.partner));
+    if (p.match.functionalUnit) return ENGAGEMENTS.filter(e => e.functionalUnit === p.match.functionalUnit);
+    if (p.match.geographicalUnit) return ENGAGEMENTS.filter(e => e.geographicalUnit === p.match.geographicalUnit);
+    return null;
+}
+function portfolioRuleFromMatch(p) {
+    if (!p || !p.match) return null;
+    if (p.match === "all") return { name: "All engagements", sel: {} };
+    if (p.match.partner) return { name: p.match.partner, sel: { jobLeader: new Set([p.match.partner]) } };
+    if (p.match.functionalUnit) return { name: p.match.functionalUnit, sel: { jobFunctionalUnitId: new Set([p.match.functionalUnit]) } };
+    if (p.match.geographicalUnit) return { name: p.match.geographicalUnit, sel: { jobGeographicalUnitId: new Set([p.match.geographicalUnit]) } };
+    return null;
+}
+function hydratePortfolioCounts() {
+    ["starred", "browse", "archive"].forEach(key => {
+        portfolios[key].forEach(p => {
+            const rows = portfolioMatchRows(p);
+            if (!rows) return;
+            p.engagements = rows.length;
+        });
+    });
+    ["starred", "browse", "archive"].forEach(key => {
+        portfolios[key].forEach(p => {
+            if (!p.example) return;
+            const target = findPortfolio(p.example.name);
+            if (target) p.example.engagements = target.engagements;
+        });
+    });
+}
 
 /* ---- Portfolio list ---- */
 const sortState = {};
@@ -3833,13 +3880,25 @@ function applyPortfolioLimit(name) {
     if (gate) gate.hidden = !over;
     if (over) {
         document.getElementById("pfLimitTitle").textContent = fmt(portfolio.engagements) + " engagements match this portfolio.";
-        document.getElementById("pfLimitCopy").textContent = "Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ". Narrow the filters to open List, Board, Performance and Team.";
+        document.getElementById("pfLimitCopy").textContent = "Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ".";
+        const example = portfolio.example;
+        const exampleEl = document.getElementById("pfLimitExample");
+        if (exampleEl) exampleEl.hidden = !example;
+        if (example) {
+            document.getElementById("pfLimitExampleRule").textContent = example.filter + " · " + example.value;
+            document.getElementById("pfLimitExampleCount").textContent = fmt(example.engagements) + " engagements. Open the example to see List, Board, Performance and Team.";
+            document.getElementById("pfLimitExampleBtn").dataset.portfolio = example.name;
+        }
     }
     const editBtn = view.querySelector(".TopBar .Btn--primary");
     if (editBtn) editBtn.innerHTML = over
         ? '<i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters'
         : '<i class="fa-solid fa-pen" aria-hidden="true"></i> Edit';
     return over;
+}
+function openPortfolioLimitExample() {
+    const name = document.getElementById("pfLimitExampleBtn").dataset.portfolio;
+    if (name) openPortfolio(name);
 }
 function openPortfolio(name, skipPersist) {
     document.getElementById("detailTitle").textContent = name;
@@ -4777,7 +4836,7 @@ const M_REQ_RESOURCES = ["Alex Turner","Jordan Blake","Sam Rivera","Casey Morgan
 
 const ENGAGEMENT_KINDS = ["Statutory Audit","Internal Audit","Compliance Review","Tax Compliance","Controls Assessment","Year-end Audit","Fraud Risk Assessment","IT Systems Audit","Sustainability Reporting","Operational Review"];
 const ENGAGEMENT_CLIENTS = ["Meridian Bank","Vertex Financial","GlobalTech Industries","Apex Pharmaceuticals","GreenWave Solutions","Summit Retail","Horizon Energy","NovaTech Manufacturing","Crestline Holdings","Brightwave Media","Orion Logistics","Vanta Foods","Northwind Health","Harbor and Co","Lumen Insurance","Pinnacle Retail","Ashford Utilities","Kepler Aerospace","Bramble Housing","Sable Logistics"];
-const GENERATED_PER_PARTNER = 24;
+const GENERATED_PER_PARTNER = 90;
 const BASE_ENGAGEMENTS = [
     ["ANG3125","Fraud Risk Assessment for Pinnacle Insurance"],
     ["ANG3105","Internal Controls Assessment for Meridian Bank"],
@@ -5220,7 +5279,13 @@ function updateLimitNote() {
     const over = portfolioOverLimit(count);
     note.hidden = !over;
     const text = document.getElementById("pfLimitNoteText");
-    if (over && text) text.textContent = fmt(count) + " engagements match this portfolio. Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ". Narrow the filters before adding engagements.";
+    if (over && text) {
+        const portfolio = findPortfolio(portfolioNameValue());
+        const example = portfolio && portfolio.example;
+        text.textContent = example
+            ? fmt(count) + " engagements match this portfolio. Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ". The example uses " + example.filter + " · " + example.value + " (" + fmt(example.engagements) + ")."
+            : fmt(count) + " engagements match this portfolio. Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ".";
+    }
 }
 function activeExclusions() {
     // only count exclusions that a rule would otherwise include
@@ -5834,9 +5899,7 @@ function commitSelectedAsStatic() {
     modalState.tableSel.clear();
     modalState.lastSelectedCode = null;
     modalState.declinedDynamicForResults = false;
-    updateMembershipUI();
-    renderResultsTable();
-    updateModalPrimary();
+    landOnPortfolioAfterMembershipChange();
 }
 function modifyFilters() {
     // Additive search: keep portfolio membership, reset the filter builder so the next query is clearly "search for more".
@@ -6489,11 +6552,14 @@ function openEditModal(name) {
         ? ENGAGEMENTS.filter(e => e.functionalUnit === ruleUnit).map(e => e.code)
         : [];
     const manualCodes = ENGAGEMENTS.filter(e => !ruleCodes.includes(e.code)).slice(0, 2).map(e => e.code);
-    resetModalState(manualCodes, true);
+    const matchedRule = portfolioRuleFromMatch(portfolio);
+    resetModalState(matchedRule ? [] : manualCodes, true);
     modalState.originalName = portfolioName;
-    modalState.reportedCount = portfolio && portfolioOverLimit(portfolio.engagements) ? portfolio.engagements : null;
+    modalState.reportedCount = null;
     modalState.nameEditing = false;
-    if (ruleUnit) {
+    if (matchedRule) {
+        modalState.rules = [{ id: ++ruleSeq, name: matchedRule.name, sel: matchedRule.sel, dateLabel: RULE_DATE_LABEL, evaluatedAt: Date.now() - 3 * 60 * 1000 }];
+    } else if (ruleUnit) {
         modalState.rules = [{ id: ++ruleSeq, name: "Technology & Media", sel: { jobFunctionalUnitId: new Set([ruleUnit]) }, dateLabel: RULE_DATE_LABEL, evaluatedAt: Date.now() - 3 * 60 * 1000 }];
     }
     modalState.step = "results";
@@ -9300,6 +9366,7 @@ document.addEventListener("click", e => {
 })();
 
 /* ---- Init ---- */
+hydratePortfolioCounts();
 renderSections();
 syncPerfChrome();
 renderPerfTable();
