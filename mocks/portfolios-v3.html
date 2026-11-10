@@ -381,12 +381,6 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfLimit-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 440px; max-width: 100%; }
 .PfLimit-title { margin: 0; font-size: var(--font-size-h2); font-weight: var(--font-weight-regular); line-height: 27px; color: var(--text-default); }
 .PfLimit-copy { margin: 0; font-size: var(--font-size-medium); line-height: 20px; color: var(--text-subtle); }
-.PfLimit-example { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; margin-top: 4px; padding: 12px; background: var(--surface-default); border: 1px solid var(--border-subtle); border-radius: var(--border-radius-default); }
-.PfLimit-example[hidden] { display: none !important; }
-.PfLimit-exampleLabel { margin: 0; font-size: var(--font-size-extra-small); font-weight: var(--font-weight-semibold); color: var(--text-subtle); }
-.PfLimit-exampleRule { margin: 0; font-size: var(--font-size-medium); line-height: 20px; color: var(--text-default); }
-.PfLimit-exampleCount { margin: 0; font-size: var(--font-size-small); line-height: 18px; color: var(--text-subtle); }
-.PfLimit-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .PfLimitNote { display: flex; align-items: flex-start; gap: 8px; flex: none; margin: 0; padding: 10px 16px; background: var(--surface-warning-subtle); border-bottom: 1px solid var(--border-warning-subtle); color: var(--text-warning-strong); font-size: var(--font-size-small); line-height: 18px; }
 .PfLimitNote[hidden] { display: none !important; }
 .PfLimitNote i { margin-top: 2px; color: var(--text-warning); }
@@ -2005,6 +1999,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     line-height: 18px;
     color: var(--text-subtle);
 }
+.DynamicFilterConfirm-hint.is-error { color: var(--text-warning-strong); }
+.DynamicFilterConfirm-hint[hidden] { display: none !important; }
 .DynamicFilterConfirm-footer {
     display: flex;
     align-items: center;
@@ -2024,6 +2020,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .Modal-toolbarSlot--center { justify-content: center; }
 .Modal-toolbarSlot--end { justify-content: flex-end; gap: 12px; }
 .Modal-resultsToolbar .results-text { font-size: var(--font-size-medium); color: var(--text-emphasis); font-weight: var(--font-weight-semibold); white-space: nowrap; }
+.Modal-resultsToolbar .results-text.is-overLimit { color: var(--text-danger); }
 /* Button group toggle — Dayshape radio button group pattern (RadioButtonGroup.stories.js) */
 .btn-group { position: relative; display: inline-flex; vertical-align: middle; flex-shrink: 0; }
 .btn-group > .btn { position: relative; flex: 1 1 auto; margin-bottom: 0; }
@@ -2831,15 +2828,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <div class="PfLimit-body">
                     <p class="PfLimit-title" id="pfLimitTitle"></p>
                     <p class="PfLimit-copy" id="pfLimitCopy"></p>
-                    <div class="PfLimit-example" id="pfLimitExample" hidden>
-                        <p class="PfLimit-exampleLabel">Example</p>
-                        <p class="PfLimit-exampleRule" id="pfLimitExampleRule"></p>
-                        <p class="PfLimit-exampleCount" id="pfLimitExampleCount"></p>
-                        <div class="PfLimit-actions">
-                            <button type="button" class="Btn Btn--primary" id="pfLimitExampleBtn" onclick="openPortfolioLimitExample()">Open example</button>
-                            <button type="button" class="Btn" onclick="openEditModal()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters</button>
-                        </div>
-                    </div>
+                    <button type="button" class="Btn Btn--primary" onclick="openEditModal()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters</button>
                 </div>
             </div>
 
@@ -3040,7 +3029,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                         </div>
                         <div class="Modal-toolbarSlot Modal-toolbarSlot--end">
                         <span class="results-text" id="resultsSelectionText"></span>
-                        <span class="BtnTooltipWrap" id="addToPortfolioBtnWrap">
+                        <span class="BtnTooltipWrap BtnTooltipWrap--float" id="addToPortfolioBtnWrap" tabindex="0">
                             <button class="Btn Btn--primary" id="addToPortfolioBtn" onclick="addSelectedToPortfolio()"><i class="fa-solid fa-plus"></i> Add to portfolio</button>
                         </span>
                         </div>
@@ -3110,11 +3099,12 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <div class="DynamicFilterConfirm-body">
                     <p class="DynamicFilterConfirm-copy">You’ve selected all matching engagements. A dynamic filter adds engagements that match your filters and fall within the start and end dates. Engagements outside that date range won’t be added automatically.</p>
                     <p class="DynamicFilterConfirm-hint">Or add only the engagements you see now, as a fixed list.</p>
+                    <p class="DynamicFilterConfirm-hint is-error" id="dynamicFilterLimitCopy" hidden></p>
                 </div>
                 <div class="DynamicFilterConfirm-footer">
                     <button type="button" class="Btn Btn--outline" onclick="closeDynamicFilterConfirm({ clearSelection: true })">Cancel</button>
-                    <button type="button" class="Btn Btn--secondary" onclick="confirmAddAsStaticSelection()">Just add these</button>
-                    <button type="button" class="Btn Btn--primary" onclick="confirmAddAsDynamicFilter()">Add as dynamic filter</button>
+                    <button type="button" class="Btn Btn--secondary" id="dynamicFilterStaticBtn" onclick="confirmAddAsStaticSelection()">Just add these</button>
+                    <button type="button" class="Btn Btn--primary" id="dynamicFilterAddBtn" onclick="confirmAddAsDynamicFilter()">Add as dynamic filter</button>
                 </div>
             </div>
         </div>
@@ -3480,7 +3470,6 @@ const portfolios = {
     browse: [
         { name: "UK Assurance — London Office", match: { geographicalUnit: "London" }, totalHours: 14200, pctScheduled: 76, starred: false, active: true },
         { name: "Corporate Tax — Year end", match: { functionalUnit: "Tax" }, totalHours: 18640, pctScheduled: 64, starred: false, active: true },
-        { name: "UK Assurance — All offices", match: "all", totalHours: null, pctScheduled: null, starred: false, active: true, dynamic: true, example: { name: "UK Assurance — Liam O'Connor", filter: "Engagement Partner / Engagement Manager", value: "Liam O'Connor" } },
         { name: "UK Assurance — Liam O'Connor", match: { partner: "Liam O'Connor" }, totalHours: 11200, pctScheduled: 74, starred: false, active: true, dynamic: true }
     ],
     archive: []
@@ -3519,13 +3508,6 @@ function hydratePortfolioCounts() {
             const rows = portfolioMatchRows(p);
             if (!rows) return;
             p.engagements = rows.length;
-        });
-    });
-    ["starred", "browse", "archive"].forEach(key => {
-        portfolios[key].forEach(p => {
-            if (!p.example) return;
-            const target = findPortfolio(p.example.name);
-            if (target) p.example.engagements = target.engagements;
         });
     });
 }
@@ -3881,24 +3863,12 @@ function applyPortfolioLimit(name) {
     if (over) {
         document.getElementById("pfLimitTitle").textContent = fmt(portfolio.engagements) + " engagements match this portfolio.";
         document.getElementById("pfLimitCopy").textContent = "Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ".";
-        const example = portfolio.example;
-        const exampleEl = document.getElementById("pfLimitExample");
-        if (exampleEl) exampleEl.hidden = !example;
-        if (example) {
-            document.getElementById("pfLimitExampleRule").textContent = example.filter + " · " + example.value;
-            document.getElementById("pfLimitExampleCount").textContent = fmt(example.engagements) + " engagements. Open the example to see List, Board, Performance and Team.";
-            document.getElementById("pfLimitExampleBtn").dataset.portfolio = example.name;
-        }
     }
     const editBtn = view.querySelector(".TopBar .Btn--primary");
     if (editBtn) editBtn.innerHTML = over
         ? '<i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters'
         : '<i class="fa-solid fa-pen" aria-hidden="true"></i> Edit';
     return over;
-}
-function openPortfolioLimitExample() {
-    const name = document.getElementById("pfLimitExampleBtn").dataset.portfolio;
-    if (name) openPortfolio(name);
 }
 function openPortfolio(name, skipPersist) {
     document.getElementById("detailTitle").textContent = name;
@@ -5267,6 +5237,19 @@ function effectiveMembershipCodes() {
     return s;
 }
 function effectiveMembershipSize() { return effectiveMembershipCodes().size; }
+function projectedMembershipSize(extraCodes) {
+    const s = effectiveMembershipCodes();
+    (extraCodes || []).forEach(c => s.add(c));
+    return s.size;
+}
+function pendingRuleSel() {
+    const source = Object.keys(modalState.appliedSel).some(p => modalState.appliedSel[p] && modalState.appliedSel[p].size)
+        ? modalState.appliedSel
+        : modalState.valueSel;
+    const sel = {};
+    Object.keys(source).forEach(p => { if (source[p] && source[p].size) sel[p] = new Set(source[p]); });
+    return sel;
+}
 function resolvedViewCount() {
     if (modalState.reportedCount == null) return effectiveMembershipSize();
     if (!modalState.baseline || modalSignature() === modalState.baseline) return modalState.reportedCount;
@@ -5279,13 +5262,7 @@ function updateLimitNote() {
     const over = portfolioOverLimit(count);
     note.hidden = !over;
     const text = document.getElementById("pfLimitNoteText");
-    if (over && text) {
-        const portfolio = findPortfolio(portfolioNameValue());
-        const example = portfolio && portfolio.example;
-        text.textContent = example
-            ? fmt(count) + " engagements match this portfolio. Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ". The example uses " + example.filter + " · " + example.value + " (" + fmt(example.engagements) + ")."
-            : fmt(count) + " engagements match this portfolio. Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ".";
-    }
+    if (over && text) text.textContent = fmt(count) + " engagements match this portfolio. Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ". Narrow the filters to save.";
 }
 function activeExclusions() {
     // only count exclusions that a rule would otherwise include
@@ -5876,6 +5853,19 @@ function isFullSearchSelection() {
 function openDynamicFilterConfirm() {
     const el = document.getElementById("dynamicFilterConfirm");
     if (!el) return;
+    const sel = pendingRuleSel();
+    const ruleCodes = Object.keys(sel).length ? ruleMatchCodes({ sel }) : [];
+    const overDynamic = portfolioOverLimit(projectedMembershipSize(ruleCodes));
+    const overStatic = portfolioOverLimit(projectedMembershipSize([...modalState.tableSel]));
+    const addDynamic = document.getElementById("dynamicFilterAddBtn");
+    const addStatic = document.getElementById("dynamicFilterStaticBtn");
+    const copy = document.getElementById("dynamicFilterLimitCopy");
+    if (addDynamic) addDynamic.disabled = overDynamic;
+    if (addStatic) addStatic.disabled = overStatic;
+    if (copy) {
+        copy.hidden = !(overDynamic || overStatic);
+        copy.textContent = "Adding these would go over " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + " engagements. Narrow the filters first.";
+    }
     el.hidden = false;
     el.classList.add("is-open");
 }
@@ -6130,9 +6120,9 @@ function renderResultsTable() {
     document.getElementById("portfolioTabCount").textContent = `(${fmt(resolvedViewCount())})`;
     const addBtn = document.getElementById("addToPortfolioBtn");
     const addWrap = document.getElementById("addToPortfolioBtnWrap");
-    const overLimit = portfolioOverLimit(resolvedViewCount());
+    const overLimit = portfolioOverLimit(projectedMembershipSize([...modalState.tableSel]));
     addBtn.disabled = !modalState.tableSel.size || overLimit;
-    if (overLimit) addWrap.dataset.tooltip = "Narrow the filters before adding engagements.";
+    if (overLimit) addWrap.dataset.tooltip = "Adding these would go over " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + " engagements.";
     else delete addWrap.dataset.tooltip;
 
     if (!isSearch) {
@@ -6179,7 +6169,9 @@ function renderResultsTable() {
     const total = rows.length;
     const selected = modalState.tableSel.size;
     if (!(total > 0 && selected === total)) modalState.declinedDynamicForResults = false;
-    document.getElementById("resultsSelectionText").textContent = `${selected} of ${total} selected`;
+    const selText = document.getElementById("resultsSelectionText");
+    selText.textContent = `${selected} of ${total} selected`;
+    selText.classList.toggle("is-overLimit", portfolioOverLimit(projectedMembershipSize([...modalState.tableSel])));
     const toggleAll = document.getElementById("modalToggleAll");
     if (toggleAll) {
         const selectedOnPage = pageRows.filter(e => modalState.tableSel.has(e.code)).length;
@@ -6517,7 +6509,7 @@ function modalSignature() {
     });
 }
 function updateModalPrimary() {
-    let disabled = effectiveMembershipSize() === 0 || !!portfolioNameError();
+    let disabled = effectiveMembershipSize() === 0 || !!portfolioNameError() || portfolioOverLimit(resolvedViewCount());
     if (modalMode === "edit") disabled = disabled || (modalSignature() === modalState.baseline);
     document.getElementById("modalPrimary").disabled = disabled;
     updateFiltersBar();
