@@ -2010,6 +2010,19 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     padding: 16px 20px;
     border-top: 1px solid var(--border-subtle);
 }
+.LimitDialog {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    box-sizing: border-box;
+    background: var(--surface-overlay);
+}
+.LimitDialog[hidden] { display: none !important; }
+.LimitDialog.is-open { display: flex; }
 
 /* Results step — Engagement Listing Results (Figma 3254:101971) */
 .Modal-step--results { background: #fff; }
@@ -3145,6 +3158,23 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     </div>
 </div>
 
+<div class="LimitDialog" id="portfolioLimitDialog" role="dialog" aria-modal="true" aria-labelledby="portfolioLimitTitle" hidden>
+    <div class="DynamicFilterConfirm-panel">
+        <div class="DynamicFilterConfirm-header">
+            <h3 class="DynamicFilterConfirm-title" id="portfolioLimitTitle">This portfolio can’t be opened</h3>
+            <button type="button" class="DynamicFilterConfirm-close" aria-label="Close" onclick="closePortfolioLimitDialog()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+        <div class="DynamicFilterConfirm-body">
+            <p class="DynamicFilterConfirm-copy" id="portfolioLimitCopy"></p>
+            <p class="DynamicFilterConfirm-hint">Narrow the filters to bring it under the limit.</p>
+        </div>
+        <div class="DynamicFilterConfirm-footer">
+            <button type="button" class="Btn Btn--secondary" onclick="closePortfolioLimitDialog()">Not now</button>
+            <button type="button" class="Btn Btn--primary" id="portfolioLimitEdit" onclick="editPortfolioFromLimitDialog()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters</button>
+        </div>
+    </div>
+</div>
+
 <!-- ===================== Add Resource Requirement modal (Job Editor ResourceRequirementModal) ===================== -->
 <div class="RModal-backdrop" id="reqModal">
     <div class="RModal RModal--req" role="dialog" aria-modal="true" aria-labelledby="reqModalTitle">
@@ -3468,6 +3498,7 @@ const STATUS = { Draft: "secondary", Submitted: "warning", Approved: "success", 
 const portfolios = {
     starred: [],
     browse: [
+        { name: "UK Assurance — All offices", match: "all", totalHours: 32920, pctScheduled: 71, starred: false, active: true, dynamic: true },
         { name: "UK Assurance — London Office", match: { geographicalUnit: "London" }, totalHours: 14200, pctScheduled: 76, starred: false, active: true },
         { name: "Corporate Tax — Year end", match: { functionalUnit: "Tax" }, totalHours: 18640, pctScheduled: 64, starred: false, active: true },
         { name: "UK Assurance — Liam O'Connor", match: { partner: "Liam O'Connor" }, totalHours: 11200, pctScheduled: 74, starred: false, active: true, dynamic: true }
@@ -3715,7 +3746,7 @@ function pageRows(key) {
 function rowHtml(p, key, i) {
     const inactive = !p.active;
     const over = portfolioOverLimit(p.engagements);
-    const badgeTitle = over ? ` title="Views can show up to ${PORTFOLIO_ENGAGEMENT_LIMIT} engagements"` : "";
+    const badgeTitle = over ? ` title="Exceeds the limit of ${fmt(PORTFOLIO_ENGAGEMENT_LIMIT)} engagements in a portfolio"` : "";
     return `
         <tr class="${inactive ? "is-inactive" : ""}" onclick="openPortfolio('${esc(p.name)}')">
             <td class="col-star"><i class="fa-solid fa-star star-toggle ${p.starred ? "is-starred" : ""}" title="${p.starred ? "Unstar" : "Star"}" onclick="event.stopPropagation(); toggleStar('${key}', ${i}, this)"></i></td>
@@ -3870,7 +3901,42 @@ function applyPortfolioLimit(name) {
         : '<i class="fa-solid fa-pen" aria-hidden="true"></i> Edit';
     return over;
 }
+let limitDialogName = null;
+let openedEditorFromLimit = false;
+function openPortfolioLimitDialog(portfolio) {
+    limitDialogName = portfolio.name;
+    document.getElementById("portfolioLimitCopy").textContent = portfolio.name + " matches " + fmt(portfolio.engagements) + " engagements. A portfolio can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ", so its views stay closed.";
+    const el = document.getElementById("portfolioLimitDialog");
+    el.hidden = false;
+    el.classList.add("is-open");
+    const edit = document.getElementById("portfolioLimitEdit");
+    if (edit) edit.focus();
+}
+function closePortfolioLimitDialog() {
+    const el = document.getElementById("portfolioLimitDialog");
+    if (!el) return;
+    el.classList.remove("is-open");
+    el.hidden = true;
+    limitDialogName = null;
+}
+function editPortfolioFromLimitDialog() {
+    const name = limitDialogName;
+    closePortfolioLimitDialog();
+    if (!name) return;
+    openedEditorFromLimit = true;
+    openEditModal(name);
+}
 function openPortfolio(name, skipPersist) {
+    const existing = findPortfolio(name);
+    if (existing && portfolioOverLimit(existing.engagements)) {
+        document.getElementById("view-detail").classList.remove("is-active", "is-over-limit");
+        document.getElementById("view-list").classList.add("is-active");
+        const gate = document.getElementById("pfLimit");
+        if (gate) gate.hidden = true;
+        openPortfolioLimitDialog(existing);
+        return;
+    }
+    closePortfolioLimitDialog();
     document.getElementById("detailTitle").textContent = name;
     document.getElementById("view-list").classList.remove("is-active");
     document.getElementById("view-detail").classList.add("is-active");
@@ -6122,7 +6188,7 @@ function renderResultsTable() {
     const addWrap = document.getElementById("addToPortfolioBtnWrap");
     const overLimit = portfolioOverLimit(projectedMembershipSize([...modalState.tableSel]));
     addBtn.disabled = !modalState.tableSel.size || overLimit;
-    if (overLimit) addWrap.dataset.tooltip = "Adding these would go over " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + " engagements.";
+    if (overLimit) addWrap.dataset.tooltip = "This exceeds the limit of " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + " engagements in a portfolio.";
     else delete addWrap.dataset.tooltip;
 
     if (!isSearch) {
@@ -6610,8 +6676,10 @@ function commitPortfolioSave() {
     const mode = modalMode;
     const name = portfolioNameValue();
     const original = modalState.originalName;
+    const fromLimit = openedEditorFromLimit;
+    openedEditorFromLimit = false;
     const narrowed = modalState.reportedCount != null && modalSignature() !== modalState.baseline;
-    const nextCount = narrowed ? effectiveMembershipSize() : null;
+    const nextCount = (narrowed || fromLimit) ? effectiveMembershipSize() : null;
     closeCreateModal({ force: true });
     if (mode === "create") {
         openPortfolio(name); // creating takes you straight onto the new portfolio's page
@@ -6626,7 +6694,8 @@ function commitPortfolioSave() {
             }
         }
         renderSections();
-        if (document.getElementById("view-detail").classList.contains("is-active")) openPortfolio(name, true);
+        if (fromLimit && existing && !portfolioOverLimit(existing.engagements)) openPortfolio(name);
+        else if (document.getElementById("view-detail").classList.contains("is-active")) openPortfolio(name, true);
     }
 }
 function portfolioHasProgress() {
@@ -6669,9 +6738,17 @@ function closeCreateModal(opts) {
     closeDiscardPortfolioConfirm();
     hideUnaddedSelectionConfirm();
     closeDynamicFilterConfirm();
+    openedEditorFromLimit = false;
     document.getElementById("createModal").classList.remove("is-open");
 }
 document.getElementById("createModal").addEventListener("click", e => { if (e.target.id === "createModal") closeCreateModal(); });
+document.getElementById("portfolioLimitDialog").addEventListener("click", e => { if (e.target.id === "portfolioLimitDialog") closePortfolioLimitDialog(); });
+document.addEventListener("keydown", e => {
+    const el = document.getElementById("portfolioLimitDialog");
+    if (!el || !el.classList.contains("is-open") || e.key !== "Escape") return;
+    e.preventDefault();
+    closePortfolioLimitDialog();
+});
 document.getElementById("bookingModal").addEventListener("click", e => { if (e.target.id === "bookingModal") closeBookingModal(); });
 document.getElementById("reqModal").addEventListener("click", e => { if (e.target.id === "reqModal") closeReqModal(); });
 
