@@ -1165,7 +1165,10 @@
             <span>Storybook kit</span>
           </div>
           <h1 class="brand">Components</h1>
-          <p class="tagline">The Storybook components library. Each one has HTML you can paste into a mock.</p>
+          <p class="tagline">The Storybook components library. Download a copy to use in a mock, or copy one component’s HTML.</p>
+        </div>
+        <div class="hub-actions">
+          <button type="button" class="hub-action is-primary" id="kitDownload"><i class="fa-solid fa-download" aria-hidden="true"></i> Download components</button>
         </div>
       </div>
       <div class="kit">
@@ -1747,6 +1750,174 @@
         if (!button) return;
         activeStoryId = button.getAttribute('data-story-id');
         showShell();
+      });
+      function crc32(bytes) {
+        if (!crc32.table) {
+          var table = crc32.table = new Uint32Array(256);
+          for (var n = 0; n < 256; n++) {
+            var c = n;
+            for (var k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+            table[n] = c >>> 0;
+          }
+        }
+        var crc = 0xffffffff;
+        for (var i = 0; i < bytes.length; i++) crc = crc32.table[(crc ^ bytes[i]) & 0xff] ^ (crc >>> 8);
+        return (crc ^ 0xffffffff) >>> 0;
+      }
+
+      function zipStore(files) {
+        var encoder = new TextEncoder();
+        var parts = [];
+        var central = [];
+        var offset = 0;
+        files.forEach(function (file) {
+          var name = encoder.encode(file.name);
+          var data = file.data;
+          var crc = crc32(data);
+          var local = new Uint8Array(30 + name.length + data.length);
+          var view = new DataView(local.buffer);
+          view.setUint32(0, 0x04034b50, true);
+          view.setUint16(4, 20, true);
+          view.setUint16(6, 0x0800, true);
+          view.setUint32(14, crc, true);
+          view.setUint32(18, data.length, true);
+          view.setUint32(22, data.length, true);
+          view.setUint16(26, name.length, true);
+          local.set(name, 30);
+          local.set(data, 30 + name.length);
+          parts.push(local);
+          var cen = new Uint8Array(46 + name.length);
+          var cv = new DataView(cen.buffer);
+          cv.setUint16(4, 20, true);
+          cv.setUint16(6, 20, true);
+          cv.setUint16(8, 0x0800, true);
+          cv.setUint32(0, 0x02014b50, true);
+          cv.setUint32(16, crc, true);
+          cv.setUint32(20, data.length, true);
+          cv.setUint32(24, data.length, true);
+          cv.setUint16(28, name.length, true);
+          cv.setUint32(42, offset, true);
+          cen.set(name, 46);
+          central.push(cen);
+          offset += local.length;
+        });
+        var centralSize = central.reduce(function (sum, part) { return sum + part.length; }, 0);
+        var end = new Uint8Array(22);
+        var ev = new DataView(end.buffer);
+        ev.setUint32(0, 0x06054b50, true);
+        ev.setUint16(8, files.length, true);
+        ev.setUint16(10, files.length, true);
+        ev.setUint32(12, centralSize, true);
+        ev.setUint32(16, offset, true);
+        var out = new Uint8Array(offset + centralSize + end.length);
+        var pos = 0;
+        parts.concat(central).forEach(function (part) {
+          out.set(part, pos);
+          pos += part.length;
+        });
+        out.set(end, pos);
+        return out;
+      }
+
+      function kitPackageHtml(html) {
+        return (html || '')
+          .replace(/shared\/dayshape\/dayshape-spinner\.svg/g, 'img/dayshape-spinner.svg')
+          .replace(/shared\/dayshape\/calendar\.svg/g, 'img/calendar.svg');
+      }
+
+      function kitStyleLinks() {
+        return [
+          'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap',
+          'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css',
+          'css/bootstrap.css',
+          'css/bootstrap-vue.css',
+          'css/dayshape-bootstrap.css',
+          'css/utilities.css',
+          'css/styles.css',
+          'css/colors.css',
+          'css/bootstrap-overrides.css',
+          'css/components.css'
+        ].map(function (href) { return '<link rel="stylesheet" href="' + href + '">'; }).join('');
+      }
+
+      function kitReadme() {
+        return [
+          'Dayshape components',
+          '',
+          'This folder is a copy of the components from the prototypes hub.',
+          'Keep the css and img folders next to these HTML files.',
+          '',
+          'snippets.html shows every component and the HTML for it.',
+          'starter.html is an empty page with the Dayshape styles already linked. Paste component HTML into it to start a mock.',
+          '',
+          'Open Sans and Font Awesome load from the internet. The Dayshape styles are in css/.',
+          ''
+        ].join('\n');
+      }
+
+      function kitStarter() {
+        return '<!DOCTYPE html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dayshape mock</title>' +
+          kitStyleLinks() +
+          '</head><body style="margin:24px">\n<!-- Paste a component here. -->\n</body></html>\n';
+      }
+
+      function kitSnippets() {
+        var group = '';
+        var body = kitStories.map(function (story) {
+          var heading = story.group !== group ? (group = story.group, '<h2>' + escapeHtml(story.group) + '</h2>') : '';
+          return heading + '<article><h3>' + escapeHtml(story.title) + '</h3><p>' + escapeHtml(story.note) + '</p><div class="preview">' + kitPackageHtml(story.html) + '</div><pre>' + escapeHtml(kitPackageHtml(story.html)) + '</pre></article>';
+        }).join('');
+        return '<!DOCTYPE html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dayshape components</title>' +
+          kitStyleLinks() +
+          '<style>body{margin:0;background:#f4f5f8;font-family:"Open Sans",sans-serif}.wrap{width:min(880px,100%);margin:0 auto;padding:32px 20px 80px}h1{margin:0 0 8px;font-size:28px}h2{margin:32px 0 12px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#667085}article{background:#fff;border:1px solid #e4e7ee;border-radius:12px;margin:0 0 16px;overflow:hidden}h3,article p{margin:16px 20px 0}article p{color:#667085;font-size:14px}.preview{position:relative;min-height:72px;margin:16px 20px;overflow:auto}pre{margin:16px 0 0;padding:16px 20px;background:#1c1c28;color:#f4f5f8;overflow:auto;font-size:12px;line-height:1.5}.preview .b-sidebar{position:absolute;height:100%;min-height:320px}</style>' +
+          '</head><body><div class="wrap"><h1>Dayshape components</h1><p>Paste the HTML under a component into starter.html. The styles live in the css folder.</p>' + body + '</div></body></html>\n';
+      }
+
+      document.getElementById('kitDownload').addEventListener('click', function () {
+        var button = document.getElementById('kitDownload');
+        var label = button.innerHTML;
+        var files = [
+          ['shared/dayshape/bootstrap.css', 'dayshape-components/css/bootstrap.css'],
+          ['shared/dayshape/bootstrap-vue.css', 'dayshape-components/css/bootstrap-vue.css'],
+          ['shared/dayshape/dayshape-bootstrap.css', 'dayshape-components/css/dayshape-bootstrap.css'],
+          ['shared/dayshape/utilities.css', 'dayshape-components/css/utilities.css'],
+          ['shared/dayshape/styles.css', 'dayshape-components/css/styles.css'],
+          ['shared/dayshape/colors.css', 'dayshape-components/css/colors.css'],
+          ['shared/dayshape/bootstrap-overrides.css', 'dayshape-components/css/bootstrap-overrides.css'],
+          ['shared/dayshape/components.css', 'dayshape-components/css/components.css'],
+          ['shared/dayshape/calendar.svg', 'dayshape-components/img/calendar.svg'],
+          ['shared/dayshape/dayshape-spinner.svg', 'dayshape-components/img/dayshape-spinner.svg']
+        ];
+        button.disabled = true;
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Preparing';
+        Promise.all(files.map(function (pair) {
+          return fetch(pair[0]).then(function (response) {
+            if (!response.ok) throw new Error(pair[0]);
+            return response.arrayBuffer().then(function (buffer) {
+              return { name: pair[1], data: new Uint8Array(buffer) };
+            });
+          });
+        })).then(function (packed) {
+          var encoder = new TextEncoder();
+          packed.push({ name: 'dayshape-components/README.txt', data: encoder.encode(kitReadme()) });
+          packed.push({ name: 'dayshape-components/starter.html', data: encoder.encode(kitStarter()) });
+          packed.push({ name: 'dayshape-components/snippets.html', data: encoder.encode(kitSnippets()) });
+          var blob = new Blob([zipStore(packed)], { type: 'application/zip' });
+          var link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'dayshape-components.zip';
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(function () { URL.revokeObjectURL(link.href); }, 1000);
+          button.innerHTML = 'Downloaded';
+        }).catch(function () {
+          document.getElementById('kitNote').textContent = 'The component files could not be downloaded. Refresh the page and try again.';
+          button.innerHTML = label;
+        }).finally(function () {
+          button.disabled = false;
+          setTimeout(function () { if (button.innerHTML === 'Downloaded') button.innerHTML = label; }, 1600);
+        });
       });
       document.getElementById('kitCopy').addEventListener('click', function () {
         var html = currentStory().html;
