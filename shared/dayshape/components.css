@@ -1757,3 +1757,243 @@
 .GanttSidebarSection--storybook .flex-align-right {
     justify-content: flex-end;
 }
+﻿/* define TreeInput */
+.TreeInput {
+    position: relative;
+}
+
+.TreeInput-treeView {
+    display: none;
+    height: 20vh;
+    overflow-y: hidden;
+    border: 1px solid lightgray;
+    background-color: var(--surface-default);
+    z-index: 1000000;
+    padding: 1px 0 0;
+}
+
+.TreeInput-treeView.is-visible {
+    display: block;
+}
+
+.TreeInput-treeView.TreeInput-treeView--withHeader.is-visible {
+    display: flex;
+    flex-direction: column;
+}
+
+.TreeInput-dropdownHeader {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border-default, lightgray);
+}
+
+.TreeInput-dropdownHeader .custom-control {
+    margin-bottom: 0;
+}
+
+.TreeInput-dropdownHeader .custom-control-inline {
+    margin-right: 1rem;
+}
+
+.TreeInput-treeViewContent {
+    flex: 1;
+    min-height: 0;
+}
+
+/* These styles are only needed in storybook */
+.Storybook-demo .TreeInput-treeView {
+    width: 50vw;
+}
+/* @define TreeView */
+.TreeView {
+    height: 100%;
+    overflow-y: auto;
+
+    /* respect parent max-height if set while a specific height is not */
+    max-height: inherit;
+}
+
+.TreeView-node {
+    user-select: none;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-grow: 1;
+    height: 27px;
+}
+
+.TreeView-node.is-selected {
+    background-color: #ececec;
+}
+
+/* Because this style is defined after .TreeView-node.is-selected, it wins (the selectors have the same specificity otherwise). */
+.TreeView-node.is-potentiallySelected {
+    background-color: var(--interactive-primary-13);
+}
+
+.TreeView-node--leaf {
+    display: flex;
+    padding-left: var(--fa-width, 1.25em); /* The value of the font awesome fixed width fa-fw class */
+}
+
+.TreeView-expander {
+    cursor: pointer;
+}
+
+.TreeView-invalidItem,
+.TreeView-validItem {
+    margin-right: 5px;
+}
+
+.TreeView-invalidParent,
+.TreeView-validParent {
+    margin: 0 5px;
+}
+
+.TreeView-label {
+    flex-grow: 1;
+    cursor: default;
+}
+
+.TreeView-label.is-selectable {
+    cursor: pointer;
+}
+
+.TreeView-label.is-selected {
+    font-weight: var(--font-weight-bold);
+}
+
+.TreeView-label.is-deleted {
+    text-decoration: line-through;
+}
+
+.TreeView-descendantToggle {
+    margin-right: 3px;
+    margin-left: auto;
+    min-width: 2rem;
+    flex-shrink: 0;
+}
+
+.TreeView-dataVisibilityToggle {
+    display: flex;
+    padding: 5px;
+    align-items: center;
+    border-bottom: 1px solid var(--border-default);
+}
+
+/* stylelint-disable-next-line */
+.TreeView-dataVisibilityToggle .custom-control-label {
+    padding-top: 1px;
+}
+
+.TreeView-dataVisibilityToggleLabel {
+    padding-right: 5px;
+}
+
+.TreeView-dataVisibilityToggleButton {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.TreeView-label--notSelectable {
+    color: var(--text-disabled);
+}
+
+.TreeView-node--notSelectable:hover {
+    background-color: transparent;
+}
+
+.TreeView--additionalPadding {
+    padding-bottom: 35px;
+}
+﻿.TreeControls-buttonBar {
+    margin-top: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 100%;
+    margin-bottom: 5px;
+}
+
+.TreeControls__button {
+    max-height: calc(1.5 * 1rem);
+}
+
+@media (width <= 1000px) {
+    .TreeControls__button {
+        margin-bottom: 0.25rem;
+    }
+}
+
+.TreeControls-left {
+    display: flex;
+    flex-flow: row nowrap;
+    flex-shrink: 1;
+    min-width: 3rem;
+}
+
+.TreeControls-shrinkableCount {
+    margin-left: 3px;
+    flex-shrink: 1;
+    min-width: 1rem;
+}
+
+.TreeControls-filters {
+    flex-shrink: 0;
+    display: flex;
+    gap: 0.25rem;
+}
+
+.TreeControls-selectionReplaceIcon {
+    font-size: 0.5em;
+}
+
+.TreeControls-selectionReplaceIcon .fa-plus {
+    left: 4px;
+    top: -6px;
+}
+
+.TreeControls__buttons {
+    flex: 0 1 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+﻿/* define TreeSelector */
+.TreeSelector {
+    padding-top: 15px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    /* respect parent max-height if set while a specific height is not */
+    max-height: inherit;
+
+    /* overriding col-sm-3 padding so we can have the tree scrollbar on the edge */
+    padding-right: 0;
+}
+
+.TreeSelector-slot {
+    flex-grow: 0;
+    margin-bottom: 1em;
+
+    /* setting padding to restore even padding on both sides */
+    padding-right: 15px;
+}
+
+.TreeSelector-controls {
+    /* setting padding to restore even padding on both sides */
+    padding-right: calc(4px + var(--scroll-width));
+    display: flex;
+}
+
+.TreeSelector-tree {
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow-y: auto;
+}
