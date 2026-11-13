@@ -216,11 +216,6 @@ body {
 }
 .TopBar-checkInCount:empty,
 .TopBar-checkInCount[hidden] { display: none !important; }
-.BoardFilterBtn.is-active {
-  border-color: var(--border-primary);
-  color: var(--text-primary);
-  background: var(--surface-primary-subtle);
-}
 .TopBar-filterCount {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 18px; height: 18px; padding: 0 5px; margin-left: 2px;
@@ -253,6 +248,18 @@ body {
   font-weight: 600; color: var(--text-primary); border-color: var(--border-default);
 }
 .CalPicker #weekToday:disabled { cursor: default; }
+.CalPicker .Btn.is-active {
+  font-weight: 600;
+  color: var(--text-primary);
+  border-color: var(--border-primary);
+  background: var(--surface-primary-subtle);
+}
+.CalPicker .Btn.is-active:hover,
+.CalPicker .Btn.is-active:focus {
+  color: var(--text-primary);
+  background: var(--surface-primary-subtle);
+  border-color: var(--border-primary);
+}
 .CalPicker .Btn--icon {
   width: 35px; height: 35px; padding: 0; justify-content: center;
 }
@@ -4927,17 +4934,17 @@ body.overlay-open { overflow: hidden; }
     <div class="TopBar">
       <h1 class="TopBar-title" id="topTitle">Your Board</h1>
       <div class="TopBar-actions">
-        <button type="button" class="Btn BoardFilterBtn" id="boardFilterBtn" data-prep-filter-toggle="1" title="Filter board" aria-label="Filter board" aria-expanded="false">
-          <i class="fa-solid fa-filter" aria-hidden="true"></i>
-          Filters
-          <span class="TopBar-filterCount" id="boardFilterCount" hidden></span>
-        </button>
         <button type="button" class="Btn" id="weekCheckInBtn" title="Review In Progress items from last week">
           Week check-in
           <span class="TopBar-checkInCount" id="weekCheckInCount" hidden></span>
         </button>
         <div class="CalPicker">
           <button type="button" class="Btn is-muted" id="weekToday" disabled>Today</button>
+          <button type="button" class="Btn" id="boardFilterBtn" data-prep-filter-toggle="1" title="Filter board" aria-label="Filter board" aria-expanded="false">
+            <i class="fa-solid fa-filter" aria-hidden="true"></i>
+            Filters
+            <span class="TopBar-filterCount" id="boardFilterCount" hidden></span>
+          </button>
           <button type="button" class="Btn Btn--icon" id="weekPrev" aria-label="Previous week"><i class="fa-solid fa-chevron-left"></i></button>
           <span class="CalPicker-range" id="weekRangeBtn" aria-live="polite"><i class="fa-regular fa-calendar" aria-hidden="true"></i> <span id="weekLabel">8 Jun – 12 Jun</span></span>
           <button type="button" class="Btn Btn--icon" id="weekNext" aria-label="Next week"><i class="fa-solid fa-chevron-right"></i></button>
@@ -6722,6 +6729,7 @@ const prepFilters = {
   flyoutQuery: '',
   draft: null,
   expanded: new Set(),
+  phases: new Set(),
   bookingStates: new Set(),
   bookingTypes: new Set(),
   clients: new Set(),
@@ -6732,6 +6740,16 @@ const prepFilters = {
 
 const PREP_BOOKING_STATES = ['Definite', 'Tentative', 'On Hold', 'Complete'];
 const PREP_KEY_PERSONNEL = ['Manager', 'Partner'];
+const PREP_PHASE_TYPES = ['Preparation', 'First Review', 'Second Review'];
+
+function taskPhaseTypeLabel(task) {
+  if (!task || isJobCard(task) || !task.workPhase) return '';
+  const p = String(task.workPhase).toLowerCase();
+  if (p.includes('second')) return 'Second Review';
+  if (p.includes('first')) return 'First Review';
+  if (p.includes('prep')) return 'Preparation';
+  return String(task.workPhase);
+}
 
 function parseDeadlineSort(d) {
   const months = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
@@ -6745,6 +6763,7 @@ function prepFilterActiveCount() {
   if ((prepFilters.search || '').trim()) n += 1;
   if (prepFilters.ready) n += 1;
   if (prepFilters.notReady) n += 1;
+  n += prepFilters.phases.size;
   n += prepFilters.bookingStates.size;
   n += prepFilters.bookingTypes.size;
   n += prepFilters.clients.size;
@@ -6760,6 +6779,7 @@ function clearPrepFilters() {
   prepFilters.flyoutQuery = '';
   prepFilters.draft = null;
   prepFilters.expanded = new Set();
+  prepFilters.phases = new Set();
   prepFilters.bookingStates = new Set();
   prepFilters.bookingTypes = new Set();
   prepFilters.clients = new Set();
@@ -6773,7 +6793,8 @@ function openPrepFilterSubmenu(key) {
   prepFilters.draft = new Set(set || []);
   prepFilters.expanded = new Set();
   /* Auto-expand first parent so Booking State tree is visible */
-  if (key === 'bookingState') prepFilters.expanded.add('New Task Workflow');
+  if (key === 'phases') prepFilters.expanded.add('Phase types');
+  else if (key === 'bookingState') prepFilters.expanded.add('New Task Workflow');
   else if (key === 'bookingTypes') prepFilters.expanded.add('Booking types');
   else if (key === 'clients') prepFilters.expanded.add('Clients');
   else if (key === 'keyPersonnel') prepFilters.expanded.add('Key Personnel');
@@ -6794,6 +6815,14 @@ function closePrepFilterSubmenu(apply) {
 }
 
 function prepFilterTree(key, opts) {
+  if (key === 'phases') {
+    return [{
+      label: 'Phase types',
+      children: (opts.phases || []).map(function (v) {
+        return { label: v, value: v };
+      })
+    }];
+  }
   if (key === 'bookingState') {
     return [{
       label: 'New Task Workflow',
@@ -6841,13 +6870,26 @@ function taskBookingStateLabel(task) {
 function collectPrepFilterOptions() {
   const types = new Set();
   const clients = new Set();
+  const phases = new Set(PREP_PHASE_TYPES);
   columns.forEach(function (col) {
     (col.tasks || []).forEach(function (task) {
       (task.taxTypes || []).forEach(function (t) { if (t) types.add(t); });
       if (task.company) clients.add(task.company);
+      const phase = taskPhaseTypeLabel(task);
+      if (phase) phases.add(phase);
     });
   });
+  const phaseOrder = PREP_PHASE_TYPES.slice();
+  const phaseList = [...phases].sort(function (a, b) {
+    const ai = phaseOrder.indexOf(a);
+    const bi = phaseOrder.indexOf(b);
+    if (ai === -1 && bi === -1) return a.localeCompare(b);
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
   return {
+    phases: phaseList,
     bookingState: PREP_BOOKING_STATES.slice(),
     bookingTypes: [...types].sort(),
     clients: [...clients].sort(),
@@ -6856,6 +6898,7 @@ function collectPrepFilterOptions() {
 }
 
 function prepSelectionSet(key) {
+  if (key === 'phases') return prepFilters.phases;
   if (key === 'bookingState') return prepFilters.bookingStates;
   if (key === 'bookingTypes') return prepFilters.bookingTypes;
   if (key === 'clients') return prepFilters.clients;
@@ -6879,6 +6922,10 @@ function matchesPrepColumnFilters(task) {
     } else if (prepFilters.notReady && isReady) {
       return false;
     }
+  }
+  if (prepFilters.phases.size) {
+    const phase = taskPhaseTypeLabel(task);
+    if (!phase || !prepFilters.phases.has(phase)) return false;
   }
   if (prepFilters.bookingStates.size) {
     if (!prepFilters.bookingStates.has(taskBookingStateLabel(task))) return false;
@@ -7026,6 +7073,7 @@ function renderPrepFiltersPanelHtml() {
   const active = prepFilterActiveCount();
   const opts = collectPrepFilterOptions();
   const submeta = {
+    phases: { label: 'Phase types', set: prepFilters.phases, values: opts.phases },
     bookingState: { label: 'Booking State', set: prepFilters.bookingStates, values: opts.bookingState },
     bookingTypes: { label: 'Booking types', set: prepFilters.bookingTypes, values: opts.bookingTypes },
     clients: { label: 'Clients', set: prepFilters.clients, values: opts.clients },
@@ -7081,6 +7129,7 @@ function renderPrepFiltersPanelHtml() {
             ? ('<div class="PrepFilters-options">' +
                 '<label class="PrepFilters-check"><input type="checkbox" id="prepFilterReady"' + (prepFilters.ready ? ' checked' : '') + ' /> Ready</label>' +
                 '<label class="PrepFilters-check"><input type="checkbox" id="prepFilterNotReady"' + (prepFilters.notReady ? ' checked' : '') + ' /> Not ready</label>' +
+                subitem('phases') +
               '</div>')
             : '') +
         '</section>' +
