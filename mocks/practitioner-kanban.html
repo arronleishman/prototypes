@@ -2334,11 +2334,12 @@ body.is-card-dragging * {
   align-items: center;
   gap: 8px;
   width: 100%;
-  min-height: 30px;
+  height: 30px;
   padding: 6px 12px;
   box-sizing: border-box;
   border: 0;
-  background: transparent;
+  border-radius: 0;
+  background: var(--surface-default);
   color: var(--text-default);
   font: inherit;
   font-size: 14px;
@@ -2365,6 +2366,7 @@ body.is-card-dragging * {
   box-sizing: border-box;
   gap: 4px;
   border: 0;
+  border-radius: 0;
   background: var(--surface-default);
   color: var(--text-default);
   font: inherit;
@@ -2372,7 +2374,7 @@ body.is-card-dragging * {
   line-height: 21px;
   cursor: pointer;
 }
-.PrepFilters-subitem:hover:not(.is-active) {
+.PrepFilters-subitem:hover {
   background: var(--surface-list-item-hover);
 }
 .PrepFilters-subitem i {
@@ -2381,7 +2383,8 @@ body.is-card-dragging * {
   color: var(--icon-subtle);
   font-size: 12px;
 }
-.PrepFilters-subitem.is-active {
+.PrepFilters-subitem.is-active,
+.PrepFilters-subitem.is-active:hover {
   background: var(--surface-list-item-selected-dark);
   color: var(--text-inverse);
 }
@@ -2456,6 +2459,10 @@ body.is-card-dragging * {
   color: var(--icon-subtle);
   cursor: pointer;
 }
+.PrepFilters-flyoutSearch button:hover {
+  background: var(--surface-list-item-hover);
+  color: var(--icon-accent);
+}
 .PrepFilters-flyoutActions {
   display: flex;
   justify-content: space-between;
@@ -2476,10 +2483,18 @@ body.is-card-dragging * {
   color: var(--icon-subtle);
   cursor: pointer;
 }
+.PrepFilters-flyoutAction:hover {
+  background: var(--surface-list-item-hover);
+  color: var(--icon-accent);
+}
 .PrepFilters-flyoutAction--apply {
   border-color: var(--border-default);
   color: var(--icon-accent);
   margin-left: auto;
+}
+.PrepFilters-flyoutAction--apply:hover {
+  background: var(--surface-list-item-selected-light);
+  color: var(--text-primary);
 }
 .PrepFilters-flyoutAction--apply + .PrepFilters-flyoutAction--extra {
   margin-left: 8px;
@@ -2487,10 +2502,11 @@ body.is-card-dragging * {
 .PrepFilters-flyoutValues {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0;
   overflow: auto;
   flex: 1 1 auto;
   min-height: 0;
+  margin: 0 -4px;
 }
 .PrepFilters-flyoutValue {
   display: flex;
@@ -2498,9 +2514,9 @@ body.is-card-dragging * {
   gap: 8px;
   width: 100%;
   min-height: 30px;
-  padding: 4px;
+  padding: 4px 8px;
   border: 0;
-  border-radius: var(--border-radius-default);
+  border-radius: 0;
   background: var(--surface-default);
   color: var(--text-default);
   font: inherit;
@@ -2518,6 +2534,7 @@ body.is-card-dragging * {
   height: 16px;
   padding: 0;
   border: 0;
+  border-radius: 0;
   background: transparent;
   color: var(--icon-subtle);
   cursor: pointer;
@@ -2525,6 +2542,10 @@ body.is-card-dragging * {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+.PrepFilters-flyoutChevron:hover {
+  color: var(--icon-accent);
+  background: transparent;
 }
 .PrepFilters-flyoutChevron i { font-size: 10px; }
 .PrepFilters-flyoutValue input {
