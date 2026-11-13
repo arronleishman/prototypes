@@ -11678,14 +11678,6 @@ document.getElementById('board').addEventListener('click', (e) => {
     renderBoard();
     return;
   }
-  const filterBtn = e.target.closest('[data-prep-filter-toggle]');
-  if (filterBtn) {
-    e.stopPropagation();
-    prepFilters.open = !prepFilters.open;
-    if (!prepFilters.open) closePrepFilterSubmenu(false);
-    renderBoard();
-    return;
-  }
 });
 
 function handlePrepFiltersClick(e) {
@@ -11780,8 +11772,15 @@ function handlePrepFiltersClick(e) {
 
 document.addEventListener('click', function (e) {
   if (handlePrepFiltersClick(e)) return;
+  const filterBtn = e.target.closest('[data-prep-filter-toggle]');
+  if (filterBtn) {
+    e.stopPropagation();
+    prepFilters.open = !prepFilters.open;
+    if (!prepFilters.open) closePrepFilterSubmenu(false);
+    renderBoard();
+    return;
+  }
   if (!prepFilters.open) return;
-  if (e.target.closest('[data-prep-filter-toggle]')) return;
   prepFilters.open = false;
   closePrepFilterSubmenu(false);
   renderBoard();
