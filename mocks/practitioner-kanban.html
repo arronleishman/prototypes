@@ -6690,8 +6690,8 @@ const REVERT_REASONS = [
 const prepFilters = {
   open: false,
   search: '',
-  priorityOnly: false,
-  readyOnly: false,
+  ready: false,
+  notReady: false,
   showSelected: false,
   openGroups: { work: true, booking: true, engagement: false },
   submenu: null,
@@ -6719,8 +6719,8 @@ function parseDeadlineSort(d) {
 function prepFilterActiveCount() {
   let n = 0;
   if ((prepFilters.search || '').trim()) n += 1;
-  if (prepFilters.priorityOnly) n += 1;
-  if (prepFilters.readyOnly) n += 1;
+  if (prepFilters.ready) n += 1;
+  if (prepFilters.notReady) n += 1;
   n += prepFilters.bookingStates.size;
   n += prepFilters.bookingTypes.size;
   n += prepFilters.clients.size;
@@ -6730,8 +6730,8 @@ function prepFilterActiveCount() {
 
 function clearPrepFilters() {
   prepFilters.search = '';
-  prepFilters.priorityOnly = false;
-  prepFilters.readyOnly = false;
+  prepFilters.ready = false;
+  prepFilters.notReady = false;
   prepFilters.submenu = null;
   prepFilters.flyoutQuery = '';
   prepFilters.draft = null;
@@ -6846,8 +6846,16 @@ function matchesPrepColumnFilters(task) {
     const hay = [task.company, task.engagementType, task.workPhase, ...(task.taxTypes || [])].join(' ').toLowerCase();
     if (!hay.includes(q)) return false;
   }
-  if (prepFilters.priorityOnly && !task.isPriority) return false;
-  if (prepFilters.readyOnly && !task.isReady) return false;
+  if (prepFilters.ready || prepFilters.notReady) {
+    const isReady = !!task.isReady;
+    if (prepFilters.ready && prepFilters.notReady) {
+      /* both selected = no readiness restriction */
+    } else if (prepFilters.ready && !isReady) {
+      return false;
+    } else if (prepFilters.notReady && isReady) {
+      return false;
+    }
+  }
   if (prepFilters.bookingStates.size) {
     if (!prepFilters.bookingStates.has(taskBookingStateLabel(task))) return false;
   }
@@ -7029,8 +7037,8 @@ function renderPrepFiltersPanelHtml() {
           groupTitle('work', 'Work') +
           (workOpen
             ? ('<div class="PrepFilters-options">' +
-                '<label class="PrepFilters-check"><input type="checkbox" id="prepFilterPriority"' + (prepFilters.priorityOnly ? ' checked' : '') + ' /> Priority only</label>' +
-                '<label class="PrepFilters-check"><input type="checkbox" id="prepFilterReady"' + (prepFilters.readyOnly ? ' checked' : '') + ' /> Ready only</label>' +
+                '<label class="PrepFilters-check"><input type="checkbox" id="prepFilterReady"' + (prepFilters.ready ? ' checked' : '') + ' /> Ready</label>' +
+                '<label class="PrepFilters-check"><input type="checkbox" id="prepFilterNotReady"' + (prepFilters.notReady ? ' checked' : '') + ' /> Not ready</label>' +
               '</div>')
             : '') +
         '</section>' +
@@ -11811,13 +11819,13 @@ document.addEventListener('input', function (e) {
 });
 
 document.addEventListener('change', function (e) {
-  if (e.target.id === 'prepFilterPriority') {
-    prepFilters.priorityOnly = !!e.target.checked;
+  if (e.target.id === 'prepFilterReady') {
+    prepFilters.ready = !!e.target.checked;
     renderBoardKeepPrepFilters();
     return;
   }
-  if (e.target.id === 'prepFilterReady') {
-    prepFilters.readyOnly = !!e.target.checked;
+  if (e.target.id === 'prepFilterNotReady') {
+    prepFilters.notReady = !!e.target.checked;
     renderBoardKeepPrepFilters();
   }
 });
