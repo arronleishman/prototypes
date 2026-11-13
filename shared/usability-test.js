@@ -42,7 +42,7 @@
   var root = null;
   var card = null;
   var issueForm = null;
-  var STYLE_VERSION = '2026-09-15-widget-row';
+  var STYLE_VERSION = '2026-11-10-hide-launch';
 
   function addStylesheet() {
     var script = document.currentScript;
@@ -83,7 +83,13 @@
     if (launch) launch.hidden = open;
   }
 
+  function setLayoutMode(mode) {
+    if (!root) return;
+    root.classList.toggle('is-task', mode === 'task');
+  }
+
   function renderIntro() {
+    setLayoutMode('intro');
     card.innerHTML =
       '<div class="ProtoUsability-head"><h2>' + escapeHtml(test.title) + '</h2>' +
         '<button type="button" class="ProtoUsability-close" data-usability-close aria-label="Close usability test">&times;</button></div>' +
@@ -96,12 +102,15 @@
   function renderTask() {
     var task = currentTask();
     if (!task) return;
+    setLayoutMode('task');
     card.innerHTML =
       '<div class="ProtoUsability-head"><h2>' + escapeHtml(test.title) + '</h2>' +
         '<button type="button" class="ProtoUsability-close" data-usability-close aria-label="Close usability test">&times;</button></div>' +
       '<div class="ProtoUsability-body">' +
-        '<div class="ProtoUsability-progress">Task ' + (currentIndex + 1) + ' of ' + test.tasks.length + '</div>' +
-        '<p class="ProtoUsability-task">' + escapeHtml(task.instruction) + '</p>' +
+        '<div class="ProtoUsability-main">' +
+          '<div class="ProtoUsability-progress">Task ' + (currentIndex + 1) + ' of ' + test.tasks.length + '</div>' +
+          '<p class="ProtoUsability-task">' + escapeHtml(task.instruction) + '</p>' +
+        '</div>' +
         '<div class="ProtoUsability-actions">' +
           '<button type="button" class="ProtoUsability-button" data-usability-done>Mark task complete</button>' +
           '<button type="button" class="ProtoUsability-button is-secondary" data-usability-skip>Skip</button>' +
@@ -116,6 +125,7 @@
   }
 
   function renderComplete() {
+    setLayoutMode('intro');
     card.innerHTML =
       '<div class="ProtoUsability-head"><h2>Test complete</h2>' +
         '<button type="button" class="ProtoUsability-close" data-usability-close aria-label="Close usability test">&times;</button></div>' +
@@ -125,14 +135,19 @@
   }
 
   function renderFollowUp(task) {
+    setLayoutMode('task');
     card.innerHTML =
       '<div class="ProtoUsability-head"><h2>Task feedback</h2>' +
         '<button type="button" class="ProtoUsability-close" data-usability-close aria-label="Close usability test">&times;</button></div>' +
       '<div class="ProtoUsability-body">' +
-        '<p class="ProtoUsability-task">' + escapeHtml(task.prompt) + '</p>' +
+        '<div class="ProtoUsability-main">' +
+          '<p class="ProtoUsability-task">' + escapeHtml(task.prompt) + '</p>' +
+        '</div>' +
+        '<div class="ProtoUsability-actions">' +
+          '<button type="button" class="ProtoUsability-button" data-usability-continue>Continue</button>' +
+        '</div>' +
         '<div class="ProtoUsability-issue-form">' +
           '<textarea maxlength="500" data-usability-follow-up placeholder="Add an optional note"></textarea>' +
-          '<button type="button" class="ProtoUsability-button" data-usability-continue>Continue</button>' +
         '</div>' +
       '</div>';
   }

@@ -216,6 +216,19 @@ body {
 }
 .TopBar-checkInCount:empty,
 .TopBar-checkInCount[hidden] { display: none !important; }
+.BoardFilterBtn.is-active {
+  border-color: var(--border-primary);
+  color: var(--text-primary);
+  background: var(--surface-primary-subtle);
+}
+.TopBar-filterCount {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px; margin-left: 2px;
+  border-radius: 9px; background: var(--primary); color: #fff;
+  font-size: 11px; font-weight: 700; line-height: 1;
+}
+.TopBar-filterCount:empty,
+.TopBar-filterCount[hidden] { display: none !important; }
 .Tag {
   display: inline-flex; align-items: center; gap: 4px;
   background: var(--surface-primary-subtle); color: var(--text-primary);
@@ -2166,8 +2179,8 @@ body.is-card-dragging * {
   padding: 0 8px; border: 1px solid #babfd1; border-radius: 0 4px 4px 0;
   background: #fff; font-size: 13px; color: #4c5172; font-weight: 600;
 }
-/* To Do filters — Portfolio PfTeam filter panel chrome, practitioner-light set.
-   Fixed to the viewport so column overflow:hidden cannot clip the panel or flyout. */
+/* Board filters — Portfolio PfTeam filter panel chrome, practitioner-light set.
+   Anchored from the TopBar control; fixed so layout overflow cannot clip the panel. */
 .PrepFilters {
   display: none;
   position: fixed;
@@ -4890,6 +4903,11 @@ body.overlay-open { overflow: hidden; }
     <div class="TopBar">
       <h1 class="TopBar-title" id="topTitle">Your Board</h1>
       <div class="TopBar-actions">
+        <button type="button" class="Btn BoardFilterBtn" id="boardFilterBtn" data-prep-filter-toggle="1" title="Filter board" aria-label="Filter board" aria-expanded="false">
+          <i class="fa-solid fa-filter" aria-hidden="true"></i>
+          Filters
+          <span class="TopBar-filterCount" id="boardFilterCount" hidden></span>
+        </button>
         <button type="button" class="Btn" id="weekCheckInBtn" title="Review In Progress items from last week">
           Week check-in
           <span class="TopBar-checkInCount" id="weekCheckInCount" hidden></span>
@@ -6797,13 +6815,13 @@ function taskBookingStateLabel(task) {
 }
 
 function collectPrepFilterOptions() {
-  const todoCol = columns.find(function (c) { return c.id === 'to-do'; });
-  const todo = (todoCol && todoCol.tasks) || [];
   const types = new Set();
   const clients = new Set();
-  todo.forEach(function (task) {
-    (task.taxTypes || []).forEach(function (t) { if (t) types.add(t); });
-    if (task.company) clients.add(task.company);
+  columns.forEach(function (col) {
+    (col.tasks || []).forEach(function (task) {
+      (task.taxTypes || []).forEach(function (t) { if (t) types.add(t); });
+      if (task.company) clients.add(task.company);
+    });
   });
   return {
     bookingState: PREP_BOOKING_STATES.slice(),
@@ -6852,7 +6870,7 @@ function matchesPrepColumnFilters(task) {
 
 function positionPrepFiltersPanel() {
   const panel = document.getElementById('prepFiltersPanel');
-  const btn = document.querySelector('.column[data-column-id="to-do"] [data-prep-filter-toggle]');
+  const btn = document.getElementById('boardFilterBtn') || document.querySelector('[data-prep-filter-toggle]');
   if (!panel || !btn || !prepFilters.open) return;
   const rect = btn.getBoundingClientRect();
   const gap = 4;
@@ -7001,7 +7019,7 @@ function renderPrepFiltersPanelHtml() {
       flyout +
       '<div class="PrepFilters-body">' +
         '<div class="PrepFilters-search">' +
-          '<input type="search" id="prepFilterSearch" placeholder="Search company or engagement" value="' + (prepFilters.search || '').replace(/"/g, '&quot;') + '" aria-label="Search To Do" />' +
+          '<input type="search" id="prepFilterSearch" placeholder="Search company or engagement" value="' + (prepFilters.search || '').replace(/"/g, '&quot;') + '" aria-label="Search board" />' +
         '</div>' +
         '<div class="PrepFilters-top">' +
           '<button type="button" class="PrepFilters-toggle' + (prepFilters.showSelected ? ' is-on' : '') + '" data-prep-filter-show-selected aria-pressed="' + (prepFilters.showSelected ? 'true' : 'false') + '" aria-label="Show selected filter values only"></button>' +
@@ -7760,8 +7778,9 @@ function renderCard(task, columnId, weekISO) {
 function getVisibleColumns() {
   const weekISO = getWeekISO(state.weekOffset);
   return columns.map(col => {
-    let tasks = col.tasks.filter(t => taskVisibleThisWeek(t, weekISO));
-    if (col.id === 'to-do') tasks = tasks.filter(matchesTodoFilters);
+    const tasks = col.tasks
+      .filter(t => taskVisibleThisWeek(t, weekISO))
+      .filter(matchesPrepColumnFilters);
     return { ...col, tasks };
   });
 }
@@ -7896,25 +7915,32 @@ function renderBoard(opts) {
   const meta = document.getElementById('filterMeta');
   if (meta) meta.textContent = 'Week ' + weekISO;
 
+  const filterCount = prepFilterActiveCount();
+  const filterActive = filterCount > 0;
+  const boardFilterBtn = document.getElementById('boardFilterBtn');
+  const boardFilterCount = document.getElementById('boardFilterCount');
+  if (boardFilterBtn) {
+    boardFilterBtn.classList.toggle('is-active', filterActive || prepFilters.open);
+    boardFilterBtn.setAttribute('aria-expanded', prepFilters.open ? 'true' : 'false');
+  }
+  if (boardFilterCount) {
+    boardFilterCount.hidden = !filterActive;
+    boardFilterCount.textContent = filterActive ? String(filterCount) : '';
+  }
+
   document.getElementById('board').innerHTML = cols.map(col => {
     let actions = '';
-    if (col.id === 'to-do') {
-      const filterActive = prepFilterActiveCount() > 0;
-      actions += '<button type="button" class="ColFilter' + (filterActive || prepFilters.open ? ' is-active' : '') + '" title="Filter" aria-label="Filter" aria-expanded="' + (prepFilters.open ? 'true' : 'false') + '" data-prep-filter-toggle="1"><i class="fa-solid fa-filter"></i></button>';
-    }
     if (col.id === 'in-progress') {
       const hrs = Math.round(bookingHoursForWeek(col.tasks, weekISO) * 10) / 10;
       const full = hrs >= WEEKLY_CAPACITY;
       actions += '<span class="CapacityBadge' + (full ? ' is-full' : '') + '">' + hrs + ' / ' + WEEKLY_CAPACITY + ' h</span>';
     }
-    const visibleCount = col.id === 'to-do'
-      ? col.tasks.filter(matchesPrepColumnFilters).filter(t => taskVisibleThisWeek(t, weekISO)).length
-      : col.tasks.filter(t => taskVisibleThisWeek(t, weekISO)).length;
+    const visibleCount = col.tasks.length;
     actions += '<span class="count">' + visibleCount + '</span>';
 
     let body = '';
     if (col.id === 'to-do') {
-      const tasks = col.tasks.filter(matchesPrepColumnFilters).filter(t => taskVisibleThisWeek(t, weekISO));
+      const tasks = col.tasks;
       const scheduled = tasks.filter(t => t.deadline && t.engagementType !== 'Time Off' && t.engagementType !== 'Training')
         .slice().sort((a, b) => parseDeadlineSort(a.deadline) - parseDeadlineSort(b.deadline));
       const pooled = tasks.filter(t => !t.deadline && t.engagementType !== 'Time Off' && t.engagementType !== 'Training');
@@ -7929,9 +7955,8 @@ function renderBoard(opts) {
       }
       body = parts.join('') || columnEmptyState(col.id);
     } else {
-      const visible = col.tasks.filter(t => taskVisibleThisWeek(t, weekISO));
-      body = visible.length
-        ? visible.map(t => renderCard(t, col.id, weekISO)).join('')
+      body = col.tasks.length
+        ? col.tasks.map(t => renderCard(t, col.id, weekISO)).join('')
         : columnEmptyState(col.id);
     }
 
@@ -12408,7 +12433,7 @@ window.addEventListener('scroll', function () {
 <script src="../shared/telemetry-store.js"></script>
 <script src="../shared/usability-test-store.js?v=2026-09-15-kanban-session"></script>
 <script src="../shared/telemetry.js?v=2026-09-10-heatmap-pages" defer></script>
-<script src="../shared/usability-test.js?v=2026-09-15-widget-row" defer></script>
+<script src="../shared/usability-test.js?v=2026-11-10-hide-launch" defer></script>
 <script src="../shared/feedback.js" defer></script>
 </body>
 </html>

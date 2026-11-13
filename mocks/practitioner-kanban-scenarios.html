@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en-GB" data-prototype-id="practitioner-kanban-scenarios" data-prototype-title="Practitioner Kanban scenarios">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practitioner Kanban scenarios</title>
+  <style>
+    :root {
+      --ink: #1a1f24;
+      --muted: #5a6570;
+      --line: #d8dee4;
+      --paper: #f7f5f1;
+      --card: #ffffff;
+      --accent: #0b6e4f;
+      --accent-soft: #e6f3ed;
+      --warn: #8a5a00;
+      --warn-soft: #fff3d6;
+      --partial: #8a4b12;
+      --partial-soft: #fce9d8;
+      --blocked: #8b1e1e;
+      --blocked-soft: #f8e4e4;
+      --system: #1e3a5f;
+      --system-soft: #e4eef8;
+      --todo: #4a5568;
+      --progress: #1d6fa5;
+      --hold: #b45309;
+      --done: #0b6e4f;
+      --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+      --sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 50% at 10% -10%, #e8f0ea 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 100% 0%, #e7eef6 0%, transparent 50%),
+        var(--paper);
+      font-family: var(--sans);
+      line-height: 1.5;
+    }
+
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+
+    header.hero {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 1.75rem;
+      margin-bottom: 2rem;
+    }
+    .eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+      margin: 0 0 0.75rem;
+    }
+    h1 {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: clamp(1.9rem, 4vw, 2.6rem);
+      line-height: 1.15;
+      margin: 0 0 0.75rem;
+      letter-spacing: -0.02em;
+    }
+    .lede { color: var(--muted); max-width: 46rem; margin: 0; font-size: 1.05rem; }
+    .meta {
+      display: flex; flex-wrap: wrap; gap: 0.5rem 1rem;
+      margin-top: 1.25rem; font-size: 0.85rem; color: var(--muted);
+    }
+    .meta code {
+      font-family: var(--mono); font-size: 0.8rem;
+      background: #fff; border: 1px solid var(--line); padding: 0.1rem 0.4rem; border-radius: 4px;
+    }
+
+    nav.toc {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2rem;
+    }
+    nav.toc h2 { margin: 0 0 0.75rem; font-size: 0.95rem; }
+    nav.toc ul {
+      margin: 0; padding: 0; list-style: none;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.35rem 1rem;
+    }
+    nav.toc a { color: var(--ink); text-decoration: none; font-size: 0.92rem; }
+    nav.toc a:hover { color: var(--accent); text-decoration: underline; }
+
+    section { margin-bottom: 2.75rem; }
+    h2 {
+      font-family: var(--serif);
+      font-size: 1.55rem;
+      margin: 0 0 0.75rem;
+      letter-spacing: -0.015em;
+    }
+    h3 {
+      font-size: 1.05rem;
+      margin: 1.5rem 0 0.6rem;
+      color: var(--ink);
+    }
+    p.section-intro { color: var(--muted); margin: 0 0 1rem; max-width: 48rem; }
+
+    .board-model {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin: 1rem 0 1.25rem;
+    }
+    .board-model article {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+    }
+    .board-model h4 { margin: 0 0 0.35rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    .board-model p { margin: 0; font-size: 0.95rem; }
+
+    .columns {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+    @media (max-width: 700px) { .columns { grid-template-columns: 1fr 1fr; } }
+    .col {
+      border-radius: 8px;
+      padding: 0.75rem;
+      color: #fff;
+      font-weight: 600;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .col.todo { background: var(--todo); }
+    .col.progress { background: var(--progress); }
+    .col.hold { background: var(--hold); }
+    .col.done { background: var(--done); }
+
+    .flow {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem;
+      font-size: 0.82rem; color: var(--muted); margin: 0.75rem 0 1.25rem;
+    }
+    .flow span.pill {
+      background: #fff; border: 1px solid var(--line);
+      border-radius: 999px; padding: 0.15rem 0.55rem; color: var(--ink);
+    }
+    .flow .arrow { opacity: 0.5; }
+
+    .filters {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 1rem;
+    }
+    .filters button {
+      font: inherit; font-size: 0.82rem; cursor: pointer;
+      border: 1px solid var(--line); background: #fff;
+      border-radius: 999px; padding: 0.3rem 0.75rem; color: var(--muted);
+    }
+    .filters button.active, .filters button:hover {
+      border-color: var(--accent); color: var(--accent); background: var(--accent-soft);
+    }
+
+    .scenario {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1rem 1.15rem 1.1rem;
+      margin: 0 0 0.75rem;
+      transition: box-shadow 0.15s ease;
+    }
+    .scenario:hover { box-shadow: 0 6px 20px rgba(26, 31, 36, 0.06); }
+    .scenario.hidden { display: none; }
+    .scenario-top {
+      display: flex; flex-wrap: wrap; gap: 0.4rem 0.6rem; align-items: center;
+      margin-bottom: 0.45rem;
+    }
+    .sid {
+      font-family: var(--mono); font-size: 0.78rem; font-weight: 700;
+      background: var(--ink); color: #fff;
+      padding: 0.15rem 0.45rem; border-radius: 4px;
+    }
+    .scenario h4 { margin: 0; font-size: 1.02rem; flex: 1 1 auto; }
+    .badge {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em;
+      text-transform: uppercase; border-radius: 999px; padding: 0.18rem 0.55rem;
+    }
+    .badge.ok { background: var(--accent-soft); color: var(--accent); }
+    .badge.partial { background: var(--partial-soft); color: var(--partial); }
+    .badge.warn { background: var(--warn-soft); color: var(--warn); }
+    .badge.blocked { background: var(--blocked-soft); color: var(--blocked); }
+    .badge.system { background: var(--system-soft); color: var(--system); }
+    .badge.actor { background: #f0f0f0; color: var(--muted); }
+
+    .scenario dl {
+      margin: 0.5rem 0 0;
+      display: grid;
+      grid-template-columns: 7.5rem 1fr;
+      gap: 0.35rem 0.75rem;
+      font-size: 0.92rem;
+    }
+    .scenario dt { color: var(--muted); font-weight: 600; }
+    .scenario dd { margin: 0; }
+
+    .support-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.65rem;
+    }
+    .support-grid article {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+    }
+    .support-grid h4 { margin: 0 0 0.3rem; font-size: 0.95rem; }
+    .support-grid p { margin: 0; font-size: 0.88rem; color: var(--muted); }
+
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: var(--accent-soft);
+      padding: 0.85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+      font-size: 0.92rem;
+    }
+    .callout.warn {
+      border-left-color: var(--warn);
+      background: var(--warn-soft);
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding-top: 1.25rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--accent); }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    @media (max-width: 700px) { .split { grid-template-columns: 1fr; } }
+    .split article {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+    }
+    .split h4 { margin: 0 0 0.4rem; }
+    .split ul { margin: 0; padding-left: 1.1rem; font-size: 0.9rem; }
+    .split li { margin: 0.25rem 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="eyebrow">Dayshape · Practitioner Kanban</p>
+      <h1>All practitioner scenarios on the feature</h1>
+      <p class="lede">
+        A map of what a practitioner can do on Practitioner Kanban (Phase view),
+        as defined for <strong>prac-kanban-v4</strong> and exercised against
+        <strong>Stramash</strong> (use the <em>First Environment</em> instance for Pinion data).
+      </p>
+      <div class="meta">
+        <span>Source: <code>appTax/docs/user-flows</code> + Critical Kanban Playwright</span>
+        <span>Branch: <code>feature/prac-kanban-v4</code></span>
+        <span>FigJam: Practitioner Kanban Userflow · Phase view (v4)</span>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Contents">
+      <h2>Contents</h2>
+      <ul>
+        <li><a href="#board">Board model</a></li>
+        <li><a href="#lifecycle">Card lifecycle</a></li>
+        <li><a href="#work">Start &amp; complete</a></li>
+        <li><a href="#defer">Defer</a></li>
+        <li><a href="#hold">Block &amp; unblock</a></li>
+        <li><a href="#review">Review</a></li>
+        <li><a href="#create">Create &amp; remove</a></li>
+        <li><a href="#auto">System automation</a></li>
+        <li><a href="#ui">Board UI beyond Sxx</a></li>
+        <li><a href="#split">Practitioner vs system</a></li>
+        <li><a href="#stramash">Stramash tips</a></li>
+      </ul>
+    </nav>
+
+    <section id="board">
+      <h2>Board model</h2>
+      <p class="section-intro">
+        A <strong>Card = one Booking (Task)</strong>: one worker × hours × dates.
+        Best practice is one Booking per Phase per week. The board is week-scoped.
+      </p>
+      <div class="board-model">
+        <article>
+          <h4>Columns</h4>
+          <p>To Do · In Progress · On Hold · Done</p>
+        </article>
+        <article>
+          <h4>Status owner</h4>
+          <p>Kanban Status lives on the Booking; Phase status is a roll-up.</p>
+        </article>
+        <article>
+          <h4>Pooled vs scheduled</h4>
+          <p>Pooled = unassigned, practitioner-led. Scheduled = pre-assigned worker.</p>
+        </article>
+        <article>
+          <h4>Week lens</h4>
+          <p>Navigate by week. Multi-week bookings share one status across weeks.</p>
+        </article>
+      </div>
+      <div class="columns" aria-hidden="true">
+        <div class="col todo">To Do</div>
+        <div class="col progress">In Progress</div>
+        <div class="col hold">On Hold</div>
+        <div class="col done">Done</div>
+      </div>
+    </section>
+
+    <section id="lifecycle">
+      <h2>Card lifecycle at a glance</h2>
+      <div class="flow" aria-label="Lifecycle summary">
+        <span class="pill">New demand (S21)</span><span class="arrow">→</span>
+        <span class="pill">To Do</span><span class="arrow">→</span>
+        <span class="pill">Start (S01)</span><span class="arrow">→</span>
+        <span class="pill">In Progress</span><span class="arrow">→</span>
+        <span class="pill">Complete (S02/S03)</span><span class="arrow">→</span>
+        <span class="pill">Done</span>
+      </div>
+      <p class="section-intro" style="margin-top:0">
+        Side paths: To Do → Done without starting (S04, scheduled only) ·
+        To Do / In Progress → On Hold (S07/S08) · On Hold → resume (S10B) ·
+        Defer To Do (S05) · Reopen Done (S11/S20) · Put back to To Do (S19) ·
+        Return to Pool (S22).
+      </p>
+
+      <div class="filters" id="filters" role="group" aria-label="Filter scenarios">
+        <button type="button" class="active" data-filter="all">All</button>
+        <button type="button" data-filter="practitioner">Practitioner</button>
+        <button type="button" data-filter="system">System</button>
+        <button type="button" data-filter="ok">Implemented</button>
+        <button type="button" data-filter="partial">Partial / pending</button>
+        <button type="button" data-filter="blocked">Not in MVP / not built</button>
+      </div>
+    </section>
+
+    <section id="work">
+      <h2>Starting &amp; completing work</h2>
+      <p class="section-intro">Core drag lifecycle a practitioner uses every week.</p>
+
+      <article class="scenario" data-tags="practitioner ok" id="s01">
+        <div class="scenario-top">
+          <span class="sid">S01</span>
+          <h4>Start work</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge ok">Implemented</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag card <strong>To Do → In Progress</strong>.</dd>
+          <dt>Board</dt><dd>Card moves to In Progress. If a prior phase is still To Do, a warning toast may show (not a hard block).</dd>
+          <dt>Data / Gantt</dt><dd>Booking status → In Progress. <em>Scheduled:</em> no assignment change. <em>Pooled:</em> claim assigns the pool group; selected card starts, sibling pool bookings for that worker stay To Do; capacity updates.</dd>
+          <dt>Stramash</dt><dd>Try both scheduled and pooled cards on First Environment (Pinion).</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner ok" id="s02">
+        <div class="scenario-top">
+          <span class="sid">S02</span>
+          <h4>Complete work — no future bookings</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge ok">Implemented</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag <strong>In Progress → Done</strong>.</dd>
+          <dt>Board</dt><dd><strong>Mark Complete</strong> modal captures effort. Card sits in Done for this week.</dd>
+          <dt>Data / Gantt</dt><dd>Status → Done; this week’s effort set to actual; capacity recalculates. No “future bookings” branch.</dd>
+          <dt>Stramash</dt><dd>Confirm effort modal and capacity change after complete.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner ok" id="s03">
+        <div class="scenario-top">
+          <span class="sid">S03</span>
+          <h4>Complete work — future bookings exist</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge ok">Implemented</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag <strong>In Progress → Done</strong> when the booking has future weeks.</dd>
+          <dt>Board</dt><dd>Modal offers: <em>Done this week</em> (keep futures) or <em>Phase complete</em> (remove this worker’s future bookings) + effort.</dd>
+          <dt>Data / Gantt</dt><dd>Phase complete deletes <strong>this worker’s</strong> future bookings on the phase only; other workers untouched.</dd>
+          <dt>Stramash</dt><dd>Check next week for presence/absence of the card after each choice.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner ok" id="s04">
+        <div class="scenario-top">
+          <span class="sid">S04</span>
+          <h4>Complete without starting</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge ok">Implemented</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag <strong>To Do → Done</strong>.</dd>
+          <dt>Board</dt><dd><em>Scheduled:</em> Mark Complete modal, then Done. <em>Pooled:</em> drop blocked — must go via In Progress first.</dd>
+          <dt>Data / Gantt</dt><dd>Scheduled booking marked Done with effort captured.</dd>
+          <dt>Stramash</dt><dd>Verify pooled cards cannot skip straight to Done.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner ok" id="s11">
+        <div class="scenario-top">
+          <span class="sid">S11</span>
+          <h4>Reopen completed work (as In Progress)</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge ok">Implemented</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag <strong>Done → In Progress</strong> (current week only).</dd>
+          <dt>Board</dt><dd>Status-only reopen; no modal; no new booking. Past-week Done is read-only.</dd>
+          <dt>Stramash</dt><dd>Confirm previous weeks cannot be reopened.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner ok" id="s19">
+        <div class="scenario-top">
+          <span class="sid">S19</span>
+          <h4>Put work back to To Do</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge ok">Implemented</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag <strong>In Progress → To Do</strong>.</dd>
+          <dt>Board</dt><dd>Status-only; no modal or reason capture.</dd>
+          <dt>Stramash</dt><dd>Symmetric undo of S01.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner ok" id="s20">
+        <div class="scenario-top">
+          <span class="sid">S20</span>
+          <h4>Reopen completed work as not started</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge ok">Implemented</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag <strong>Done → To Do</strong> (current week only).</dd>
+          <dt>Board</dt><dd>Status-only back to To Do; same week gate as S11.</dd>
+          <dt>Stramash</dt><dd>Pair with S11 when validating reopen rules.</dd>
+        </dl>
+      </article>
+    </section>
+
+    <section id="defer">
+      <h2>Deferring work</h2>
+      <p class="section-intro">“Not this week — later.” Different meaning from On Hold, but related mechanics.</p>
+
+      <article class="scenario" data-tags="practitioner ok" id="s05">
+        <div class="scenario-top">
+          <span class="sid">S05</span>
+          <h4>Defer unstarted scheduled work</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge ok">Implemented</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag scheduled <strong>To Do</strong> onto the On Hold column <strong>defer zone</strong> (not the hold zone).</dd>
+          <dt>Board</dt><dd>Card leaves this week and reappears as To Do next week. Deadline-breach modal can warn but still allow.</dd>
+          <dt>Data / Gantt</dt><dd>Booking dates shift +7 calendar days; stays To Do. Later weeks are not shunted in the current ship.</dd>
+          <dt>Stramash</dt><dd>Distinguish defer zone vs hold zone; check capacity on both weeks.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner blocked" id="s06">
+        <div class="scenario-top">
+          <span class="sid">S06</span>
+          <h4>Defer started work</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge blocked">Out of MVP</span>
+        </div>
+        <dl>
+          <dt>Action (design)</dt><dd>Defer from In Progress with remaining-effort modal.</dd>
+          <dt>Today</dt><dd>Not a separate flow — use <strong>S08 On Hold</strong> when you cannot finish mid-progress.</dd>
+          <dt>Stramash</dt><dd>Do not expect a dedicated defer-from-In-Progress path.</dd>
+        </dl>
+      </article>
+    </section>
+
+    <section id="hold">
+      <h2>Blocking &amp; unblocking</h2>
+      <p class="section-intro">Put work On Hold (reason + unblock date), then resume early manually.</p>
+
+      <article class="scenario" data-tags="practitioner partial" id="s07">
+        <div class="scenario-top">
+          <span class="sid">S07</span>
+          <h4>Block before starting</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge partial">Partial</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag <strong>To Do → On Hold</strong> (pooled work must be claimed / started first).</dd>
+          <dt>Board</dt><dd>On Hold modal: reason, unblock date, effort so far, remaining. Card stays visible in On Hold.</dd>
+          <dt>Data / Gantt</dt><dd>Selected booking can split (effort so far vs remaining hold booking). Full successor <em>booking shunting</em> is not implemented.</dd>
+          <dt>Stramash</dt><dd>Use scheduled To Do cards; confirm modal validation on efforts.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner partial" id="s08">
+        <div class="scenario-top">
+          <span class="sid">S08</span>
+          <h4>Block mid progress</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge partial">Partial</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag <strong>In Progress → On Hold</strong>.</dd>
+          <dt>Board</dt><dd>Drop zones: On Hold (top) and optionally <em>Revert to previous phase</em> (bottom). On Hold / revert modals.</dd>
+          <dt>Data / Gantt</dt><dd>Booking split similar to S07. Spent effort can land in Done; On Hold portion does not count as capacity the same way.</dd>
+          <dt>Stramash</dt><dd>Exercise both drop zones where a previous phase name exists.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner partial" id="s10b">
+        <div class="scenario-top">
+          <span class="sid">S10B</span>
+          <h4>Unblock — resume now (manual)</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge partial">Agreed · verify on env</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag On Hold card back to <strong>To Do</strong> or <strong>In Progress</strong> before the unblock date.</dd>
+          <dt>Board</dt><dd>Target status applied; other held bookings for the group may return to To Do.</dd>
+          <dt>Data / Gantt</dt><dd>Prefers a current-week held booking; otherwise may move the earliest future hold into the current week. No reverse shunt of successors.</dd>
+          <dt>Stramash</dt><dd>This is the only way off On Hold today — automated S09/S10A are not built.</dd>
+        </dl>
+      </article>
+    </section>
+
+    <section id="review">
+      <h2>Review workflow</h2>
+      <p class="section-intro">Reviewer ↔ preparer loop. Treat as incomplete on Stramash until persistence is solid.</p>
+
+      <article class="scenario" data-tags="practitioner partial" id="s12">
+        <div class="scenario-top">
+          <span class="sid">S12</span>
+          <h4>Review rejected (absorbs S14)</h4>
+          <span class="badge actor">Practitioner (reviewer)</span>
+          <span class="badge partial">Partial</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Reviewer rejects / reverts preparation work.</dd>
+          <dt>Board (target)</dt><dd>Reviewer card moves toward hold/pending; preparer gets a new To Do rework card. Modal can pick preparer (defaults to most preparation effort — former S14).</dd>
+          <dt>Today</dt><dd>UI / optimistic banners may exist; backend rework booking creation / persistence was still incomplete at last flow audit.</dd>
+          <dt>Stramash</dt><dd>Expect fragile behaviour; banners may vanish on reload.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner blocked" id="s13">
+        <div class="scenario-top">
+          <span class="sid">S13</span>
+          <h4>Rework completed</h4>
+          <span class="badge actor">Practitioner (preparer)</span>
+          <span class="badge blocked">Depends on S12</span>
+        </div>
+        <dl>
+          <dt>Action (target)</dt><dd>Preparer completes rework; reviewer To Do becomes ready again.</dd>
+          <dt>Today</dt><dd>Blocked until S12 backend path is reliable.</dd>
+          <dt>Stramash</dt><dd>Look for readiness badge on the reviewer card once rework exists.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner ok" id="s14">
+        <div class="scenario-top">
+          <span class="sid">S14</span>
+          <h4>Multi-preparer assignment</h4>
+          <span class="badge actor">—</span>
+          <span class="badge ok">Absorbed into S12</span>
+        </div>
+        <dl>
+          <dt>Note</dt><dd>No standalone scenario. S12 modal pre-selects the preparer with the most preparation effort; reviewer can change.</dd>
+        </dl>
+      </article>
+    </section>
+
+    <section id="create">
+      <h2>Creating &amp; removing work</h2>
+
+      <article class="scenario" data-tags="practitioner ok" id="s21">
+        <div class="scenario-top">
+          <span class="sid">S21</span>
+          <h4>Create demand / booking from the board</h4>
+          <span class="badge actor">Practitioner</span>
+          <span class="badge ok">In code &amp; tests</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Create Booking from the board (engagement search, this / next / custom week).</dd>
+          <dt>Board</dt><dd>New card appears in the target week; toast if created outside the selected week.</dd>
+          <dt>Doc note</dt><dd>User-flow doc still marked pending as of an older audit; Critical Playwright <code>Kanban.BookingCreation</code> and UI modals are present on v4.</dd>
+          <dt>Stramash</dt><dd>Create against Pinion engagements on First Environment.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="practitioner ok" id="s22">
+        <div class="scenario-top">
+          <span class="sid">S22</span>
+          <h4>Return to Pool</h4>
+          <span class="badge actor">Practitioner (pool worker)</span>
+          <span class="badge ok">Return shipped</span>
+        </div>
+        <dl>
+          <dt>Action</dt><dd>Drag eligible assigned To Do / In Progress onto the To Do column <strong>Return to Pool</strong> zone → confirm.</dd>
+          <dt>Board</dt><dd>Group bookings become pooled To Do; capacity drops. This is <strong>not</strong> delete.</dd>
+          <dt>Also</dt><dd>In Progress → Scheduled To Do can be status-only (keeps assignment). Pooled → Scheduled To Do claims without starting.</dd>
+          <dt>Stramash</dt><dd>Hard delete of work remains unresolved — use Return to Pool, not delete.</dd>
+        </dl>
+      </article>
+    </section>
+
+    <section id="auto">
+      <h2>System automation (not practitioner-initiated)</h2>
+      <p class="section-intro">These fire on dates or week open — mostly still design / partial.</p>
+
+      <article class="scenario" data-tags="system blocked" id="s09">
+        <div class="scenario-top">
+          <span class="sid">S09</span>
+          <h4>Automated unblock — not yet started</h4>
+          <span class="badge system">System</span>
+          <span class="badge blocked">Not built</span>
+        </div>
+        <dl>
+          <dt>Trigger</dt><dd>Unblock date reached for work that was never started.</dd>
+          <dt>Target</dt><dd>On Hold → To Do automatically.</dd>
+          <dt>Today</dt><dd><code>UnblockDate</code> is stored but not consumed by a job. Only S10B leaves On Hold.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="system blocked" id="s10a">
+        <div class="scenario-top">
+          <span class="sid">S10A</span>
+          <h4>Automated unblock — resume</h4>
+          <span class="badge system">System</span>
+          <span class="badge blocked">Not built</span>
+        </div>
+        <dl>
+          <dt>Trigger</dt><dd>Unblock date reached for work that had been started.</dd>
+          <dt>Target</dt><dd>Same destination as S09 in current design (To Do). Kept as a separate ID for automation docs.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="system partial" id="s15">
+        <div class="scenario-top">
+          <span class="sid">S15</span>
+          <h4>Week rollover — In Progress, no futures</h4>
+          <span class="badge system">System + prompt</span>
+          <span class="badge partial">Designed (POST V1)</span>
+        </div>
+        <dl>
+          <dt>Trigger</dt><dd>First board open in a new week with leftover In Progress.</dd>
+          <dt>Target</dt><dd>Modal: completed last week? Yes → Done previous week. Still going → split remaining into new To Do this week.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="system partial" id="s16">
+        <div class="scenario-top">
+          <span class="sid">S16</span>
+          <h4>Week rollover — In Progress, futures exist</h4>
+          <span class="badge system">System + prompt</span>
+          <span class="badge partial">Designed (POST V1)</span>
+        </div>
+        <dl>
+          <dt>Trigger</dt><dd>Same as S15 when a future booking exists (not necessarily this week).</dd>
+          <dt>Target</dt><dd>Yes keeps futures; Still going can create a current-week booking. Contiguous booking already this week may auto-close old week without a modal.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="system partial" id="s17">
+        <div class="scenario-top">
+          <span class="sid">S17</span>
+          <h4>Week rollover — untouched To Do</h4>
+          <span class="badge system">System</span>
+          <span class="badge partial">Partial</span>
+        </div>
+        <dl>
+          <dt>Today</dt><dd>Overdue indicator is built. Automatic booking roll into the new week is not.</dd>
+          <dt>Stramash</dt><dd>Expect overdue cues; do not expect auto-roll yet.</dd>
+        </dl>
+      </article>
+
+      <article class="scenario" data-tags="system ok" id="s18">
+        <div class="scenario-top">
+          <span class="sid">S18</span>
+          <h4>Week rollover — was Done last week</h4>
+          <span class="badge system">System</span>
+          <span class="badge ok">Agreed no-op</span>
+        </div>
+        <dl>
+          <dt>Behaviour</dt><dd>Card does not reappear; no new booking. Negative assert on Stramash.</dd>
+        </dl>
+      </article>
+    </section>
+
+    <section id="ui">
+      <h2>Board UI practitioners also use (beyond Sxx)</h2>
+      <p class="section-intro">
+        Supporting interactions on the same Stramash Kanban surface.
+        The public usability widget on
+        <a href="practitioner-kanban.html">Practitioner Kanban</a>
+        exercises these gap scenarios (S04, S06, shunting, S11/S20, S21, S22, S17) alongside the happy path — this map stays Stramash product truth; the widget is where we test the gaps.
+      </p>
+      <div class="support-grid">
+        <article>
+          <h4>Week navigation</h4>
+          <p>Previous / next week via board controls; URL carries <code>weekKey</code>.</p>
+        </article>
+        <article>
+          <h4>Capacity indicator</h4>
+          <p>See weekly used capacity; updates on claim, complete, defer, return to pool.</p>
+        </article>
+        <article>
+          <h4>Column filters</h4>
+          <p>Filter cards within columns (phase / traits / search facets depending on build).</p>
+        </article>
+        <article>
+          <h4>Engagement search</h4>
+          <p>Find engagements when creating demand or navigating work.</p>
+        </article>
+        <article>
+          <h4>Card sidebar</h4>
+          <p>Open a card for engagement info, phases, milestones, booking dates, status banners.</p>
+        </article>
+        <article>
+          <h4>Effort edit</h4>
+          <p>Adjust effort from sidebar / effort controls (also prompted on complete / hold).</p>
+        </article>
+        <article>
+          <h4>Phase readiness badges</h4>
+          <p>Informational ready / not-ready cues from phase predecessors — not a hard start gate.</p>
+        </article>
+        <article>
+          <h4>Due-date warnings</h4>
+          <p>Defer and On Hold flows can warn when dates breach phase due / scheduled end.</p>
+        </article>
+        <article>
+          <h4>Trait overflow &amp; importance</h4>
+          <p>Card shows traits (+N overflow) and importance cues.</p>
+        </article>
+        <article>
+          <h4>Past-week Done lock</h4>
+          <p>Historical Done cards are read-only with tooltip; reopen only in the current week.</p>
+        </article>
+        <article>
+          <h4>Preceding-phase toast</h4>
+          <p>Starting work while a prior phase is still To Do can show a warning toast.</p>
+        </article>
+        <article>
+          <h4>Feature flag</h4>
+          <p>Without Kanban access / flag, board routes can 404.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="split">
+      <h2>Practitioner vs system</h2>
+      <div class="split">
+        <article>
+          <h4>Practitioner can</h4>
+          <ul>
+            <li>Start, complete, put back, reopen (S01–S04, S11, S19, S20)</li>
+            <li>Defer unstarted scheduled work (S05)</li>
+            <li>Hold from To Do / In Progress (S07, S08)</li>
+            <li>Manually resume from On Hold (S10B)</li>
+            <li>Create bookings (S21) and Return to Pool (S22)</li>
+            <li>Navigate weeks, filter, search, use sidebar, respond to readiness / due warnings</li>
+            <li>Claim pooled work by starting it</li>
+          </ul>
+        </article>
+        <article>
+          <h4>Not available / not MVP yet</h4>
+          <ul>
+            <li>Defer from In Progress (S06) — use On Hold</li>
+            <li>Full booking shunting on hold/defer</li>
+            <li>Automated unblock by date (S09 / S10A)</li>
+            <li>Reliable review rework loop (S12 / S13)</li>
+            <li>Delete work via unassign (Return to Pool ≠ delete)</li>
+            <li>Pooled To Do → Done shortcut</li>
+            <li>Week-rollover auto-roll (S17) and first-open modals (S15 / S16) as fully shipped automation</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="stramash">
+      <h2>Stramash tips</h2>
+      <div class="callout">
+        Gap probing for incomplete / not-MVP behaviours also runs via the usability widget on
+        <a href="practitioner-kanban.html">Practitioner Kanban</a>
+        — status badges on this map are unchanged Stramash truth.
+      </div>
+      <div class="callout">
+        <strong>Use First Environment</strong> for Pinion demo data. The High Volume instance only has thin test data —
+        an empty-looking board there does not mean the feature is broken.
+      </div>
+      <div class="callout warn">
+        Local FE against Stramash: forward port <strong>4000</strong> in Cursor Ports, open
+        <code>http://localhost:4000/kanban</code>, and sign in with <strong>Dayshape Staff Login</strong>
+        (Auth0’s normal Login button rejects localhost).
+      </div>
+      <p class="section-intro">
+        Authoritative flow write-ups live under
+        <code>Dayshape/Dayshape/appTax/docs/user-flows/</code> on
+        <code>feature/prac-kanban-v4</code>. FigJam remains the design source of truth for Phase view v4.
+      </p>
+    </section>
+
+    <footer>
+      <p>
+        Generated from Practitioner Kanban user-flow docs and Critical Kanban Playwright coverage
+        (<code>feature/prac-kanban-v4</code> · Stramash First Environment).
+      </p>
+      <p>
+        FigJam:
+        <a href="https://www.figma.com/board/0xgbzwShxxB4UUqnkLg6sP/Practioner-Kanban-Userflow?node-id=51-706">
+          Practitioner Kanban Userflow · Phase view (v4)
+        </a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const buttons = document.querySelectorAll("#filters button");
+      const scenarios = document.querySelectorAll(".scenario");
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          buttons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          const filter = btn.getAttribute("data-filter");
+          scenarios.forEach((card) => {
+            const tags = (card.getAttribute("data-tags") || "").split(/\s+/);
+            const show =
+              filter === "all" ||
+              tags.includes(filter) ||
+              (filter === "partial" && tags.includes("warn"));
+            card.classList.toggle("hidden", !show);
+          });
+        });
+      });
+    })();
+  </script>
+  <script src="../config.js"></script>
+  <script src="../shared/access.js"></script>
+  <script src="../shared/feedback-store.js"></script>
+  <script src="../shared/telemetry-store.js"></script>
+  <script src="../shared/telemetry.js" defer></script>
+  <script src="../shared/feedback.js" defer></script>
+</body>
+</html>

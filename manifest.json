@@ -5,7 +5,15 @@
     "description": "Tax practitioner board — bookings, defer, capacity, week check-in.",
     "path": "mocks/practitioner-kanban.html",
     "status": "active",
-    "updated": "2026-11-03"
+    "updated": "2026-11-13"
+  },
+  {
+    "id": "practitioner-kanban-scenarios",
+    "title": "Practitioner Kanban scenarios",
+    "description": "Scenario map for Phase view on Stramash / prac-kanban-v4 — what is implemented, partial, or out of MVP.",
+    "path": "mocks/practitioner-kanban-scenarios.html",
+    "status": "draft",
+    "updated": "2026-11-10"
   },
   {
     "id": "demand-templates",

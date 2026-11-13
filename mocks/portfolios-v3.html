@@ -836,25 +836,28 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-toolBtn {
     display: inline-flex; align-items: center; justify-content: center; gap: 4px;
     height: 28px; padding: 0 8px; box-sizing: border-box; flex: 0 0 auto;
-    border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
+    border: 1px solid var(--border-default); border-radius: 4px;
     background: var(--surface-default); color: var(--icon-accent);
     font: inherit; cursor: pointer;
 }
-.PfTeam-toolBtn i { font-size: 14px; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; color: var(--icon-accent); }
-.PfTeam-toolBtn:hover { background: var(--surface-subtle-light); }
-.PfTeam-toolBtn.is-active { border-color: var(--border-primary); }
-.PfTeam-toolBtn--filter { width: 48px; border-radius: 4px 0 0 4px; }
-.PfTeam-toolBtn--clear {
-    width: 30px; border-radius: 0 4px 4px 0; border-left: 0; color: var(--icon-disabled);
-}
-.PfTeam-toolBtn--clear i { width: 10px; height: 10px; font-size: 10px; color: var(--icon-disabled); }
+.PfTeam-toolBtn i { font-size: 14px; }
+.PfTeam-toolBtn:hover,
+.PfTeam-toolBtn.is-on,
+.PfTeam-toolBtn.is-on:hover { color: var(--text-inverse); background: var(--surface-emphasis); border-color: var(--surface-emphasis); }
+.PfTeam-toolBtn:disabled,
+.PfTeam-toolBtn:disabled:hover { color: var(--text-disabled); background: var(--surface-default); border-color: var(--border-default); cursor: default; }
+.PfTeam-toolBtn--filter,
 .PfTeam-toolBtn--settings { width: 48px; }
-.PfTeam-toolBtn--view { width: 30px; }
+.PfTeam-toolBtn--view { width: 30px; padding: 0; }
+.PfTeam-toolBtn--clear {
+    width: 30px; padding: 0; border-radius: 0 4px 4px 0; border-left: 0; color: var(--icon-disabled);
+}
+.PfTeam-toolBtn--clear i { width: 10px; font-size: 10px; color: var(--icon-disabled); }
 .PfTeam-searchField {
-    flex: 1 1 auto; min-width: 0; height: 28px; margin: 0; padding: 3.5px 12px; box-sizing: border-box;
-    border-width: 1px 1px 1px 0; border-style: solid; border-color: #ced4da; border-radius: 0;
+    flex: 1 1 auto; min-width: 0; height: 28px; margin: 0; padding: 0 10px; box-sizing: border-box;
+    border: 1px solid #ced4da; border-right: 0; border-radius: 4px 0 0 4px;
     background: var(--surface-default); color: var(--text-default);
-    font-family: var(--font-family); font-size: 14px; font-weight: 400; line-height: 19px;
+    font-family: var(--font-family); font-size: 14px; font-weight: 400;
 }
 .PfTeam-searchField::placeholder { color: #767676; }
 .PfTeam-searchField:focus { outline: none; }
@@ -1011,7 +1014,8 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     position: relative; box-sizing: border-box;
 }
 .PfTeam-cellName > * { height: var(--pf-team-sub-row-h); display: flex; align-items: center; }
-.PfTeam-cellName span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.PfTeam-cellName span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1 1 auto; }
+.PfTeam-cellName span.PfTeam-uaActs { flex: 0 0 auto; overflow: visible; text-overflow: clip; }
 .PfTeam-rowCheckWrap {
     position: absolute; left: 12px; top: 0;
     width: 20px; height: var(--pf-team-sub-row-h);
@@ -1150,6 +1154,122 @@ body.PfTeam-is-dragging,
 body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !important; }
 .PfTeam.is-readOnly .PfTeam-rowTrack { cursor: default; }
 .PfTeam.is-readOnly .PfTeam-barHandle { display: none !important; }
+.PfTeam.is-readOnly .PfTeam-worker.is-unassigned .PfTeam-bar.is-selected .PfTeam-barHandle { display: block !important; }
+.PfTeam-addRes {
+    height: 28px; padding: 0 10px; flex: 0 0 auto;
+    border: 1px solid var(--border-primary); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--text-primary);
+    font-family: inherit; font-size: 13px; font-weight: var(--font-weight-semibold);
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+}
+.PfTeam-addRes:hover { background: var(--surface-primary-subtle); }
+.PfTeam-uaGroup { margin-left: auto; display: inline-flex; flex: 0 0 auto; gap: 0; }
+.PfTeam-uaGroup button {
+    height: 24px; padding: 0 7px; border: 1px solid var(--border-default);
+    background: var(--surface-default); color: var(--text-accent);
+    font: inherit; font-size: 12px; font-weight: var(--font-weight-semibold);
+    text-transform: none; letter-spacing: 0; cursor: pointer;
+}
+.PfTeam-uaGroup button + button { border-left: 0; }
+.PfTeam-uaGroup button:first-child { border-radius: 4px 0 0 4px; }
+.PfTeam-uaGroup button:last-child { border-radius: 0 4px 4px 0; }
+.PfTeam-uaGroup button.is-active { background: var(--surface-emphasis); border-color: var(--surface-emphasis); color: var(--text-inverse); }
+.PfTeam-uaActs { margin-left: auto; display: none; align-items: center; gap: 2px; flex: 0 0 auto; }
+.PfTeam-worker.is-unassigned:hover .PfTeam-uaActs,
+.PfTeam-worker.is-unassigned.is-menu .PfTeam-uaActs { display: inline-flex; }
+.PfTeam-uaAct {
+    width: 24px; height: 24px; padding: 0; border: 0; border-radius: var(--border-radius-default);
+    background: transparent; color: var(--icon-accent); cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.PfTeam-uaAct:hover { background: var(--surface-subtle-dark); }
+.PfTeam-uaMenu {
+    position: fixed; z-index: 80; min-width: 160px; padding: 4px 0;
+    background: var(--surface-default); border: 1px solid var(--border-subtle);
+    border-radius: var(--border-radius-default); box-shadow: 0 2px 4px 2px rgb(178 178 178 / 30%);
+}
+.PfTeam-uaMenu button {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    padding: 8px 14px; border: 0; background: transparent;
+    color: var(--text-accent); font: inherit; font-size: var(--font-size-medium); cursor: pointer; text-align: left;
+}
+.PfTeam-uaMenu button:hover { background: var(--surface-list-item-hover); }
+.PfTeam-uaMenu button.is-danger { color: var(--text-danger); }
+
+/* Unassigned panel — chrome from portfolio-gantt-unassigned-comparison.html */
+.PfTeam-uaPanel {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 40;
+    display: flex; flex-direction: column; min-height: 0;
+    background: var(--surface-default); box-shadow: 0 -1px 0 #ccc;
+}
+.PfTeam-uaPanel[hidden] { display: none !important; }
+.PfTeam-uaPanel.is-collapsed { height: auto !important; }
+.PfTeam-uaPanel.is-collapsed .PfTeam-uaBody,
+.PfTeam-uaPanel.is-collapsed .PfTeam-uaDates { display: none; }
+.PfTeam-uaResize {
+    position: relative; height: 10px; flex: 0 0 10px;
+    background: var(--surface-default); border-bottom: 1px solid #ccc; cursor: row-resize;
+}
+.PfTeam-uaGrip {
+    position: absolute; left: 50%; top: 3px; width: 36px; height: 4px; margin-left: -18px;
+    border-radius: 2px; background: var(--border-default); pointer-events: none;
+}
+.PfTeam-uaClose {
+    position: absolute; right: 4px; top: -6px; width: 22px; height: 22px; padding: 0;
+    border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--text-accent);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 5; font-size: 12px;
+}
+.PfTeam-uaClose:hover { background: var(--surface-subtle-light); }
+.PfTeam-uaBand {
+    display: flex; align-items: stretch; height: 32px; flex: 0 0 32px;
+    background: var(--surface-default); border-bottom: 1px solid var(--border-subtle);
+}
+.PfTeam-uaBandLabel {
+    width: var(--pf-team-left-w); flex: 0 0 var(--pf-team-left-w); box-sizing: border-box;
+    display: flex; align-items: center; gap: 5px; padding: 2px 5px 0;
+    border-right: 1px solid var(--border-subtle);
+}
+.PfTeam-uaSelAll {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-default); white-space: nowrap; cursor: pointer;
+}
+.PfTeam-uaSelAll input { width: 16px; height: 16px; margin: 0; accent-color: var(--primary); flex: 0 0 auto; }
+.PfTeam-uaSort {
+    margin-left: 5px; min-width: 45px; height: 28px; padding: 0 6px; flex: 0 0 auto;
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+    border: 1px solid var(--border-default); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--text-accent); cursor: pointer;
+}
+.PfTeam-uaSort .caret {
+    width: 0; height: 0; border-top: 4px solid currentColor;
+    border-right: 4px solid transparent; border-left: 4px solid transparent;
+}
+.PfTeam-uaDates { flex: 1 1 auto; min-width: 0; overflow: hidden; }
+.PfTeam-uaDates .PfTeam-week { height: 32px; border-bottom: 0; }
+.PfTeam-uaBody { flex: 1 1 auto; min-height: 0; overflow: auto; position: relative; }
+.PfTeam-uaInner { position: relative; width: max-content; min-width: 100%; }
+.PfTeam-uaBody .PfTeam-group .PfTeam-rowLeft,
+.PfTeam-uaBody .PfTeam-group .PfTeam-rowTrack {
+    height: 27px; min-height: 27px; background: var(--surface-accent);
+    border-top: 2px solid var(--border-default);
+}
+.PfTeam-uaBody .PfTeam-group .PfTeam-rowLeft {
+    align-items: center; padding-left: 8px; gap: 6px;
+    font-size: 11px; font-weight: 500; letter-spacing: .33px; text-transform: uppercase;
+}
+.PfTeam-uaEmpty { position: sticky; left: 0; padding: 28px 16px; color: var(--text-subtle); }
+.PfTeam-uaBody .PfTeam-groupLabel { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.PfTeam-uaStats {
+    position: sticky; left: var(--pf-team-left-w); z-index: 2;
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 28px;
+    height: 100%; padding: 0 14px; background: var(--surface-accent);
+    font-size: 11px; font-weight: 500; letter-spacing: .33px; text-transform: uppercase;
+    color: var(--text-default); white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.PfTeam-uaStats span { display: inline-flex; align-items: center; }
+.PfTeam-uaStats i { font-size: 12px; margin-right: 6px; color: var(--icon-default); }
 .Tab-navBar .Tab-viewOnly {
     display: none; align-items: center; gap: 6px; align-self: center;
     margin-left: auto; padding: 2px 8px; min-height: 24px;
@@ -2834,7 +2954,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <button class="Tab-navItem" data-tab="board" onclick="switchTab('board')"><span class="Tab-navItem-inner">Board</span><span class="Tab-navItem-bar"></span></button>
                 <button class="Tab-navItem is-active" data-tab="performance" onclick="switchTab('performance')"><span class="Tab-navItem-inner">Performance</span><span class="Tab-navItem-bar"></span></button>
                 <button class="Tab-navItem" data-tab="team" onclick="switchTab('team')"><span class="Tab-navItem-inner">Team</span><span class="Tab-navItem-bar"></span></button>
-                <span class="Tab-viewOnly BtnTooltipWrap BtnTooltipWrap--float" tabindex="0" data-tooltip="This is currently a read-only view of assigned work within your portfolio for informational purpose only. If you need to make any edits, this can be done on the main Gantt or Engagement page in line with your permission set. Edits in this view will be permitted in a future release."><i class="fa-regular fa-eye" aria-hidden="true"></i>Read only</span>
+                <span class="Tab-viewOnly BtnTooltipWrap BtnTooltipWrap--float" tabindex="0" data-tooltip="Assigned work is read-only. Unassigned demand can be added, edited, moved, split, cloned or deleted. Assigning that work stays on the main Gantt."><i class="fa-regular fa-eye" aria-hidden="true"></i>Read only</span>
             </div>
 
             <div class="PfLimit" id="pfLimit" hidden>
@@ -2953,12 +3073,14 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <div class="PfTeam-scroller" id="pfTeamScroller">
                     <div class="PfTeam-inner" id="pfTeamInner"></div>
                     </div>
+                <section class="PfTeam-uaPanel" id="pfTeamUaPanel" aria-label="Unassigned panel" hidden></section>
                 <div class="PfTeam-bottomControls" aria-label="Gantt navigation">
                     <div class="PfTeam-zoomGroup" role="group" aria-label="Zoom actions">
                         <button type="button" class="Btn--iconSoft" id="pfTeamZoomOut" title="Zoom out" aria-label="Zoom out" onclick="pfSetZoom(pfTeamState.zoom - 0.25)"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
                         <button type="button" class="Btn--iconSoft" id="pfTeamZoomReset" title="Reset zoom" aria-label="Reset zoom" onclick="pfSetZoom(1); document.getElementById('pfTeamScroller').scrollLeft = 0"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
                         <button type="button" class="Btn--iconSoft" id="pfTeamZoomIn" title="Zoom in" aria-label="Zoom in" onclick="pfSetZoom(pfTeamState.zoom + 0.25)"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
                     </div>
+                    <button type="button" class="Btn--iconSoft" id="pfTeamUaCollapse" hidden title="Collapse unassigned panel" aria-label="Collapse unassigned panel" onclick="pfCollapseUaPanel()"><i class="fa-solid fa-caret-down" aria-hidden="true"></i></button>
                     <button type="button" class="Btn--iconSoft" id="pfTeamZoomOptionsButton" title="Zoom options" aria-label="Zoom options" onclick="pfToggleZoomOptions(event)"><i class="fa-solid fa-caret-down" aria-hidden="true"></i></button>
                 </div>
             </div>
@@ -7326,9 +7448,8 @@ const pfTeamWorkers = PF_WORKER_SPECS.map(function (wk) {
 /* Portfolio Team tab is view-only: no new resources, no unassigned requirements, no booking edits. */
 const PF_TEAM_READ_ONLY = true;
 
-/* Demo UNASSIGNED requirements — main Schedule Gantt label pattern */
+/* Inline unassigned demand. Assigned rows stay read-only. */
 (function seedUnassignedRequirements() {
-    if (PF_TEAM_READ_ONLY) return;
     function mkItem(job, code, start, span, hours) {
         const cells = {};
         for (let i = 0; i < span; i++) {
@@ -7379,6 +7500,18 @@ const PF_TEAM_READ_ONLY = true;
         cap: 37.5,
         items: [mkItem("Related Party Review — Harbour Estates", "HBE-12", 12, 3, 10)]
     });
+    pfTeamWorkers.push({
+        id: "w-ua-partner",
+        unassigned: true,
+        reqType: "unassignable",
+        name: null,
+        grade: "PTR",
+        fu: null,
+        gu: null,
+        role: "Partner",
+        cap: 37.5,
+        items: [mkItem("Year-end Audit — Calder Ceramics", "CCR-YE", 16, 2, 8)]
+    });
 })();
 
 const pfTeamState = {
@@ -7394,6 +7527,12 @@ const pfTeamState = {
     selectedItemId: null,
     selectedItemIds: [],
     lastBarSelection: null,
+    uaGroup: "engagement",
+    uaMenuId: null,
+    uaPanel: "closed",
+    uaHeight: 320,
+    uaSortDir: "asc",
+    uaSelected: {},
     teamSearch: "",
     teamFilters: { resource: new Set(), booking: new Set(), engagement: new Set() },
     filterPanel: false,
@@ -8025,6 +8164,14 @@ function pfBuildHeadCorner() {
     const corner = pfEl("div", "PfTeam-headCorner");
     const tools = pfEl("div", "PfTeam-headTools");
     const row = pfEl("div", "PfTeam-headToolsRow");
+    const addRes = pfEl("button", "PfTeam-addRes");
+    addRes.type = "button";
+    addRes.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i> Add resource';
+    addRes.addEventListener("click", function (e) {
+        e.stopPropagation();
+        openReqModal();
+    });
+    row.appendChild(addRes);
     const group = pfEl("div", "PfTeam-searchGroup");
 
     const filterBtn = pfEl("button", "PfTeam-toolBtn PfTeam-toolBtn--filter");
@@ -8039,7 +8186,7 @@ function pfBuildHeadCorner() {
         pfTeamState.filterPanel = !pfTeamState.filterPanel;
         pfRenderFilterPanel();
     });
-    group.appendChild(filterBtn);
+    row.appendChild(filterBtn);
 
     const search = document.createElement("input");
     search.type = "search";
@@ -8076,7 +8223,8 @@ function pfBuildHeadCorner() {
         if (next) next.focus();
     });
     group.appendChild(clearBtn);
-    row.appendChild(group);
+    const searchRow = pfEl("div", "PfTeam-headToolsRow");
+    searchRow.appendChild(group);
 
     const settingsBtn = pfEl("button", "PfTeam-toolBtn PfTeam-toolBtn--settings");
     settingsBtn.type = "button";
@@ -8092,12 +8240,31 @@ function pfBuildHeadCorner() {
     viewBtn.type = "button";
     viewBtn.id = "pfTeamViewBtn";
     const pivotTo = pfTeamState.pivot === "engagement" ? "Resource view" : "Engagement view";
+    viewBtn.classList.toggle("is-on", pfTeamState.pivot === "engagement");
     viewBtn.title = "Pivot to " + pivotTo;
     viewBtn.setAttribute("aria-label", "Pivot to " + pivotTo);
     viewBtn.innerHTML = '<i class="fa-solid fa-right-left" aria-hidden="true"></i>';
     viewBtn.addEventListener("click", pivotTeamView);
     row.appendChild(viewBtn);
     tools.appendChild(row);
+
+    const uaBtn = pfEl("button", "PfTeam-toolBtn PfTeam-toolBtn--ua");
+    uaBtn.type = "button";
+    uaBtn.id = "pfTeamUaBtn";
+    const uaOn = pfTeamState.uaPanel !== "closed" && pfTeamState.pivot !== "engagement";
+    uaBtn.classList.toggle("is-on", uaOn);
+    uaBtn.setAttribute("aria-pressed", uaOn ? "true" : "false");
+    uaBtn.innerHTML = '<i class="fa-solid fa-list-check" aria-hidden="true"></i><span>Unassigned</span>';
+    if (pfTeamState.pivot === "engagement") {
+        uaBtn.disabled = true;
+        uaBtn.title = "Available in Resource view";
+    }
+    uaBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        pfToggleUaPanel();
+    });
+    row.insertBefore(uaBtn, viewBtn);
+    tools.appendChild(searchRow);
 
     corner.appendChild(tools);
     return corner;
@@ -8166,7 +8333,7 @@ function pfBuildGroupRow(label, collapseKey, opts) {
     left.appendChild(Object.assign(document.createElement("i"), {
         className: "fa-solid fa-chevron-" + (collapsed ? "right" : "down")
     }));
-    left.appendChild(pfEl("span", null, label));
+    left.appendChild(pfEl("span", "PfTeam-groupLabel", label));
     left.title = label;
     left.addEventListener("click", function () {
         pfTeamState.collapsedEngagements[collapseKey] = !collapsed;
@@ -8174,6 +8341,7 @@ function pfBuildGroupRow(label, collapseKey, opts) {
     });
     const track = pfEl("div", "PfTeam-rowTrack");
     track.style.width = (PF_WEEKS.length * PF_WEEK_W) + "px";
+    if (opts.stats) track.appendChild(pfUaStatsEl(opts.stats));
     row.appendChild(left);
     row.appendChild(track);
     return row;
@@ -8201,12 +8369,45 @@ function pfBuildWorkerRow(worker, index) {
         const cb = document.createElement("input");
         cb.type = "checkbox";
         cb.className = "PfTeam-rowCheck";
+        cb.checked = !!pfTeamState.uaSelected[worker.id];
         cb.addEventListener("click", function (e) { e.stopPropagation(); });
+        cb.addEventListener("change", function () {
+            if (cb.checked) pfTeamState.uaSelected[worker.id] = true;
+            else delete pfTeamState.uaSelected[worker.id];
+        });
         checkWrap.appendChild(cb);
         name.appendChild(checkWrap);
-        const label = pfEl("span", null, pfUnassignedLabel(worker));
-        label.title = pfUnassignedLabel(worker);
+        const label = pfEl("span", null, worker.displayName || pfUnassignedLabel(worker));
+        label.title = worker.displayName || pfUnassignedLabel(worker);
         name.appendChild(label);
+        const acts = pfEl("span", "PfTeam-uaActs");
+        const edit = pfEl("button", "PfTeam-uaAct");
+        edit.type = "button";
+        edit.title = "Edit requirement";
+        edit.setAttribute("aria-label", "Edit requirement");
+        edit.innerHTML = '<i class="fa-solid fa-pencil" aria-hidden="true"></i>';
+        edit.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const first = (worker.items || [])[0];
+            if (first) {
+                pfTeamState.selectedItemId = first.id;
+                pfTeamState.selectedItemIds = [first.id];
+                renderGantt();
+            }
+        });
+        const more = pfEl("button", "PfTeam-uaAct");
+        more.type = "button";
+        more.title = "Requirement actions";
+        more.setAttribute("aria-label", "Requirement actions");
+        more.innerHTML = '<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>';
+        more.addEventListener("click", function (e) {
+            e.stopPropagation();
+            pfOpenUaMenu(worker.sourceId || worker.id, more);
+        });
+        acts.appendChild(edit);
+        acts.appendChild(more);
+        name.appendChild(acts);
+        if (pfTeamState.uaMenuId === (worker.sourceId || worker.id)) row.classList.add("is-menu");
     } else {
         name.appendChild(pfEl("span", null, worker.name));
     }
@@ -8247,7 +8448,7 @@ function pfBuildWorkerRow(worker, index) {
         if (e.target.closest("button, a, .PfTeam-bar")) return;
         e.preventDefault();
         e.stopPropagation();
-        if (PF_TEAM_READ_ONLY) {
+        if (!pfIsUnassigned(worker)) {
             pfShowReadOnlyNotice();
             return;
         }
@@ -8363,7 +8564,7 @@ function pfBuildCell(worker, row, wi) {
     c.addEventListener("dblclick", function (e) {
         e.preventDefault();
         e.stopPropagation();
-        if (PF_TEAM_READ_ONLY) {
+        if (!pfIsUnassigned(worker)) {
             pfShowReadOnlyNotice();
             return;
         }
@@ -8440,7 +8641,8 @@ function renderPfSelectionPanel() {
     const multi = contexts.length > 1;
     const panel = document.createElement("aside");
     panel.id = "pfSelectionPanel";
-    panel.className = "PfSelectionPanel" + (PF_TEAM_READ_ONLY ? " is-readOnly" : "");
+    const demand = !multi && pfIsUnassigned(worker);
+    panel.className = "PfSelectionPanel" + (demand ? "" : " is-readOnly");
     panel.setAttribute("aria-label", "Booking details");
     const hours = pfItemHours(item);
     const start = PF_WEEKS[item.startWeek];
@@ -8457,13 +8659,15 @@ function renderPfSelectionPanel() {
                 <button type="button" class="PfSelectionPanel-close" aria-label="Close booking details" title="Close" onclick="clearPfSelection()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             </div>
             <div class="PfSelectionPanel-actions">
-                ${PF_TEAM_READ_ONLY ? "" : `<button type="button" class="Btn--iconSoft" title="Clone" aria-label="Clone"><i class="fa-regular fa-clone"></i></button>
-                <button type="button" class="Btn--iconSoft" title="Delete" aria-label="Delete"><i class="fa-regular fa-trash-can"></i></button>`}
+                ${demand ? `<button type="button" class="Btn--iconSoft" data-ua="clone" title="Clone" aria-label="Clone"><i class="fa-regular fa-clone"></i></button>
+                <button type="button" class="Btn--iconSoft" data-ua="split" title="Split" aria-label="Split"><i class="fa-solid fa-scissors"></i></button>
+                <button type="button" class="Btn--iconSoft" data-ua="delete" title="Delete" aria-label="Delete"><i class="fa-regular fa-trash-can"></i></button>` : ""}
                 <button type="button" class="Btn--iconSoft" title="Jump to" aria-label="Jump to"><i class="fa-solid fa-crosshairs"></i></button>
-                ${PF_TEAM_READ_ONLY ? "" : `<button type="button" class="Btn--iconSoft" title="Swap or reassign" aria-label="Swap or reassign"><i class="fa-solid fa-retweet"></i></button>`}
                 <button type="button" class="Btn--iconSoft" title="Audit history" aria-label="Audit history"><i class="fa-solid fa-clock-rotate-left"></i></button>
             </div>
-            ${PF_TEAM_READ_ONLY ? `<p class="PfSelectionPanel-readOnly"><i class="fa-regular fa-eye" aria-hidden="true"></i>View only. Edit this booking in the Gantt.</p>` : ""}
+            ${demand
+                ? `<p class="PfSelectionPanel-readOnly"><i class="fa-solid fa-pen" aria-hidden="true"></i>You can edit this demand. Assigning it stays on the main Gantt.</p>`
+                : `<p class="PfSelectionPanel-readOnly"><i class="fa-regular fa-eye" aria-hidden="true"></i>Assigned work is read-only.</p>`}
         </div>
         <div class="PfSelectionPanel-body">
             <section class="PfSelectionPanel-section">
@@ -8500,6 +8704,15 @@ function renderPfSelectionPanel() {
     panel.querySelectorAll(".PfSelectionPanel-section--collapsed").forEach(function (section) {
         section.addEventListener("click", function () { section.classList.toggle("is-open"); });
     });
+    if (demand) {
+        const id = worker.id;
+        const clone = panel.querySelector("[data-ua='clone']");
+        const split = panel.querySelector("[data-ua='split']");
+        const remove = panel.querySelector("[data-ua='delete']");
+        if (clone) clone.addEventListener("click", function () { pfCloneUnassigned(id); });
+        if (split) split.addEventListener("click", function () { pfSplitUnassigned(id); });
+        if (remove) remove.addEventListener("click", function () { pfDeleteUnassigned(id); });
+    }
     document.body.appendChild(panel);
 }
 
@@ -8582,7 +8795,7 @@ function pfBuildBars(worker, row, topPad) {
         bar.appendChild(content);
 
         bar.title = it.job + (it.code ? " (" + it.code + ")" : "") + " — " + perWeek + " h/week";
-        if (PF_TEAM_READ_ONLY) {
+        if (!pfIsUnassigned(worker)) {
             bar.addEventListener("click", function (e) {
                 e.stopPropagation();
                 pfSelectBarItem(it, e);
@@ -8778,10 +8991,393 @@ let pfReadOnlyNoticeTimer = null;
 function pfShowReadOnlyNotice() {
     const el = document.getElementById("pfTeamNotice");
     if (!el) return;
-    el.textContent = "This view is read-only. Add resources or bookings in the Gantt.";
+    el.textContent = "Assigned work is read-only. Edit demand in the Unassigned section.";
     el.classList.add("is-visible");
     clearTimeout(pfReadOnlyNoticeTimer);
     pfReadOnlyNoticeTimer = setTimeout(function () { el.classList.remove("is-visible"); }, 3000);
+}
+
+function pfScopedDemand(worker, job, items, displayName) {
+    return {
+        id: worker.id + "::" + job,
+        sourceId: worker.id,
+        name: worker.name,
+        displayName: displayName,
+        grade: worker.grade,
+        cap: worker.cap,
+        items: items,
+        unassigned: true,
+        reqType: worker.reqType,
+        fu: worker.fu,
+        gu: worker.gu,
+        role: worker.role
+    };
+}
+function pfUaGroupControl() {
+    const group = pfEl("div", "PfTeam-uaGroup");
+    group.setAttribute("role", "group");
+    group.setAttribute("aria-label", "Group unassigned work");
+    [["engagement", "Engagement"], ["requirement", "Requirement"]].forEach(function (pair) {
+        const on = pfTeamState.uaGroup === pair[0];
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = pair[1];
+        if (on) btn.className = "is-active";
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+        btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            pfTeamState.uaGroup = pair[0];
+            renderGantt();
+        });
+        group.appendChild(btn);
+    });
+    return group;
+}
+function pfUaWeekStrip() {
+    const dates = pfEl("div", "PfTeam-uaDates");
+    dates.id = "pfTeamUaDates";
+    const weeks = pfEl("div", "PfTeam-weeks");
+    PF_WEEKS.forEach(function (d) { weeks.appendChild(pfEl("div", "PfTeam-week", pfWcLabel(d))); });
+    dates.appendChild(weeks);
+    return dates;
+}
+function pfUaSortKeys(keys) {
+    keys.sort(function (a, b) { return a.localeCompare(b); });
+    if (pfTeamState.uaSortDir === "desc") keys.reverse();
+    return keys;
+}
+function pfSyncUaDates(left) {
+    const dates = document.getElementById("pfTeamUaDates");
+    if (dates && dates.scrollLeft !== left) dates.scrollLeft = left;
+}
+function pfToggleUaPanel() {
+    if (pfTeamState.pivot === "engagement") return;
+    pfTeamState.uaPanel = pfTeamState.uaPanel === "closed" ? "open" : "closed";
+    renderGantt();
+}
+function pfCollapseUaPanel() {
+    pfTeamState.uaPanel = pfTeamState.uaPanel === "collapsed" ? "open" : "collapsed";
+    renderGantt();
+}
+function pfCloseUaPanel() {
+    pfTeamState.uaPanel = "closed";
+    renderGantt();
+}
+function pfStartUaResize(e) {
+    if (e.button !== 0 || e.target.closest(".PfTeam-uaClose")) return;
+    e.preventDefault();
+    const panel = document.getElementById("pfTeamUaPanel");
+    const tab = document.getElementById("tab-team");
+    if (!panel || !tab) return;
+    const startY = e.clientY;
+    const startH = panel.getBoundingClientRect().height;
+    const max = tab.getBoundingClientRect().height - 140;
+    document.body.style.cursor = "row-resize";
+    function move(ev) {
+        const h = Math.max(160, Math.min(max, startH + (startY - ev.clientY)));
+        pfTeamState.uaHeight = h;
+        panel.style.height = h + "px";
+    }
+    function up() {
+        document.removeEventListener("mousemove", move);
+        document.removeEventListener("mouseup", up);
+        document.body.style.cursor = "";
+    }
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", up);
+}
+function pfRenderUaPanel() {
+    const panel = document.getElementById("pfTeamUaPanel");
+    const tab = document.getElementById("tab-team");
+    const host = document.getElementById("pfTeamScroller");
+    if (!panel || !tab) return;
+    const show = pfTeamState.uaPanel !== "closed" && pfTeamState.pivot !== "engagement";
+    const collapse = document.getElementById("pfTeamUaCollapse");
+    if (collapse) {
+        const collapsedNow = pfTeamState.uaPanel === "collapsed";
+        collapse.hidden = !show;
+        collapse.title = collapsedNow ? "Expand unassigned panel" : "Collapse unassigned panel";
+        collapse.setAttribute("aria-label", collapse.title);
+        collapse.innerHTML = '<i class="fa-solid fa-caret-' + (collapsedNow ? "up" : "down") + '" aria-hidden="true"></i>';
+    }
+    panel.innerHTML = "";
+    if (!show) {
+        panel.hidden = true;
+    } else {
+        const collapsed = pfTeamState.uaPanel === "collapsed";
+        panel.hidden = false;
+        panel.classList.toggle("is-collapsed", collapsed);
+        panel.style.height = collapsed ? "" : pfTeamState.uaHeight + "px";
+
+        const resize = pfEl("div", "PfTeam-uaResize");
+        resize.title = "Drag to resize the unassigned panel";
+        resize.appendChild(pfEl("span", "PfTeam-uaGrip"));
+        const closeBtn = pfEl("button", "PfTeam-uaClose");
+        closeBtn.type = "button";
+        closeBtn.title = "Close unassigned panel";
+        closeBtn.setAttribute("aria-label", "Close unassigned panel");
+        closeBtn.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+        closeBtn.addEventListener("click", function (e) { e.stopPropagation(); pfCloseUaPanel(); });
+        resize.appendChild(closeBtn);
+        resize.addEventListener("mousedown", pfStartUaResize);
+
+        const workers = pfVisibleWorkers().filter(pfIsUnassigned);
+        const band = pfEl("div", "PfTeam-uaBand");
+        const label = pfEl("div", "PfTeam-uaBandLabel");
+        const selectAll = pfEl("label", "PfTeam-uaSelAll");
+        const selectBox = document.createElement("input");
+        selectBox.type = "checkbox";
+        selectBox.addEventListener("click", function (e) { e.stopPropagation(); });
+        selectBox.addEventListener("change", function () {
+            document.querySelectorAll("#pfTeamUaBody .PfTeam-rowCheck").forEach(function (box) {
+                if (box.checked === selectBox.checked) return;
+                box.checked = selectBox.checked;
+                box.dispatchEvent(new Event("change"));
+            });
+        });
+        selectAll.appendChild(selectBox);
+        selectAll.appendChild(document.createTextNode("Select All"));
+        label.appendChild(selectAll);
+        label.appendChild(pfUaGroupControl());
+        const sortBtn = pfEl("button", "PfTeam-uaSort");
+        sortBtn.type = "button";
+        sortBtn.title = "Sort rows";
+        sortBtn.setAttribute("aria-label", "Sort rows");
+        sortBtn.innerHTML = '<i class="fa-solid fa-arrow-down-short-wide" aria-hidden="true"></i><span class="caret"></span>';
+        sortBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            pfTeamState.uaSortDir = pfTeamState.uaSortDir === "desc" ? "asc" : "desc";
+            renderGantt();
+        });
+        label.appendChild(sortBtn);
+        band.appendChild(label);
+        band.appendChild(pfUaWeekStrip());
+
+        const body = pfEl("div", "PfTeam-uaBody");
+        body.id = "pfTeamUaBody";
+        const inner = pfEl("div", "PfTeam-uaInner");
+        let rowIndex = 0;
+        pfAppendUaRows(inner, function () { return rowIndex++; });
+        if (!workers.length) inner.appendChild(pfEl("div", "PfTeam-uaEmpty", "No unassigned requirements match this search."));
+        body.appendChild(inner);
+        const boxes = inner.querySelectorAll(".PfTeam-rowCheck");
+        selectBox.checked = boxes.length > 0 && Array.prototype.every.call(boxes, function (box) { return box.checked; });
+
+        panel.appendChild(resize);
+        panel.appendChild(band);
+        panel.appendChild(body);
+
+        if (host) {
+            body.scrollLeft = host.scrollLeft;
+            pfSyncUaDates(host.scrollLeft);
+            body.addEventListener("scroll", function () {
+                if (host.scrollLeft !== body.scrollLeft) host.scrollLeft = body.scrollLeft;
+                pfSyncUaDates(body.scrollLeft);
+            });
+            if (!host.dataset.uaSync) {
+                host.dataset.uaSync = "1";
+                host.addEventListener("scroll", function () {
+                    const b = document.getElementById("pfTeamUaBody");
+                    if (b && b.scrollLeft !== host.scrollLeft) b.scrollLeft = host.scrollLeft;
+                    pfSyncUaDates(host.scrollLeft);
+                });
+            }
+        }
+    }
+}
+/* Group header totals for the Unassigned panel, computed from loaded team data.
+   hours: unassigned hours in the group (after filters).
+   pctScheduled: share of the group's jobs' hours already booked to named resources.
+   pctClashed: share of those booked hours in weeks where the resource is over capacity. */
+const PF_UA_RECOVERY = { "ORP-44": 410, "HBE-12": 510, "CCR-YE": 450, "MLG-118": 330, "HBE-BC": 340 };
+function pfUaGroupStats(items) {
+    const jobs = {};
+    const codes = {};
+    let unassignedHours = 0;
+    items.forEach(function (it) {
+        jobs[it.job] = true;
+        if (it.code) codes[it.code] = true;
+        Object.keys(it.cells || {}).forEach(function (w) { unassignedHours += it.cells[w] || 0; });
+    });
+    let booked = 0, clashed = 0;
+    pfTeamWorkers.forEach(function (worker) {
+        if (pfIsUnassigned(worker)) return;
+        (worker.items || []).forEach(function (it) {
+            if (!jobs[it.job]) return;
+            Object.keys(it.cells || {}).forEach(function (w) {
+                const h = it.cells[w] || 0;
+                booked += h;
+                if (pfWeekConsumed(worker, w) > worker.cap) clashed += h;
+            });
+        });
+    });
+    const total = unassignedHours + booked;
+    const codeList = Object.keys(codes);
+    let recovery = 0;
+    codeList.forEach(function (code) { recovery += PF_UA_RECOVERY[code] || 0; });
+    return {
+        hours: Math.round(unassignedHours),
+        pctScheduled: total ? Math.round(booked / total * 100) : 0,
+        pctClashed: booked ? Math.round(clashed / booked * 100) : 0,
+        recovery: recovery,
+        code: codeList.length === 1 ? codeList[0] : ""
+    };
+}
+function pfUaStatsEl(s) {
+    const wrap = pfEl("div", "PfTeam-uaStats");
+    wrap.appendChild(pfEl("span", null, s.pctScheduled + "% scheduled"));
+    wrap.appendChild(pfEl("span", null, s.pctClashed + "% clashed"));
+    const hours = pfEl("span");
+    const clock = document.createElement("i");
+    clock.className = "fa-regular fa-clock";
+    clock.setAttribute("aria-hidden", "true");
+    hours.appendChild(clock);
+    hours.appendChild(document.createTextNode(s.hours + " total hours"));
+    wrap.appendChild(hours);
+    if (s.recovery) wrap.appendChild(pfEl("span", null, s.recovery + " recovery rate"));
+    if (s.code) wrap.appendChild(pfEl("span", null, s.code));
+    wrap.title = s.pctScheduled + "% of these jobs' hours are booked to named resources. "
+        + s.pctClashed + "% of booked hours sit in weeks where that resource is over capacity. "
+        + "Calculated from loaded data; the calculation is still to be confirmed.";
+    wrap.addEventListener("click", function (e) { e.stopPropagation(); });
+    return wrap;
+}
+function pfAppendUaRows(inner, nextIndex) {
+    const workers = pfVisibleWorkers().filter(pfIsUnassigned);
+    if (pfTeamState.uaGroup === "requirement") {
+        const groups = {};
+        workers.forEach(function (worker) {
+            const key = pfUnassignedLabel(worker);
+            if (!groups[key]) groups[key] = { label: key, worker: worker, jobs: {} };
+            (worker.items || []).forEach(function (item) {
+                if (!item.job) return;
+                if (!groups[key].jobs[item.job]) groups[key].jobs[item.job] = [];
+                groups[key].jobs[item.job].push(item);
+            });
+        });
+        pfUaSortKeys(Object.keys(groups)).forEach(function (key) {
+            const group = groups[key];
+            const collapseKey = "ua-req:" + key;
+            const reqItems = [];
+            Object.keys(group.jobs).forEach(function (job) { reqItems.push.apply(reqItems, group.jobs[job]); });
+            inner.appendChild(pfBuildGroupRow(group.label, collapseKey, { nested: true, stats: pfUaGroupStats(reqItems) }));
+            if (pfTeamState.collapsedEngagements[collapseKey]) return;
+            pfUaSortKeys(Object.keys(group.jobs)).forEach(function (job) {
+                inner.appendChild(pfBuildWorkerRow(pfScopedDemand(group.worker, job, group.jobs[job], job), nextIndex()));
+            });
+        });
+        return;
+    }
+    const byJob = {};
+    workers.forEach(function (worker) {
+        (worker.items || []).forEach(function (item) {
+            if (!item.job) return;
+            if (!byJob[item.job]) byJob[item.job] = {};
+            if (!byJob[item.job][worker.id]) byJob[item.job][worker.id] = { worker: worker, items: [] };
+            byJob[item.job][worker.id].items.push(item);
+        });
+    });
+    pfUaSortKeys(Object.keys(byJob)).forEach(function (job) {
+        const collapseKey = "ua-eng:" + job;
+        const jobItems = [];
+        Object.keys(byJob[job]).forEach(function (id) { jobItems.push.apply(jobItems, byJob[job][id].items); });
+        inner.appendChild(pfBuildGroupRow(job, collapseKey, { nested: true, stats: pfUaGroupStats(jobItems) }));
+        if (pfTeamState.collapsedEngagements[collapseKey]) return;
+        Object.keys(byJob[job]).forEach(function (id) {
+            const entry = byJob[job][id];
+            inner.appendChild(pfBuildWorkerRow(pfScopedDemand(entry.worker, job, entry.items, null), nextIndex()));
+        });
+    });
+}
+function pfWorkerById(id) {
+    return pfTeamWorkers.find(function (worker) { return worker.id === id; }) || null;
+}
+function pfCopyDemandItem(item) {
+    return Object.assign({}, item, { id: "pfit-" + (++PF_ITEM_SEQ), cells: Object.assign({}, item.cells || {}) });
+}
+function pfCloneUnassigned(id) {
+    const worker = pfWorkerById(id);
+    if (!worker) return;
+    pfTeamWorkers.push(Object.assign({}, worker, {
+        id: "w-req-" + (++PF_ITEM_SEQ),
+        items: (worker.items || []).map(pfCopyDemandItem)
+    }));
+    pfTeamState.uaMenuId = null;
+    pfTeamState.selectedItemId = null;
+    pfTeamState.selectedItemIds = [];
+    renderGantt();
+}
+function pfDeleteUnassigned(id) {
+    const index = pfTeamWorkers.findIndex(function (worker) { return worker.id === id; });
+    if (index < 0) return;
+    const removed = new Set((pfTeamWorkers[index].items || []).map(function (item) { return item.id; }));
+    pfTeamWorkers.splice(index, 1);
+    pfTeamState.uaMenuId = null;
+    if (removed.has(pfTeamState.selectedItemId)) pfTeamState.selectedItemId = null;
+    pfTeamState.selectedItemIds = (pfTeamState.selectedItemIds || []).filter(function (itemId) { return !removed.has(itemId); });
+    renderGantt();
+}
+function pfSplitUnassigned(id) {
+    const worker = pfWorkerById(id);
+    if (!worker || !worker.items || !worker.items.length) return;
+    const item = worker.items.find(function (it) { return it.span > 1; }) || worker.items[0];
+    const keep = Math.max(1, Math.floor(item.span / 2));
+    const rest = Math.max(1, item.span - keep);
+    const clone = pfCopyDemandItem(item);
+    if (item.span > 1) {
+        clone.cells = {};
+        for (let i = keep; i < item.span; i++) {
+            const week = item.startWeek + i;
+            if (item.cells && item.cells[week] != null) clone.cells[week] = item.cells[week];
+            if (item.cells) delete item.cells[week];
+        }
+        item.span = keep;
+        clone.startWeek = item.startWeek + keep;
+        clone.span = rest;
+    } else {
+        const start = Math.min(PF_WEEK_COUNT - 1, item.startWeek + 1);
+        clone.startWeek = start;
+        clone.span = 1;
+        clone.cells = {};
+        clone.cells[start] = item.hours || 8;
+    }
+    worker.items.push(clone);
+    pfTeamState.uaMenuId = null;
+    renderGantt();
+}
+function pfOpenUaMenu(id, anchor) {
+    const existing = document.getElementById("pfUaMenu");
+    if (existing) existing.remove();
+    pfTeamState.uaMenuId = id;
+    const menu = pfEl("div", "PfTeam-uaMenu");
+    menu.id = "pfUaMenu";
+    function addItem(label, icon, danger, action) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        if (danger) btn.className = "is-danger";
+        btn.innerHTML = '<i class="' + icon + '" aria-hidden="true"></i><span>' + label + '</span>';
+        btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            menu.remove();
+            action();
+        });
+        menu.appendChild(btn);
+    }
+    addItem("Clone", "fa-regular fa-clone", false, function () { pfCloneUnassigned(id); });
+    addItem("Split", "fa-solid fa-scissors", false, function () { pfSplitUnassigned(id); });
+    addItem("Delete", "fa-regular fa-trash-can", true, function () { pfDeleteUnassigned(id); });
+    document.body.appendChild(menu);
+    const box = anchor.getBoundingClientRect();
+    menu.style.top = (box.bottom + 4) + "px";
+    menu.style.left = Math.max(8, box.right - menu.offsetWidth) + "px";
+    setTimeout(function () {
+        function close() {
+            if (menu.parentNode) menu.remove();
+            pfTeamState.uaMenuId = null;
+            document.removeEventListener("click", close);
+        }
+        document.addEventListener("click", close);
+    }, 0);
 }
 
 function renderGantt(options) {
@@ -8818,56 +9414,33 @@ function renderGantt(options) {
                 });
             }
 
-            if (unassigned.length && !PF_TEAM_READ_ONLY) {
-                const uaKey = group.job + "|unassigned";
-                inner.appendChild(pfBuildGroupRow("Unassigned", uaKey, { nested: true, checkbox: true }));
-                if (!pfTeamState.collapsedEngagements[uaKey]) {
-                    unassigned.forEach(function (entry) {
-                        const scoped = {
-                            id: entry.worker.id + "::" + group.job,
-                            name: entry.worker.name,
-                            grade: entry.worker.grade,
-                            cap: entry.worker.cap,
-                            items: entry.items,
-                            unassigned: true,
-                            reqType: entry.worker.reqType,
-                            fu: entry.worker.fu,
-                            gu: entry.worker.gu,
-                            role: entry.worker.role
-                        };
-                        inner.appendChild(pfBuildWorkerRow(scoped, rowIndex++));
+            if (unassigned.length) {
+                const assignable = unassigned.filter(function (entry) { return entry.worker.reqType !== "unassignable"; });
+                const blocked = unassigned.filter(function (entry) { return entry.worker.reqType === "unassignable"; });
+                function appendDemand(label, list, key) {
+                    if (!list.length) return;
+                    inner.appendChild(pfBuildGroupRow(label, key, { nested: true }));
+                    if (pfTeamState.collapsedEngagements[key]) return;
+                    list.forEach(function (entry) {
+                        inner.appendChild(pfBuildWorkerRow(pfScopedDemand(entry.worker, group.job, entry.items, null), rowIndex++));
                     });
                 }
+                appendDemand("Unassigned", assignable, group.job + "|unassigned");
+                appendDemand("Not available to assign", blocked, group.job + "|blocked");
             }
         });
     } else {
         const visibleWorkers = pfVisibleWorkers();
         const assigned = visibleWorkers.filter(function (wk) { return !pfIsUnassigned(wk); });
-        const unassigned = visibleWorkers.filter(function (wk) { return pfIsUnassigned(wk); });
-
-        if (PF_TEAM_READ_ONLY) {
-            assigned.forEach(function (wk) {
-                inner.appendChild(pfBuildWorkerRow(wk, rowIndex++));
-            });
-        } else {
-            inner.appendChild(pfBuildGroupRow("Assigned", "__assigned"));
-            if (!pfTeamState.collapsedEngagements.__assigned) {
-                assigned.forEach(function (wk) {
-                    inner.appendChild(pfBuildWorkerRow(wk, rowIndex++));
-                });
-            }
-            inner.appendChild(pfBuildGroupRow("Unassigned", "__unassigned", { checkbox: true }));
-            if (!pfTeamState.collapsedEngagements.__unassigned) {
-                unassigned.forEach(function (wk) {
-                    inner.appendChild(pfBuildWorkerRow(wk, rowIndex++));
-                });
-            }
-        }
+        assigned.forEach(function (wk) {
+            inner.appendChild(pfBuildWorkerRow(wk, rowIndex++));
+        });
     }
 
     inner.appendChild(pfBuildTodayMarker());
     host.scrollLeft = scrollLeft;
     host.scrollTop = scrollTop;
+    pfRenderUaPanel();
     // Re-anchor open menus after DOM rebuild
     if (pfTeamState.menu) pfRenderMenu();
     if (pfTeamState.filterPanel && !(options && options.preserveFilter)) pfRenderFilterPanel();
@@ -9450,7 +10023,7 @@ restoreViewState();
 <script src="../shared/telemetry-store.js"></script>
 <script src="../shared/usability-test-store.js?v=2026-09-15-kanban-session"></script>
 <script src="../shared/telemetry.js?v=2026-09-10-heatmap-pages" defer></script>
-<script src="../shared/usability-test.js?v=2026-09-15-widget-row" defer></script>
+<script src="../shared/usability-test.js?v=2026-11-10-hide-launch" defer></script>
 <script src="../shared/feedback.js" defer></script>
 </body>
 </html>
