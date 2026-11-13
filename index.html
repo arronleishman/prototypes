@@ -1211,6 +1211,7 @@
     <div class="team-views" role="tablist" aria-label="This team">
       <button type="button" id="teamPlanTab" role="tab" aria-selected="true">Plan</button>
       <button type="button" id="teamPrototypesTab" role="tab" aria-selected="false">Prototypes</button>
+      <button type="button" id="teamDiscoveryTab" role="tab" aria-selected="false">Discovery</button>
     </div>
     <div id="teamPlan"></div>
     <div id="teamPrototypes">
@@ -1220,7 +1221,7 @@
     <ul class="list" id="mockList" aria-live="polite">
       <li class="empty">Loading mocks…</li>
     </ul>
-    <footer>
+    <footer id="teamListFooter">
       Use <strong>Add prototype</strong> to upload a shared HTML mock, then add developer resources from its workspace.
     </footer>
     </div>
@@ -1380,9 +1381,12 @@
       var STORYBOOK_ORIGIN = 'https://storybook.dayshapedev.app';
       var baseTeams = [
         { id: 'high-volume', name: 'High Volume', short: 'HV' },
+        { id: 'customer-enhancements', name: 'Customer Enhancements', short: 'CE' },
       ];
       var prototypeTeams = {
         'practitioner-kanban': 'high-volume',
+        'practitioner-kanban-scenarios': 'high-volume',
+        'kanban-demo-scenarios': 'high-volume',
         'demand-profile-templates': 'high-volume',
         'job-editor-apply-template': 'high-volume',
         'job-editor-phase-selector': 'high-volume',
@@ -1390,9 +1394,17 @@
         'high-volume-focus': 'high-volume',
         'kanban-sidebar-scenarios': 'high-volume',
         'sidebar-comparison': 'high-volume',
-        'dashboard-main-prototype': 'high-volume',
+        'dashboard-main-prototype': 'customer-enhancements',
         'portfolios-v3': 'high-volume',
         'gantt-resource-breakdown': 'high-volume',
+      };
+      /* Shown on the Discovery tab instead of Prototypes */
+      var discoveryPrototypeIds = {
+        'practitioner-kanban-scenarios': true,
+        'kanban-demo-scenarios': true,
+        'kanban-sidebar-scenarios': true,
+        'high-volume-focus': true,
+        'sidebar-comparison': true,
       };
       var kitStories = [
         { group: 'Common patterns', id: 'beta-tag', title: 'Beta tag', story: 'components-common-patterns-beta-tag--default', docs: 'components-common-patterns-beta-tag--docs', note: 'Docs default. Small, info, strong. The label is the localised string common:beta.', html: '<span class="badge Badge Badge-sm Badge-info--strong text-uppercase">Beta</span>' },
@@ -1496,18 +1508,33 @@
       function renderTeamContext() {
         var team = currentTeam();
         var onPlan = teamSection === 'plan';
+        var onDiscovery = teamSection === 'discovery';
         document.getElementById('activeTeamName').textContent = team.name;
         document.getElementById('teamContextAvatar').innerHTML = teamAvatarMarkup(team);
-        document.getElementById('siteName').textContent = onPlan ? team.name : team.name + ' Prototypes';
+        document.getElementById('siteName').textContent = onPlan
+          ? team.name
+          : (onDiscovery ? team.name + ' Discovery' : team.name + ' Prototypes');
         document.getElementById('siteTagline').textContent = onPlan
           ? 'The picture this team is working from.'
-          : (cfg.siteTagline || 'Click a mock, share the link, leave feedback.');
+          : (onDiscovery
+            ? 'Scenario maps, focus notes, and comparison boards for discovery.'
+            : (cfg.siteTagline || 'Click a mock, share the link, leave feedback.'));
         document.title = document.getElementById('siteName').textContent;
+        var footer = document.getElementById('teamListFooter');
+        if (footer) {
+          footer.textContent = onDiscovery
+            ? 'Discovery holds scenario maps and prep boards. Product mocks live under Prototypes.'
+            : 'Use Add prototype to upload a shared HTML mock, then add developer resources from its workspace.';
+        }
       }
 
       function teamForItem(item) {
         if (item.team) return item.team;
         return prototypeTeams[item.id] || 'high-volume';
+      }
+
+      function isDiscoveryItem(item) {
+        return !!(item && discoveryPrototypeIds[item.id]);
       }
 
       function renderTeamRail() {
@@ -1640,7 +1667,9 @@
         if (parts[0] === 'teams' && parts[1]) {
           appMode = 'team';
           activeTeamId = teams().some(function (team) { return team.id === parts[1]; }) ? parts[1] : 'high-volume';
-          teamSection = parts[2] === 'prototypes' ? 'prototypes' : 'plan';
+          if (parts[2] === 'prototypes') teamSection = 'prototypes';
+          else if (parts[2] === 'discovery') teamSection = 'discovery';
+          else teamSection = 'plan';
           return;
         }
         appMode = 'components';
@@ -1649,15 +1678,17 @@
 
       function showShell() {
         var components = appMode === 'components';
+        var showList = teamSection === 'prototypes' || teamSection === 'discovery';
         document.getElementById('componentsView').hidden = !components;
         document.getElementById('teamView').hidden = components;
         document.getElementById('componentsNav').classList.toggle('is-active', components);
         if (components) document.getElementById('componentsNav').setAttribute('aria-current', 'page');
         else document.getElementById('componentsNav').removeAttribute('aria-current');
         document.getElementById('teamPlan').hidden = teamSection !== 'plan';
-        document.getElementById('teamPrototypes').hidden = teamSection !== 'prototypes';
+        document.getElementById('teamPrototypes').hidden = !showList;
         document.getElementById('teamPlanTab').setAttribute('aria-selected', teamSection === 'plan' ? 'true' : 'false');
         document.getElementById('teamPrototypesTab').setAttribute('aria-selected', teamSection === 'prototypes' ? 'true' : 'false');
+        document.getElementById('teamDiscoveryTab').setAttribute('aria-selected', teamSection === 'discovery' ? 'true' : 'false');
         if (components) {
           document.title = 'Components';
           renderStory();
@@ -1670,12 +1701,16 @@
       }
 
       function itemsForActiveTeam() {
+        var discoveryTab = teamSection === 'discovery';
         return allItems.reduce(function (result, item) {
           if (isGroup(item)) {
-            var children = item.children.filter(function (child) { return teamForItem(child) === activeTeamId; });
+            var children = item.children.filter(function (child) {
+              if (teamForItem(child) !== activeTeamId) return false;
+              return discoveryTab ? isDiscoveryItem(child) : !isDiscoveryItem(child);
+            });
             if (children.length) result.push(Object.assign({}, item, { children: children }));
           } else if (teamForItem(item) === activeTeamId) {
-            result.push(item);
+            if (discoveryTab ? isDiscoveryItem(item) : !isDiscoveryItem(item)) result.push(item);
           }
           return result;
         }, []);
@@ -1684,7 +1719,10 @@
       function renderList(items) {
         if (!Array.isArray(items) || !items.length) {
           var team = teams().find(function (entry) { return entry.id === activeTeamId; });
-          list.innerHTML = '<li class="empty">No prototypes in ' + escapeHtml(team ? team.name : 'this team') + ' yet.</li>';
+          var emptyLabel = teamSection === 'discovery'
+            ? 'No discovery boards in ' + (team ? team.name : 'this team') + ' yet.'
+            : 'No prototypes in ' + (team ? team.name : 'this team') + ' yet.';
+          list.innerHTML = '<li class="empty">' + escapeHtml(emptyLabel) + '</li>';
           return;
         }
         list.innerHTML = items.map(function (item) {
@@ -1738,6 +1776,10 @@
       });
       document.getElementById('teamPrototypesTab').addEventListener('click', function () {
         teamSection = 'prototypes';
+        showShell();
+      });
+      document.getElementById('teamDiscoveryTab').addEventListener('click', function () {
+        teamSection = 'discovery';
         showShell();
       });
       document.getElementById('teamPlan').addEventListener('click', function (event) {

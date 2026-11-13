@@ -16,6 +16,14 @@
     "updated": "2026-11-10"
   },
   {
+    "id": "kanban-demo-scenarios",
+    "title": "Kanban demo scenarios",
+    "description": "22 Sep customer demo storyboard — current Stramash behaviour, talk-track, and open gap questions.",
+    "path": "mocks/kanban-demo-scenarios.html",
+    "status": "draft",
+    "updated": "2026-09-24"
+  },
+  {
     "id": "demand-templates",
     "title": "Demand templates",
     "description": "Two connected flows — building a reusable demand template, then applying one to a job.",
