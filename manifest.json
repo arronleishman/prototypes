@@ -81,6 +81,14 @@
     "updated": "2026-11-03"
   },
   {
+    "id": "portfolios-v3-heatmap",
+    "title": "Portfolio Views — Unassigned heat map",
+    "description": "Direction version of Portfolio Views: availability heat map (slim and full) on named-person unassigned requests, with bookings underneath. Same as the 27.1 Team tab otherwise.",
+    "path": "mocks/portfolios-v3-heatmap.html",
+    "status": "in-development",
+    "updated": "2026-11-13"
+  },
+  {
     "id": "high-volume-focus",
     "title": "High Volume focus — decisions and roadmap",
     "description": "What design can answer from the 30 Sep focus session and the 2 Oct review: clickable concepts, a release line from 26.6, and the open questions still sitting across Kanban, templating, and portfolio.",

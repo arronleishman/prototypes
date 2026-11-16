@@ -192,8 +192,19 @@ a:hover { text-decoration: underline; }
 .TopBar-title { font-size: var(--font-size-h1); font-weight: var(--font-weight-semibold); color: var(--text-default); margin: 0; }
 #detailTitle { font-size: 24px; font-weight: 400; line-height: 32px; color: #222430; display: flex; align-items: center; }
 .TopBar-back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-subtle); font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold); cursor: pointer; margin-bottom: 2px; }
+.TopBar-kicker { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.TopBar-modify {
+    padding: 0; border: 0; background: none; cursor: pointer;
+    color: var(--text-primary); font-family: inherit;
+    font-size: var(--font-size-small); font-weight: var(--font-weight-semibold);
+    text-decoration: underline; white-space: nowrap;
+}
+.TopBar-modify:hover { color: var(--text-primary); }
 .TopBar-back:hover { color: var(--text-primary); text-decoration: none; }
 .TopBar-spacer { flex: 1 1 auto; }
+.TopBar-editActions { display: flex; align-items: center; gap: var(--padding-sm); }
+#pfGanttEdit[hidden],
+.TopBar-editActions[hidden] { display: none; }
 .TopBar-titleGroup { display: flex; flex-direction: column; min-width: 0; }
 
 /* ---- Buttons ---- */
@@ -848,7 +859,8 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-toolBtn:disabled:hover { color: var(--text-disabled); background: var(--surface-default); border-color: var(--border-default); cursor: default; }
 .PfTeam-toolBtn--filter,
 .PfTeam-toolBtn--settings { width: 48px; }
-.PfTeam-toolBtn--view { width: 30px; padding: 0; }
+.PfTeam-toolBtn--view,
+.PfTeam-toolBtn--ua { width: 30px; padding: 0; }
 .PfTeam-toolBtn--clear {
     width: 30px; padding: 0; border-radius: 0 4px 4px 0; border-left: 0; color: var(--icon-disabled);
 }
@@ -1154,7 +1166,8 @@ body.PfTeam-is-dragging,
 body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !important; }
 .PfTeam.is-readOnly .PfTeam-rowTrack { cursor: default; }
 .PfTeam.is-readOnly .PfTeam-barHandle { display: none !important; }
-.PfTeam.is-readOnly .PfTeam-worker.is-unassigned .PfTeam-bar.is-selected .PfTeam-barHandle { display: block !important; }
+.PfTeam.is-editing .PfTeam-worker.is-unassigned .PfTeam-bar.is-selected .PfTeam-barHandle { display: block !important; }
+.PfTeam:not(.is-editing) .PfTeam-uaActs { display: none !important; }
 .PfTeam-addRes {
     height: 28px; padding: 0 10px; flex: 0 0 auto;
     border: 1px solid var(--border-primary); border-radius: var(--border-radius-default);
@@ -2942,11 +2955,18 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
             <div class="TopBar TopBar--noBorder">
                 <div class="EntityIcon-badge"><i class="fa-solid fa-folder-open"></i></div>
                 <div class="TopBar-titleGroup">
-                    <span class="TopBar-back" onclick="showList()"><i class="fa-solid fa-arrow-left"></i> Portfolios</span>
+                    <div class="TopBar-kicker">
+                        <span class="TopBar-back" onclick="showList()"><i class="fa-solid fa-arrow-left"></i> Portfolios</span>
+                        <button type="button" class="TopBar-modify" onclick="openEditModal()">Modify portfolio</button>
+                    </div>
                     <h1 class="TopBar-title" id="detailTitle">Q3 Audit — Financial Services</h1>
                 </div>
                 <div class="TopBar-spacer"></div>
-                <button class="Btn Btn--primary" onclick="openEditModal()"><i class="fa-solid fa-pen"></i> Edit</button>
+                <div class="TopBar-editActions" id="pfGanttEditActions" hidden>
+                    <button type="button" class="Btn Btn--secondary" onclick="pfExitGanttEdit()">Cancel</button>
+                    <button type="button" class="Btn Btn--primary" onclick="pfExitGanttEdit()">Save changes</button>
+                </div>
+                <button class="Btn Btn--primary" id="pfGanttEdit" type="button" onclick="pfToggleGanttEdit()">Edit</button>
             </div>
 
             <div class="Tab-navBar">
@@ -2954,7 +2974,6 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <button class="Tab-navItem" data-tab="board" onclick="switchTab('board')"><span class="Tab-navItem-inner">Board</span><span class="Tab-navItem-bar"></span></button>
                 <button class="Tab-navItem is-active" data-tab="performance" onclick="switchTab('performance')"><span class="Tab-navItem-inner">Performance</span><span class="Tab-navItem-bar"></span></button>
                 <button class="Tab-navItem" data-tab="team" onclick="switchTab('team')"><span class="Tab-navItem-inner">Team</span><span class="Tab-navItem-bar"></span></button>
-                <span class="Tab-viewOnly BtnTooltipWrap BtnTooltipWrap--float" tabindex="0" data-tooltip="Assigned work is read-only. Unassigned demand can be added, edited, moved, split, cloned or deleted. Assigning that work stays on the main Gantt."><i class="fa-regular fa-eye" aria-hidden="true"></i>Read only</span>
             </div>
 
             <div class="PfLimit" id="pfLimit" hidden>
@@ -4017,10 +4036,8 @@ function applyPortfolioLimit(name) {
         document.getElementById("pfLimitTitle").textContent = fmt(portfolio.engagements) + " engagements match this portfolio.";
         document.getElementById("pfLimitCopy").textContent = "Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ".";
     }
-    const editBtn = view.querySelector(".TopBar .Btn--primary");
-    if (editBtn) editBtn.innerHTML = over
-        ? '<i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters'
-        : '<i class="fa-solid fa-pen" aria-hidden="true"></i> Edit';
+    const editBtn = document.getElementById("pfGanttEdit");
+    if (editBtn) editBtn.textContent = "Edit";
     return over;
 }
 let limitDialogName = null;
@@ -7512,6 +7529,42 @@ const PF_TEAM_READ_ONLY = true;
         cap: 37.5,
         items: [mkItem("Year-end Audit — Calder Ceramics", "CCR-YE", 16, 2, 8)]
     });
+    pfTeamWorkers.push({
+        id: "w-ua-flex-forensic",
+        unassigned: true,
+        reqType: "flexible",
+        name: null,
+        grade: "SM",
+        fu: "Forensic",
+        gu: "London",
+        role: null,
+        cap: 37.5,
+        items: [mkItem("Financial Statement Audit — NovaTech Manufacturing", "NTM-2601", 6, 3, 12)]
+    });
+    pfTeamWorkers.push({
+        id: "w-ua-flex-audit",
+        unassigned: true,
+        reqType: "flexible",
+        name: null,
+        grade: "SA",
+        fu: "Audit",
+        gu: "Manchester",
+        role: null,
+        cap: 37.5,
+        items: [mkItem("Revenue Recognition Review — Cloudspan Software", "CSS-301", 9, 2, 9)]
+    });
+    pfTeamWorkers.push({
+        id: "w-ua-harriet",
+        unassigned: true,
+        reqType: "specific",
+        name: "Harriet Lowe",
+        grade: "A2",
+        fu: "Audit",
+        gu: "Edinburgh",
+        role: null,
+        cap: 37.5,
+        items: [mkItem("Completion Memo — Calder Ceramics", "CCR-CM", 20, 2, 7)]
+    });
 })();
 
 const pfTeamState = {
@@ -7519,6 +7572,8 @@ const pfTeamState = {
     breakdown: "none",
     showAvailability: false,
     availabilityMode: "full",
+    mockVersion: "27.1",
+    ganttEditing: false,
     tasksInGrey: false,
     zoom: 1,
     expandedRows: {},
@@ -7825,6 +7880,10 @@ function pfSlimColour(consumed, capacity) {
     if (p < 1.25) return "var(--utilisation-level-4)";
     return "var(--utilisation-level-5)";
 }
+/* Mock versions for the Team tab (review switch, not product settings).
+   "27.1": availability is shown on assigned rows only; the Unassigned panel has no heat map.
+   "heatmap": slim and full availability also apply to Unassigned rows; full view expands them by default. */
+function pfHeatOnUnassigned() { return pfTeamState.mockVersion === "heatmap"; }
 function pfRowExpanded(worker, row) { return !!pfTeamState.expandedRows[worker.id + "|" + row.key]; }
 
 function pfPortfolioEngagementNames() {
@@ -8254,7 +8313,9 @@ function pfBuildHeadCorner() {
     const uaOn = pfTeamState.uaPanel !== "closed" && pfTeamState.pivot !== "engagement";
     uaBtn.classList.toggle("is-on", uaOn);
     uaBtn.setAttribute("aria-pressed", uaOn ? "true" : "false");
-    uaBtn.innerHTML = '<i class="fa-solid fa-list-check" aria-hidden="true"></i><span>Unassigned</span>';
+    uaBtn.setAttribute("aria-label", "Unassigned");
+    uaBtn.innerHTML = '<i class="fa-solid fa-list-check" aria-hidden="true"></i>';
+    uaBtn.title = "Unassigned";
     if (pfTeamState.pivot === "engagement") {
         uaBtn.disabled = true;
         uaBtn.title = "Available in Resource view";
@@ -8357,6 +8418,8 @@ function pfBuildFullCell(worker, wi) {
 
 function pfBuildWorkerRow(worker, index) {
     const isUa = pfIsUnassigned(worker);
+    /* Unassigned rows only get a heat map for named (specific) requests in the heat-map version; flexible requests have no person to measure. */
+    const showAvail = pfTeamState.showAvailability && (!isUa || (pfHeatOnUnassigned() && worker.reqType === "specific"));
     const rows = pfBuildBreakdownRows(worker, pfTeamState.breakdown);
     const row = pfEl("div", "PfTeam-row PfTeam-worker" + (isUa ? " is-unassigned" : "") + (index % 2 === 0 ? " is-alt" : ""));
     row.dataset.worker = worker.id;
@@ -8448,7 +8511,7 @@ function pfBuildWorkerRow(worker, index) {
         if (e.target.closest("button, a, .PfTeam-bar")) return;
         e.preventDefault();
         e.stopPropagation();
-        if (!pfIsUnassigned(worker)) {
+        if (!pfIsUnassigned(worker) || !pfGanttEditing()) {
             pfShowReadOnlyNotice();
             return;
         }
@@ -8460,7 +8523,7 @@ function pfBuildWorkerRow(worker, index) {
     weeksCol.style.width = "100%";
     track.appendChild(weeksCol);
 
-    if (pfTeamState.showAvailability && pfTeamState.availabilityMode === "slim") {
+    if (showAvail && pfTeamState.availabilityMode === "slim") {
         dims.appendChild(pfEl("div", "PfTeam-slimGutter"));
         const slim = pfEl("div", "PfTeam-slim");
         PF_WEEKS.forEach(function (d, wi) {
@@ -8474,7 +8537,7 @@ function pfBuildWorkerRow(worker, index) {
         weeksCol.appendChild(slim);
     }
 
-    if (pfTeamState.showAvailability && pfTeamState.availabilityMode === "full") {
+    if (showAvail && pfTeamState.availabilityMode === "full") {
         const full = pfEl("div", "PfTeam-subrow PfTeam-fullAvailability");
         full.style.height = "var(--pf-team-full-row-h)";
         PF_WEEKS.forEach(function (d, wi) { full.appendChild(pfBuildFullCell(worker, wi)); });
@@ -8482,6 +8545,22 @@ function pfBuildWorkerRow(worker, index) {
         const fullLabel = pfEl("div", "PfTeam-dimLabel is-spacer", "");
         fullLabel.style.height = "var(--pf-team-full-row-h)";
         dims.appendChild(fullLabel);
+        if (isUa && pfHeatOnUnassigned()) {
+            /* Unassigned rows in the heat-map version open with their bookings underneath the block. */
+            const barsH = pfBarsHeight(pfLaneCount(worker.items), PF_BAR_PAD);
+            const under = pfEl("div", "PfTeam-subrow");
+            under.style.height = barsH + "px";
+            under.style.position = "relative";
+            PF_WEEKS.forEach(function () { under.appendChild(pfEl("div", "PfTeam-cellw")); });
+            const underBars = pfBuildBars(worker, { key: "__ua-full", items: worker.items }, PF_BAR_PAD);
+            underBars.style.position = "absolute";
+            underBars.style.inset = "0";
+            under.appendChild(underBars);
+            weeksCol.appendChild(under);
+            const underLabel = pfEl("div", "PfTeam-dimLabel is-spacer", "");
+            underLabel.style.height = barsH + "px";
+            dims.appendChild(underLabel);
+        }
     } else if (!rows) {
         const flatH = pfBarsHeight(pfLaneCount(worker.items), PF_BAR_PAD);
         const flat = pfEl("div", "PfTeam-subrow");
@@ -8564,7 +8643,7 @@ function pfBuildCell(worker, row, wi) {
     c.addEventListener("dblclick", function (e) {
         e.preventDefault();
         e.stopPropagation();
-        if (!pfIsUnassigned(worker)) {
+        if (!pfIsUnassigned(worker) || !pfGanttEditing()) {
             pfShowReadOnlyNotice();
             return;
         }
@@ -8659,7 +8738,7 @@ function renderPfSelectionPanel() {
                 <button type="button" class="PfSelectionPanel-close" aria-label="Close booking details" title="Close" onclick="clearPfSelection()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             </div>
             <div class="PfSelectionPanel-actions">
-                ${demand ? `<button type="button" class="Btn--iconSoft" data-ua="clone" title="Clone" aria-label="Clone"><i class="fa-regular fa-clone"></i></button>
+                ${demand && pfGanttEditing() ? `<button type="button" class="Btn--iconSoft" data-ua="clone" title="Clone" aria-label="Clone"><i class="fa-regular fa-clone"></i></button>
                 <button type="button" class="Btn--iconSoft" data-ua="split" title="Split" aria-label="Split"><i class="fa-solid fa-scissors"></i></button>
                 <button type="button" class="Btn--iconSoft" data-ua="delete" title="Delete" aria-label="Delete"><i class="fa-regular fa-trash-can"></i></button>` : ""}
                 <button type="button" class="Btn--iconSoft" title="Jump to" aria-label="Jump to"><i class="fa-solid fa-crosshairs"></i></button>
@@ -8795,7 +8874,7 @@ function pfBuildBars(worker, row, topPad) {
         bar.appendChild(content);
 
         bar.title = it.job + (it.code ? " (" + it.code + ")" : "") + " — " + perWeek + " h/week";
-        if (!pfIsUnassigned(worker)) {
+        if (!pfIsUnassigned(worker) || !pfGanttEditing()) {
             bar.addEventListener("click", function (e) {
                 e.stopPropagation();
                 pfSelectBarItem(it, e);
@@ -9013,26 +9092,6 @@ function pfScopedDemand(worker, job, items, displayName) {
         role: worker.role
     };
 }
-function pfUaGroupControl() {
-    const group = pfEl("div", "PfTeam-uaGroup");
-    group.setAttribute("role", "group");
-    group.setAttribute("aria-label", "Group unassigned work");
-    [["engagement", "Engagement"], ["requirement", "Requirement"]].forEach(function (pair) {
-        const on = pfTeamState.uaGroup === pair[0];
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.textContent = pair[1];
-        if (on) btn.className = "is-active";
-        btn.setAttribute("aria-pressed", on ? "true" : "false");
-        btn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            pfTeamState.uaGroup = pair[0];
-            renderGantt();
-        });
-        group.appendChild(btn);
-    });
-    return group;
-}
 function pfUaWeekStrip() {
     const dates = pfEl("div", "PfTeam-uaDates");
     dates.id = "pfTeamUaDates";
@@ -9138,7 +9197,6 @@ function pfRenderUaPanel() {
         selectAll.appendChild(selectBox);
         selectAll.appendChild(document.createTextNode("Select All"));
         label.appendChild(selectAll);
-        label.appendChild(pfUaGroupControl());
         const sortBtn = pfEl("button", "PfTeam-uaSort");
         sortBtn.type = "button";
         sortBtn.title = "Sort rows";
@@ -9189,7 +9247,7 @@ function pfRenderUaPanel() {
    hours: unassigned hours in the group (after filters).
    pctScheduled: share of the group's jobs' hours already booked to named resources.
    pctClashed: share of those booked hours in weeks where the resource is over capacity. */
-const PF_UA_RECOVERY = { "ORP-44": 410, "HBE-12": 510, "CCR-YE": 450, "MLG-118": 330, "HBE-BC": 340 };
+const PF_UA_RECOVERY = { "ORP-44": 410, "HBE-12": 510, "CCR-YE": 450, "MLG-118": 330, "HBE-BC": 340, "NTM-2601": 380, "CSS-301": 260, "CCR-CM": 240 };
 function pfUaGroupStats(items) {
     const jobs = {};
     const codes = {};
@@ -9346,6 +9404,10 @@ function pfSplitUnassigned(id) {
     renderGantt();
 }
 function pfOpenUaMenu(id, anchor) {
+    if (!pfGanttEditing()) {
+        pfShowReadOnlyNotice();
+        return;
+    }
     const existing = document.getElementById("pfUaMenu");
     if (existing) existing.remove();
     pfTeamState.uaMenuId = id;
@@ -9380,7 +9442,33 @@ function pfOpenUaMenu(id, anchor) {
     }, 0);
 }
 
+function pfGanttEditing() { return !!pfTeamState.ganttEditing; }
+function pfSyncGanttEdit() {
+    const on = pfGanttEditing();
+    const btn = document.getElementById("pfGanttEdit");
+    const actions = document.getElementById("pfGanttEditActions");
+    const tab = document.getElementById("tab-team");
+    if (btn) btn.hidden = on;
+    if (actions) actions.hidden = !on;
+    if (tab) tab.classList.toggle("is-editing", on);
+}
+function pfExitGanttEdit() {
+    pfTeamState.ganttEditing = false;
+    pfSyncGanttEdit();
+    renderGantt();
+}
+function pfToggleGanttEdit() {
+    pfTeamState.ganttEditing = !pfTeamState.ganttEditing;
+    if (pfTeamState.ganttEditing) {
+        switchTab("team");
+        if (pfTeamState.pivot === "engagement") pfTeamState.pivot = "resource";
+        pfTeamState.uaPanel = "open";
+    }
+    pfSyncGanttEdit();
+    renderGantt();
+}
 function renderGantt(options) {
+    pfSyncGanttEdit();
     const inner = document.getElementById("pfTeamInner");
     const host = document.getElementById("pfTeamScroller");
     if (!inner || !host) return;
