@@ -8428,15 +8428,11 @@ function pfBuildHeadCorner() {
     uaBtn.setAttribute("aria-label", "Unassigned");
     uaBtn.innerHTML = '<i class="fa-solid fa-list-check" aria-hidden="true"></i>';
     uaBtn.title = "Unassigned";
-    if (pfTeamState.pivot === "engagement") {
-        uaBtn.disabled = true;
-        uaBtn.title = "Available in Resource view";
-    }
     uaBtn.addEventListener("click", function (e) {
         e.stopPropagation();
         pfToggleUaPanel();
     });
-    row.insertBefore(uaBtn, viewBtn);
+    if (pfTeamState.pivot !== "engagement") row.insertBefore(uaBtn, viewBtn);
     tools.appendChild(searchRow);
 
     corner.appendChild(tools);
@@ -9440,6 +9436,7 @@ function pfSyncUaDates(left) {
 function pfToggleUaPanel() {
     if (pfTeamState.pivot === "engagement") return;
     pfTeamState.uaPanel = pfTeamState.uaPanel === "closed" ? "open" : "closed";
+    if (pfTeamState.uaPanel === "closed") pfUnloadUa();
     renderGantt();
 }
 function pfCollapseUaPanel() {
@@ -9448,6 +9445,7 @@ function pfCollapseUaPanel() {
 }
 function pfCloseUaPanel() {
     pfTeamState.uaPanel = "closed";
+    pfUnloadUa();
     renderGantt();
 }
 function pfStartUaResize(e) {
@@ -9650,6 +9648,12 @@ function pfUaWorkers() {
 }
 let pfUaLoadWaiters = [];
 let pfUaLoadFailedOnce = false;
+let pfUaLoadToken = 0;
+function pfUnloadUa() {
+    pfUaLoadToken++;
+    pfUaLoadWaiters = [];
+    pfTeamState.uaLoad = "idle";
+}
 function pfEnsureUaLoaded(then) {
     const portfolio = (document.getElementById("detailTitle") || {}).textContent || "";
     if (pfTeamState.uaLoadFor !== portfolio) {
@@ -9661,9 +9665,10 @@ function pfEnsureUaLoaded(then) {
     if (then) pfUaLoadWaiters.push(then);
     if (pfTeamState.uaLoad === "loading") return;
     pfTeamState.uaLoad = "loading";
+    const token = ++pfUaLoadToken;
     const fail = /[?&]uaLoad=error\b/.test(location.search) && !pfUaLoadFailedOnce;
     setTimeout(function () {
-        if (pfTeamState.uaLoadFor !== portfolio) return;
+        if (pfTeamState.uaLoadFor !== portfolio || token !== pfUaLoadToken) return;
         pfTeamState.uaLoad = fail ? "error" : "loaded";
         if (fail) { pfUaLoadFailedOnce = true; pfUaLoadWaiters = []; }
         renderGantt();
