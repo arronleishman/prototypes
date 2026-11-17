@@ -1025,6 +1025,9 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-worker.is-alt .PfTeam-rowTrack { background: var(--surface-row-alt); }
 /* Unassigned rows match main Schedule Gantt: same white/alt row chrome as assigned — not purple */
 .PfTeam-worker:not(.is-unassigned):hover .PfTeam-rowLeft { background: var(--surface-list-item-hover); }
+@keyframes pfJustAdded { from { background-color: var(--surface-primary-subtle); } }
+.PfTeam-worker.is-justAdded .PfTeam-rowLeft,
+.PfTeam-worker.is-justAdded .PfTeam-rowTrack { animation: pfJustAdded 2.4s ease-in; }
 .PfTeam-worker:not(.is-unassigned) .PfTeam-cellName { cursor: pointer; }
 .PfTeam-worker:not(.is-unassigned) .PfTeam-cellName:hover span { color: var(--text-primary); text-decoration: underline; }
 
@@ -1141,7 +1144,8 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-cellw.is-monthEnd,
 .PfTeam.is-weekDividers .PfTeam-grid > i,
 .PfTeam.is-weekDividers .PfTeam-cellw { border-right: 4px solid var(--border-subtle); }
-.PfTeam.is-weekDividers .PfTeam-headRow--weeks .PfTeam-week { border-right-width: 4px; }
+.PfTeam.is-weekDividers .PfTeam-headRow--weeks .PfTeam-week,
+.PfTeam .PfTeam-week.is-monthEnd { border-right-width: 4px; }
 .PfTeam-bars > .PfTeam-grid { z-index: 0; }
 .PfTeam-bars { z-index: 10; }
 
@@ -2530,6 +2534,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 
 /* ---- Add Resource Requirement — Job Editor ResourceRequirementModal field chrome ---- */
 .RModal--req { max-width: 800px; }
+.DsModalFrame { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1000; background: transparent; }
+.DsModalFrame[hidden] { display: none; }
 .RModal--bio { max-width: 604px; }
 .RModal--bio .RModal-header { padding: 12px 16px; }
 .RModal--bio .RModal-title { display: flex; align-items: center; gap: 12px; font-size: var(--font-size-h2); color: var(--text-primary); }
@@ -3091,10 +3097,10 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                     <h1 class="TopBar-title" id="detailTitle">Q3 Audit — Financial Services</h1>
                 </div>
                 <div class="TopBar-spacer"></div>
-                <button type="button" class="Btn Btn--secondary" id="pfModifyPortfolio" onclick="openEditModal()">Modify portfolio</button>
+                <button type="button" class="Btn Btn--secondary" id="pfModifyPortfolio" onclick="openEditModal()">Modify Portfolio</button>
                 <div class="TopBar-editActions" id="pfGanttEditActions" hidden>
                     <button type="button" class="Btn Btn--secondary" onclick="pfExitGanttEdit()">Cancel</button>
-                    <button type="button" class="Btn Btn--primary" onclick="pfExitGanttEdit()">Save changes</button>
+                    <button type="button" class="Btn Btn--primary" onclick="pfExitGanttEdit()">Save Changes</button>
                 </div>
                 <button class="Btn Btn--primary" id="pfGanttEdit" type="button" onclick="pfToggleGanttEdit()">Edit</button>
             </div>
@@ -3110,7 +3116,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <div class="PfLimit-body">
                     <p class="PfLimit-title" id="pfLimitTitle"></p>
                     <p class="PfLimit-copy" id="pfLimitCopy"></p>
-                    <button type="button" class="Btn Btn--primary" onclick="openEditModal()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters</button>
+                    <button type="button" class="Btn Btn--primary" onclick="openEditModal()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit Filters</button>
                 </div>
             </div>
 
@@ -3269,7 +3275,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <div class="Modal-resultsBar" id="editFilterToolbarBar" hidden>
                     <div class="Modal-resultsToolbar Modal-editRuleToolbar">
                         <div class="Modal-toolbarSlot Modal-toolbarSlot--start">
-                            <button class="Btn Btn--outline" type="button" onclick="goBackToPortfolio()"><i class="fa-solid fa-arrow-left"></i> Go back to portfolio (<span id="editFilterPortfolioCount">0</span>)</button>
+                            <button class="Btn Btn--outline" type="button" onclick="goBackToPortfolio()"><i class="fa-solid fa-arrow-left"></i> Go Back to Portfolio (<span id="editFilterPortfolioCount">0</span>)</button>
                         </div>
                         <div class="Modal-toolbarSlot Modal-toolbarSlot--center">
                             <span class="PfRuleSummary-pill" id="editFilterSummaryPill"></span>
@@ -3297,7 +3303,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <div class="Modal-resultsBar">
                     <div class="Modal-resultsToolbar">
                         <div class="Modal-toolbarSlot Modal-toolbarSlot--start">
-                            <button class="Btn Btn--outline" onclick="modifyFilters()"><i class="fa-solid fa-arrow-left"></i> Search for more</button>
+                            <button class="Btn Btn--outline" onclick="modifyFilters()"><i class="fa-solid fa-arrow-left"></i> Search for More</button>
                         </div>
                         <div class="Modal-toolbarSlot Modal-toolbarSlot--center">
                         <div class="btn-group btn-group-toggle Modal-resultsTabGroup" role="group" aria-label="Results view">
@@ -3314,7 +3320,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                         <div class="Modal-toolbarSlot Modal-toolbarSlot--end">
                         <span class="results-text" id="resultsSelectionText"></span>
                         <span class="BtnTooltipWrap BtnTooltipWrap--float" id="addToPortfolioBtnWrap" tabindex="0">
-                            <button class="Btn Btn--primary" id="addToPortfolioBtn" onclick="addSelectedToPortfolio()"><i class="fa-solid fa-plus"></i> Add to portfolio</button>
+                            <button class="Btn Btn--primary" id="addToPortfolioBtn" onclick="addSelectedToPortfolio()"><i class="fa-solid fa-plus"></i> Add to Portfolio</button>
                         </span>
                         </div>
                     </div>
@@ -3337,7 +3343,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                     <div class="Modal-resultsBar">
                         <div class="Modal-resultsToolbar Modal-editRuleToolbar">
                             <div class="Modal-toolbarSlot Modal-toolbarSlot--start">
-                                <button class="Btn Btn--outline" type="button" onclick="goBackToPortfolio()"><i class="fa-solid fa-arrow-left"></i> Go back to portfolio (<span id="editRulePortfolioCount">0</span>)</button>
+                                <button class="Btn Btn--outline" type="button" onclick="goBackToPortfolio()"><i class="fa-solid fa-arrow-left"></i> Go Back to Portfolio (<span id="editRulePortfolioCount">0</span>)</button>
                             </div>
                             <div class="Modal-toolbarSlot Modal-toolbarSlot--center">
                                 <span class="PfRuleSummary-pill" id="editRuleSummaryPill"></span>
@@ -3356,17 +3362,17 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 
         <div class="Modal-footer" id="modalFooter">
             <div class="Modal-footerLeft" id="modalFooterFilters">
-                <button class="Btn Btn--outline" id="modalClearBtn" onclick="clearAllFilters()" disabled><i class="fa-solid fa-rotate-left"></i> Clear filters</button>
+                <button class="Btn Btn--outline" id="modalClearBtn" onclick="clearAllFilters()" disabled><i class="fa-solid fa-rotate-left"></i> Clear Filters</button>
             </div>
             <div class="Modal-footerActions" id="modalFooterFilterActions">
-                <button class="Btn Btn--secondary" id="backToPortfolioBtn" type="button" onclick="returnToPortfolioView()" hidden>Go back to portfolio</button>
+                <button class="Btn Btn--secondary" id="backToPortfolioBtn" type="button" onclick="returnToPortfolioView()" hidden>Go Back to Portfolio</button>
                 <span class="BtnTooltipWrap" id="viewResultsBtnWrap">
                     <button class="Btn Btn--primary" id="viewResultsBtn" onclick="viewFilterResults()" disabled>Select Engagements</button>
                 </span>
             </div>
             <div class="Modal-footerActions" id="modalFooterEditRule" hidden>
                 <button class="Btn Btn--secondary" type="button" onclick="cancelEditRule()">Cancel</button>
-                <button class="Btn Btn--primary" id="updateFilterSetBtn" type="button" onclick="updateFilterSet()" disabled>Update filter set</button>
+                <button class="Btn Btn--primary" id="updateFilterSetBtn" type="button" onclick="updateFilterSet()" disabled>Update Filter Set</button>
             </div>
             <div class="Modal-footerActions" id="modalFooterResults" hidden>
                 <button class="Btn Btn--secondary" id="modalResultsCancel" type="button" onclick="closeCreateModal()">Cancel</button>
@@ -3387,8 +3393,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 </div>
                 <div class="DynamicFilterConfirm-footer">
                     <button type="button" class="Btn Btn--outline" onclick="closeDynamicFilterConfirm({ clearSelection: true })">Cancel</button>
-                    <button type="button" class="Btn Btn--secondary" id="dynamicFilterStaticBtn" onclick="confirmAddAsStaticSelection()">Just add these</button>
-                    <button type="button" class="Btn Btn--primary" id="dynamicFilterAddBtn" onclick="confirmAddAsDynamicFilter()">Add as dynamic filter</button>
+                    <button type="button" class="Btn Btn--secondary" id="dynamicFilterStaticBtn" onclick="confirmAddAsStaticSelection()">Just Add These</button>
+                    <button type="button" class="Btn Btn--primary" id="dynamicFilterAddBtn" onclick="confirmAddAsDynamicFilter()">Add as Dynamic Filter</button>
                 </div>
             </div>
         </div>
@@ -3421,8 +3427,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                     <p class="DynamicFilterConfirm-hint" id="discardPortfolioConfirmHint">You can keep editing and save when you’re ready.</p>
                 </div>
                 <div class="DynamicFilterConfirm-footer">
-                    <button type="button" class="Btn Btn--outline" onclick="closeDiscardPortfolioConfirm()">Keep editing</button>
-                    <button type="button" class="Btn Btn--primary" id="discardPortfolioConfirmBtn" onclick="confirmDiscardPortfolio()">Discard progress</button>
+                    <button type="button" class="Btn Btn--outline" onclick="closeDiscardPortfolioConfirm()">Keep Editing</button>
+                    <button type="button" class="Btn Btn--primary" id="discardPortfolioConfirmBtn" onclick="confirmDiscardPortfolio()">Discard Progress</button>
                 </div>
             </div>
         </div>
@@ -3440,8 +3446,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
             <p class="DynamicFilterConfirm-hint">Narrow the filters to bring it under the limit.</p>
         </div>
         <div class="DynamicFilterConfirm-footer">
-            <button type="button" class="Btn Btn--secondary" onclick="closePortfolioLimitDialog()">Not now</button>
-            <button type="button" class="Btn Btn--primary" id="portfolioLimitEdit" onclick="editPortfolioFromLimitDialog()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters</button>
+            <button type="button" class="Btn Btn--secondary" onclick="closePortfolioLimitDialog()">Not Now</button>
+            <button type="button" class="Btn Btn--primary" id="portfolioLimitEdit" onclick="editPortfolioFromLimitDialog()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit Filters</button>
         </div>
     </div>
 </div>
@@ -3460,153 +3466,8 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     </div>
 </div>
 
-<!-- ===================== Add Resource Requirement modal (Job Editor ResourceRequirementModal) ===================== -->
-<div class="RModal-backdrop" id="reqModal">
-    <div class="RModal RModal--req" role="dialog" aria-modal="true" aria-labelledby="reqModalTitle">
-        <div class="RModal-header">
-            <h3 class="RModal-title" id="reqModalTitle">Add Resource Requirement</h3>
-            <button class="RModal-close" title="Close without saving" aria-label="Close" onclick="closeReqModal()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="RModal-body">
-            <div class="RModal-pane">
-                <div class="RModal-block">
-                    <div class="RField">
-                        <label class="RField-label" for="reqEngagement">Engagement <span class="req">*</span></label>
-                        <div class="RField-control">
-                            <i class="fa-solid fa-briefcase lead" aria-hidden="true"></i>
-                            <select id="reqEngagement" class="RField-select" required><option value="">Choose engagement</option></select>
-                            <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                        </div>
-                    </div>
-            </div>
-
-                <div class="RModal-block">
-                    <div class="RModal-tabs" role="tablist" aria-label="Resource type">
-                        <button type="button" class="RModal-tab" role="tab" data-rtype="specific" aria-selected="false" onclick="switchReqTab('specific')">Specific</button>
-                        <button type="button" class="RModal-tab is-active" role="tab" data-rtype="flexible" aria-selected="true" onclick="switchReqTab('flexible')">Flexible</button>
-                        <button type="button" class="RModal-tab" role="tab" data-rtype="unassignable" aria-selected="false" onclick="switchReqTab('unassignable')">Unassignable</button>
-                    </div>
-
-                    <div id="reqtab-specific" class="reqtab" hidden>
-                <div class="RField">
-                            <label class="RField-label" for="reqWorker">Worker Name <span class="req">*</span></label>
-                            <div class="RField-control">
-                                <i class="fa-solid fa-user lead" aria-hidden="true"></i>
-                                <select id="reqWorker" class="RField-select" onchange="onReqWorkerChange()">
-                                    <option value="">Choose worker</option>
-                                    <option>Priya Patel</option>
-                                    <option>Sofia Rossi</option>
-                                    <option>Noah Williams</option>
-                                    <option>Mia Fernandez</option>
-                                    <option>Tom Becker</option>
-                                    <option>Jordan Blake</option>
-                                    <option>Olivia Chen</option>
-                                    <option>Marcus Webb</option>
-                                    <option>Aisha Khan</option>
-                                    <option>Harry Collins</option>
-                                    <option>Liam O'Connor</option>
-                                    <option>Emma Johnson</option>
-                                </select>
-                                <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                </div>
-                </div>
-                        <div class="RSummary" id="reqWorkerSummary" style="display:none">
-                            <div><label>Grade</label><div class="val" id="reqwGrade">—</div></div>
-                            <div><label>Functional Unit</label><div class="val" id="reqwFu">—</div></div>
-                            <div><label>Geographical Unit</label><div class="val" id="reqwGu">—</div></div>
-                        </div>
-                        <label class="RCheck RCheck--block"><input type="checkbox" id="reqContinuity" /> Continuity</label>
-                        <div class="RField">
-                            <label class="RField-label" for="reqSpecificRole">Project Role</label>
-                            <div class="RField-control">
-                                <i class="fa-solid fa-briefcase lead" aria-hidden="true"></i>
-                                <select id="reqSpecificRole" class="RField-select"><option value="">Choose project role</option><option>Engagement Lead</option><option>Reviewer</option><option>Preparer</option><option>Specialist</option></select>
-                                <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                            </div>
-                        </div>
-            </div>
-
-                    <div id="reqtab-flexible" class="reqtab">
-                <div class="RField">
-                            <label class="RField-label" for="reqRole">Project Role</label>
-                            <div class="RField-control">
-                                <i class="fa-solid fa-briefcase lead" aria-hidden="true"></i>
-                                <select id="reqRole" class="RField-select"><option value="">Choose project role</option><option>Engagement Lead</option><option>Reviewer</option><option>Preparer</option><option>Specialist</option></select>
-                                <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                            </div>
-                </div>
-                <div class="RField">
-                            <label class="RField-label" for="reqGrade">Grade <span class="req">*</span></label>
-                            <div class="RField-control">
-                                <i class="fa-solid fa-graduation-cap lead" aria-hidden="true"></i>
-                                <select id="reqGrade" class="RField-select"><option value="">Choose grade</option><option>Partner</option><option>Director</option><option>Manager</option><option>Senior Associate</option><option>Associate</option></select>
-                                <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                            </div>
-                </div>
-                <div class="RField">
-                            <label class="RField-label" for="reqFu">Functional Unit</label>
-                            <div class="RField-control">
-                                <i class="fa-solid fa-building lead" aria-hidden="true"></i>
-                                <select id="reqFu" class="RField-select"><option value="">Choose functional unit</option><option>Audit</option><option>Tax</option><option>Advisory</option><option>Risk Assurance</option></select>
-                                <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                            </div>
-                </div>
-                <div class="RField">
-                            <label class="RField-label" for="reqGu">Geographical Unit</label>
-                            <div class="RField-control">
-                                <i class="fa-solid fa-map lead" aria-hidden="true"></i>
-                                <select id="reqGu" class="RField-select"><option value="">Choose geographical unit</option><option>London</option><option>Manchester</option><option>Edinburgh</option><option>Bristol</option></select>
-                                <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                            </div>
-                </div>
-            </div>
-
-                    <div id="reqtab-unassignable" class="reqtab" hidden>
-                <div class="RField">
-                            <label class="RField-label" for="reqUnGrade">Grade <span class="req">*</span></label>
-                            <div class="RField-control">
-                                <i class="fa-solid fa-graduation-cap lead" aria-hidden="true"></i>
-                                <select id="reqUnGrade" class="RField-select"><option value="">Choose grade</option><option>Partner</option><option>Director</option><option>Manager</option><option>Senior Associate</option><option>Associate</option></select>
-                                <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                        <div class="RField">
-                            <label class="RField-label" for="reqUnRole">Project Role</label>
-                            <div class="RField-control">
-                                <i class="fa-solid fa-briefcase lead" aria-hidden="true"></i>
-                                <select id="reqUnRole" class="RField-select"><option value="">Choose project role</option><option>Engagement Lead</option><option>Reviewer</option><option>Preparer</option><option>Specialist</option></select>
-                                <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                </div>
-            </div>
-
-                <div class="RModal-block RModal-block--traits" id="reqSkills">
-                    <h4 class="RModal-sectionTitle">Required Skills</h4>
-                    <div>
-                        <button type="button" class="Btn Btn--secondary"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add Skills</button>
-                    </div>
-                    <div class="RTraitsTableWrap">
-                        <table class="RTraitsTable" aria-label="Required skills">
-                            <thead>
-                                <tr>
-                                    <th><i class="fa-solid fa-sort" aria-hidden="true" style="opacity:.45;margin-right:4px"></i>Name</th>
-                                    <th><i class="fa-solid fa-sort" aria-hidden="true" style="opacity:.45;margin-right:4px"></i>Primary</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                        </table>
-                        <div class="RTraitsEmpty">Nothing to display</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="RModal-footer">
-            <button type="button" class="Btn Btn--secondary" onclick="closeReqModal()">Cancel</button>
-            <button type="button" class="Btn Btn--primary" onclick="submitReq()">Confirm</button>
-        </div>
-    </div>
-</div>
+<!-- ===================== Resource Requirement modal (component kit Modal, rendered with the Dayshape library styles) ===================== -->
+<iframe id="reqModalFrame" class="DsModalFrame" title="Resource requirement" hidden></iframe>
 
 <!-- ===================== Create a New Booking modal (Figma High-Volume) ===================== -->
 <div class="RModal-backdrop" id="bookingModal">
@@ -4916,7 +4777,7 @@ function pfBoardRenderFilters(focusId) {
     const workOpen = !!pfBoardFilters.openGroups.work;
     const bookingOpen = !!pfBoardFilters.openGroups.booking;
     const engagementOpen = !!pfBoardFilters.openGroups.engagement;
-    panel.innerHTML = `${pfBoardFilters.submenu ? pfBoardFlyoutHtml(pfBoardFilters.submenu, options) : ""}<div class="PrepFilters-body"><div class="PrepFilters-search"><input type="search" id="pfFilterSearch" placeholder="Search company or engagement" value="${htmlEsc(pfBoardFilters.search || "")}" aria-label="Search" /></div><div class="PrepFilters-top"><button type="button" class="PrepFilters-toggle${pfBoardFilters.showSelected ? " is-on" : ""}" data-pf-show-selected aria-pressed="${pfBoardFilters.showSelected ? "true" : "false"}" aria-label="Show selected filter values only"></button><button type="button" class="PrepFilters-clear${active ? " is-active" : ""}" data-pf-clear${active ? "" : " disabled"}>Clear all</button></div><section class="PrepFilters-group">${title("work", "Work")}${workOpen ? `<div class="PrepFilters-options"><label class="PrepFilters-check"><input type="checkbox" data-pf-check="priority"${pfBoardFilters.priorityOnly ? " checked" : ""} /> Priority only</label><label class="PrepFilters-check"><input type="checkbox" data-pf-check="ready"${pfBoardFilters.readyOnly ? " checked" : ""} /> Ready only</label></div>` : ""}</section><section class="PrepFilters-group">${title("booking", "Booking")}${bookingOpen ? `<div class="PrepFilters-options">${subitem("bookingState")}${subitem("bookingTypes")}</div>` : ""}</section><section class="PrepFilters-group">${title("engagement", "Engagement")}${engagementOpen ? `<div class="PrepFilters-options">${subitem("clients")}${subitem("keyPersonnel")}${subitem("resources")}</div>` : ""}</section></div>`;
+    panel.innerHTML = `${pfBoardFilters.submenu ? pfBoardFlyoutHtml(pfBoardFilters.submenu, options) : ""}<div class="PrepFilters-body"><div class="PrepFilters-search"><input type="search" id="pfFilterSearch" placeholder="Search company or engagement" value="${htmlEsc(pfBoardFilters.search || "")}" aria-label="Search" /></div><div class="PrepFilters-top"><button type="button" class="PrepFilters-toggle${pfBoardFilters.showSelected ? " is-on" : ""}" data-pf-show-selected aria-pressed="${pfBoardFilters.showSelected ? "true" : "false"}" aria-label="Show selected filter values only"></button><button type="button" class="PrepFilters-clear${active ? " is-active" : ""}" data-pf-clear${active ? "" : " disabled"}>Clear All</button></div><section class="PrepFilters-group">${title("work", "Work")}${workOpen ? `<div class="PrepFilters-options"><label class="PrepFilters-check"><input type="checkbox" data-pf-check="priority"${pfBoardFilters.priorityOnly ? " checked" : ""} /> Priority only</label><label class="PrepFilters-check"><input type="checkbox" data-pf-check="ready"${pfBoardFilters.readyOnly ? " checked" : ""} /> Ready only</label></div>` : ""}</section><section class="PrepFilters-group">${title("booking", "Booking")}${bookingOpen ? `<div class="PrepFilters-options">${subitem("bookingState")}${subitem("bookingTypes")}</div>` : ""}</section><section class="PrepFilters-group">${title("engagement", "Engagement")}${engagementOpen ? `<div class="PrepFilters-options">${subitem("clients")}${subitem("keyPersonnel")}${subitem("resources")}</div>` : ""}</section></div>`;
     panel.querySelectorAll("[data-indeterminate]").forEach(input => { input.indeterminate = true; });
     pfBoardPlaceFilters();
     if (focusId) {
@@ -5562,7 +5423,7 @@ function ruleExpandHtml(rule) {
     const active = ruleActiveEngagements(rule);
     const excluded = ruleExcludedEngagements(rule);
     const excludedBar = excluded.length
-        ? `<div class="PfRuleCard-excluded"><i class="fa-solid fa-eye-slash"></i><span>${excluded.length} excluded from this rule</span><button type="button" class="PfLink" onclick="restoreRuleExclusions(${rule.id})">Restore all</button></div>`
+        ? `<div class="PfRuleCard-excluded"><i class="fa-solid fa-eye-slash"></i><span>${excluded.length} excluded from this rule</span><button type="button" class="PfLink" onclick="restoreRuleExclusions(${rule.id})">Restore All</button></div>`
         : "";
     const table = active.length
         ? pfTableHtml(active, "dynamic")
@@ -5914,7 +5775,7 @@ function renderActiveFilterCards() {
                 <div class="Modal-search"><i class="fa-solid fa-magnifying-glass" style="color:var(--icon-subtle)"></i><input placeholder="Search values" value="${htmlEsc(modalState.valueSearch[prop] || "")}" oninput="onFilterCardSearch('${prop}', this.value)" /></div>
             </div>
             <div class="FilterCard-tools FilterCard-tools--links">
-                <button class="LinkBtn" onclick="selectAllFilterValues('${prop}')">Select all</button>
+                <button class="LinkBtn" onclick="selectAllFilterValues('${prop}')">Select All</button>
                 <button class="LinkBtn" onclick="clearFilterValues('${prop}')">Clear</button>
             </div>
             <div class="FilterCard-body" data-filter-body="${prop}">${body}</div>
@@ -6390,10 +6251,10 @@ function resultsPaginationFooterHtml(rowCount) {
 function resultsSelectMenuHtml(pageCount, total) {
     if (total <= RESULTS_ROWS_PER_PAGE) return "";
     return `<div class="TableSelect-menu" id="resultsSelectMenu" role="menu" hidden>
-        <button type="button" class="TableSelect-item" role="menuitem" onclick="selectResultsOnPage()">Select ${engagementCountLabel(pageCount)} on this page</button>
-        <button type="button" class="TableSelect-item" role="menuitem" onclick="selectAllResultRows()">Select all ${engagementCountLabel(total)}</button>
+        <button type="button" class="TableSelect-item" role="menuitem" onclick="selectResultsOnPage()">Select ${engagementCountLabel(pageCount)} on This Page</button>
+        <button type="button" class="TableSelect-item" role="menuitem" onclick="selectAllResultRows()">Select All ${engagementCountLabel(total)}</button>
         <div class="RowMenu-divider"></div>
-        <button type="button" class="TableSelect-item" role="menuitem" onclick="deselectAllResultRows()">Deselect all</button>
+        <button type="button" class="TableSelect-item" role="menuitem" onclick="deselectAllResultRows()">Deselect All</button>
     </div>`;
 }
 function closeResultsSelectMenu() {
@@ -6557,7 +6418,7 @@ function renderPortfolioView() {
         : `<div class="PfEmpty">No filter rules yet. Select all matching engagements on Search Results, then choose Add as dynamic filter.</div>`;
 
     const excludedHtml = excluded.length
-        ? `<div class="PfExcluded"><i class="fa-solid fa-eye-slash"></i><span>${excluded.length} engagement${excluded.length === 1 ? "" : "s"} excluded from filter rules.</span><button class="PfLink" onclick="restoreExclusions()">Restore all</button></div>`
+        ? `<div class="PfExcluded"><i class="fa-solid fa-eye-slash"></i><span>${excluded.length} engagement${excluded.length === 1 ? "" : "s"} excluded from filter rules.</span><button class="PfLink" onclick="restoreExclusions()">Restore All</button></div>`
         : "";
 
     document.getElementById("modalPortfolioView").innerHTML = `
@@ -6730,7 +6591,7 @@ function updateMembershipUI() {
     const back = document.getElementById("backToPortfolioBtn");
     if (back) {
         back.hidden = n === 0;
-        back.textContent = "Go back to portfolio (" + n + ")";
+        back.textContent = "Go Back to Portfolio (" + n + ")";
     }
 }
 
@@ -7033,7 +6894,6 @@ document.addEventListener("keydown", e => {
     closePortfolioLimitDialog();
 });
 document.getElementById("bookingModal").addEventListener("click", e => { if (e.target.id === "bookingModal") closeBookingModal(); });
-document.getElementById("reqModal").addEventListener("click", e => { if (e.target.id === "reqModal") closeReqModal(); });
 document.getElementById("bioModal").addEventListener("click", e => { if (e.target.id === "bioModal") closeBioModal(); });
 document.addEventListener("keydown", e => {
     const el = document.getElementById("bioModal");
@@ -8250,7 +8110,7 @@ function pfRenderFilterPanel() {
     const clear = document.createElement("button");
     clear.type = "button";
     clear.className = "PfTeam-filterClear" + (filterCount ? " is-active" : "");
-    clear.textContent = "Clear all";
+    clear.textContent = "Clear All";
     clear.disabled = !filterCount;
     clear.hidden = false;
     clear.addEventListener("click", function () {
@@ -8467,7 +8327,7 @@ function pfBuildHeadCorner() {
     const row = pfEl("div", "PfTeam-headToolsRow");
     const addRes = pfEl("button", "PfTeam-addRes");
     addRes.type = "button";
-    addRes.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i> Add Resource';
+    addRes.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i> Resource';
     addRes.addEventListener("click", function (e) {
         e.stopPropagation();
         openReqModal();
@@ -8648,9 +8508,9 @@ function pfBuildHeader() {
     const tallWeeks = mode === "date" || mode === "weekCommencing";
     const wRow = pfEl("div", "PfTeam-headRow" + (tallWeeks ? " PfTeam-headRow--weeks" : ""));
     const wks = pfEl("div", "PfTeam-weeks");
-    PF_WEEKS.forEach(function (d) {
+    PF_WEEKS.forEach(function (d, wi) {
         const label = mode === "date" ? pfPad2(d.getDate()) + "/" + pfPad2(d.getMonth() + 1) : pfWcLabel(d);
-        wks.appendChild(pfEl("div", "PfTeam-week", label));
+        wks.appendChild(pfEl("div", "PfTeam-week" + pfMonthEndClass(wi), label));
     });
     wRow.appendChild(wks);
     scroller.appendChild(wRow);
@@ -8764,12 +8624,7 @@ function pfBuildWorkerRow(worker, index) {
         edit.innerHTML = '<i class="fa-solid fa-pencil" aria-hidden="true"></i>';
         edit.addEventListener("click", function (e) {
             e.stopPropagation();
-            const first = (worker.items || [])[0];
-            if (first) {
-                pfTeamState.selectedItemId = first.id;
-                pfTeamState.selectedItemIds = [first.id];
-                renderGantt();
-            }
+            openReqModalForEdit(worker.sourceId || worker.id);
         });
         const more = pfEl("button", "PfTeam-uaAct");
         more.type = "button";
@@ -9520,9 +9375,9 @@ function pfUaWeekStrip() {
     const dates = pfEl("div", "PfTeam-uaDates");
     dates.id = "pfTeamUaDates";
     const weeks = pfEl("div", "PfTeam-weeks");
-    PF_WEEKS.forEach(function (d) {
+    PF_WEEKS.forEach(function (d, wi) {
         const label = pfZoomLevel().header === "date" ? pfPad2(d.getDate()) + "/" + pfPad2(d.getMonth() + 1) : pfWcLabel(d);
-        weeks.appendChild(pfEl("div", "PfTeam-week", label));
+        weeks.appendChild(pfEl("div", "PfTeam-week" + pfMonthEndClass(wi), label));
     });
     dates.appendChild(weeks);
     return dates;
@@ -10222,8 +10077,7 @@ const WORKER_INFO = {
     "Liam O'Connor":  { grade: "Partner",          fu: "Audit",           gu: "London", code: "PTR" },
     "Emma Johnson":   { grade: "Manager",          fu: "Audit",           gu: "London", code: "MAN" }
 };
-const GRADE_CODE = { Partner: "PTR", Director: "DIR", "Senior Manager": "SRM", Manager: "MAN", "Senior Associate": "SA", Associate: "A2" };
-let reqTab = "flexible";
+const GRADE_CODE = { Partner: "PTR", Director: "DIR", "Senior Manager": "SRM", Manager: "MAN", "Assistant Manager": "AM", "Senior Associate": "SA", Associate: "A2" };
 let bookingModalTab = "booking";
 let bookingContext = { workerId: null, weekIndex: 2 };
 
@@ -10232,21 +10086,252 @@ function assignOptionValue(worker) {
     return "(" + code + ") " + worker.name;
 }
 
+const PF_REQ_ROLES = ["Engagement Lead", "Engagement Manager", "Reviewer", "Preparer", "Specialist"];
+const PF_REQ_GRADES = ["Partner", "Director", "Senior Manager", "Manager", "Assistant Manager", "Senior Associate", "Associate"];
+const PF_REQ_UNITS = ["Audit", "Tax", "Advisory", "Risk Assurance", "Forensic", "Actuarial Services"];
+const PF_REQ_LOCATIONS = ["London", "Manchester", "Edinburgh", "Bristol", "Oxford", "Berlin"];
+const PF_GRADE_NAME = { PTR: "Partner", DIR: "Director", SRM: "Senior Manager", SM: "Senior Manager", MAN: "Manager", AM: "Assistant Manager", SA: "Senior Associate", A3: "Associate", A2: "Associate", A1: "Associate" };
+/* Same stylesheets the hub component kit renders with, so the modal matches the library. */
+const PF_DS_SHEETS = ["bootstrap.css", "bootstrap-vue.css", "dayshape-bootstrap.css", "utilities.css", "styles.css", "colors.css", "bootstrap-overrides.css", "components.css"];
+let pfReq = null;
+
+function pfReqDoc() {
+    const frame = document.getElementById("reqModalFrame");
+    return frame && frame.dataset.ready === "1" ? frame.contentDocument : null;
+}
+function pfEnsureReqFrame(then) {
+    const frame = document.getElementById("reqModalFrame");
+    if (frame.dataset.ready === "1") { then(); return; }
+    frame._pending = then;
+    if (frame.dataset.loading === "1") return;
+    frame.dataset.loading = "1";
+    frame.addEventListener("load", function () {
+        frame.dataset.ready = "1";
+        pfBindReqFrame(frame.contentDocument);
+        const next = frame._pending;
+        frame._pending = null;
+        if (next) next();
+    }, { once: true });
+    const links = ['https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css']
+        .concat(PF_DS_SHEETS.map(function (f) { return "../shared/dayshape/" + f; }))
+        .map(function (href) { return '<link rel="stylesheet" href="' + href + '">'; }).join("");
+    frame.srcdoc = '<!DOCTYPE html><html lang="en-GB"><head><meta charset="utf-8">' + links +
+        '<style>html,body{background:transparent;margin:0;}' +
+        '.modal-dialog{max-width:960px;}' +
+        '.ReqTabs{display:flex;margin:0 15px 1rem;}.ReqTabs>.btn{flex:1 1 0;}' +
+        '.TreeInput .input-group-append>.Btn{width:46px;justify-content:center;display:flex;align-items:center;}.TreeInput .input-group-append>.btn-secondary{width:48px;display:flex;align-items:center;justify-content:center;}' +
+        '.TreeInput-treeView.is-visible{height:auto;max-height:200px;overflow-y:auto;}' +
+        '.ReqSummary{display:flex;gap:2rem;margin:0 15px 1rem;font-size:.875rem;}' +
+        '.ReqSummary small{display:block;}' +
+        '.ReqContinuity{margin:0 15px 1rem;}' +
+        '</style></head><body><div id="reqRoot"></div></body></html>';
+}
+
+function pfReqOptions(key) {
+    if (key === "engagement") return pfPortfolioEngagementNames();
+    if (key === "worker") {
+        const names = {};
+        Object.keys(WORKER_INFO).forEach(function (n) { names[n] = true; });
+        pfTeamWorkers.forEach(function (w) { if (!w.unassigned && w.name) names[w.name] = true; });
+        if (pfReq && pfReq.v.worker) names[pfReq.v.worker] = true;
+        return Object.keys(names).sort();
+    }
+    if (key === "role") return PF_REQ_ROLES;
+    if (key === "grade") return PF_REQ_GRADES;
+    if (key === "bu") return PF_REQ_UNITS;
+    if (key === "location") return PF_REQ_LOCATIONS;
+    return [];
+}
+function pfReqWorkerInfo(name) {
+    if (!name) return null;
+    const info = WORKER_INFO[name];
+    if (info) return { grade: info.grade, code: info.code || GRADE_CODE[info.grade], fu: info.fu, gu: info.gu };
+    const editing = pfReq && pfReq.editId ? pfTeamWorkers.find(function (w) { return w.id === pfReq.editId; }) : null;
+    if (editing && editing.name === name) return { grade: PF_GRADE_NAME[editing.grade] || editing.grade, code: editing.grade, fu: editing.fu, gu: editing.gu };
+    const known = pfTeamWorkers.find(function (w) { return !w.unassigned && w.name === name; });
+    if (known) return { grade: PF_GRADE_NAME[known.grade] || known.grade, code: known.grade, fu: "Audit", gu: "London" };
+    return null;
+}
+
+function pfReqNodes(key, query) {
+    const q = (query || "").trim().toLowerCase();
+    const value = pfReq.v[key] || "";
+    const list = pfReqOptions(key).filter(function (o) { return !q || q === value.toLowerCase() || o.toLowerCase().indexOf(q) !== -1; });
+    if (!list.length) return '<div class="TreeView-node TreeView-node--leaf text-muted">No matches</div>';
+    return list.map(function (o) {
+        return '<div class="TreeView-node TreeView-node--leaf' + (o === value ? " is-selected" : "") + '" data-tree-node>' +
+            '<button type="button" class="TreeView-label u-ellipsis border-0 bg-transparent p-0 text-left is-selectable" data-req-pick="' + key + '" data-value="' + htmlEsc(o) + '">' + htmlEsc(o) + '</button></div>';
+    }).join("");
+}
+function pfReqPicker(key, label, icon, opts) {
+    opts = opts || {};
+    const value = pfReq.v[key] || "";
+    const err = pfReq.errors[key];
+    const dis = opts.disabled ? " disabled" : "";
+    const open = pfReq.open === key && !opts.disabled;
+    return '<div role="group" class="FormGroup">' +
+        '<label for="req-' + key + '" class="col-sm-12 col-form-label FormGroup-label"><span class="FormGroup-labelText u-ellipsis">' + htmlEsc(label) + '</span>' +
+        (opts.required ? '<span class="text-danger FormGroup-mandatory" title="Mandatory">*</span>' : "") + '</label>' +
+        '<div class="col-sm-12 FormGroup-body"><div class="TreeInput" data-req-field="' + key + '">' +
+        '<div class="input-group"><input id="req-' + key + '" class="form-control' + (err ? " is-invalid" : "") + '" type="text" data-req-input="' + key + '" placeholder="Filter..." autocomplete="off" value="' + htmlEsc(value) + '"' + dis + '>' +
+        '<div class="input-group-append"><button type="button" class="Btn btn btn-outline-secondary u-ellipsis" data-req-clear="' + key + '" title="Clear"' + (dis || !value ? " disabled" : "") + '><i class="fas fa-times"></i></button>' +
+        '<span class="btn btn-secondary' + (opts.disabled ? " disabled" : "") + '"><i class="fas fa-' + icon + '"></i></span></div></div>' +
+        '<div class="TreeInput-treeView' + (open ? " is-visible" : "") + '"><div class="TreeView" data-req-list="' + key + '">' + (open ? pfReqNodes(key, "") : "") + '</div></div>' +
+        '</div>' +
+        (err ? '<div class="FormGroup-invalidFeedback invalid-feedback d-block">This field is required</div>' : "") +
+        (opts.description ? '<small class="FormGroup-description form-text text-muted">' + htmlEsc(opts.description) + '</small>' : "") +
+        '</div></div>';
+}
+function pfReqRender() {
+    const doc = pfReqDoc();
+    if (!doc || !pfReq) return;
+    const tab = pfReq.tab;
+    const tabs = [["specific", "Specific"], ["flexible", "Flexible"], ["unassignable", "Unassignable"]].map(function (t) {
+        const on = t[0] === tab;
+        return '<label class="btn btn-outline-secondary' + (on ? " active" : "") + '" data-req-tab="' + t[0] + '"><input type="radio" name="reqType" value="' + t[0] + '"' + (on ? " checked" : "") + '> ' + t[1] + '</label>';
+    }).join("");
+    let fields = "";
+    if (tab === "specific") {
+        fields += pfReqPicker("worker", "Worker", "user", { required: true });
+        const info = pfReqWorkerInfo(pfReq.v.worker);
+        if (info) {
+            fields += '<div class="ReqSummary"><div><small class="text-muted">Grade</small>' + htmlEsc(info.grade || "—") + '</div>' +
+                '<div><small class="text-muted">Business Unit</small>' + htmlEsc(info.fu || "—") + '</div>' +
+                '<div><small class="text-muted">Location</small>' + htmlEsc(info.gu || "—") + '</div></div>';
+        }
+        fields += '<div class="custom-control custom-checkbox ReqContinuity"><input type="checkbox" class="custom-control-input" id="req-continuity" data-req-continuity' + (pfReq.v.continuity ? " checked" : "") + '><label class="custom-control-label" for="req-continuity">Continuity</label></div>';
+        fields += pfReqPicker("role", "Engagement Role", "sitemap");
+    } else if (tab === "unassignable") {
+        fields += pfReqPicker("role", "Engagement Role", "sitemap");
+        fields += pfReqPicker("grade", "Grade", "graduation-cap", { required: true });
+    } else {
+        fields += pfReqPicker("role", "Engagement Role", "sitemap");
+        fields += pfReqPicker("grade", "Grade", "graduation-cap", { required: true });
+        fields += pfReqPicker("bu", "Business Unit", "building", { required: true });
+        fields += pfReqPicker("location", "Location", "map", { required: true });
+    }
+    const skills = tab === "unassignable" ? "" :
+        '<div role="group" class="FormGroup"><label class="col-sm-12 col-form-label FormGroup-label"><span class="FormGroup-labelText u-ellipsis">Required Skills</span></label>' +
+        '<div class="col-sm-12 FormGroup-body"><button type="button" class="Btn btn btn-outline-primary mb-3"><i class="fas fa-plus"></i> Add Resource Skills</button>' +
+        '<div class="GenericTable"><div class="GenericTable-tableContainer"><table class="u-table table table-striped m-0 GenericTable-table--bordered">' +
+        '<thead class="GenericTable-tableHead"><tr><th class="GenericTable-headerCell" scope="col"><div class="GenericTable-headerCellContent"><span>Name</span></div></th>' +
+        '<th class="GenericTable-headerCell" scope="col" style="width:200px"><div class="GenericTable-headerCellContent"><span>Requirement Type</span> <i class="fas fa-circle-question text-primary ml-1" title="Required skills must be met; preferred skills rank suggestions."></i></div></th>' +
+        '<th class="GenericTable-headerCell" scope="col" style="width:56px"></th></tr></thead>' +
+        '<tbody><tr class="GenericTable-row"><td class="GenericTable-cell text-center py-4" colspan="3">No Skills</td></tr></tbody></table></div></div></div></div>';
+    doc.getElementById("reqRoot").innerHTML =
+        '<div class="modal d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="reqTitle" data-req-backdrop>' +
+        '<div class="modal-dialog modal-dialog-scrollable" role="document"><div class="modal-content">' +
+        '<div class="modal-header"><h5 class="modal-title" id="reqTitle">' + (pfReq.editId ? "Edit Resource Requirement" : "Add Resource Requirement") + '</h5>' +
+        '<button type="button" class="close" aria-label="Close" data-req-close><span aria-hidden="true">&times;</span></button></div>' +
+        '<div class="modal-body">' +
+        pfReqPicker("engagement", "Engagement", "briefcase", { required: true, disabled: !!pfReq.editId, description: pfReq.editId ? "Requirements can't move to another engagement." : "" }) +
+        '<div class="btn-group btn-group-toggle ReqTabs" role="radiogroup" aria-label="Resource type">' + tabs + '</div>' +
+        fields + skills +
+        '</div>' +
+        '<div class="modal-footer"><button type="button" class="Btn btn btn-outline-primary" data-req-close>Cancel</button>' +
+        '<button type="button" class="Btn btn btn-primary" data-req-submit>Submit</button></div>' +
+        '</div></div></div><div class="modal-backdrop show"></div>';
+}
+function pfBindReqFrame(doc) {
+    doc.addEventListener("click", function (e) {
+        const t = e.target;
+        const pick = t.closest("[data-req-pick]");
+        if (pick) {
+            const key = pick.dataset.reqPick;
+            pfReq.v[key] = pick.dataset.value;
+            delete pfReq.errors[key];
+            pfReq.open = null;
+            pfReqRender();
+            return;
+        }
+        const clear = t.closest("[data-req-clear]");
+        if (clear) {
+            pfReq.v[clear.dataset.reqClear] = "";
+            pfReq.open = null;
+            pfReqRender();
+            return;
+        }
+        const tabBtn = t.closest("[data-req-tab]");
+        if (tabBtn) {
+            e.preventDefault();
+            pfReq.tab = tabBtn.dataset.reqTab;
+            pfReq.errors = {};
+            pfReq.open = null;
+            pfReqRender();
+            return;
+        }
+        if (t.closest("[data-req-close]") || t.matches("[data-req-backdrop]")) { closeReqModal(); return; }
+        if (t.closest("[data-req-submit]")) { submitReq(); return; }
+        if (!t.closest(".TreeInput") && pfReq.open) {
+            pfReq.open = null;
+            pfReqRender();
+        }
+    });
+    const openList = function (e) {
+        const input = e.target.closest && e.target.closest("[data-req-input]");
+        if (!input || input.disabled || pfReq.open === input.dataset.reqInput) return;
+        pfReq.open = input.dataset.reqInput;
+        const view = input.closest(".TreeInput").querySelector(".TreeInput-treeView");
+        doc.querySelectorAll(".TreeInput-treeView.is-visible").forEach(function (v) { if (v !== view) v.classList.remove("is-visible"); });
+        view.classList.add("is-visible");
+        view.querySelector("[data-req-list]").innerHTML = pfReqNodes(pfReq.open, "");
+    };
+    doc.addEventListener("focusin", openList);
+    doc.addEventListener("mousedown", openList);
+    doc.addEventListener("input", function (e) {
+        const input = e.target.closest("[data-req-input]");
+        if (!input) return;
+        const key = input.dataset.reqInput;
+        pfReq.v[key] = "";
+        const list = input.closest(".TreeInput").querySelector("[data-req-list]");
+        list.innerHTML = pfReqNodes(key, input.value);
+        input.closest(".TreeInput").querySelector(".TreeInput-treeView").classList.add("is-visible");
+        pfReq.open = key;
+    });
+    doc.addEventListener("change", function (e) {
+        if (e.target.matches("[data-req-continuity]")) pfReq.v.continuity = e.target.checked;
+    });
+    doc.addEventListener("keydown", function (e) {
+        if (e.key !== "Escape") return;
+        e.preventDefault();
+        if (pfReq.open) { pfReq.open = null; pfReqRender(); return; }
+        closeReqModal();
+    });
+}
+function pfShowReqModal() {
+    pfEnsureReqFrame(function () {
+        pfReqRender();
+        const frame = document.getElementById("reqModalFrame");
+        frame.hidden = false;
+        frame.focus();
+    });
+}
 function openReqModal() {
-    switchReqTab("flexible");
-    pfPopulateEngagementSelect("reqEngagement", "Choose engagement");
-    const eng = document.getElementById("reqEngagement");
-    if (eng) eng.value = "";
-    const worker = document.getElementById("reqWorker");
-    if (worker) worker.value = "";
-    onReqWorkerChange();
-    const cont = document.getElementById("reqContinuity");
-    if (cont) cont.checked = false;
-    const grade = document.getElementById("reqGrade");
-    if (grade) grade.value = "";
-    const unGrade = document.getElementById("reqUnGrade");
-    if (unGrade) unGrade.value = "";
-    document.getElementById("reqModal").classList.add("is-open");
+    pfReq = { editId: null, tab: "flexible", v: {}, errors: {}, open: null };
+    pfShowReqModal();
+}
+function openReqModalForEdit(workerId) {
+    const worker = pfTeamWorkers.find(function (w) { return w.id === workerId; });
+    if (!worker) return;
+    const tab = worker.reqType === "specific" || worker.reqType === "unassignable" ? worker.reqType : "flexible";
+    pfReq = {
+        editId: worker.id, tab: tab, errors: {}, open: null,
+        v: {
+            engagement: ((worker.items || [])[0] || {}).job || "",
+            worker: tab === "specific" ? (worker.name || "") : "",
+            role: worker.role || "",
+            grade: PF_GRADE_NAME[worker.grade] || worker.grade || "",
+            bu: worker.fu || "",
+            location: worker.gu || "",
+            continuity: !!worker.continuity
+        }
+    };
+    pfShowReqModal();
+}
+function closeReqModal() {
+    const frame = document.getElementById("reqModalFrame");
+    if (frame) frame.hidden = true;
+    pfReq = null;
 }
 const PF_GRADE_TITLES = {
     PTR: "Partner", DIR: "Director", SRM: "Senior Manager", MAN: "Manager",
@@ -10370,73 +10455,59 @@ function openBioModal(worker) {
     document.getElementById("bioModal").classList.add("is-open");
 }
 function closeBioModal() { document.getElementById("bioModal").classList.remove("is-open"); }
-function closeReqModal() { document.getElementById("reqModal").classList.remove("is-open"); }
-function switchReqTab(t) {
-    reqTab = t;
-    const modal = document.getElementById("reqModal");
-    if (!modal) return;
-    modal.querySelectorAll(".RModal-tab[data-rtype]").forEach(function (b) {
-        const on = b.dataset.rtype === t;
-        b.classList.toggle("is-active", on);
-        b.setAttribute("aria-selected", on ? "true" : "false");
-    });
-    modal.querySelectorAll(".reqtab").forEach(function (p) {
-        p.hidden = p.id !== "reqtab-" + t;
-    });
-    const skills = document.getElementById("reqSkills");
-    if (skills) skills.hidden = (t === "unassignable");
-}
-function onReqWorkerChange() {
-    const name = (document.getElementById("reqWorker") || {}).value || "";
-    const info = WORKER_INFO[name];
-    const summary = document.getElementById("reqWorkerSummary");
-    if (summary) summary.style.display = info ? "flex" : "none";
-    if (info) {
-        document.getElementById("reqwGrade").textContent = info.grade;
-        document.getElementById("reqwFu").textContent = info.fu;
-        document.getElementById("reqwGu").textContent = info.gu;
-    }
-}
 function submitReq() {
-    const v = function (id) { const el = document.getElementById(id); return el ? el.value : ""; };
-    const engagement = v("reqEngagement");
-    if (!engagement) {
-        const sel = document.getElementById("reqEngagement");
-        if (sel) {
-            sel.focus();
-            sel.style.outline = "2px solid var(--text-danger)";
-            setTimeout(function () { sel.style.outline = ""; }, 1200);
-        }
+    if (!pfReq) return;
+    const v = pfReq.v;
+    const tab = pfReq.tab;
+    const need = ["engagement"].concat(tab === "specific" ? ["worker"] : tab === "unassignable" ? ["grade"] : ["grade", "bu", "location"]);
+    pfReq.errors = {};
+    need.forEach(function (k) { if (!v[k]) pfReq.errors[k] = true; });
+    if (Object.keys(pfReq.errors).length) {
+        pfReq.open = null;
+        pfReqRender();
         return;
     }
-    let personName = null, gradeCode, fu = null, gu = null, role = null, reqType = reqTab;
-    if (reqTab === "specific") {
-        personName = v("reqWorker") || "New resource";
-        const info = WORKER_INFO[personName] || {};
-        gradeCode = info.code || GRADE_CODE[info.grade] || "A2";
+    const engagement = v.engagement;
+    const editing = pfReq.editId ? pfTeamWorkers.find(function (w) { return w.id === pfReq.editId; }) : null;
+    let personName = null, gradeCode, fu = null, gu = null;
+    const role = v.role || null;
+    if (tab === "specific") {
+        personName = v.worker;
+        const info = pfReqWorkerInfo(personName) || {};
+        gradeCode = info.code || "A2";
         fu = info.fu || "Audit";
         gu = info.gu || "London";
-        role = v("reqSpecificRole") || null;
-    } else if (reqTab === "unassignable") {
-        const grade = v("reqUnGrade") || "Associate";
-        gradeCode = GRADE_CODE[grade] || "A2";
-        role = v("reqUnRole") || null;
     } else {
-        const grade = v("reqGrade") || "Associate";
-        gradeCode = GRADE_CODE[grade] || "A2";
-        fu = v("reqFu") || "Audit";
-        gu = v("reqGu") || "London";
-        role = v("reqRole") || null;
+        gradeCode = GRADE_CODE[v.grade] || "A2";
+        if (tab === "flexible") { fu = v.bu; gu = v.location; }
+    }
+    if (editing) {
+        if (PF_GRADE_NAME[editing.grade] === v.grade && tab !== "specific") gradeCode = editing.grade;
+        editing.reqType = tab;
+        editing.name = personName;
+        editing.grade = gradeCode;
+        editing.fu = fu;
+        editing.gu = gu;
+        editing.role = role;
+        editing.continuity = tab === "specific" && !!v.continuity;
+        editing.items.forEach(function (it) {
+            it.role = role || gradeCode;
+            it.req = pfUnassignedLabel(editing);
+        });
+        closeReqModal();
+        renderGantt();
+        return;
     }
     const worker = {
         id: "w-req-" + (++PF_ITEM_SEQ),
         unassigned: true,
-        reqType: reqType,
+        reqType: tab,
         name: personName,
         grade: gradeCode,
         fu: fu,
         gu: gu,
-        role: role || null,
+        role: role,
+        continuity: tab === "specific" && !!v.continuity,
         cap: 37.5,
         items: []
     };
@@ -10462,9 +10533,35 @@ function submitReq() {
     if (pfTeamState.pivot === "engagement") {
         delete pfTeamState.collapsedEngagements[engagement];
         delete pfTeamState.collapsedEngagements[engagement + "|unassigned"];
+    } else {
+        pfTeamState.uaPanel = "open";
     }
-    renderGantt();
     closeReqModal();
+    renderGantt();
+    pfRevealNewRequirement(worker.id);
+}
+
+function pfRevealNewRequirement(workerId) {
+    const find = function () {
+        const scope = document.getElementById(pfTeamState.pivot === "engagement" ? "pfTeamInner" : "pfTeamUaBody");
+        return scope ? scope.querySelector('.PfTeam-worker[data-worker="' + workerId + '"], .PfTeam-worker[data-worker^="' + workerId + '::"]') : null;
+    };
+    let row = find();
+    if (!row && pfTeamState.bookingTypeQuery) {
+        pfTeamState.bookingTypeQuery = "";
+        renderGantt();
+        row = find();
+    }
+    if (!row) return;
+    const scroller = pfTeamState.pivot === "engagement"
+        ? document.getElementById("pfTeamScroller")
+        : document.getElementById("pfTeamUaBody");
+    if (scroller) {
+        const top = row.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
+        scroller.scrollTop = Math.max(0, top - scroller.clientHeight / 2 + row.offsetHeight / 2);
+    }
+    row.classList.add("is-justAdded");
+    setTimeout(function () { row.classList.remove("is-justAdded"); }, 2400);
 }
 
 function formatBookingFromWeek(weekIndex) {
