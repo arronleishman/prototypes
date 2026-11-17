@@ -204,8 +204,15 @@ a:hover { text-decoration: underline; }
 .TopBar-spacer { flex: 1 1 auto; }
 .TopBar-editActions { display: flex; align-items: center; gap: var(--padding-sm); }
 #pfGanttEdit[hidden],
+#pfModifyPortfolio[hidden],
 .TopBar-editActions[hidden] { display: none; }
 .TopBar-titleGroup { display: flex; flex-direction: column; min-width: 0; }
+#view-detail .TopBar { padding: 24px 24px 0; gap: 12px; }
+#view-detail .EntityIcon-badge { width: 32px; height: 32px; font-size: 14px; }
+#view-detail .TopBar-back { gap: 4px; margin-bottom: 0; color: var(--text-default); font-size: var(--font-size-small); font-weight: var(--font-weight-regular); line-height: 18px; }
+#view-detail .TopBar-back i { font-size: 12px; }
+#view-detail .TopBar .Btn { height: 35px; padding: 0 12px; box-sizing: border-box; }
+#view-detail .Tab-navBar { padding: 8px 24px 0; gap: 16px; }
 
 /* ---- Buttons ---- */
 .Btn { font-family: var(--font-family); font-size: var(--font-size-medium); font-weight: var(--font-weight-semibold); border-radius: var(--border-radius-default); border: 1px solid var(--border-default); padding: 7px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; line-height: 1.2; background: #fff; color: var(--text-accent); white-space: nowrap; }
@@ -861,13 +868,14 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-toolBtn--settings { width: 48px; }
 .PfTeam-toolBtn--view,
 .PfTeam-toolBtn--ua { width: 30px; padding: 0; }
+.PfTeam-searchGroup .PfTeam-toolBtn--filter { border-radius: 4px 0 0 4px; }
 .PfTeam-toolBtn--clear {
     width: 30px; padding: 0; border-radius: 0 4px 4px 0; border-left: 0; color: var(--icon-disabled);
 }
 .PfTeam-toolBtn--clear i { width: 10px; font-size: 10px; color: var(--icon-disabled); }
 .PfTeam-searchField {
     flex: 1 1 auto; min-width: 0; height: 28px; margin: 0; padding: 0 10px; box-sizing: border-box;
-    border: 1px solid #ced4da; border-right: 0; border-radius: 4px 0 0 4px;
+    border: 1px solid #ced4da; border-left: 0; border-radius: 0;
     background: var(--surface-default); color: var(--text-default);
     font-family: var(--font-family); font-size: 14px; font-weight: 400;
 }
@@ -923,7 +931,7 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     background: var(--surface-default);
 }
 .PfTeam-bottomControls {
-    position: absolute; right: 16px; bottom: 16px; z-index: 45;
+    position: absolute; right: 20px; bottom: 72px; z-index: 45;
     display: flex; align-items: center; gap: 5px;
 }
 .PfTeam-zoomGroup {
@@ -991,9 +999,9 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 
 .PfTeam-group .PfTeam-rowLeft,
 .PfTeam-group .PfTeam-rowTrack {
-    height: var(--pf-team-group-h);
-    background: var(--surface-subtle-dark);
-    border-top: 0;
+    height: var(--pf-team-group-h); box-sizing: border-box;
+    background: var(--surface-accent);
+    border-top: 2px solid var(--border-emphasis);
     border-bottom: 0;
 }
 .PfTeam-group .PfTeam-rowLeft {
@@ -1016,21 +1024,24 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-worker.is-alt .PfTeam-rowLeft,
 .PfTeam-worker.is-alt .PfTeam-rowTrack { background: var(--surface-row-alt); }
 /* Unassigned rows match main Schedule Gantt: same white/alt row chrome as assigned — not purple */
+.PfTeam-worker:not(.is-unassigned):hover .PfTeam-rowLeft { background: var(--surface-list-item-hover); }
+.PfTeam-worker:not(.is-unassigned) .PfTeam-cellName { cursor: pointer; }
+.PfTeam-worker:not(.is-unassigned) .PfTeam-cellName:hover span { color: var(--text-primary); text-decoration: underline; }
 
 .PfTeam-cellName {
     width: var(--pf-team-col-name-w); flex: 0 0 var(--pf-team-col-name-w);
     padding: 0 5px 0 var(--pf-team-col-select-w);
     border-right: var(--border-xs) solid var(--border-subtle);
-    font-size: var(--font-size-label); color: var(--text-label);
+    font-size: var(--font-size-small); color: var(--text-label);
     overflow: hidden; display: flex; align-items: flex-start; gap: 6px;
     position: relative; box-sizing: border-box;
 }
-.PfTeam-cellName > * { height: var(--pf-team-sub-row-h); display: flex; align-items: center; }
+.PfTeam-cellName > * { height: var(--pf-team-full-row-h); display: flex; align-items: center; }
 .PfTeam-cellName span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1 1 auto; }
 .PfTeam-cellName span.PfTeam-uaActs { flex: 0 0 auto; overflow: visible; text-overflow: clip; }
 .PfTeam-rowCheckWrap {
     position: absolute; left: 12px; top: 0;
-    width: 20px; height: var(--pf-team-sub-row-h);
+    width: 20px; height: var(--pf-team-full-row-h);
     display: flex; align-items: center; justify-content: center;
 }
 .PfTeam-rowCheck {
@@ -1045,13 +1056,13 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 
 .PfTeam-cellGrade {
     width: var(--pf-team-col-grade-w); flex: 0 0 var(--pf-team-col-grade-w);
-    height: var(--pf-team-sub-row-h); padding-left: 5px;
+    height: var(--pf-team-full-row-h); padding-left: 5px;
     display: flex; align-items: center;
-    font-size: var(--font-size-label); color: var(--text-label);
+    font-size: var(--font-size-small); color: var(--text-label); text-transform: uppercase;
 }
 .PfTeam-cellExpand {
     width: var(--pf-team-col-expand-w); flex: 0 0 var(--pf-team-col-expand-w);
-    height: var(--pf-team-sub-row-h);
+    height: var(--pf-team-full-row-h);
     display: flex; align-items: center; justify-content: center;
 }
 .PfTeam-expander {
@@ -1106,6 +1117,9 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .PfTeam-cellw.is-zero { color: var(--text-disabled); }
+/* Narrow weeks: no side padding and no unit, so the number fits. The full value is in the tooltip. */
+.PfTeam.is-narrow .PfTeam-cellw { padding: 4px 0; gap: 0; font-size: var(--pf-team-cell-fs, 12px); }
+.PfTeam.is-narrow .PfTeam-cellwHours { text-overflow: clip; }
 .PfTeam-cellw.is-clickable { cursor: pointer; }
 .PfTeam-cellw.is-clickable:hover { background: var(--surface-list-item-hover); }
 .PfTeam-cellw.is-selected { background: var(--surface-default); }
@@ -1122,13 +1136,19 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-grid > i { width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); display: flex; border-right: var(--border-xs) solid var(--border-emphasis); }
 .PfTeam-grid > i > b { flex: 1; border-right: var(--border-xs) solid #f2f2f5; }
 .PfTeam-grid > i > b:last-child { border-right: 0; }
+/* Matches the header: 4px dividers at month ends, and at every week from the Weeks zoom in. */
+.PfTeam-grid > i.is-monthEnd,
+.PfTeam-cellw.is-monthEnd,
+.PfTeam.is-weekDividers .PfTeam-grid > i,
+.PfTeam.is-weekDividers .PfTeam-cellw { border-right: 4px solid var(--border-subtle); }
+.PfTeam.is-weekDividers .PfTeam-headRow--weeks .PfTeam-week { border-right-width: 4px; }
 .PfTeam-bars > .PfTeam-grid { z-index: 0; }
 .PfTeam-bars { z-index: 10; }
 
 .PfTeam-bar {
     position: absolute; height: var(--pf-team-bar-h); min-width: 2px;
     border: var(--border-xs) solid var(--pf-team-bar-border);
-    border-radius: 3px; background-color: var(--surface-booking-trait-1); color: var(--text-white);
+    border-radius: 2px; background-color: var(--surface-booking-trait-1); color: var(--text-white);
     display: flex; justify-content: space-between;
     transition: box-shadow .1s, opacity .1s; cursor: pointer;
     user-select: none; -webkit-user-select: none;
@@ -1138,8 +1158,8 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .PfTeam-bar.is-dragging,
 .PfTeam-bar.is-resizing { cursor: grabbing; z-index: 14; transition: none; }
 .PfTeam-barContent {
-    flex: 1 1 auto; min-width: 0; display: flex; height: 21px; line-height: 22px;
-    font-size: var(--font-size-label); font-weight: 300; padding-left: 2px; margin-right: 7px;
+    flex: 1 1 auto; min-width: 0; display: flex; height: 21px; line-height: 21px;
+    font-size: var(--font-size-label); font-weight: var(--font-weight-regular); padding-left: 2px; margin-right: 4px;
     border-radius: 2px; overflow: hidden; white-space: nowrap; pointer-events: none;
 }
 .PfTeam-bar.is-selected .PfTeam-barContent { font-weight: var(--font-weight-regular); }
@@ -1169,13 +1189,13 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .PfTeam.is-editing .PfTeam-worker.is-unassigned .PfTeam-bar.is-selected .PfTeam-barHandle { display: block !important; }
 .PfTeam:not(.is-editing) .PfTeam-uaActs { display: none !important; }
 .PfTeam-addRes {
-    height: 28px; padding: 0 10px; flex: 0 0 auto;
+    height: 28px; padding: 0 8px; flex: 0 0 auto;
     border: 1px solid var(--border-primary); border-radius: var(--border-radius-default);
     background: var(--surface-default); color: var(--text-primary);
-    font-family: inherit; font-size: 13px; font-weight: var(--font-weight-semibold);
-    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+    font-family: inherit; font-size: var(--font-size-small); font-weight: var(--font-weight-regular);
+    display: inline-flex; align-items: center; gap: 4px; cursor: pointer;
 }
-.PfTeam-addRes:hover { background: var(--surface-primary-subtle); }
+.PfTeam-addRes:hover { background: var(--surface-primary); border-color: var(--border-primary); color: var(--text-inverse); }
 .PfTeam-uaGroup { margin-left: auto; display: inline-flex; flex: 0 0 auto; gap: 0; }
 .PfTeam-uaGroup button {
     height: 24px; padding: 0 7px; border: 1px solid var(--border-default);
@@ -1260,6 +1280,29 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     border-right: 4px solid transparent; border-left: 4px solid transparent;
 }
 .PfTeam-uaDates { flex: 1 1 auto; min-width: 0; overflow: hidden; }
+/* Week dates fill the header height under the month row. No day-number row.
+   The label is the week within the month, for example 07/04. */
+.PfTeam-head .PfTeam-month { padding: 0 10px; line-height: normal; white-space: nowrap; overflow: hidden; text-overflow: clip; min-width: 0; }
+.PfTeam-headRow--weeks { flex: 1 1 auto; min-height: 0; align-items: stretch; }
+.PfTeam-hourDay { flex: 1; display: flex; min-width: 0; border-right: var(--border-xs) solid var(--border-subtle); }
+.PfTeam-hourDay:last-child { border-right: 0; }
+.PfTeam-hour {
+    flex: 1; min-width: 0; height: 24px; overflow: hidden; white-space: nowrap;
+    border-right: var(--border-xs) solid var(--border-subtle);
+    border-bottom: var(--border-xs) solid var(--border-subtle);
+    font-size: 11px; color: var(--text-default);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface-default);
+}
+.PfTeam-hour:last-child { border-right: 0; }
+.PfTeam-day { white-space: nowrap; overflow: hidden; min-width: 0; }
+.PfTeam-zoomGroup .Btn--iconSoft:disabled { color: var(--text-disabled); cursor: not-allowed; background: var(--surface-default); }
+.PfTeam-headRow--weeks .PfTeam-weeks { flex: 1 1 auto; align-items: stretch; }
+.PfTeam-headRow--weeks .PfTeam-week {
+    height: auto; align-self: stretch; min-width: 0; min-height: 0;
+    display: flex; align-items: flex-start; justify-content: center;
+    border-right-width: 1px; padding: 6px 0 0; overflow: hidden; white-space: nowrap;
+}
 .PfTeam-uaDates .PfTeam-week { height: 32px; border-bottom: 0; }
 .PfTeam-uaBody { flex: 1 1 auto; min-height: 0; overflow: auto; position: relative; }
 .PfTeam-uaInner { position: relative; width: max-content; min-width: 100%; }
@@ -1327,51 +1370,51 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 }
 .PfSelectionPanel-head {
     display: flex; flex-direction: column; gap: 8px;
-    padding: var(--padding-sm); padding-right: 48px;
-    border-bottom: var(--border-xs) solid var(--border-section);
+    padding: 12px;
+    border-bottom: var(--border-xs) solid var(--border-default);
     flex: 0 0 auto;
 }
-.PfSelectionPanel-headTop { position: relative; display: flex; align-items: flex-start; gap: 12px; }
+.PfSelectionPanel-headTop { display: flex; align-items: flex-start; gap: 12px; }
 .PfSelectionPanel-close {
-    position: absolute; top: 0; right: -36px;
     display: inline-flex; align-items: center; justify-content: center;
     width: 24px; height: 24px; flex: 0 0 24px; padding: 0;
     border: var(--border-xs) solid var(--border-subtle); border-radius: var(--border-radius-default);
-    background: var(--surface-subtle-dark); color: var(--text-accent); cursor: pointer;
+    background: rgba(152, 155, 182, .15); color: var(--icon-default); cursor: pointer;
 }
+.PfSelectionPanel-close i { font-size: 12px; }
+.PfSelectionPanel-titleWrap { flex: 1 1 auto; min-width: 0; }
 .PfSelectionPanel-title {
-    flex: 1 1 auto; min-width: 0; margin: 0;
-    color: var(--text-emphasis); font-size: 16px; font-weight: var(--font-weight-bold);
-    line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    margin: 0; color: var(--text-default); font-size: 16px; font-weight: var(--font-weight-bold);
+    line-height: 24px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.PfSelectionPanel-code { color: var(--text-link-color); font-size: var(--font-size-medium); }
-.PfSelectionPanel-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.PfSelectionPanel-badge {
-    display: inline-flex; align-items: center; min-height: 30px; padding: 0 var(--padding-xs);
-    border: var(--border-xs) solid var(--border-subtle); border-radius: var(--border-radius-default);
-    color: var(--text-subtle); font-size: var(--font-size-small); font-weight: var(--font-weight-bold);
-}
+.PfSelectionPanel-code { display: flex; align-items: center; gap: 4px; color: var(--text-link-color); font-size: var(--font-size-medium); line-height: 21px; }
+.PfSelectionPanel-code i { font-size: 12px; color: var(--text-danger); }
 .PfSelectionPanel-actions { display: flex; align-items: center; gap: 4px; }
-.PfSelectionPanel-actions .Btn--iconSoft {
-    width: 28px; height: 28px; padding: 0; border: var(--border-xs) solid var(--border-default);
-    background: var(--surface-default); color: var(--text-accent);
+.PfSelectionPanel .Btn--iconSoft {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; flex: 0 0 28px; padding: 0;
+    border: var(--border-xs) solid var(--border-default); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--icon-default); cursor: pointer;
 }
+.PfSelectionPanel .Btn--iconSoft i { font-size: 14px; }
+.PfSelectionPanel .Btn--iconSoft:hover { background: var(--surface-list-item-hover); }
 .PfSelectionPanel-body { flex: 1 1 auto; overflow-y: auto; }
 .PfSelectionPanel-section { border-bottom: var(--border-xs) solid var(--border-default); }
 .PfSelectionPanel-section--collapsed { cursor: pointer; }
-.PfSelectionPanel-section--collapsed .PfSelectionPanel-sectionTitle {
-    display: flex; align-items: center; gap: 6px; min-height: 46px; box-sizing: border-box;
+.PfSelectionPanel-sectionTitle {
+    display: flex; align-items: center; gap: 8px; min-height: 38px; box-sizing: border-box;
+    margin: 0; padding: 8px 12px 9px; color: #212529;
+    font-size: var(--font-size-medium); font-weight: var(--font-weight-regular); line-height: 21px;
 }
-.PfSelectionPanel-section--collapsed .PfSelectionPanel-sectionTitle::before {
-    content: "\f054"; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 12px;
-}
-.PfSelectionPanel-section--collapsed.is-open .PfSelectionPanel-sectionTitle::before { content: "\f078"; }
+.PfSelectionPanel-sectionTitle.has-actions { min-height: 45px; }
+.PfSelectionPanel-chevron { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; flex: 0 0 20px; }
+.PfSelectionPanel-chevron i { font-size: 12px; color: var(--icon-default); }
+.PfSelectionPanel-sectionName { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.PfSelectionPanel-sectionName b { font-weight: var(--font-weight-bold); }
+.PfSelectionPanel-sectionLink { color: var(--text-link-color); }
+.PfSelectionPanel-sectionActions { display: flex; gap: 5px; flex: 0 0 auto; }
 .PfSelectionPanel-section--collapsed .PfSelectionPanel-fields { display: none; }
 .PfSelectionPanel-section--collapsed.is-open .PfSelectionPanel-fields { display: flex; }
-.PfSelectionPanel-sectionTitle {
-    margin: 0; padding: 12px; color: var(--text-default);
-    font-size: var(--font-size-medium); font-weight: var(--font-weight-bold);
-}
 .PfSelectionPanel-fields { display: flex; flex-direction: column; gap: 8px; padding: 0 12px 12px; }
 .PfSelectionPanel-field { display: flex; align-items: center; gap: 8px; min-height: 35px; }
 .PfSelectionPanel-field i { width: 14px; color: var(--icon-default); text-align: center; }
@@ -1381,23 +1424,35 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     color: var(--text-emphasis); font-size: var(--font-size-medium); text-align: right;
 }
 .PfSelectionPanel-empty { padding: 16px 12px; color: var(--text-subtle); font-size: var(--font-size-small); }
-.PfSelectionPanel-schedule { padding: 0 12px 12px; }
-.PfSelectionPanel-scheduleTitle { margin: 0 0 8px; color: var(--text-default); font-size: var(--font-size-medium); font-weight: var(--font-weight-bold); }
-.PfSelectionPanel-scheduleGrid { display: grid; grid-template-columns: 1fr 28px 1fr; gap: 6px 4px; align-items: center; }
+.PfSelectionPanel-schedule { display: flex; flex-direction: column; gap: 8px; padding: 12px; }
+.PfSelectionPanel-scheduleTitle { margin: 0; color: var(--text-default); font-size: var(--font-size-medium); font-weight: var(--font-weight-bold); line-height: 17px; }
+.PfSelectionPanel-scheduleRow { display: flex; align-items: center; gap: 8px; height: 35px; }
+.PfSelectionPanel-scheduleRow > i { width: 14px; flex: 0 0 14px; font-size: 14px; color: var(--icon-default); text-align: center; }
+.PfSelectionPanel-scheduleDates { display: flex; align-items: center; gap: 4px; flex: 1 1 auto; min-width: 0; }
+.PfSelectionPanel-scheduleDuration { display: flex; align-items: center; justify-content: space-between; flex: 1 1 auto; min-width: 0; color: var(--text-default); font-size: var(--font-size-medium); }
 .PfSelectionPanel-input {
-    min-width: 0; height: 24px; box-sizing: border-box; padding: 2px 8px;
-    border: var(--border-xs) solid var(--border-subtle); border-radius: 3px;
-    color: var(--text-primary); background: var(--surface-default); font: inherit; font-size: var(--font-size-small);
-    text-align: center;
+    flex: 1 1 auto; min-width: 0; height: 35px; box-sizing: border-box; padding: 8px 12px;
+    border: var(--border-xs) solid var(--border-default); border-radius: var(--border-radius-default);
+    background: var(--surface-default); color: var(--text-accent);
+    font: inherit; font-size: var(--font-size-medium); line-height: 1.5;
+    overflow: hidden; text-overflow: ellipsis; white-space: pre;
 }
-.PfSelectionPanel-scheduleIcon { color: var(--text-default); text-align: center; }
-.PfSelectionPanel-scheduleMeta { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
-.PfSelectionPanel-scheduleMeta i { width: 14px; color: var(--icon-default); text-align: center; }
-.PfSelectionPanel-scheduleMetaValue { color: var(--text-primary); font-size: var(--font-size-small); }
-.PfSelectionPanel-scheduleActions { display: flex; gap: 4px; margin-top: 8px; }
-.PfSelectionPanel-scheduleActions .Btn--iconSoft { width: 31px; height: 31px; padding: 0; }
+.PfSelectionPanel-input::placeholder { color: var(--text-subtle); }
+.PfSelectionPanel-lock {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; flex: 0 0 28px; padding: 0; border: 0;
+    border-radius: var(--border-radius-default); background: var(--text-emphasis); color: var(--text-inverse);
+}
+.PfSelectionPanel-lock i { font-size: 14px; }
+.PfSelectionPanel-group { display: flex; width: 90px; flex: 0 0 90px; height: 35px; }
+.PfSelectionPanel-group .PfSelectionPanel-input { border-radius: var(--border-radius-default) 0 0 var(--border-radius-default); color: var(--text-emphasis); }
+.PfSelectionPanel-addon {
+    display: inline-flex; align-items: center; justify-content: center; width: 35px; flex: 0 0 35px; box-sizing: border-box;
+    border: var(--border-xs) solid var(--border-default); border-left: 0;
+    border-radius: 0 var(--border-radius-default) var(--border-radius-default) 0;
+    background: var(--surface-subtle-dark); color: var(--text-emphasis); font-size: var(--font-size-medium);
+}
 .PfSelectionPanel.is-readOnly .PfSelectionPanel-input { background: var(--surface-subtle-dark); color: var(--text-default); cursor: default; }
-.PfSelectionPanel.is-readOnly .PfSelectionPanel-scheduleActions { display: none; }
 
 .PfTeam-slim { display: flex; height: var(--pf-team-slim-h); position: relative; z-index: 2; }
 .PfTeam-slimCell { width: var(--pf-team-week-w); flex: 0 0 var(--pf-team-week-w); height: var(--pf-team-slim-h); }
@@ -1562,6 +1617,12 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .PfTeam-menuItem:hover, .PfTeam-menuItem.is-open { background: var(--surface-list-item-hover); }
 .PfTeam-menuItem.is-checked { font-weight: var(--font-weight-semibold); }
 .PfTeam-menuItem.is-static { cursor: default; }
+.PfTeam-menuItem.is-disabled,
+.PfTeam-menuItem.is-disabled:hover {
+    color: var(--text-disabled); background: transparent; cursor: not-allowed;
+}
+.PfTeam-menuItem.is-disabled i.fa-chevron-left,
+.PfTeam-menuItem.is-disabled:hover i.fa-chevron-left { opacity: 0; }
 .PfTeam-menuItem i.fa-chevron-left { font-size: 10px; color: var(--text-default); opacity: 0; }
 .PfTeam-menuItem:hover i.fa-chevron-left, .PfTeam-menuItem.is-open i.fa-chevron-left { opacity: 1; }
 .PfTeam-menuItem i.fa-check { font-size: 11px; color: var(--icon-default); }
@@ -1588,6 +1649,50 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 }
 .PfTeam-radio.is-checked .PfTeam-radioDot { border: 5px solid var(--primary); }
 .PfTeam-radio.is-disabled { color: var(--text-subtle); cursor: not-allowed; }
+/* Resource Data columns, copied from gantt-resource-breakdown. Name is always on. Grade, engagement hours and breakdown hours switch on and off. */
+.PfTeam {
+    --pf-team-col-name-w: 370px;
+    --pf-team-col-grade-w: 0px;
+    --pf-team-col-expand-w: 0px;
+    --pf-team-col-dim-w: 0px;
+    --pf-team-col-eng-w: 0px;
+    --pf-team-col-hours-w: 0px;
+    --pf-team-left-w: calc(var(--pf-team-col-name-w) + var(--pf-team-col-grade-w) + var(--pf-team-col-expand-w) + var(--pf-team-col-dim-w) + var(--pf-team-col-eng-w) + var(--pf-team-col-hours-w));
+}
+.PfTeam.is-grade { --pf-team-col-grade-w: 69px; }
+.PfTeam.is-eng-hours { --pf-team-col-eng-w: 56px; }
+.PfTeam.is-breakdown { --pf-team-col-name-w: 195px; --pf-team-col-expand-w: 25px; --pf-team-col-dim-w: 100px; }
+.PfTeam.is-phase-hours { --pf-team-col-hours-w: 58px; }
+.PfTeam:not(.is-grade) .PfTeam-cellGrade,
+.PfTeam:not(.is-breakdown) .PfTeam-cellExpand,
+.PfTeam:not(.is-breakdown) .PfTeam-dims,
+.PfTeam:not(.is-phase-hours) .PfTeam-hoursCol { display: none; }
+.PfTeam-engCell {
+    width: var(--pf-team-col-eng-w); flex: 0 0 var(--pf-team-col-eng-w);
+    align-self: stretch; line-height: var(--pf-team-sub-row-h); padding-left: 5px;
+    border-left: var(--border-xs) solid var(--border-subtle);
+    white-space: nowrap; overflow: hidden; display: block;
+    font-size: var(--font-size-label); color: var(--text-label);
+    font-variant-numeric: tabular-nums;
+}
+.PfTeam-hoursCol {
+    width: var(--pf-team-col-hours-w); flex: 0 0 var(--pf-team-col-hours-w);
+    display: flex; flex-direction: column;
+    border-left: var(--border-xs) solid var(--border-subtle);
+    font-variant-numeric: tabular-nums;
+}
+.PfTeam-hoursCell {
+    height: var(--pf-team-sub-row-h);
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: 0 8px; border-bottom: var(--border-xs) solid var(--border-subtle);
+    font-size: 12px; font-weight: 500; line-height: 1;
+}
+.PfTeam-hoursCell.is-zero { color: var(--text-disabled); font-weight: 400; }
+.PfTeam-flyout--columns { width: 260px; padding: 8px 0 10px; gap: 2px; }
+.PfTeam-flyout--columns .PfTeam-flyoutTitle { padding: 10px 16px 4px; }
+.PfTeam-flyout--columns .PfTeam-flyoutTitle:first-child { padding-top: 4px; }
+.PfTeam-flyout--columns .PfTeam-menuItem { padding: 7px 16px; }
+
 .PfTeam-radio.is-disabled .PfTeam-radioDot { border-color: var(--border-emphasis); background: var(--surface-disabled); }
 .PfTeam-radioTag {
     margin-left: auto; font-size: var(--font-size-xsmall); color: var(--text-subtle);
@@ -1883,7 +1988,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .Btn--outline:hover { background: var(--surface-subtle-dark); color: var(--text-emphasis); }
 /* Btn.mjs variants: secondary = btn-outline-primary, tertiary = btn-light text-primary */
 .Btn--secondary { background: var(--surface-default); color: var(--text-primary); border-color: var(--border-primary); }
-.Btn--secondary:hover:not(:disabled) { background: var(--surface-primary-subtle); color: var(--primary-emphasis); }
+.Btn--secondary:hover:not(:disabled) { background: var(--surface-primary); border-color: var(--border-primary); color: var(--text-inverse); }
 .Btn--tertiary { background: var(--surface-subtle-dark); color: var(--text-primary); border-color: var(--border-subtle); }
 .Btn--tertiary:hover:not(:disabled) { background: var(--surface-accent); color: var(--text-primary); }
 
@@ -2425,6 +2530,31 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 
 /* ---- Add Resource Requirement — Job Editor ResourceRequirementModal field chrome ---- */
 .RModal--req { max-width: 800px; }
+.RModal--bio { max-width: 604px; }
+.RModal--bio .RModal-header { padding: 12px 16px; }
+.RModal--bio .RModal-title { display: flex; align-items: center; gap: 12px; font-size: var(--font-size-h2); color: var(--text-primary); }
+.RModal--bio .RModal-title i { font-size: 16px; }
+.RModal--bio .RModal-body { padding: 20px 10px 20px 10px; gap: 16px; border: 0; }
+.BioHead { display: flex; align-items: center; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle); }
+.BioHead-title { font-size: 18px; font-weight: var(--font-weight-regular); color: var(--text-default); margin: 0; }
+.BioHead-ai { padding: 1px 6px; border-radius: 4px; background: var(--surface-primary-subtle); color: var(--text-primary); font-size: var(--font-size-small); font-weight: var(--font-weight-semibold); }
+.BioHead .Btn { margin-left: auto; font-size: var(--font-size-small); font-weight: var(--font-weight-regular); padding: 6px 8px; gap: 4px; color: var(--text-default); border-color: var(--border-default); }
+.BioGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle); }
+.BioGrid:last-of-type { border-bottom: 0; }
+.BioField { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.BioField-label { font-size: var(--font-size-small); color: var(--text-default); }
+.BioField-value { font-size: var(--font-size-small); color: var(--text-default); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.BioField-value.is-empty { color: var(--text-disabled); }
+.BioField-value a { color: var(--text-primary); }
+.BioSkills-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; font: inherit; font-size: var(--font-size-small); color: var(--text-default); cursor: pointer; }
+.BioSkills-toggle i { font-size: 10px; width: 10px; }
+.BioSkills-filter { display: flex; width: 216px; margin: 12px 0 0 18px; }
+.BioSkills-filter input { flex: 1 1 auto; min-width: 0; height: 26px; padding: 0 8px; border: 1px solid var(--border-default); border-radius: 4px 0 0 4px; font: inherit; font-size: var(--font-size-small); }
+.BioSkills-filter button { width: 30px; border: 1px solid var(--border-default); border-left: 0; border-radius: 0 4px 4px 0; background: var(--surface-subtle-dark); color: var(--icon-default); cursor: pointer; }
+.BioSkills-table { width: calc(100% - 18px); margin: 16px 0 0 18px; border-collapse: collapse; font-size: var(--font-size-small); color: var(--text-default); }
+.BioSkills-table th { text-align: left; font-weight: var(--font-weight-semibold); padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); }
+.BioSkills-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); }
+.BioSkills-empty td { color: var(--text-subtle); }
 .RModal-tabs { display: flex; width: 100%; }
 .RModal-tab {
     flex: 1 1 0; border: 1px solid var(--border-default); background: #fff; color: var(--text-accent);
@@ -2957,11 +3087,11 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <div class="TopBar-titleGroup">
                     <div class="TopBar-kicker">
                         <span class="TopBar-back" onclick="showList()"><i class="fa-solid fa-arrow-left"></i> Portfolios</span>
-                        <button type="button" class="TopBar-modify" onclick="openEditModal()">Modify portfolio</button>
                     </div>
                     <h1 class="TopBar-title" id="detailTitle">Q3 Audit — Financial Services</h1>
                 </div>
                 <div class="TopBar-spacer"></div>
+                <button type="button" class="Btn Btn--secondary" id="pfModifyPortfolio" onclick="openEditModal()">Modify portfolio</button>
                 <div class="TopBar-editActions" id="pfGanttEditActions" hidden>
                     <button type="button" class="Btn Btn--secondary" onclick="pfExitGanttEdit()">Cancel</button>
                     <button type="button" class="Btn Btn--primary" onclick="pfExitGanttEdit()">Save changes</button>
@@ -3095,9 +3225,9 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <section class="PfTeam-uaPanel" id="pfTeamUaPanel" aria-label="Unassigned panel" hidden></section>
                 <div class="PfTeam-bottomControls" aria-label="Gantt navigation">
                     <div class="PfTeam-zoomGroup" role="group" aria-label="Zoom actions">
-                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomOut" title="Zoom out" aria-label="Zoom out" onclick="pfSetZoom(pfTeamState.zoom - 0.25)"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
-                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomReset" title="Reset zoom" aria-label="Reset zoom" onclick="pfSetZoom(1); document.getElementById('pfTeamScroller').scrollLeft = 0"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
-                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomIn" title="Zoom in" aria-label="Zoom in" onclick="pfSetZoom(pfTeamState.zoom + 0.25)"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
+                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomOut" title="Zoom out" aria-label="Zoom out" onclick="pfSetZoom(pfTeamState.zoom - 1)"><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
+                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomReset" title="Reset zoom" aria-label="Reset zoom" onclick="pfSetZoom(0); document.getElementById('pfTeamScroller').scrollLeft = 0"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
+                        <button type="button" class="Btn--iconSoft" id="pfTeamZoomIn" title="Zoom in" aria-label="Zoom in" onclick="pfSetZoom(pfTeamState.zoom + 1)"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
                     </div>
                     <button type="button" class="Btn--iconSoft" id="pfTeamUaCollapse" hidden title="Collapse unassigned panel" aria-label="Collapse unassigned panel" onclick="pfCollapseUaPanel()"><i class="fa-solid fa-caret-down" aria-hidden="true"></i></button>
                     <button type="button" class="Btn--iconSoft" id="pfTeamZoomOptionsButton" title="Zoom options" aria-label="Zoom options" onclick="pfToggleZoomOptions(event)"><i class="fa-solid fa-caret-down" aria-hidden="true"></i></button>
@@ -3312,6 +3442,20 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
         <div class="DynamicFilterConfirm-footer">
             <button type="button" class="Btn Btn--secondary" onclick="closePortfolioLimitDialog()">Not now</button>
             <button type="button" class="Btn Btn--primary" id="portfolioLimitEdit" onclick="editPortfolioFromLimitDialog()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit filters</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== Resource Bio modal ===================== -->
+<div class="RModal-backdrop" id="bioModal">
+    <div class="RModal RModal--bio" role="dialog" aria-modal="true" aria-labelledby="bioModalTitle">
+        <div class="RModal-header">
+            <h3 class="RModal-title" id="bioModalTitle"><i class="fa-solid fa-pencil" aria-hidden="true"></i><span id="bioModalName"></span></h3>
+            <button class="RModal-close" title="Close" aria-label="Close" onclick="closeBioModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="RModal-body" id="bioModalBody"></div>
+        <div class="RModal-footer">
+            <button type="button" class="Btn Btn--primary" onclick="closeBioModal()">Close</button>
         </div>
     </div>
 </div>
@@ -6890,6 +7034,13 @@ document.addEventListener("keydown", e => {
 });
 document.getElementById("bookingModal").addEventListener("click", e => { if (e.target.id === "bookingModal") closeBookingModal(); });
 document.getElementById("reqModal").addEventListener("click", e => { if (e.target.id === "reqModal") closeReqModal(); });
+document.getElementById("bioModal").addEventListener("click", e => { if (e.target.id === "bioModal") closeBioModal(); });
+document.addEventListener("keydown", e => {
+    const el = document.getElementById("bioModal");
+    if (!el || !el.classList.contains("is-open") || e.key !== "Escape") return;
+    e.preventDefault();
+    closeBioModal();
+});
 
 /* ============================================================
    Performance tab — consolidated portfolio economics
@@ -7465,7 +7616,7 @@ const pfTeamWorkers = PF_WORKER_SPECS.map(function (wk) {
 /* Portfolio Team tab is view-only: no new resources, no unassigned requirements, no booking edits. */
 const PF_TEAM_READ_ONLY = true;
 
-/* Inline unassigned demand. Assigned rows stay read-only. */
+/* Inline unassigned demand. In edit mode, assigned bookings can only be unassigned. */
 (function seedUnassignedRequirements() {
     function mkItem(job, code, start, span, hours) {
         const cells = {};
@@ -7575,7 +7726,10 @@ const pfTeamState = {
     mockVersion: "27.1",
     ganttEditing: false,
     tasksInGrey: false,
-    zoom: 1,
+    showGrade: true,
+    showEngagementHours: true,
+    showPhaseHours: true,
+    zoom: 0,
     expandedRows: {},
     collapsedEngagements: {},
     selectedCell: null,
@@ -7616,6 +7770,24 @@ function pfUnassignedLabel(worker) {
 }
 
 function pfBreakdownOn() { return pfTeamState.breakdown !== "none"; }
+function pfBreakdownShown() { return pfBreakdownOn() && pfTeamState.pivot !== "engagement"; }
+function pfFmtTotal(h) {
+    const n = Math.round((h || 0) * 10) / 10;
+    return (n % 1 ? n.toFixed(1) : String(n)) + "h";
+}
+function pfEngHours(items) {
+    let total = 0;
+    (items || []).forEach(function (it) { total += pfItemHours(it) || 0; });
+    return Math.round(total * 10) / 10;
+}
+function pfSyncResourceColumns() {
+    const tab = document.getElementById("tab-team");
+    if (!tab) return;
+    tab.classList.toggle("is-grade", !!pfTeamState.showGrade);
+    tab.classList.toggle("is-eng-hours", !!pfTeamState.showEngagementHours);
+    tab.classList.toggle("is-breakdown", pfBreakdownShown());
+    tab.classList.toggle("is-phase-hours", !!pfTeamState.showPhaseHours && pfBreakdownShown());
+}
 
 function pfReqParts(req) {
     const parts = String(req || "").split("/").map(function (part) { return part.trim(); });
@@ -7866,6 +8038,14 @@ function pfCellItems(row, week) {
     return row.items.filter(function (it) { return it.cells[week]; });
 }
 function pfFmtHours(h) { return h ? (Math.round(h * 10) / 10) + " h" : "0"; }
+function pfNarrowWeeks() { return PF_WEEK_W < 60; }
+/* Cell text scales with the week so a two-digit value always fits, down to 9px. */
+function pfCellFontSize() { return Math.max(9, Math.min(12, (PF_WEEK_W - 2) / 1.5)); }
+function pfCellLabel(h) {
+    if (!h) return "0";
+    if (!pfNarrowWeeks()) return pfFmtHours(h);
+    return String(PF_WEEK_W < 20 ? Math.round(h) : Math.round(h * 10) / 10);
+}
 function pfWeekConsumed(worker, week) {
     let total = 0;
     worker.items.forEach(function (it) { total += it.cells[week] || 0; });
@@ -7942,10 +8122,72 @@ function pivotTeamView(e) {
     setTeamPivot(pfTeamState.pivot === "engagement" ? "resource" : "engagement");
 }
 
-function pfSetZoom(next) {
-    pfTeamState.zoom = Math.max(0.75, Math.min(1.5, next));
-    PF_WEEK_W = 112.6 * pfTeamState.zoom;
+/* Zoom 100% is the default: the whole 52-week year fits the timeline width.
+   Other zoom levels scale from that fit. Recalculated on every render so it follows the window size. */
+function pfLeftWidth() {
+    const tab = document.getElementById("tab-team");
+    if (!tab) return 0;
+    const probe = document.createElement("div");
+    probe.style.cssText = "position:absolute;visibility:hidden;height:0;width:var(--pf-team-left-w);";
+    tab.appendChild(probe);
+    const w = probe.getBoundingClientRect().width;
+    probe.remove();
+    return w;
+}
+function pfFitWeekW() {
+    const host = document.getElementById("pfTeamScroller");
+    if (!host || !host.clientWidth) return null;
+    /* 20px reserves the trailing padding and scrollbar so the year fits with no horizontal scroll. */
+    const avail = host.clientWidth - pfLeftWidth() - 20;
+    return avail > 0 ? avail / PF_WEEK_COUNT : null;
+}
+let pfFitSettleRaf = 0;
+function pfApplyWeekWidth() {
+    const fit = pfFitWeekW();
+    /* The vertical scrollbar appears after the first render and narrows the timeline,
+       so re-render once when the measured fit changes. Converges after one extra pass. */
+    const changed = !!fit && Math.abs(fit - (pfTeamState.fitWeekW || 0)) > 0.05;
+    if (fit) pfTeamState.fitWeekW = fit;
+    if (changed && !pfFitSettleRaf) {
+        pfFitSettleRaf = requestAnimationFrame(function () { pfFitSettleRaf = 0; renderGantt(); });
+    }
+    const base = pfTeamState.fitWeekW || 112.6;
+    const level = pfZoomLevel();
+    PF_WEEK_W = level.weekW ? Math.max(level.weekW, base) : base;
     PF_DAY_W = PF_WEEK_W / 5;
+    const tab = document.getElementById("tab-team");
+    if (tab) {
+        tab.style.setProperty("--pf-team-week-w", PF_WEEK_W + "px");
+        tab.classList.toggle("is-narrow", pfNarrowWeeks());
+        tab.classList.toggle("is-weekDividers", level.header !== "date");
+        tab.style.setProperty("--pf-team-cell-fs", pfCellFontSize() + "px");
+    }
+}
+/* Zoom steps through fixed levels, matching the Dayshape Gantt. Level 0 fits the year. */
+const PF_ZOOM_LEVELS = [
+    { label: "Year",  weekW: 28,   header: "date" },
+    { label: "Weeks", weekW: 72,   header: "weekCommencing" },
+    { label: "Days",  weekW: 110,  header: "dayNumber" },
+    { label: "Days",  weekW: 165,  header: "dayNumber" },
+    { label: "Days",  weekW: 230,  header: "dayName" },
+    { label: "Days",  weekW: 340,  header: "dayName" },
+    { label: "Hours", weekW: 1600, header: "hours" }
+];
+const PF_DAY_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+const PF_DAY_LONG = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+const PF_HOURS = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM"];
+function pfZoomLevel() {
+    return PF_ZOOM_LEVELS[pfTeamState.zoom] || PF_ZOOM_LEVELS[0];
+}
+function pfSyncZoomButtons() {
+    const out = document.getElementById("pfTeamZoomOut");
+    const inBtn = document.getElementById("pfTeamZoomIn");
+    if (out) out.disabled = pfTeamState.zoom <= 0;
+    if (inBtn) inBtn.disabled = pfTeamState.zoom >= PF_ZOOM_LEVELS.length - 1;
+}
+function pfSetZoom(next) {
+    pfTeamState.zoom = Math.max(0, Math.min(PF_ZOOM_LEVELS.length - 1, next));
+    pfApplyWeekWidth();
     renderGantt();
 }
 
@@ -7966,7 +8208,7 @@ function pfToggleZoomOptions(event) {
     const options = document.createElement("div");
     options.id = "pfTeamZoomOptions";
     options.className = "PfTeam-zoomOptions";
-    [[0.75, "75%"], [1, "100%"], [1.25, "125%"], [1.5, "150%"]].forEach(function (entry) {
+    [[0, "Year"], [1, "Weeks"], [2, "Days"], [6, "Hours"]].forEach(function (entry) {
         const option = document.createElement("button");
         option.type = "button";
         option.className = "PfTeam-zoomOption";
@@ -8225,7 +8467,7 @@ function pfBuildHeadCorner() {
     const row = pfEl("div", "PfTeam-headToolsRow");
     const addRes = pfEl("button", "PfTeam-addRes");
     addRes.type = "button";
-    addRes.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i> Add resource';
+    addRes.innerHTML = '<i class="fa-solid fa-plus" aria-hidden="true"></i> Add Resource';
     addRes.addEventListener("click", function (e) {
         e.stopPropagation();
         openReqModal();
@@ -8245,7 +8487,7 @@ function pfBuildHeadCorner() {
         pfTeamState.filterPanel = !pfTeamState.filterPanel;
         pfRenderFilterPanel();
     });
-    row.appendChild(filterBtn);
+    group.appendChild(filterBtn);
 
     const search = document.createElement("input");
     search.type = "search";
@@ -8331,6 +8573,50 @@ function pfBuildHeadCorner() {
     return corner;
 }
 
+/* Open Sans "05/01" is about 2.65px wide per 1px of font size. Grow the label with the
+   week until it would overflow, and only then tighten the tracking. No horizontal scaling. */
+function pfCompactLabelSize() {
+    /* Leave a few pixels clear either side, so "05/01" sits in the week the way Dayshape's does. */
+    return Math.max(5, Math.min(11, (PF_WEEK_W - 5) / 2.65));
+}
+function pfApplyCompactType(nodes, size) {
+    const list = Array.prototype.slice.call(nodes);
+    if (!list.length) return;
+    list.forEach(function (node) {
+        node.style.fontSize = size + "px";
+        node.style.letterSpacing = "0px";
+    });
+    let tracking = 0;
+    const overflows = function () {
+        return list.some(function (node) { return node.scrollWidth > node.clientWidth + 0.5; });
+    };
+    while (overflows() && tracking > -0.6) {
+        tracking = Math.round((tracking - 0.1) * 10) / 10;
+        list.forEach(function (node) { node.style.letterSpacing = tracking + "px"; });
+    }
+}
+function pfFitMonthLabels(nodes) {
+    const list = Array.prototype.slice.call(nodes);
+    if (!list.length) return;
+    let size = 11;
+    list.forEach(function (node) { node.style.fontSize = size + "px"; });
+    const overflows = function () {
+        return list.some(function (node) { return node.scrollWidth > node.clientWidth + 0.5; });
+    };
+    while (overflows() && size > 8) {
+        size -= 0.5;
+        list.forEach(function (node) { node.style.fontSize = size + "px"; });
+    }
+}
+function pfFitCompactHeader() {
+    const head = document.querySelector("#pfTeamInner .PfTeam-head");
+    if (head) {
+        pfFitMonthLabels(head.querySelectorAll(".PfTeam-month"));
+        pfApplyCompactType(head.querySelectorAll(".PfTeam-week"), pfCompactLabelSize());
+    }
+    const ua = document.querySelector("#tab-team .PfTeam-uaDates");
+    if (ua) pfApplyCompactType(ua.querySelectorAll(".PfTeam-week"), pfCompactLabelSize());
+}
 function pfBuildHeader() {
     const head = pfEl("div", "PfTeam-head");
     head.appendChild(pfBuildHeadCorner());
@@ -8338,36 +8624,48 @@ function pfBuildHeader() {
     const scroller = pfEl("div", "PfTeam-headScroll");
     head.appendChild(scroller);
 
-    const mRow = pfEl("div", "PfTeam-headRow");
-    const months = pfEl("div", "PfTeam-months");
-    let run = null;
-    PF_WEEKS.forEach(function (d) {
-        const key = d.getFullYear() + "-" + d.getMonth();
-        if (!run || run.key !== key) {
-            run = { key: key, label: PF_MONTH_NAMES[d.getMonth()] + " " + d.getFullYear(), n: 0, node: null };
-            const n = pfEl("div", "PfTeam-month", run.label);
-            run.node = n;
-            months.appendChild(n);
-        }
-        run.n++;
-        run.node.style.width = (run.n * PF_WEEK_W) + "px";
-    });
-    mRow.appendChild(months);
-    scroller.appendChild(mRow);
+    const mode = pfZoomLevel().header;
+    if (mode !== "hours") {
+        const mRow = pfEl("div", "PfTeam-headRow");
+        const months = pfEl("div", "PfTeam-months");
+        let run = null;
+        PF_WEEKS.forEach(function (d) {
+            const key = d.getFullYear() + "-" + d.getMonth();
+            if (!run || run.key !== key) {
+                run = { key: key, label: PF_MONTH_NAMES[d.getMonth()] + " " + d.getFullYear(), n: 0, node: null };
+                const n = pfEl("div", "PfTeam-month", run.label);
+                run.node = n;
+                months.appendChild(n);
+            }
+            run.n++;
+            run.node.style.width = (run.n * PF_WEEK_W) + "px";
+        });
+        mRow.appendChild(months);
+        scroller.appendChild(mRow);
+    }
 
-    const wRow = pfEl("div", "PfTeam-headRow");
+    /* Year and Weeks levels: one week row filling the header under the months. */
+    const tallWeeks = mode === "date" || mode === "weekCommencing";
+    const wRow = pfEl("div", "PfTeam-headRow" + (tallWeeks ? " PfTeam-headRow--weeks" : ""));
     const wks = pfEl("div", "PfTeam-weeks");
-    PF_WEEKS.forEach(function (d) { wks.appendChild(pfEl("div", "PfTeam-week", pfWcLabel(d))); });
+    PF_WEEKS.forEach(function (d) {
+        const label = mode === "date" ? pfPad2(d.getDate()) + "/" + pfPad2(d.getMonth() + 1) : pfWcLabel(d);
+        wks.appendChild(pfEl("div", "PfTeam-week", label));
+    });
     wRow.appendChild(wks);
     scroller.appendChild(wRow);
+    if (tallWeeks) return head;
 
     const dRow = pfEl("div", "PfTeam-headRow");
     const days = pfEl("div", "PfTeam-days");
     PF_WEEKS.forEach(function (d) {
         const set = pfEl("div", "PfTeam-dayset");
-        for (let i = 1; i <= 5; i++) {
-            const cell = pfEl("div", "PfTeam-day", String(i));
-            const date = pfAddDays(d, i - 1);
+        for (let i = 0; i < 5; i++) {
+            const date = pfAddDays(d, i);
+            const label = mode === "dayNumber" ? String(date.getDate())
+                : mode === "dayName" ? PF_DAY_SHORT[i] + " " + date.getDate()
+                : PF_DAY_LONG[i] + " " + date.getDate();
+            const cell = pfEl("div", "PfTeam-day", label);
             if (date.toDateString() === PF_TODAY.toDateString()) cell.classList.add("is-today");
             set.appendChild(cell);
         }
@@ -8375,6 +8673,21 @@ function pfBuildHeader() {
     });
     dRow.appendChild(days);
     scroller.appendChild(dRow);
+    if (mode !== "hours") return head;
+
+    const hRow = pfEl("div", "PfTeam-headRow");
+    const hours = pfEl("div", "PfTeam-days");
+    PF_WEEKS.forEach(function () {
+        const set = pfEl("div", "PfTeam-dayset");
+        for (let i = 0; i < 5; i++) {
+            const day = pfEl("div", "PfTeam-hourDay");
+            PF_HOURS.forEach(function (h) { day.appendChild(pfEl("div", "PfTeam-hour", h)); });
+            set.appendChild(day);
+        }
+        hours.appendChild(set);
+    });
+    hRow.appendChild(hours);
+    scroller.appendChild(hRow);
     return head;
 }
 
@@ -8420,7 +8733,7 @@ function pfBuildWorkerRow(worker, index) {
     const isUa = pfIsUnassigned(worker);
     /* Unassigned rows only get a heat map for named (specific) requests in the heat-map version; flexible requests have no person to measure. */
     const showAvail = pfTeamState.showAvailability && (!isUa || (pfHeatOnUnassigned() && worker.reqType === "specific"));
-    const rows = pfBuildBreakdownRows(worker, pfTeamState.breakdown);
+    const rows = pfBuildBreakdownRows(worker, pfTeamState.pivot === "engagement" ? "none" : pfTeamState.breakdown);
     const row = pfEl("div", "PfTeam-row PfTeam-worker" + (isUa ? " is-unassigned" : "") + (index % 2 === 0 ? " is-alt" : ""));
     row.dataset.worker = worker.id;
     if (isUa) row.dataset.unassigned = "1";
@@ -8473,9 +8786,20 @@ function pfBuildWorkerRow(worker, index) {
         if (pfTeamState.uaMenuId === (worker.sourceId || worker.id)) row.classList.add("is-menu");
     } else {
         name.appendChild(pfEl("span", null, worker.name));
+        name.title = "View " + worker.name + "'s resource bio";
+        name.addEventListener("click", function (e) {
+            e.stopPropagation();
+            openBioModal(worker);
+        });
     }
     left.appendChild(name);
     left.appendChild(pfEl("div", "PfTeam-cellGrade", isUa ? "" : worker.grade));
+    if (pfTeamState.showEngagementHours) {
+        const engTotal = pfEngHours(worker.items);
+        const eng = pfEl("div", "PfTeam-engCell", String(engTotal));
+        eng.title = "Total engagement hours";
+        left.appendChild(eng);
+    }
 
     const expandCell = pfEl("div", "PfTeam-cellExpand");
     if (rows) {
@@ -8495,6 +8819,8 @@ function pfBuildWorkerRow(worker, index) {
 
     const dims = pfEl("div", "PfTeam-dims");
     left.appendChild(dims);
+    const hoursCol = pfEl("div", "PfTeam-hoursCol");
+    left.appendChild(hoursCol);
 
     const track = pfEl("div", "PfTeam-rowTrack");
     track.style.width = (PF_WEEKS.length * PF_WEEK_W) + "px";
@@ -8525,6 +8851,7 @@ function pfBuildWorkerRow(worker, index) {
 
     if (showAvail && pfTeamState.availabilityMode === "slim") {
         dims.appendChild(pfEl("div", "PfTeam-slimGutter"));
+        hoursCol.appendChild(pfEl("div", "PfTeam-slimGutter"));
         const slim = pfEl("div", "PfTeam-slim");
         PF_WEEKS.forEach(function (d, wi) {
             const c = pfEl("div", "PfTeam-slimCell");
@@ -8545,13 +8872,16 @@ function pfBuildWorkerRow(worker, index) {
         const fullLabel = pfEl("div", "PfTeam-dimLabel is-spacer", "");
         fullLabel.style.height = "var(--pf-team-full-row-h)";
         dims.appendChild(fullLabel);
+        const fullHours = pfEl("div", "PfTeam-hoursCell is-spacer");
+        fullHours.style.height = "var(--pf-team-full-row-h)";
+        hoursCol.appendChild(fullHours);
         if (isUa && pfHeatOnUnassigned()) {
             /* Unassigned rows in the heat-map version open with their bookings underneath the block. */
             const barsH = pfBarsHeight(pfLaneCount(worker.items), PF_BAR_PAD);
             const under = pfEl("div", "PfTeam-subrow");
             under.style.height = barsH + "px";
             under.style.position = "relative";
-            PF_WEEKS.forEach(function () { under.appendChild(pfEl("div", "PfTeam-cellw")); });
+            PF_WEEKS.forEach(function (d, wi) { under.appendChild(pfEl("div", "PfTeam-cellw" + pfMonthEndClass(wi))); });
             const underBars = pfBuildBars(worker, { key: "__ua-full", items: worker.items }, PF_BAR_PAD);
             underBars.style.position = "absolute";
             underBars.style.inset = "0";
@@ -8560,13 +8890,16 @@ function pfBuildWorkerRow(worker, index) {
             const underLabel = pfEl("div", "PfTeam-dimLabel is-spacer", "");
             underLabel.style.height = barsH + "px";
             dims.appendChild(underLabel);
+            const underHours = pfEl("div", "PfTeam-hoursCell is-spacer");
+            underHours.style.height = barsH + "px";
+            hoursCol.appendChild(underHours);
         }
     } else if (!rows) {
         const flatH = pfBarsHeight(pfLaneCount(worker.items), PF_BAR_PAD);
         const flat = pfEl("div", "PfTeam-subrow");
         flat.style.height = flatH + "px";
         flat.style.position = "relative";
-        PF_WEEKS.forEach(function () { flat.appendChild(pfEl("div", "PfTeam-cellw")); });
+        PF_WEEKS.forEach(function (d, wi) { flat.appendChild(pfEl("div", "PfTeam-cellw" + pfMonthEndClass(wi))); });
         const bars = pfBuildBars(worker, { key: "__flat", items: worker.items }, PF_BAR_PAD);
         bars.style.position = "absolute";
         bars.style.inset = "0";
@@ -8597,6 +8930,11 @@ function pfBuildWorkerRow(worker, index) {
                 });
             }
             dims.appendChild(lbl);
+            const rowTotal = pfEngHours(r.items);
+            const hoursCell = pfEl("div", "PfTeam-hoursCell" + (rowTotal ? "" : " is-zero"), pfFmtTotal(rowTotal));
+            hoursCell.style.height = h + "px";
+            hoursCell.title = r.label + " — " + pfFmtTotal(rowTotal);
+            hoursCol.appendChild(hoursCell);
 
             const sub = pfEl("div", "PfTeam-subrow");
             sub.style.height = h + "px";
@@ -8619,8 +8957,13 @@ function pfBuildWorkerRow(worker, index) {
 function pfBuildCell(worker, row, wi) {
     const hours = pfCellHours(row, wi);
     const items = pfCellItems(row, wi);
-    const c = pfEl("div", "PfTeam-cellw" + (hours ? "" : " is-zero"));
-    c.appendChild(pfEl("span", "PfTeam-cellwHours", pfFmtHours(hours)));
+    const c = pfEl("div", "PfTeam-cellw" + (hours ? "" : " is-zero") + pfMonthEndClass(wi));
+    const narrow = pfNarrowWeeks();
+    c.appendChild(pfEl("span", "PfTeam-cellwHours", pfCellLabel(hours)));
+    if (narrow && hours) {
+        c.classList.add("BtnTooltipWrap--float");
+        c.dataset.tooltip = pfFmtHours(hours) + " · " + pfWcLabel(PF_WEEKS[wi]);
+    }
     const key = worker.id + "|" + row.key + "|" + wi;
     const rowKey = worker.id + "|" + row.key;
     if (pfTeamState.selectedCell === key) c.classList.add("is-selected");
@@ -8652,10 +8995,16 @@ function pfBuildCell(worker, row, wi) {
     return c;
 }
 
+function pfMonthEndClass(wi) {
+    const next = PF_WEEKS[wi + 1];
+    return !next || next.getMonth() !== PF_WEEKS[wi].getMonth() ? " is-monthEnd" : "";
+}
+
 function pfGridLines() {
     const g = pfEl("div", "PfTeam-grid");
-    PF_WEEKS.forEach(function () {
+    PF_WEEKS.forEach(function (d, wi) {
         const week = document.createElement("i");
+        week.className = pfMonthEndClass(wi).trim();
         for (let d = 0; d < 5; d++) week.appendChild(document.createElement("b"));
         g.appendChild(week);
     });
@@ -8698,15 +9047,69 @@ function pfPanelField(icon, label, value) {
     </div>`;
 }
 
-function pfPanelSection(title, suffix, hasAction, isOpen) {
-    const cls = "PfSelectionPanel-section PfSelectionPanel-section--collapsed" + (isOpen ? " is-open" : "");
-    const action = hasAction
-        ? `<button type="button" class="Btn--iconSoft" title="${htmlEsc(title)} actions" aria-label="${htmlEsc(title)} actions"><i class="fa-solid fa-filter"></i></button>`
-        : "";
+function pfPanelSection(title, suffix, actions, opts) {
+    opts = opts || {};
+    const cls = "PfSelectionPanel-section PfSelectionPanel-section--collapsed" + (opts.open ? " is-open" : "");
+    const buttons = (actions || []).map(function (a) {
+        return `<button type="button" class="Btn--iconSoft" title="${htmlEsc(a[1])}" aria-label="${htmlEsc(a[1])}"><i class="${a[0]}" aria-hidden="true"></i></button>`;
+    }).join("");
+    const tail = suffix === "" || suffix == null ? ""
+        : opts.link ? ` <span class="PfSelectionPanel-sectionLink">${htmlEsc(suffix)}</span>`
+        : ` (${htmlEsc(suffix)})`;
     return `<section class="${cls}">
-        <h3 class="PfSelectionPanel-sectionTitle"><span>${htmlEsc(title)}${suffix ? ` <span style="font-weight:400">${htmlEsc("(" + suffix + ")")}</span>` : ""}</span>${action}</h3>
+        <h3 class="PfSelectionPanel-sectionTitle${buttons ? " has-actions" : ""}">
+            <span class="PfSelectionPanel-chevron"><i class="fa-solid fa-chevron-${opts.open ? "down" : "right"}" aria-hidden="true"></i></span>
+            <span class="PfSelectionPanel-sectionName"><b>${htmlEsc(title)}</b>${tail}</span>
+            ${buttons ? `<span class="PfSelectionPanel-sectionActions">${buttons}</span>` : ""}
+        </h3>
         <div class="PfSelectionPanel-fields">${pfPanelField("fa-solid fa-circle-info", "Details", "—")}</div>
     </section>`;
+}
+
+function pfUnassignAssigned(itemId) {
+    if (!pfGanttEditing()) return;
+    let source = null;
+    let index = -1;
+    pfTeamWorkers.forEach(function (worker) {
+        if (source || pfIsUnassigned(worker)) return;
+        const found = (worker.items || []).findIndex(function (it) { return it.id === itemId; });
+        if (found !== -1) {
+            source = worker;
+            index = found;
+        }
+    });
+    if (!source || source.items[index].kind === "unavailability") return;
+    const item = source.items.splice(index, 1)[0];
+    let dest = pfTeamWorkers.find(function (worker) {
+        return pfIsUnassigned(worker) && worker.reqType === "specific" && worker.name === source.name;
+    });
+    if (!dest) {
+        dest = {
+            id: "w-ua-from-" + source.id,
+            unassigned: true,
+            reqType: "specific",
+            name: source.name,
+            grade: source.grade,
+            cap: source.cap,
+            role: source.role || null,
+            fu: source.fu || null,
+            gu: source.gu || null,
+            items: []
+        };
+        pfTeamWorkers.push(dest);
+    }
+    dest.items.push(item);
+    pfTeamState.uaPanel = "open";
+    pfTeamState.selectedItemId = item.id;
+    pfTeamState.selectedItemIds = [item.id];
+    renderGantt();
+}
+
+function pfPanelDate(monday, offsetDays) {
+    if (!monday) return "—";
+    const d = new Date(monday.getTime() + offsetDays * 86400000);
+    const p = function (n) { return String(n).padStart(2, "0"); };
+    return p(d.getDate()) + "/" + p(d.getMonth() + 1) + "/" + String(d.getFullYear()).slice(2);
 }
 
 function renderPfSelectionPanel() {
@@ -8721,19 +9124,18 @@ function renderPfSelectionPanel() {
     const panel = document.createElement("aside");
     panel.id = "pfSelectionPanel";
     const demand = !multi && pfIsUnassigned(worker);
+    const canUnassign = !multi && !demand && pfGanttEditing() && item.kind !== "unavailability";
     panel.className = "PfSelectionPanel" + (demand ? "" : " is-readOnly");
     panel.setAttribute("aria-label", "Booking details");
     const hours = pfItemHours(item);
     const start = PF_WEEKS[item.startWeek];
     const end = PF_WEEKS[Math.min(PF_WEEK_COUNT - 1, item.startWeek + item.span - 1)];
-    const startLabel = start ? pfWcLabel(start) : "—";
-    const endLabel = end ? pfWcLabel(end) : "—";
     panel.innerHTML = `
         <div class="PfSelectionPanel-head">
             <div class="PfSelectionPanel-headTop">
-                <div>
-                    <h2 class="PfSelectionPanel-title">${multi ? contexts.length + " Selected Bookings" : htmlEsc(item.job || "Booking")}</h2>
-                    ${!multi && item.code ? `<div class="PfSelectionPanel-code">${htmlEsc(item.code)}</div>` : ""}
+                <div class="PfSelectionPanel-titleWrap">
+                    <h2 class="PfSelectionPanel-title" title="${multi ? "" : htmlEsc(item.job || "Booking")}">${multi ? contexts.length + " Selected Bookings" : htmlEsc(item.job || "Booking")}</h2>
+                    ${!multi && item.code ? `<div class="PfSelectionPanel-code"><i class="fa-solid fa-angles-up" aria-hidden="true" title="High priority"></i>${htmlEsc(item.code)}</div>` : ""}
                 </div>
                 <button type="button" class="PfSelectionPanel-close" aria-label="Close booking details" title="Close" onclick="clearPfSelection()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             </div>
@@ -8741,47 +9143,64 @@ function renderPfSelectionPanel() {
                 ${demand && pfGanttEditing() ? `<button type="button" class="Btn--iconSoft" data-ua="clone" title="Clone" aria-label="Clone"><i class="fa-regular fa-clone"></i></button>
                 <button type="button" class="Btn--iconSoft" data-ua="split" title="Split" aria-label="Split"><i class="fa-solid fa-scissors"></i></button>
                 <button type="button" class="Btn--iconSoft" data-ua="delete" title="Delete" aria-label="Delete"><i class="fa-regular fa-trash-can"></i></button>` : ""}
+                ${canUnassign ? `<button type="button" class="Btn--iconSoft" data-ua="unassign" title="Unassign" aria-label="Unassign"><i class="fa-solid fa-user-minus"></i></button>` : ""}
                 <button type="button" class="Btn--iconSoft" title="Jump to" aria-label="Jump to"><i class="fa-solid fa-crosshairs"></i></button>
                 <button type="button" class="Btn--iconSoft" title="Audit history" aria-label="Audit history"><i class="fa-solid fa-clock-rotate-left"></i></button>
             </div>
             ${demand
                 ? `<p class="PfSelectionPanel-readOnly"><i class="fa-solid fa-pen" aria-hidden="true"></i>You can edit this demand. Assigning it stays on the main Gantt.</p>`
-                : `<p class="PfSelectionPanel-readOnly"><i class="fa-regular fa-eye" aria-hidden="true"></i>Assigned work is read-only.</p>`}
+                : canUnassign
+                    ? `<p class="PfSelectionPanel-readOnly"><i class="fa-solid fa-user-minus" aria-hidden="true"></i>You can unassign this booking.</p>`
+                    : `<p class="PfSelectionPanel-readOnly"><i class="fa-regular fa-eye" aria-hidden="true"></i>Assigned work is read-only.</p>`}
         </div>
         <div class="PfSelectionPanel-body">
             <section class="PfSelectionPanel-section">
                 <div class="PfSelectionPanel-schedule">
                     <h3 class="PfSelectionPanel-scheduleTitle">Schedule</h3>
-                    <div class="PfSelectionPanel-scheduleGrid">
-                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "08:30AM " + startLabel.replace("w.c. ", "")}" readonly aria-label="Start date">
-                        <span class="PfSelectionPanel-scheduleIcon"><i class="fa-solid fa-lock"></i></span>
-                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "04:30PM " + endLabel.replace("w.c. ", "")}" readonly aria-label="End date">
-                        <span class="PfSelectionPanel-scheduleIcon"><i class="fa-solid fa-arrows-left-right"></i></span><span>–</span><span></span>
-                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "08:30AM " + startLabel.replace("w.c. ", "")}" readonly aria-label="Start date and time">
-                        <span>–</span>
-                        <input class="PfSelectionPanel-input" value="${multi ? "--" : "04:30PM " + endLabel.replace("w.c. ", "")}" readonly aria-label="End date and time">
+                    <div class="PfSelectionPanel-scheduleRow">
+                        <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+                        <div class="PfSelectionPanel-scheduleDates">
+                            <input class="PfSelectionPanel-input" value="${multi ? "--" : pfPanelDate(start, 0) + "  08:30AM"}" readonly aria-label="Start date">
+                            <span class="PfSelectionPanel-lock" title="Dates locked"><i class="fa-solid fa-lock" aria-hidden="true"></i></span>
+                            <input class="PfSelectionPanel-input" value="${multi ? "--" : pfPanelDate(end, 4) + "  04:30PM"}" readonly aria-label="End date">
+                        </div>
                     </div>
-                    <div class="PfSelectionPanel-scheduleMeta"><i class="fa-solid fa-hourglass-half"></i><span class="PfSelectionPanel-input" style="width:52px">${multi ? "--" : hours}</span><span>h</span><span class="PfSelectionPanel-input" style="width:52px">0</span><span>m</span></div>
-                    <div class="PfSelectionPanel-scheduleMeta"><i class="fa-solid fa-user"></i><span class="PfSelectionPanel-scheduleMetaValue">${multi ? "—" : (pfIsUnassigned(worker) ? "Unassigned" : worker.name)}</span></div>
-                    <div class="PfSelectionPanel-scheduleActions">
-                        <button type="button" class="Btn--iconSoft" title="Expand schedule" aria-label="Expand schedule"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button>
-                        <button type="button" class="Btn--iconSoft" title="Schedule options" aria-label="Schedule options"><i class="fa-solid fa-arrows-up-down"></i></button>
-                        <button type="button" class="Btn--iconSoft" title="Calendar options" aria-label="Calendar options"><i class="fa-regular fa-calendar-xmark"></i></button>
+                    <div class="PfSelectionPanel-scheduleRow">
+                        <i class="fa-solid fa-hourglass-half" aria-hidden="true"></i>
+                        <div class="PfSelectionPanel-scheduleDuration">
+                            <span class="PfSelectionPanel-group"><input class="PfSelectionPanel-input" value="${multi ? "--" : hours}" readonly aria-label="Hours"><span class="PfSelectionPanel-addon">h</span></span>
+                            <span class="PfSelectionPanel-group"><input class="PfSelectionPanel-input" value="${multi ? "--" : "00"}" readonly aria-label="Minutes"><span class="PfSelectionPanel-addon">m</span></span>
+                            <span>or</span>
+                            <span class="PfSelectionPanel-group"><input class="PfSelectionPanel-input" value="${multi ? "--" : "100"}" readonly aria-label="Percentage"><span class="PfSelectionPanel-addon">%</span></span>
+                        </div>
+                    </div>
+                    <div class="PfSelectionPanel-scheduleRow">
+                        <i class="fa-solid fa-user" aria-hidden="true"></i>
+                        <input class="PfSelectionPanel-input" value="${multi ? "--" : htmlEsc(pfIsUnassigned(worker) ? "Unassigned" : "(" + worker.grade + ") " + worker.name)}" readonly aria-label="Resource">
+                    </div>
+                    <div class="PfSelectionPanel-scheduleRow">
+                        <i class="fa-regular fa-comment-dots" aria-hidden="true"></i>
+                        <input class="PfSelectionPanel-input" placeholder="Leave a comment" aria-label="Comment"${demand ? "" : " readonly"}>
                     </div>
                 </div>
             </section>
-            ${pfPanelSection("Suggestions", "0", false, false)}
-            ${pfPanelSection("Resource Requirements", multi ? contexts.length : "", true, false)}
-            ${pfPanelSection("Traits", multi ? "8" : "Detail", false, false)}
-            ${!multi ? pfPanelSection("Booking State", "Definite", false, false) : ""}
-            ${pfPanelSection("Engagement", multi ? contexts.length : (item.job || "—"), true, false)}
-            ${pfPanelSection("Economics", "Recovery Rate 74%, Margin 56%", false, false)}
-            ${pfPanelSection("Percentage Scheduled", "72.9%", false, false)}
-            ${pfPanelSection("Location", "", false, false)}
-            ${pfPanelSection("Notes", multi ? "Note goes here" : "", false, false)}
+            ${pfPanelSection("Suggestions", "0")}
+            ${pfPanelSection("Resource Requirements", multi ? contexts.length : "", [["fa-solid fa-filter", "Filter resource requirements"]])}
+            ${pfPanelSection("Traits", multi ? "8" : "Detail", [["fa-solid fa-pencil", "Edit traits"]])}
+            ${!multi ? pfPanelSection("Booking State", "Definite") : ""}
+            ${pfPanelSection("Engagement", multi ? contexts.length + " engagements" : (item.code || item.job || "—"), [["fa-solid fa-calendar-plus", "Add booking to engagement"], ["fa-solid fa-arrow-right-arrow-left", "Change engagement"], ["fa-solid fa-filter", "Filter by engagement"]], { link: true })}
+            ${pfPanelSection("Economics", "Recovery Rate 74%, Margin 56%")}
+            ${pfPanelSection("Percentage Scheduled", "72.9%")}
+            ${pfPanelSection("Location", "")}
+            ${pfPanelSection("Notes", multi ? "Note goes here" : "")}
         </div>`;
     panel.querySelectorAll(".PfSelectionPanel-section--collapsed").forEach(function (section) {
-        section.addEventListener("click", function () { section.classList.toggle("is-open"); });
+        section.addEventListener("click", function (e) {
+            if (e.target.closest(".PfSelectionPanel-sectionActions")) return;
+            const open = section.classList.toggle("is-open");
+            const icon = section.querySelector(".PfSelectionPanel-chevron i");
+            if (icon) icon.className = "fa-solid fa-chevron-" + (open ? "down" : "right");
+        });
     });
     if (demand) {
         const id = worker.id;
@@ -8791,6 +9210,9 @@ function renderPfSelectionPanel() {
         if (clone) clone.addEventListener("click", function () { pfCloneUnassigned(id); });
         if (split) split.addEventListener("click", function () { pfSplitUnassigned(id); });
         if (remove) remove.addEventListener("click", function () { pfDeleteUnassigned(id); });
+    } else if (canUnassign) {
+        const unassign = panel.querySelector("[data-ua='unassign']");
+        if (unassign) unassign.addEventListener("click", function () { pfUnassignAssigned(item.id); });
     }
     document.body.appendChild(panel);
 }
@@ -9070,7 +9492,9 @@ let pfReadOnlyNoticeTimer = null;
 function pfShowReadOnlyNotice() {
     const el = document.getElementById("pfTeamNotice");
     if (!el) return;
-    el.textContent = "Assigned work is read-only. Edit demand in the Unassigned section.";
+    el.textContent = pfGanttEditing()
+        ? "Assigned bookings can only be unassigned."
+        : "Assigned work is read-only. Edit demand in the Unassigned section.";
     el.classList.add("is-visible");
     clearTimeout(pfReadOnlyNoticeTimer);
     pfReadOnlyNoticeTimer = setTimeout(function () { el.classList.remove("is-visible"); }, 3000);
@@ -9096,7 +9520,10 @@ function pfUaWeekStrip() {
     const dates = pfEl("div", "PfTeam-uaDates");
     dates.id = "pfTeamUaDates";
     const weeks = pfEl("div", "PfTeam-weeks");
-    PF_WEEKS.forEach(function (d) { weeks.appendChild(pfEl("div", "PfTeam-week", pfWcLabel(d))); });
+    PF_WEEKS.forEach(function (d) {
+        const label = pfZoomLevel().header === "date" ? pfPad2(d.getDate()) + "/" + pfPad2(d.getMonth() + 1) : pfWcLabel(d);
+        weeks.appendChild(pfEl("div", "PfTeam-week", label));
+    });
     dates.appendChild(weeks);
     return dates;
 }
@@ -9446,9 +9873,11 @@ function pfGanttEditing() { return !!pfTeamState.ganttEditing; }
 function pfSyncGanttEdit() {
     const on = pfGanttEditing();
     const btn = document.getElementById("pfGanttEdit");
+    const modifyBtn = document.getElementById("pfModifyPortfolio");
     const actions = document.getElementById("pfGanttEditActions");
     const tab = document.getElementById("tab-team");
     if (btn) btn.hidden = on;
+    if (modifyBtn) modifyBtn.hidden = on;
     if (actions) actions.hidden = !on;
     if (tab) tab.classList.toggle("is-editing", on);
 }
@@ -9469,6 +9898,9 @@ function pfToggleGanttEdit() {
 }
 function renderGantt(options) {
     pfSyncGanttEdit();
+    pfSyncResourceColumns();
+    pfApplyWeekWidth();
+    pfSyncZoomButtons();
     const inner = document.getElementById("pfTeamInner");
     const host = document.getElementById("pfTeamScroller");
     if (!inner || !host) return;
@@ -9529,6 +9961,7 @@ function renderGantt(options) {
     host.scrollLeft = scrollLeft;
     host.scrollTop = scrollTop;
     pfRenderUaPanel();
+    pfFitCompactHeader();
     // Re-anchor open menus after DOM rebuild
     if (pfTeamState.menu) pfRenderMenu();
     if (pfTeamState.filterPanel && !(options && options.preserveFilter)) pfRenderFilterPanel();
@@ -9576,14 +10009,28 @@ function pfRenderMenu() {
     });
     section.appendChild(rowSelect);
     rowLayout.appendChild(section);
-    rowLayout.appendChild(pfEl("div", "PfTeam-menuItem", "Resource Data"));
-    rowLayout.appendChild(pfEl("div", "PfTeam-menuItem", "Resource Sorting"));
-    const bd = pfEl("div", "PfTeam-menuItem" + (pfTeamState.flyout === "breakdown" ? " is-open" : ""));
-    bd.innerHTML = "<span>Resource Breakdown</span><i class=\"fa-solid fa-chevron-left\"></i>";
-    bd.addEventListener("mouseenter", function () {
-        pfTeamState.flyout = "breakdown";
+    const rd = pfEl("div", "PfTeam-menuItem" + (pfTeamState.flyout === "resourceData" ? " is-open" : ""));
+    rd.innerHTML = "<span>Resource Data</span><i class=\"fa-solid fa-chevron-left\"></i>";
+    rd.title = "Add/remove resource data columns on Gantt";
+    rd.addEventListener("mouseenter", function () {
+        pfTeamState.flyout = "resourceData";
         pfRenderMenu();
     });
+    rowLayout.appendChild(rd);
+    rowLayout.appendChild(pfEl("div", "PfTeam-menuItem", "Resource Sorting"));
+    const breakdownOff = pfTeamState.pivot === "engagement";
+    const bd = pfEl("div", "PfTeam-menuItem" + (breakdownOff ? " is-disabled" : (pfTeamState.flyout === "breakdown" ? " is-open" : "")));
+    bd.innerHTML = "<span>Resource Breakdown</span><i class=\"fa-solid fa-chevron-left\"></i>";
+    if (breakdownOff) {
+        bd.classList.add("BtnTooltipWrap--float");
+        bd.dataset.tooltip = "Not available in Engagement view.";
+        if (pfTeamState.flyout === "breakdown") pfTeamState.flyout = null;
+    } else {
+        bd.addEventListener("mouseenter", function () {
+            pfTeamState.flyout = "breakdown";
+            pfRenderMenu();
+        });
+    }
     rowLayout.appendChild(bd);
     menu.appendChild(rowLayout);
 
@@ -9644,7 +10091,7 @@ function pfRenderMenu() {
         const flyout = pfEl("div", "PfTeam-flyout");
         flyout.appendChild(pfEl("div", "PfTeam-flyoutTitle", "Availability Display"));
         ["slim", "full"].forEach(function (mode) {
-            const locked = pfBreakdownOn() && mode === "full";
+            const locked = pfTeamState.pivot !== "engagement" && pfBreakdownOn() && mode === "full";
             const option = pfEl("div", "PfTeam-radio"
                 + (pfTeamState.availabilityMode === mode ? " is-checked" : "")
                 + (locked ? " is-disabled" : ""));
@@ -9696,6 +10143,36 @@ function pfRenderMenu() {
         layer.appendChild(flyout);
         document.body.appendChild(layer);
         const a = display.getBoundingClientRect();
+        flyout.style.left = (parseFloat(menu.style.left) + PF_MENU_W - 1) + "px";
+        flyout.style.top = Math.max(8, Math.min(a.top, window.innerHeight - flyout.offsetHeight - 8)) + "px";
+    } else if (pfTeamState.flyout === "resourceData") {
+        const flyout = pfEl("div", "PfTeam-flyout PfTeam-flyout--columns");
+        flyout.addEventListener("click", function (e) { e.stopPropagation(); });
+        flyout.appendChild(pfEl("div", "PfTeam-flyoutTitle", "Resource Data"));
+        const columnRow = function (label, on, toggle, disabled, why) {
+            const row = pfEl("div", "PfTeam-menuItem" + (!toggle || disabled ? " is-static" : "") + (disabled ? " is-disabled" : ""));
+            row.innerHTML = "<span>" + htmlEsc(label) + "</span>" + (on ? '<i class="fa-solid fa-check"></i>' : "");
+            if (disabled && why) { row.classList.add("BtnTooltipWrap--float"); row.dataset.tooltip = why; }
+            if (toggle && !disabled) row.addEventListener("click", toggle);
+            return row;
+        };
+        const rerender = function () { pfRenderMenu(); renderGantt(); };
+        flyout.appendChild(columnRow("Name", true));
+        flyout.appendChild(columnRow("Grade Code", pfTeamState.showGrade, function () { pfTeamState.showGrade = !pfTeamState.showGrade; rerender(); }));
+        flyout.appendChild(columnRow("Grade Name", false));
+        flyout.appendChild(columnRow("Business Unit", true));
+        flyout.appendChild(columnRow("Location", false));
+        flyout.appendChild(columnRow("Employment Start Date", false));
+        flyout.appendChild(pfEl("div", "PfTeam-flyoutTitle", "Booking Data"));
+        flyout.appendChild(columnRow("Total Engagement Hours", pfTeamState.showEngagementHours, function () { pfTeamState.showEngagementHours = !pfTeamState.showEngagementHours; rerender(); }));
+        const hoursOff = !pfBreakdownOn() || pfTeamState.pivot === "engagement";
+        const hoursWhy = pfTeamState.pivot === "engagement"
+            ? "Not available in Engagement view."
+            : "Not available while resource breakdown is None. Turn on a breakdown to show the total for each row.";
+        flyout.appendChild(columnRow("Total Breakdown Hours", pfTeamState.showPhaseHours, function () { pfTeamState.showPhaseHours = !pfTeamState.showPhaseHours; rerender(); }, hoursOff, hoursWhy));
+        layer.appendChild(flyout);
+        document.body.appendChild(layer);
+        const a = rd.getBoundingClientRect();
         flyout.style.left = (parseFloat(menu.style.left) + PF_MENU_W - 1) + "px";
         flyout.style.top = Math.max(8, Math.min(a.top, window.innerHeight - flyout.offsetHeight - 8)) + "px";
     } else if (pfTeamState.flyout === "breakdown") {
@@ -9771,6 +10248,128 @@ function openReqModal() {
     if (unGrade) unGrade.value = "";
     document.getElementById("reqModal").classList.add("is-open");
 }
+const PF_GRADE_TITLES = {
+    PTR: "Partner", DIR: "Director", SRM: "Senior Manager", MAN: "Manager",
+    SA: "Senior Associate", A2: "Associate 2", A1: "Associate 1"
+};
+const PF_GRADE_SKILLS = {
+    PTR: [["Industry", "Financial Services", "Expert", "Preferred"], ["Leadership", "Client Relationship", "Expert", "Preferred"]],
+    DIR: [["Industry", "Manufacturing", "Expert", "Preferred"], ["Leadership", "Engagement Management", "Advanced", "Preferred"]],
+    SRM: [["Audit", "IFRS 9", "Advanced", "Preferred"], ["Systems", "ITGC Testing", "Intermediate", "Neutral"]],
+    MAN: [["Audit", "Revenue Recognition", "Advanced", "Preferred"], ["Audit", "Group Audit", "Intermediate", "Neutral"]],
+    SA: [["Audit", "Substantive Testing", "Advanced", "Preferred"], ["Systems", "Data Analytics", "Intermediate", "Preferred"]],
+    A2: [["Audit", "Bank Confirmations", "Intermediate", "Neutral"], ["Systems", "Excel", "Intermediate", "Preferred"]]
+};
+function pfBioField(label, value, opts) {
+    const f = pfEl("div", "BioField");
+    f.appendChild(pfEl("div", "BioField-label", label));
+    const v = pfEl("div", "BioField-value" + (value ? "" : " is-empty"));
+    if (value && opts && opts.href) {
+        const a = document.createElement("a");
+        a.href = "#";
+        a.textContent = value;
+        a.addEventListener("click", function (e) { e.preventDefault(); });
+        v.appendChild(a);
+    } else {
+        v.textContent = value || "Not set";
+    }
+    v.title = value || "";
+    f.appendChild(v);
+    return f;
+}
+function openBioModal(worker) {
+    const slug = worker.name.toLowerCase().replace(/[^a-z ]/g, "").trim().split(/\s+/);
+    const seq = 100 + pfTeamWorkers.indexOf(worker) * 37;
+    const title = PF_GRADE_TITLES[worker.grade] || worker.grade;
+    document.getElementById("bioModalName").textContent = worker.name;
+    const body = document.getElementById("bioModalBody");
+    body.innerHTML = "";
+
+    const head = pfEl("div", "BioHead");
+    head.appendChild(pfEl("h4", "BioHead-title", "Resource Bio"));
+    head.appendChild(pfEl("span", "BioHead-ai", "AI"));
+    const gen = pfEl("button", "Btn Btn--secondary");
+    gen.type = "button";
+    gen.innerHTML = 'Generate <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>';
+    head.appendChild(gen);
+    body.appendChild(head);
+
+    const g1 = pfEl("div", "BioGrid");
+    g1.appendChild(pfBioField("Grade", title));
+    g1.appendChild(pfBioField("HR System Id", "Adv-" + seq));
+    g1.appendChild(pfBioField("Business Unit", "Assurance"));
+    g1.appendChild(pfBioField("Location", "London"));
+    g1.appendChild(pfBioField("Email", slug.map(function (s) { return s.charAt(0).toUpperCase() + s.slice(1); }).join(".") + "@demodata.com"));
+    g1.appendChild(pfBioField("Employment Start", "09:00AM 01/09/" + (19 + (seq % 6))));
+    body.appendChild(g1);
+
+    const g2 = pfEl("div", "BioGrid");
+    g2.appendChild(pfBioField("Charge Goals", String(Math.round(worker.cap * 46))));
+    g2.appendChild(pfBioField("CV", "www.dayshape.com/cv_" + slug.join("_"), { href: true }));
+    g2.appendChild(pfBioField("Employee Type", "Full Time"));
+    g2.appendChild(pfBioField("Job Title", title));
+    g2.appendChild(pfBioField("Line Manager", ""));
+    g2.appendChild(pfBioField("Standard Hours", String(worker.cap)));
+    g2.appendChild(pfBioField("Working Team / Pod", "Pod " + "ABCD".charAt(seq % 4)));
+    body.appendChild(g2);
+
+    const skills = pfEl("div", "BioSkills");
+    const toggle = pfEl("button", "BioSkills-toggle");
+    toggle.type = "button";
+    toggle.setAttribute("aria-expanded", "true");
+    toggle.innerHTML = '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i> Skills and Traits';
+    const panel = pfEl("div", "BioSkills-panel");
+    toggle.addEventListener("click", function () {
+        const open = panel.hidden;
+        panel.hidden = !open;
+        toggle.setAttribute("aria-expanded", String(open));
+        toggle.querySelector("i").className = "fa-solid fa-chevron-" + (open ? "down" : "right");
+    });
+    const filter = pfEl("div", "BioSkills-filter");
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Filter skill/trait name";
+    input.setAttribute("aria-label", "Filter skill/trait name");
+    const clear = document.createElement("button");
+    clear.type = "button";
+    clear.setAttribute("aria-label", "Clear filter");
+    clear.innerHTML = '<i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>';
+    filter.appendChild(input);
+    filter.appendChild(clear);
+    const table = pfEl("table", "BioSkills-table");
+    table.innerHTML = "<thead><tr><th>Skill/Trait Category <i class=\"fa-solid fa-caret-up\" aria-hidden=\"true\"></i></th><th>Skill/Trait Name</th><th>Competency</th><th>Preference</th></tr></thead>";
+    const tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+    const rows = PF_GRADE_SKILLS[worker.grade] || [];
+    const draw = function () {
+        const q = input.value.trim().toLowerCase();
+        tbody.innerHTML = "";
+        const shown = rows.filter(function (r) { return !q || r[1].toLowerCase().indexOf(q) !== -1; });
+        if (!shown.length) {
+            const tr = pfEl("tr", "BioSkills-empty");
+            const td = pfEl("td", null, "No skills or traits match.");
+            td.colSpan = 4;
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+        }
+        shown.forEach(function (r) {
+            const tr = document.createElement("tr");
+            r.forEach(function (c) { tr.appendChild(pfEl("td", null, c)); });
+            tbody.appendChild(tr);
+        });
+    };
+    input.addEventListener("input", draw);
+    clear.addEventListener("click", function () { input.value = ""; draw(); input.focus(); });
+    draw();
+    panel.appendChild(filter);
+    panel.appendChild(table);
+    skills.appendChild(toggle);
+    skills.appendChild(panel);
+    body.appendChild(skills);
+
+    document.getElementById("bioModal").classList.add("is-open");
+}
+function closeBioModal() { document.getElementById("bioModal").classList.remove("is-open"); }
 function closeReqModal() { document.getElementById("reqModal").classList.remove("is-open"); }
 function switchReqTab(t) {
     reqTab = t;
