@@ -369,6 +369,33 @@ a:hover { text-decoration: underline; }
 .u-table thead th.sortable:hover { background: var(--surface-list-item-hover); }
 .u-table thead th.is-sorted, .u-table thead th.is-sorted .sortIcon { color: var(--text-emphasis); }
 .PortfolioTable { box-shadow: 0 1px 2px rgba(39,35,61,.04); border-radius: var(--border-radius-default); overflow: visible; }
+/* Dayshape GenericTable (components.css + dayshape-bootstrap .table), scoped to the portfolio list */
+.PortfolioTable.GenericTable { display: flex; flex-direction: column; }
+.PortfolioTable .GenericTable-tableContainer { overflow: visible; }
+.PortfolioTable .GenericTable-table--bordered { width: 100%; margin: 0; border-collapse: separate; border-spacing: 0; table-layout: fixed; font-size: 14px; line-height: 21px; color: #212529; background: var(--surface-default); }
+.PortfolioTable .GenericTable-table--bordered thead th {
+    padding: 12px; vertical-align: top; font-weight: 500; color: #212529;
+    background: var(--secondary-subtle, #f1f1f4);
+    border-top: 1px solid #dee2e6; border-right: 1px solid #dee2e6; border-bottom: 2px solid var(--border-default);
+}
+.PortfolioTable .GenericTable-table--bordered td {
+    padding: 12px; vertical-align: top; color: #212529;
+    border-top: 0; border-right: 1px solid #dee2e6; border-bottom: 1px solid #dee2e6;
+}
+.PortfolioTable .GenericTable-table--bordered tr th:first-of-type,
+.PortfolioTable .GenericTable-table--bordered tr td:first-of-type { border-left: 1px solid #dee2e6; }
+.PortfolioTable .GenericTable-headerCellContent { display: flex; align-items: start; }
+.PortfolioTable .GenericTable-sortIcon { margin-top: 0.25rem; margin-right: 0.5rem; font-size: 12.25px; color: #212529; }
+.PortfolioTable .table-striped tbody tr:nth-of-type(odd) td { background: var(--surface-subtle-light, #f8f8f8); }
+.PortfolioTable .table-striped tbody tr:nth-of-type(even) td { background: var(--surface-default); }
+.PortfolioTable .table-hover tbody tr:hover td { background: var(--surface-list-item-hover); }
+.PortfolioTable .GenericTable-table--card tr:first-child th:first-child { border-top-left-radius: 4px; }
+.PortfolioTable .GenericTable-table--card tr:first-child th:last-child { border-top-right-radius: 4px; }
+.PortfolioTable .GenericTable-table--card tr:last-child td:first-child { border-bottom-left-radius: 4px; }
+.PortfolioTable .GenericTable-table--card tr:last-child td:last-child { border-bottom-right-radius: 4px; }
+.PortfolioTable td.col-star, .PortfolioTable td.col-actions { vertical-align: middle; }
+.PortfolioTable td.col-actions { padding-top: 6px; padding-bottom: 6px; }
+.PfSrOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .PortfolioTableShell--paginated { display: flex; flex-direction: column; border-radius: var(--border-radius-default); box-shadow: 0 1px 2px rgba(39,35,61,.04); background: var(--surface-default); }
 .PortfolioTableShell--paginated .PortfolioTable { box-shadow: none; border-radius: 0; }
 .PortfolioTable tbody tr { cursor: pointer; }
@@ -1160,6 +1187,29 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 }
 .PfTeam-bar:hover { box-shadow: 1px 1px 6px 2px rgba(64, 64, 64, .3); }
 .PfTeam-bar.is-selected { outline: 2px solid var(--border-primary); outline-offset: 0; z-index: 12; }
+.PfTeam-bar.is-saveFailed { outline: 2px solid var(--text-danger); outline-offset: 0; z-index: 13; }
+.PfSaveToasts {
+    position: fixed; right: 24px; bottom: 24px; z-index: 80;
+    display: flex; flex-direction: column; gap: 12px; width: 360px; pointer-events: none;
+}
+.PfSaveToasts .toast {
+    pointer-events: auto; display: block; width: 360px; max-width: 360px;
+    background: var(--surface-default); color: var(--text-default);
+    border: 1px solid var(--border-subtle); border-radius: var(--border-radius-default);
+    box-shadow: 0 8px 24px rgba(39, 35, 61, .18); font-size: var(--font-size-medium);
+}
+.PfSaveToasts .toast-header {
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+    background: var(--surface-default); border-bottom: 1px solid var(--border-subtle);
+    border-radius: var(--border-radius-default) var(--border-radius-default) 0 0;
+}
+.PfSaveToasts .toast-header strong { flex: 1 1 auto; font-weight: var(--font-weight-semibold); color: var(--text-emphasis); }
+.PfSaveToasts .toast-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.PfSaveToasts .SavingToast-body { flex-direction: row; align-items: center; }
+.PfSaveToasts .PfSaveToast-line { display: flex; gap: 8px; align-items: flex-start; margin: 0; line-height: 1.4; }
+.PfSaveToasts .PfSaveToast-line i { margin-top: 2px; }
+.PfSaveToasts .is-saved { color: var(--text-success-dark); }
+.PfSaveToasts .is-failed { color: var(--text-danger); }
 .PfTeam-bar.is-dragging,
 .PfTeam-bar.is-resizing { cursor: grabbing; z-index: 14; transition: none; }
 .PfTeam-barContent {
@@ -1233,6 +1283,38 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 }
 .PfTeam-uaMenu button:hover { background: var(--surface-list-item-hover); }
 .PfTeam-uaMenu button.is-danger { color: var(--text-danger); }
+.PfReqAction {
+    position: fixed; inset: 0; z-index: 140; display: none;
+    align-items: center; justify-content: center; padding: 32px 24px;
+    background: rgba(31, 32, 45, 0.35);
+}
+.PfReqAction.is-open { display: flex; }
+.PfReqAction[hidden] { display: none !important; }
+.PfReqAction-panel {
+    width: 100%; max-width: 420px; background: var(--surface-default);
+    border: 1px solid var(--border-subtle); border-radius: var(--border-radius-lg);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22); display: flex; flex-direction: column;
+}
+.PfReqAction-header {
+    display: flex; align-items: center; gap: 12px; padding: 16px 20px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.PfReqAction-title {
+    margin: 0; flex: 1 1 auto; font-size: 16px; font-weight: var(--font-weight-semibold);
+    line-height: 1.35; color: var(--text-emphasis);
+}
+.PfReqAction-close {
+    width: 32px; height: 32px; border: 0; background: none; border-radius: var(--border-radius-default);
+    color: var(--icon-subtle); cursor: pointer;
+}
+.PfReqAction-close:hover { background: var(--surface-subtle-dark); color: var(--text-default); }
+.PfReqAction-body { padding: 16px 20px; color: var(--text-default); font-size: var(--font-size-medium); line-height: 1.4; }
+.PfReqAction-name { margin: 8px 0 0; color: var(--text-emphasis); font-weight: var(--font-weight-semibold); }
+.PfReqAction-footer {
+    display: flex; justify-content: flex-end; gap: 12px; padding: 16px 20px;
+    border-top: 1px solid var(--border-subtle);
+}
+.PfReqAction .Btn.is-danger { color: var(--text-danger); border-color: var(--border-danger-subtle); background: var(--surface-default); }
 
 /* Unassigned panel — chrome from portfolio-gantt-unassigned-comparison.html */
 .PfTeam-uaPanel {
@@ -1329,11 +1411,6 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .PfTeam-uaLoading {
     position: sticky; left: 0; display: flex; align-items: center; justify-content: center;
     box-sizing: border-box; min-height: 80px;
-}
-.PfTeam-blankTag {
-    flex: 0 0 auto; margin-left: 6px; padding: 0 6px; height: 18px; line-height: 18px;
-    border: 1px dashed var(--border-default); border-radius: 9px;
-    font-size: 10px; color: var(--text-subtle); white-space: nowrap;
 }
 .PfTeam-uaBody .PfTeam-groupLabel { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .PfTeam-uaStats {
@@ -3115,7 +3192,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <button type="button" class="Btn Btn--secondary" id="pfModifyPortfolio" onclick="openEditModal()">Modify Portfolio</button>
                 <div class="TopBar-editActions" id="pfGanttEditActions" hidden>
                     <button type="button" class="Btn Btn--secondary" onclick="pfExitGanttEdit()">Cancel</button>
-                    <button type="button" class="Btn Btn--primary" onclick="pfExitGanttEdit()">Save Changes</button>
+                    <button type="button" class="Btn Btn--primary" onclick="pfSaveGanttEdit()">Save Changes</button>
                 </div>
                 <button class="Btn Btn--primary" id="pfGanttEdit" type="button" onclick="pfToggleGanttEdit()">Edit</button>
             </div>
@@ -3240,6 +3317,22 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                  Visual/interaction basis: mocks/gantt-resource-breakdown.html -->
             <div id="tab-team" class="tabpane PfTeam is-readOnly">
                 <div class="PfTeam-notice" id="pfTeamNotice" role="status" aria-live="polite"></div>
+                <div class="PfReqAction" id="pfReqActionModal" role="dialog" aria-modal="true" aria-labelledby="pfReqActionTitle" hidden>
+                    <div class="PfReqAction-panel">
+                        <div class="PfReqAction-header">
+                            <h3 class="PfReqAction-title" id="pfReqActionTitle">Copy or delete</h3>
+                            <button type="button" class="PfReqAction-close" aria-label="Close" onclick="pfCloseReqActionModal()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                        </div>
+                        <div class="PfReqAction-body">
+                            <p>Choose what to do with this requirement.</p>
+                            <p class="PfReqAction-name" id="pfReqActionName"></p>
+                        </div>
+                        <div class="PfReqAction-footer">
+                            <button type="button" class="Btn Btn--secondary" onclick="pfConfirmReqAction('copy')"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copy</button>
+                            <button type="button" class="Btn is-danger" onclick="pfConfirmReqAction('delete')"><i class="fa-regular fa-trash-can" aria-hidden="true"></i> Delete</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="PfTeam-scroller" id="pfTeamScroller">
                     <div class="PfTeam-inner" id="pfTeamInner"></div>
                     </div>
@@ -3825,7 +3918,8 @@ function sortTh(key, col, label) {
     const st = sortState[key];
     const active = st && st.col === col;
     const icon = active ? (st.dir === 1 ? "fa-sort-up" : "fa-sort-down") : "fa-sort";
-    return `<th class="sortable${active ? " is-sorted" : ""}" onclick="sortSection('${key}','${col}')"><i class="fa-solid ${icon} sortIcon"></i>${label}</th>`;
+    const aria = active ? (st.dir === 1 ? "ascending" : "descending") : "none";
+    return `<th class="GenericTable-headerCell sortable${active ? " is-sorted" : ""}" scope="col" aria-sort="${aria}" onclick="sortSection('${key}','${col}')"><div class="GenericTable-headerCellContent"><i class="GenericTable-sortIcon fas ${icon}" aria-hidden="true"></i><span>${label}</span></div></th>`;
 }
 function sortSection(key, col) {
     const st = sortState[key] || { col: null, dir: 1 };
@@ -3862,8 +3956,9 @@ function renderSections() {
         const body = isEmpty
             ? sectionEmptyCardHtml(s.key)
             : `<div class="PortfolioTableShell${rows.length > ROWS_PER_PAGE ? " PortfolioTableShell--paginated" : ""}">
-                <div class="PortfolioTable">
-                    <table class="u-table table-striped table-hover">
+                <div class="PortfolioTable GenericTable">
+                  <div class="GenericTable-tableContainer">
+                    <table class="u-table table table-striped table-hover m-0 GenericTable-table--bordered GenericTable-table--card GenericTable-table--fixed">
                         <colgroup>
                             <col style="width:44px" />
                             <col style="width:auto" />
@@ -3872,16 +3967,17 @@ function renderSections() {
                             <col style="width:130px" />
                             <col style="width:64px" />
                         </colgroup>
-                        <thead><tr>
-                            <th class="col-star"></th>
+                        <thead class="GenericTable-tableHead"><tr>
+                            <th class="GenericTable-headerCell GenericTable-selectionHeaderCell col-star" scope="col"><span class="PfSrOnly">Starred</span></th>
                             ${sortTh(s.key, "name", "Name")}
                             ${sortTh(s.key, "engagements", "Engagements")}
                             ${sortTh(s.key, "hours", "Total Hours")}
                             ${sortTh(s.key, "scheduled", "% Scheduled")}
-                            <th class="col-actions"></th>
+                            <th class="GenericTable-headerCell GenericTable-actionsHeaderCell col-actions" scope="col"><span class="PfSrOnly">Actions</span></th>
                         </tr></thead>
                         <tbody>${pageRows(s.key).map(({ p, i }) => rowHtml(p, s.key, i)).join("")}</tbody>
                     </table>
+                  </div>
                 </div>
                 ${paginationFooterHtml(s.key, rows.length)}
                 </div>`;
@@ -3908,13 +4004,13 @@ function rowHtml(p, key, i) {
     const over = portfolioOverLimit(p.engagements);
     const badgeTitle = over ? ` title="Exceeds the limit of ${fmt(PORTFOLIO_ENGAGEMENT_LIMIT)} engagements in a portfolio"` : "";
     return `
-        <tr class="${inactive ? "is-inactive" : ""}" onclick="openPortfolio('${esc(p.name)}')">
-            <td class="col-star"><i class="fa-solid fa-star star-toggle ${p.starred ? "is-starred" : ""}" title="${p.starred ? "Unstar" : "Star"}" onclick="event.stopPropagation(); toggleStar('${key}', ${i}, this)"></i></td>
-            <td><span class="cell-name">${p.name}</span>${inactive ? ' <span class="Pill Pill--secondary">Inactive</span>' : ""}</td>
-            <td><span class="CountBadge${over ? " is-overLimit" : ""}"${badgeTitle}>${ENGAGEMENTS_BADGE_ICON}${fmt(p.engagements)} Engagements</span></td>
-            <td class="cell-muted num">${p.totalHours == null ? "—" : fmt(p.totalHours)}</td>
-            <td class="cell-muted num">${p.pctScheduled == null ? "—" : fmtPct(p.pctScheduled)}</td>
-            <td class="col-actions">
+        <tr class="GenericTable-row${inactive ? " is-inactive" : ""}" onclick="openPortfolio('${esc(p.name)}')">
+            <td class="GenericTable-cell col-star"><i class="fa-solid fa-star star-toggle ${p.starred ? "is-starred" : ""}" title="${p.starred ? "Unstar" : "Star"}" onclick="event.stopPropagation(); toggleStar('${key}', ${i}, this)"></i></td>
+            <td class="GenericTable-cell"><span class="cell-name">${p.name}</span>${inactive ? ' <span class="Pill Pill--secondary">Inactive</span>' : ""}</td>
+            <td class="GenericTable-cell"><span class="CountBadge${over ? " is-overLimit" : ""}"${badgeTitle}>${ENGAGEMENTS_BADGE_ICON}${fmt(p.engagements)} Engagements</span></td>
+            <td class="GenericTable-cell cell-muted num">${p.totalHours == null ? "—" : fmt(p.totalHours)}</td>
+            <td class="GenericTable-cell cell-muted num">${p.pctScheduled == null ? "—" : fmtPct(p.pctScheduled)}</td>
+            <td class="GenericTable-cell col-actions">
                 <div class="RowMenu" onclick="event.stopPropagation();">
                     <button class="RowMenu-toggle" title="Actions" onclick="toggleRowMenu(this)"><i class="fa-solid fa-ellipsis-vertical"></i></button>
                     <div class="RowMenu-dropdown">
@@ -7612,6 +7708,7 @@ const pfTeamState = {
     availabilityMode: "full",
     mockVersion: "heatmap",
     ganttEditing: false,
+    saveFailedIds: {},
     tasksInGrey: false,
     showGrade: true,
     showEngagementHours: true,
@@ -8669,12 +8766,6 @@ function pfBuildWorkerRow(worker, index) {
         });
         acts.appendChild(edit);
         acts.appendChild(more);
-        if (!(worker.items || []).length) {
-            const tag = pfEl("span", "PfTeam-blankTag", "No bookings");
-            tag.title = "This requirement has no bookings yet. It stays until someone deletes it.";
-            name.appendChild(tag);
-            row.classList.add("is-blank");
-        }
         name.appendChild(acts);
         if (pfTeamState.uaMenuId === (worker.sourceId || worker.id)) row.classList.add("is-menu");
     } else {
@@ -9169,7 +9260,8 @@ function pfBuildBars(worker, row, topPad) {
         const bar = pfEl("div", "PfTeam-bar"
             + (it.kind === "unavailability" ? " PfTeam-bar--unavail" : "")
             + (isUa && it.kind !== "unavailability" ? " PfTeam-bar--unassigned" : "")
-            + (selected ? " is-selected" : ""));
+            + (selected ? " is-selected" : "")
+            + (pfTeamState.saveFailedIds[it.id] ? " is-saveFailed" : ""));
         bar.dataset.itemId = it.id;
         bar.style.left = (it.startWeek * PF_WEEK_W + 2) + "px";
         bar.style.width = (it.span * PF_WEEK_W - 5) + "px";
@@ -9188,7 +9280,7 @@ function pfBuildBars(worker, row, topPad) {
         content.appendChild(pfEl("span", "PfTeam-barName", perWeek + "h " + it.job));
         bar.appendChild(content);
 
-        bar.title = it.job + (it.code ? " (" + it.code + ")" : "") + " — " + perWeek + " h/week";
+        bar.title = it.job + (it.code ? " (" + it.code + ")" : "") + " — " + perWeek + " h/week" + (pfTeamState.saveFailedIds[it.id] ? ". Not saved." : "");
         if (!pfIsUnassigned(worker) || !pfGanttEditing()) {
             bar.addEventListener("click", function (e) {
                 e.stopPropagation();
@@ -9805,7 +9897,31 @@ function pfSplitUnassigned(id) {
     pfTeamState.uaMenuId = null;
     renderGantt();
 }
-function pfOpenUaMenu(id, anchor) {
+function pfReqActionLabel(id) {
+    const worker = pfWorkerById(id);
+    if (!worker) return "This requirement";
+    const label = worker.displayName || pfUnassignedLabel(worker);
+    const job = worker.job || ((worker.items || [])[0] && worker.items[0].job);
+    if (label && label !== "Unassigned resource" && job) return label + " — " + job;
+    return job || label || "This requirement";
+}
+function pfCloseReqActionModal() {
+    const dialog = document.getElementById("pfReqActionModal");
+    if (dialog) {
+        dialog.hidden = true;
+        dialog.classList.remove("is-open");
+    }
+    pfTeamState.uaMenuId = null;
+    document.querySelectorAll(".PfTeam-worker.is-menu").forEach(function (row) { row.classList.remove("is-menu"); });
+}
+function pfConfirmReqAction(kind) {
+    const id = pfTeamState.uaMenuId;
+    pfCloseReqActionModal();
+    if (!id) return;
+    if (kind === "copy") pfCloneUnassigned(id);
+    else pfDeleteUnassigned(id);
+}
+function pfOpenUaMenu(id) {
     if (!pfGanttEditing()) {
         pfShowReadOnlyNotice();
         return;
@@ -9813,35 +9929,12 @@ function pfOpenUaMenu(id, anchor) {
     const existing = document.getElementById("pfUaMenu");
     if (existing) existing.remove();
     pfTeamState.uaMenuId = id;
-    const menu = pfEl("div", "PfTeam-uaMenu");
-    menu.id = "pfUaMenu";
-    function addItem(label, icon, danger, action) {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        if (danger) btn.className = "is-danger";
-        btn.innerHTML = '<i class="' + icon + '" aria-hidden="true"></i><span>' + label + '</span>';
-        btn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            menu.remove();
-            action();
-        });
-        menu.appendChild(btn);
-    }
-    addItem("Clone", "fa-regular fa-clone", false, function () { pfCloneUnassigned(id); });
-    addItem("Split", "fa-solid fa-scissors", false, function () { pfSplitUnassigned(id); });
-    addItem("Delete", "fa-regular fa-trash-can", true, function () { pfDeleteUnassigned(id); });
-    document.body.appendChild(menu);
-    const box = anchor.getBoundingClientRect();
-    menu.style.top = (box.bottom + 4) + "px";
-    menu.style.left = Math.max(8, box.right - menu.offsetWidth) + "px";
-    setTimeout(function () {
-        function close() {
-            if (menu.parentNode) menu.remove();
-            pfTeamState.uaMenuId = null;
-            document.removeEventListener("click", close);
-        }
-        document.addEventListener("click", close);
-    }, 0);
+    const dialog = document.getElementById("pfReqActionModal");
+    const name = document.getElementById("pfReqActionName");
+    if (!dialog) return;
+    if (name) name.textContent = pfReqActionLabel(id);
+    dialog.hidden = false;
+    dialog.classList.add("is-open");
 }
 
 function pfGanttEditing() { return !!pfTeamState.ganttEditing; }
@@ -9860,6 +9953,50 @@ function pfExitGanttEdit() {
     pfTeamState.ganttEditing = false;
     pfSyncGanttEdit();
     renderGantt();
+}
+const PF_SAVE_FAILURES = [
+    { workerId: "w-jordan", code: "HBE-12", who: "Jordan Blake", job: "Related Party Review — Harbour Estates" },
+    { workerId: "w-aisha", code: "FSD-IT", who: "Aisha Khan", job: "ITGC Assessment — FinServe Digital" }
+];
+let pfSaveTimer = null;
+function pfSaveHost() {
+    let host = document.getElementById("pfSaveToasts");
+    if (!host) {
+        host = document.createElement("div");
+        host.id = "pfSaveToasts";
+        host.className = "PfSaveToasts";
+        host.setAttribute("aria-live", "polite");
+        document.body.appendChild(host);
+    }
+    return host;
+}
+function pfDismissSaveToast() {
+    const host = document.getElementById("pfSaveToasts");
+    if (host) host.innerHTML = "";
+}
+function pfApplySaveFailures() {
+    const ids = {};
+    PF_SAVE_FAILURES.forEach(function (fail) {
+        const worker = pfTeamWorkers.find(function (w) { return w.id === fail.workerId; });
+        const item = worker && (worker.items || []).find(function (it) { return it.code === fail.code; });
+        if (item) ids[item.id] = true;
+    });
+    pfTeamState.saveFailedIds = ids;
+}
+function pfSaveGanttEdit() {
+    const failed = PF_SAVE_FAILURES.map(function (fail) { return fail.job + " (" + fail.who + ")"; }).join(" and ");
+    pfSaveHost().innerHTML = '<div class="toast show" role="status"><div class="toast-header"><strong>Saving</strong></div><div class="toast-body SavingToast-body"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i><span>Saving your changes</span></div></div>';
+    clearTimeout(pfSaveTimer);
+    pfSaveTimer = setTimeout(function () {
+        pfApplySaveFailures();
+        pfTeamState.ganttEditing = false;
+        pfSyncGanttEdit();
+        switchTab("team");
+        renderGantt();
+        pfSaveHost().innerHTML = '<div class="toast show" role="status"><div class="toast-header"><strong>Partly saved</strong><button type="button" class="Btn-iconOnly" aria-label="Dismiss" onclick="pfDismissSaveToast()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div><div class="toast-body"><p class="PfSaveToast-line is-saved"><i class="fa-solid fa-check" aria-hidden="true"></i><span>The other changes on this portfolio were saved.</span></p><p class="PfSaveToast-line is-failed"><i class="fa-solid fa-xmark" aria-hidden="true"></i><span>Not saved: ' + failed + '. They are still on the Gantt, outlined in red.</span></p></div></div>';
+        const bar = document.querySelector(".PfTeam-bar.is-saveFailed");
+        if (bar) bar.scrollIntoView({ block: "nearest", inline: "nearest" });
+    }, 700);
 }
 function pfToggleGanttEdit() {
     pfTeamState.ganttEditing = !pfTeamState.ganttEditing;
