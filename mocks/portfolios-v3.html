@@ -1277,6 +1277,33 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .PfTeam-uaGroup button:last-child { border-radius: 0 4px 4px 0; }
 .PfTeam-uaGroup button.is-active { background: var(--surface-emphasis); border-color: var(--surface-emphasis); color: var(--text-inverse); }
 .PfTeam-uaActs { margin-left: auto; display: none; align-items: center; gap: 4px; flex: 0 0 auto; }
+.PfTeam-uaReqHours { display: none; }
+.PfTeam-uaBody .PfTeam-uaReqHours {
+    display: flex; align-items: center; justify-content: flex-start;
+    position: absolute; left: calc(var(--pf-team-col-name-w) + 5px); top: 0; height: 100%;
+    margin: 0; width: auto; flex: none; text-align: left;
+    color: var(--text-accent); font-size: 12px; line-height: 18px;
+    font-variant-numeric: tabular-nums;
+}
+.PfTeam.is-editing .PfTeam-uaBody .PfTeam-uaActs {
+    display: inline-flex; visibility: hidden;
+    width: 52px; flex: 0 0 52px; margin-left: auto;
+}
+.PfTeam.is-editing .PfTeam-uaBody .PfTeam-worker.is-unassigned:hover .PfTeam-uaActs,
+.PfTeam.is-editing .PfTeam-uaBody .PfTeam-worker.is-unassigned.is-menu .PfTeam-uaActs {
+    visibility: visible;
+}
+.PfTeam-uaBandLabel { position: relative; }
+.PfTeam.is-grade .PfTeam-uaBandLabel::after,
+.PfTeam.is-grade .PfTeam-uaBody .PfTeam-group .PfTeam-rowLeft::after,
+.PfTeam.is-grade .PfTeam-uaBody .PfTeam-worker.is-unassigned .PfTeam-cellName::after {
+    content: "";
+    position: absolute;
+    left: var(--pf-team-col-name-w);
+    top: 0; bottom: 0; width: 1px;
+    background: var(--border-subtle);
+    pointer-events: none;
+}
 .PfTeam-worker.is-unassigned:hover .PfTeam-uaActs,
 .PfTeam-worker.is-unassigned.is-menu .PfTeam-uaActs { display: inline-flex; }
 .PfTeam-uaAct {
@@ -1470,12 +1497,32 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     color: var(--text-accent);
 }
 .PfTeam-uaBody .PfTeam-worker.is-unassigned .PfTeam-cellName > * { height: auto; }
+.PfTeam-uaBody .PfTeam-worker.is-unassigned .PfTeam-cellName > .PfTeam-uaReqHours {
+    position: absolute; left: calc(var(--pf-team-col-name-w) + 5px); top: 0; height: 100%;
+    margin-left: 0; width: auto; flex: none; text-align: left; justify-content: flex-start;
+}
+.PfTeam-uaBody .PfTeam-worker.is-unassigned .PfTeam-cellName > span:not([class]) {
+    max-width: calc(var(--pf-team-col-name-w) - 76px);
+}
 .PfTeam-uaBody .PfTeam-worker.is-unassigned .PfTeam-rowCheckWrap {
     position: static; width: 16px; height: 16px;
 }
-.PfTeam-uaBody .PfTeam-group.is-unassignableHead .PfTeam-groupLabel,
 .PfTeam-uaBody .PfTeam-worker.is-unassignable .PfTeam-cellName {
     color: var(--text-subtle);
+}
+.PfTeam-uaBody .PfTeam-group.is-unassignableHead .PfTeam-rowLeft,
+.PfTeam-uaBody .PfTeam-group.is-unassignableHead .PfTeam-rowTrack {
+    background: var(--surface-accent);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-accent);
+}
+.PfTeam-uaBody .PfTeam-group.is-unassignableHead .PfTeam-rowLeft {
+    cursor: default; padding-left: 16px; gap: 0;
+}
+.PfTeam-uaBody .PfTeam-group.is-unassignableHead .PfTeam-groupLabel {
+    color: var(--text-accent);
+    font-size: 11px; font-weight: var(--font-weight-regular); letter-spacing: 0.33px;
 }
 .PfTeam-worker.is-unassigned .PfTeam-cellName > .PfTeam-uaPriority {
     flex: 0 0 20px; width: 20px; height: 20px; min-width: 20px; min-height: 20px;
@@ -1483,6 +1530,13 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
     display: inline-flex; align-items: center; justify-content: center;
     background: var(--surface-subtle-light); border-radius: 4px; box-sizing: border-box;
 }
+.PfTeam-uaBody .PfTeam-worker.is-unassigned .PfTeam-cellName > .PfTeam-uaPriority { display: none; }
+.PfTeam-group .PfTeam-rowLeft > .PfTeam-uaPriority {
+    flex: 0 0 20px; width: 20px; height: 20px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--surface-subtle-light); border-radius: 4px;
+}
+.PfTeam-group .PfTeam-rowLeft > .PfTeam-uaPriority i,
 .PfTeam-uaPriority i {
     width: 12px; height: 12px; font-size: 12px; line-height: 12px;
     display: flex; align-items: center; justify-content: center; color: var(--text-danger);
@@ -8827,9 +8881,11 @@ function pfBuildGroupRow(label, collapseKey, opts) {
     const row = pfEl("div", "PfTeam-row PfTeam-group" + (opts.nested ? " is-nested" : "") + (opts.unassignable ? " is-unassignableHead" : ""));
     const left = pfEl("div", "PfTeam-rowLeft");
     const collapsed = !!pfTeamState.collapsedEngagements[collapseKey];
-    left.appendChild(Object.assign(document.createElement("i"), {
-        className: "fa-solid fa-chevron-" + (collapsed ? "right" : "down")
-    }));
+    if (!opts.unassignable) {
+        left.appendChild(Object.assign(document.createElement("i"), {
+            className: "fa-solid fa-chevron-" + (collapsed ? "right" : "down")
+        }));
+    }
     if (opts.checkbox) {
         const cb = document.createElement("input");
         cb.type = "checkbox";
@@ -8838,12 +8894,20 @@ function pfBuildGroupRow(label, collapseKey, opts) {
         cb.addEventListener("click", function (e) { e.stopPropagation(); });
         left.appendChild(cb);
     }
+    if (opts.priority) {
+        const priority = pfEl("span", "PfTeam-uaPriority");
+        priority.title = "High priority";
+        priority.innerHTML = '<i class="fa-solid fa-angles-up" aria-hidden="true"></i>';
+        left.appendChild(priority);
+    }
     left.appendChild(pfEl("span", "PfTeam-groupLabel", label));
     left.title = label;
-    left.addEventListener("click", function () {
-        pfTeamState.collapsedEngagements[collapseKey] = !collapsed;
-        renderGantt();
-    });
+    if (!opts.unassignable) {
+        left.addEventListener("click", function () {
+            pfTeamState.collapsedEngagements[collapseKey] = !collapsed;
+            renderGantt();
+        });
+    }
     const track = pfEl("div", "PfTeam-rowTrack");
     track.style.width = (PF_WEEKS.length * PF_WEEK_W) + "px";
     if (opts.stats) track.appendChild(pfUaStatsEl(opts.stats));
@@ -8914,13 +8978,12 @@ function pfBuildWorkerRow(worker, index) {
             checkWrap.appendChild(cb);
             name.appendChild(checkWrap);
         }
-        const priority = pfEl("span", "PfTeam-uaPriority");
-        priority.title = "High priority";
-        priority.innerHTML = '<i class="fa-solid fa-angles-up" aria-hidden="true"></i>';
-        name.appendChild(priority);
         const label = pfEl("span", null, worker.displayName || pfUnassignedLabel(worker));
         label.title = worker.displayName || pfUnassignedLabel(worker);
         name.appendChild(label);
+        const reqHours = pfEl("span", "PfTeam-uaReqHours", String(Math.round(pfEngHours(worker.items) || 0)));
+        reqHours.title = "Total hours";
+        name.appendChild(reqHours);
         if (worker.continuity) {
             const star = pfEl("span", "PfTeam-uaStar");
             star.title = "Continuity";
@@ -10088,12 +10151,41 @@ function pfAppendUaRows(inner, nextIndex) {
     const assignable = workers.filter(function (worker) { return worker.reqType !== "unassignable"; });
     const blocked = workers.filter(function (worker) { return worker.reqType === "unassignable"; });
     if (pfTeamState.uaGroup === "requirement") {
-        pfAppendRequirementGroups(inner, nextIndex, assignable, "");
+        function appendRequirementRows(list, keyPrefix) {
+            const byJob = {};
+            const loose = [];
+            list.forEach(function (worker) {
+                const jobs = pfRequirementJobs(worker);
+                const names = Object.keys(jobs).filter(Boolean);
+                if (!names.length) { loose.push(worker); return; }
+                names.forEach(function (job) {
+                    if (!byJob[job]) byJob[job] = [];
+                    byJob[job].push({ worker: worker, items: jobs[job] });
+                });
+            });
+            loose.slice().sort(function (a, b) { return pfUnassignedLabel(a).localeCompare(pfUnassignedLabel(b)); }).forEach(function (worker) {
+                inner.appendChild(pfBuildWorkerRow(pfScopedDemand(worker, "", [], pfUnassignedLabel(worker)), nextIndex()));
+            });
+            pfUaSortKeys(Object.keys(byJob)).forEach(function (job) {
+                const collapseKey = "ua-eng:" + (keyPrefix || "") + job;
+                const jobItems = [];
+                byJob[job].forEach(function (entry) { jobItems.push.apply(jobItems, entry.items); });
+                inner.appendChild(pfBuildGroupRow(job, collapseKey, { nested: true, stats: pfUaGroupStats(jobItems, job) }));
+                if (pfTeamState.collapsedEngagements[collapseKey]) return;
+                byJob[job].slice().sort(function (a, b) {
+                    return pfUnassignedLabel(a.worker).localeCompare(pfUnassignedLabel(b.worker));
+                }).forEach(function (entry) {
+                    inner.appendChild(pfBuildWorkerRow(pfScopedDemand(entry.worker, job, entry.items, pfUnassignedLabel(entry.worker)), nextIndex()));
+                });
+            });
+        }
+        if (assignable.length) {
+            inner.appendChild(pfBuildGroupRow("Unassigned", "ua-assignable", { nested: true, unassignable: true }));
+            appendRequirementRows(assignable, "");
+        }
         if (blocked.length) {
             inner.appendChild(pfBuildGroupRow("Not available to assign", "ua-nonassignable", { nested: true, unassignable: true }));
-            if (!pfTeamState.collapsedEngagements["ua-nonassignable"]) {
-                pfAppendRequirementGroups(inner, nextIndex, blocked, "blocked:");
-            }
+            appendRequirementRows(blocked, "blocked:");
         }
         return;
     }
@@ -10320,7 +10412,7 @@ function renderGantt(options) {
         const engagementGroups = pfEngagementGroups();
         inner.appendChild(pfBuildEngagementsHeader(engagementGroups));
         engagementGroups.forEach(function (group) {
-            inner.appendChild(pfBuildGroupRow(group.job, group.job));
+            inner.appendChild(pfBuildGroupRow(group.job, group.job, { priority: true }));
             if (pfTeamState.collapsedEngagements[group.job]) return;
 
             const assigned = group.people.filter(function (e) { return !pfIsUnassigned(e.worker); });
@@ -10347,16 +10439,16 @@ function renderGantt(options) {
             if (unassigned.length) {
                 const assignable = unassigned.filter(function (entry) { return entry.worker.reqType !== "unassignable"; });
                 const blocked = unassigned.filter(function (entry) { return entry.worker.reqType === "unassignable"; });
-                function appendDemand(label, list, key) {
+                function appendDemand(label, list, key, unassignable) {
                     if (!list.length) return;
-                    inner.appendChild(pfBuildGroupRow(label, key, { nested: true }));
+                    inner.appendChild(pfBuildGroupRow(label, key, { nested: true, unassignable: !!unassignable }));
                     if (pfTeamState.collapsedEngagements[key]) return;
                     list.forEach(function (entry) {
                         inner.appendChild(pfBuildWorkerRow(pfScopedDemand(entry.worker, group.job, entry.items, null), rowIndex++));
                     });
                 }
                 appendDemand("Unassigned", assignable, group.job + "|unassigned");
-                appendDemand("Not available to assign", blocked, group.job + "|blocked");
+                appendDemand("Not available to assign", blocked, group.job + "|blocked", true);
             }
         });
     } else {
@@ -10782,7 +10874,9 @@ function pfReqRender() {
         '<div class="modal-header"><h5 class="modal-title" id="reqTitle">' + (pfReq.editId ? "Edit Resource Requirement" : "Add Resource Requirement") + '</h5>' +
         '<button type="button" class="close" aria-label="Close" data-req-close><span aria-hidden="true">&times;</span></button></div>' +
         '<div class="modal-body">' +
-        pfReqPicker("engagement", "Engagement", "briefcase", { required: true, disabled: !!pfReq.editId, description: pfReq.editId ? "Requirements can't move to another engagement." : "" }) +
+        (pfReq.editId
+            ? pfReqPicker("engagement", "Engagement", "briefcase", { required: true, disabled: true, description: "Requirements can't move to another engagement." })
+            : pfReqPicker("engagement", "Engagement", "briefcase")) +
         pfReqScheduleFields() +
         '<div class="btn-group btn-group-toggle ReqTabs" role="radiogroup" aria-label="Resource type">' + tabs + '</div>' +
         fields + skills +
@@ -11047,7 +11141,7 @@ function submitReq() {
     if (!pfReq) return;
     const v = pfReq.v;
     const tab = pfReq.tab;
-    const need = ["engagement"].concat(tab === "specific" ? ["worker"] : tab === "unassignable" ? ["grade"] : ["grade", "bu", "location"]);
+    const need = (pfReq.editId ? ["engagement"] : []).concat(tab === "specific" ? ["worker"] : tab === "unassignable" ? ["grade"] : ["grade", "bu", "location"]);
     pfReq.errors = {};
     need.forEach(function (k) { if (!v[k]) pfReq.errors[k] = true; });
     if (Object.keys(pfReq.errors).length) {
@@ -11128,6 +11222,7 @@ function submitReq() {
     const requirementKey = pfUnassignedLabel(worker);
     delete pfTeamState.collapsedEngagements["ua-req:" + requirementKey];
     delete pfTeamState.collapsedEngagements["ua-req:blocked:" + requirementKey];
+    if (engagement) delete pfTeamState.collapsedEngagements["ua-eng:" + (worker.reqType === "unassignable" ? "blocked:" : "") + engagement];
     if (worker.reqType === "unassignable") delete pfTeamState.collapsedEngagements["ua-nonassignable"];
     pfTeamWorkers.push(worker);
     delete pfTeamState.collapsedEngagements.__unassigned;
