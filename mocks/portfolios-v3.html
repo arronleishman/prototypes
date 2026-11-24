@@ -9053,7 +9053,7 @@ function pfBuildWorkerRow(worker, index) {
 
     const track = pfEl("div", "PfTeam-rowTrack");
     track.style.width = (PF_WEEKS.length * PF_WEEK_W) + "px";
-    if (!PF_TEAM_READ_ONLY) track.title = pfRowRequirementReady(worker) ? "Double-click to add a resource requirement" : "Double-click to create a booking";
+    if (!PF_TEAM_READ_ONLY) track.title = "Double-click to create a booking";
     track.addEventListener("click", function (e) {
         if (e.target.closest(".PfTeam-bar, button, a")) return;
         if (pfTeamState.selectedItemId || pfTeamState.selectedItemIds.length) {
@@ -9072,7 +9072,7 @@ function pfBuildWorkerRow(worker, index) {
         }
         const contentX = e.clientX - track.getBoundingClientRect().left;
         const weekIndex = Math.max(0, Math.min(PF_WEEK_COUNT - 1, Math.floor(contentX / PF_WEEK_W)));
-        pfAddRequirementFromRow(worker, weekIndex);
+        pfAddBookingFromRow(worker, weekIndex);
     });
     const weeksCol = pfEl("div", "PfTeam-trackWeeks");
     weeksCol.style.width = "100%";
@@ -9228,7 +9228,7 @@ function pfBuildCell(worker, row, wi) {
             pfShowReadOnlyNotice();
             return;
         }
-        pfAddRequirementFromRow(worker, wi);
+        pfAddBookingFromRow(worker, wi);
     });
     return c;
 }
@@ -11128,11 +11128,20 @@ function openReqModal(opts) {
     opts = opts || {};
     const enteredEdit = pfEnterGanttEdit();
     const weekIndex = typeof opts.weekIndex === "number" ? opts.weekIndex : null;
+    const target = opts.workerId ? pfWorkerById(opts.workerId) : null;
+    const tab = target && (target.reqType === "specific" || target.reqType === "unassignable") ? target.reqType : "flexible";
     pfReq = {
         editId: null,
-        tab: "flexible",
+        targetId: target ? target.id : null,
+        tab: target ? tab : "flexible",
         v: {
-            engagement: opts.engagement || "",
+            engagement: opts.engagement || (target && target.job) || "",
+            worker: target && tab === "specific" ? (target.name || "") : "",
+            role: target ? (target.role || "") : "",
+            grade: target ? (PF_GRADE_NAME[target.grade] || "") : "",
+            bu: target ? (target.fu || "") : "",
+            location: target ? (target.gu || "") : "",
+            continuity: !!(target && target.continuity),
             from: weekIndex == null ? "" : formatBookingAt(weekIndex, 0, "09:00AM"),
             to: weekIndex == null ? "" : formatBookingAt(weekIndex, 4, "05:00PM")
         },
@@ -11334,7 +11343,26 @@ function submitReq() {
     }
     const weekIndex = pfReq.weekIndex;
     const continuity = tab === "specific" && !!v.continuity;
+    const target = pfReq.targetId ? pfTeamWorkers.find(function (w) { return w.id === pfReq.targetId; }) : null;
     closeReqModal();
+    if (target) {
+        if (PF_GRADE_NAME[target.grade] === v.grade && tab !== "specific") gradeCode = target.grade;
+        target.reqType = tab;
+        target.name = personName;
+        target.grade = gradeCode;
+        target.fu = fu;
+        target.gu = gu;
+        target.role = role;
+        target.continuity = continuity;
+        if (engagement) target.job = engagement;
+        pfRefreshRequirementClassification(target);
+        (target.items || []).forEach(function (it) {
+            it.role = role || gradeCode;
+            it.req = pfUnassignedLabel(target);
+        });
+        pfAddBookingOnRequirement(target, weekIndex, engagement);
+        return;
+    }
     pfPlaceNewRequirement({
         tab: tab,
         personName: personName,
@@ -11355,26 +11383,41 @@ function pfRowRequirementReady(worker) {
     if (tab === "unassignable") return !!worker.grade;
     return !!(worker.grade && worker.fu && worker.gu);
 }
-function pfAddRequirementFromRow(worker, weekIndex) {
+function pfAddBookingOnRequirement(worker, weekIndex, engagement) {
+    const sourceId = worker.sourceId || String(worker.id || "").split("::")[0];
+    const source = pfWorkerById(sourceId) || worker;
+    const startWeek = Math.max(0, Math.min(PF_WEEK_COUNT - 1, typeof weekIndex === "number" ? weekIndex : 0));
+    const sample = (source.items || []).find(function (it) { return it && it.kind !== "unavailability"; });
+    const hours = 30;
+    const cells = {};
+    cells[startWeek] = hours;
+    if (!source.items) source.items = [];
+    source.items.push({
+        id: "pfit-" + (++PF_ITEM_SEQ),
+        job: engagement || pfRowEngagement(source) || "",
+        code: (sample && sample.code) || "",
+        phase: (sample && sample.phase) || "Preparation",
+        role: source.role || source.grade || (sample && sample.role) || null,
+        bookingType: (sample && sample.bookingType) || "Audit",
+        req: pfUnassignedLabel(source),
+        startWeek: startWeek,
+        span: 1,
+        hours: hours,
+        cells: cells,
+        kind: "booking"
+    });
+    source.blank = false;
+    renderGantt();
+}
+function pfAddBookingFromRow(worker, weekIndex) {
     const sourceId = worker.sourceId || String(worker.id || "").split("::")[0];
     const source = pfWorkerById(sourceId) || worker;
     const engagement = pfRowEngagement(worker) || pfRowEngagement(source) || "";
     if (!pfRowRequirementReady(source)) {
-        openReqModal({ engagement: engagement, weekIndex: weekIndex });
+        openReqModal({ engagement: engagement, weekIndex: weekIndex, workerId: source.id });
         return;
     }
-    const tab = source.reqType === "specific" || source.reqType === "unassignable" ? source.reqType : "flexible";
-    pfPlaceNewRequirement({
-        tab: tab,
-        personName: tab === "specific" ? source.name : null,
-        gradeCode: source.grade,
-        fu: source.fu,
-        gu: source.gu,
-        role: source.role,
-        continuity: tab === "specific" && !!source.continuity,
-        engagement: engagement,
-        weekIndex: weekIndex
-    });
+    pfAddBookingOnRequirement(source, weekIndex, engagement);
 }
 function pfPlaceNewRequirement(spec) {
     const tab = spec.tab;
