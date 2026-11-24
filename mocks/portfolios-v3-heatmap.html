@@ -9053,7 +9053,7 @@ function pfBuildWorkerRow(worker, index) {
 
     const track = pfEl("div", "PfTeam-rowTrack");
     track.style.width = (PF_WEEKS.length * PF_WEEK_W) + "px";
-    if (!PF_TEAM_READ_ONLY) track.title = "Double-click to create a booking";
+    if (!PF_TEAM_READ_ONLY) track.title = pfRowRequirementReady(worker) ? "Double-click to add a resource requirement" : "Double-click to create a booking";
     track.addEventListener("click", function (e) {
         if (e.target.closest(".PfTeam-bar, button, a")) return;
         if (pfTeamState.selectedItemId || pfTeamState.selectedItemIds.length) {
@@ -9072,7 +9072,7 @@ function pfBuildWorkerRow(worker, index) {
         }
         const contentX = e.clientX - track.getBoundingClientRect().left;
         const weekIndex = Math.max(0, Math.min(PF_WEEK_COUNT - 1, Math.floor(contentX / PF_WEEK_W)));
-        openReqModal({ engagement: pfRowEngagement(worker), weekIndex: weekIndex });
+        pfAddRequirementFromRow(worker, weekIndex);
     });
     const weeksCol = pfEl("div", "PfTeam-trackWeeks");
     weeksCol.style.width = "100%";
@@ -9228,7 +9228,7 @@ function pfBuildCell(worker, row, wi) {
             pfShowReadOnlyNotice();
             return;
         }
-        openReqModal({ engagement: pfRowEngagement(worker), weekIndex: wi });
+        pfAddRequirementFromRow(worker, wi);
     });
     return c;
 }
@@ -10184,7 +10184,7 @@ function pfAppendUaRows(inner, nextIndex) {
             appendRequirementRows(assignable, "");
         }
         if (blocked.length) {
-            inner.appendChild(pfBuildGroupRow("Not available to assign", "ua-nonassignable", { nested: true, unassignable: true }));
+            inner.appendChild(pfBuildGroupRow("Non-assignable", "ua-nonassignable", { nested: true, unassignable: true }));
             appendRequirementRows(blocked, "blocked:");
         }
         return;
@@ -10216,7 +10216,7 @@ function pfAppendUaRows(inner, nextIndex) {
         });
         if (jobBlocked.length) {
             const blockedKey = collapseKey + "|blocked";
-            inner.appendChild(pfBuildGroupRow("Not available to assign", blockedKey, { nested: true, unassignable: true }));
+            inner.appendChild(pfBuildGroupRow("Non-assignable", blockedKey, { nested: true, unassignable: true }));
             if (!pfTeamState.collapsedEngagements[blockedKey]) {
                 jobBlocked.forEach(function (entry) {
                     inner.appendChild(pfBuildWorkerRow(pfScopedDemand(entry.worker, job, entry.items, null), nextIndex()));
@@ -10382,6 +10382,14 @@ function pfSaveGanttEdit() {
         if (bar) bar.scrollIntoView({ block: "nearest", inline: "nearest" });
     }, 700);
 }
+function pfEnterGanttEdit() {
+    if (pfTeamState.ganttEditing) return false;
+    pfTeamState.ganttEditing = true;
+    if (pfTeamState.pivot === "engagement") pfTeamState.pivot = "resource";
+    pfTeamState.uaPanel = "open";
+    pfSyncGanttEdit();
+    return true;
+}
 function pfToggleGanttEdit() {
     pfTeamState.ganttEditing = !pfTeamState.ganttEditing;
     if (pfTeamState.ganttEditing) {
@@ -10448,7 +10456,7 @@ function renderGantt(options) {
                     });
                 }
                 appendDemand("Unassigned", assignable, group.job + "|unassigned");
-                appendDemand("Not available to assign", blocked, group.job + "|blocked", true);
+                appendDemand("Non-assignable", blocked, group.job + "|blocked", true);
             }
         });
     } else {
@@ -10774,6 +10782,30 @@ function pfEnsureReqFrame(then) {
         '.ReqSummary small{display:block;}' +
         '.ReqContinuity{margin:0 15px 1rem;}' +
         '.ReqSchedule{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;margin-bottom:.5rem;}' +
+        '.ReqEng{margin:0 15px 1rem;display:flex;flex-direction:column;gap:8px;}' +
+        '.CreateBooking-engLabel{display:inline-flex;align-items:center;gap:4px;margin:0;font-size:var(--font-size-medium);font-weight:var(--font-weight-semibold);color:var(--text-default);line-height:20px;}' +
+        '.CreateBooking-engCheck{display:inline-flex;align-items:center;justify-content:center;width:10px;height:10px;color:var(--text-success,#078138);line-height:0;}' +
+        '.CreateBooking-engCheck i{font-size:10px;}' +
+        '.CreateBooking-selectedEng{display:flex;align-items:center;gap:12px;width:100%;min-height:35px;font-size:14px;color:var(--text-default);line-height:20px;}' +
+        '.CreateBooking-selectedEngText{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+        '.CreateBooking-selectedEngClear{flex-shrink:0;width:35px;height:35px;padding:0;border:1px solid var(--border-default);border-radius:var(--border-radius-default);background:var(--surface-default);color:var(--text-default);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;}' +
+        '.CreateBooking-selectedEngClear:hover{border-color:var(--border-primary);color:var(--text-primary);}' +
+        '.CreateBooking-searchWrap{position:relative;width:100%;}' +
+        '.CreateBooking-searchWrap[hidden],.CreateBooking-toggle[hidden],.CreateBooking-suggest[hidden]{display:none !important;}' +
+        '.CreateBooking-searchWrap input{width:100%;height:35px;box-sizing:border-box;border:1px solid var(--border-default);border-radius:var(--border-radius-default);padding:0 44px 0 12px;font-family:inherit;font-size:var(--font-size-medium);color:var(--text-default);}' +
+        '.CreateBooking-searchWrap input:focus{outline:none;border-color:var(--border-primary);box-shadow:0 0 0 0.2rem rgba(79,63,160,.25);}' +
+        '.CreateBooking-searchWrap input:disabled{background:var(--surface-subtle-light);color:var(--text-subtle);}' +
+        '.CreateBooking-iconBtn{position:absolute;right:0;top:0;width:35px;height:35px;border:1px solid var(--surface-primary);border-left:none;border-radius:0 var(--border-radius-default) var(--border-radius-default) 0;background:var(--surface-primary);color:var(--text-inverse);display:inline-flex;align-items:center;justify-content:center;padding:0;}' +
+        '.CreateBooking-suggest{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;background:var(--surface-default);border:1px solid var(--border-subtle);border-radius:var(--border-radius-default);box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:220px;overflow:auto;}' +
+        '.CreateBooking-suggest button{display:block;width:100%;text-align:left;padding:10px 12px;border:none;background:var(--surface-default);cursor:pointer;font-family:inherit;font-size:13px;color:var(--text-default);}' +
+        '.CreateBooking-suggest button:hover{background:var(--primary-subtle);}' +
+        '.CreateBooking-suggest .code{color:var(--text-link-color,#7059e8);}' +
+        '.CreateBooking-toggle{display:inline-flex;align-items:center;gap:10px;margin:4px 0 0;font-size:var(--font-size-medium);color:var(--text-default);cursor:pointer;user-select:none;}' +
+        '.CreateBooking-toggle input{position:absolute;opacity:0;width:0;height:0;}' +
+        '.CreateBooking-toggleTrack{position:relative;width:40px;height:22px;flex-shrink:0;border-radius:11px;background:var(--surface-emphasis);}' +
+        '.CreateBooking-toggleTrack::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform .15s ease;}' +
+        '.CreateBooking-toggle input:checked+.CreateBooking-toggleTrack{background:var(--surface-primary);}' +
+        '.CreateBooking-toggle input:checked+.CreateBooking-toggleTrack::after{transform:translateX(18px);}' +
         '</style></head><body><div id="reqRoot"></div></body></html>';
 }
 
@@ -10832,6 +10864,74 @@ function pfReqPicker(key, label, icon, opts) {
         (opts.description ? '<small class="FormGroup-description form-text text-muted">' + htmlEsc(opts.description) + '</small>' : "") +
         '</div></div>';
 }
+function pfReqEngagementRecords() {
+    return pfPortfolioEngagementNames().map(function (name, i) {
+        const parts = name.split(" — ");
+        const type = parts.length > 1 ? parts[0] : "";
+        const company = parts.length > 1 ? parts.slice(1).join(" — ") : name;
+        return { name: name, company: company, engagementType: type, viewable: i % 8 !== 7 };
+    });
+}
+function pfReqEngagementRecord(name) {
+    return pfReqEngagementRecords().filter(function (e) { return e.name === name; })[0] || null;
+}
+function pfFilterReqEngagements(query) {
+    const q = (query || "").trim().toLowerCase();
+    const onlyViewable = !pfReq || pfReq.v.engagementViewable !== false;
+    return pfReqEngagementRecords().filter(function (e) {
+        if (onlyViewable && !e.viewable) return false;
+        if (!q) return true;
+        return (e.company + " " + e.engagementType + " " + e.name).toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 8);
+}
+function pfReqEngagementSuggestHtml(query) {
+    return pfFilterReqEngagements(query).map(function (e) {
+        const type = e.engagementType && e.engagementType !== e.company
+            ? ' <span class="code">' + htmlEsc(e.engagementType) + "</span>" : "";
+        return '<button type="button" data-req-eng="' + htmlEsc(e.name) + '">' + htmlEsc(e.company) + type + "</button>";
+    }).join("");
+}
+function pfReqEngagementSelectedHtml(name) {
+    const rec = pfReqEngagementRecord(name);
+    if (!rec) return htmlEsc(name || "");
+    return htmlEsc(rec.company) + (rec.engagementType ? " | " + htmlEsc(rec.engagementType) : "");
+}
+function pfSyncReqEngagementSuggest(doc) {
+    const suggest = doc && doc.querySelector(".CreateBooking-suggest");
+    if (!suggest || !pfReq) return;
+    const html = pfReqEngagementSuggestHtml(pfReq.v.engagementQuery || "");
+    suggest.innerHTML = html;
+    suggest.hidden = !html;
+}
+function pfReqEngagementField() {
+    const locked = !!(pfReq && pfReq.editId);
+    const value = (pfReq && pfReq.v.engagement) || "";
+    const selected = !!value;
+    const viewable = !pfReq || pfReq.v.engagementViewable !== false;
+    const query = (pfReq && pfReq.v.engagementQuery) || "";
+    const open = !!(pfReq && pfReq.engagementOpen && !selected && !locked);
+    const selectedHtml = selected
+        ? '<div class="CreateBooking-selectedEng"><span class="CreateBooking-selectedEngText">' + pfReqEngagementSelectedHtml(value) + "</span>" +
+            (locked ? "" : '<button type="button" class="CreateBooking-selectedEngClear" data-req-eng-clear aria-label="Clear engagement"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>') +
+            "</div>"
+        : "";
+    return '<div class="ReqEng">' +
+        '<div class="CreateBooking-engLabel">Engagement' +
+        (selected ? '<span class="CreateBooking-engCheck"><i class="fa-solid fa-check"></i></span>' : "") +
+        "</div>" +
+        selectedHtml +
+        '<div class="CreateBooking-searchWrap"' + (selected ? " hidden" : "") + ">" +
+        '<input type="search" id="req-engagement-search" placeholder="Search for Engagement" autocomplete="off" value="' + htmlEsc(query) + '"' + (locked ? " disabled" : "") + ">" +
+        '<button type="button" class="CreateBooking-iconBtn is-emphasis" tabindex="-1" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></button>' +
+        '<div class="CreateBooking-suggest"' + (open ? "" : " hidden") + ">" + (open ? pfReqEngagementSuggestHtml(query) : "") + "</div>" +
+        "</div>" +
+        '<label class="CreateBooking-toggle"' + (selected || locked ? " hidden" : "") + ">" +
+        '<input type="checkbox" data-req-eng-viewable' + (viewable ? " checked" : "") + (locked ? " disabled" : "") + ">" +
+        '<span class="CreateBooking-toggleTrack" aria-hidden="true"></span>' +
+        "<span>Filter Engagements based on Viewable Units</span></label>" +
+        (locked ? '<small class="form-text text-muted">Requirements can\'t move to another engagement.</small>' : "") +
+        "</div>";
+}
 function pfReqRender() {
     const doc = pfReqDoc();
     if (!doc || !pfReq) return;
@@ -10874,9 +10974,7 @@ function pfReqRender() {
         '<div class="modal-header"><h5 class="modal-title" id="reqTitle">' + (pfReq.editId ? "Edit Resource Requirement" : "Add Resource Requirement") + '</h5>' +
         '<button type="button" class="close" aria-label="Close" data-req-close><span aria-hidden="true">&times;</span></button></div>' +
         '<div class="modal-body">' +
-        (pfReq.editId
-            ? pfReqPicker("engagement", "Engagement", "briefcase", { required: true, disabled: true, description: "Requirements can't move to another engagement." })
-            : pfReqPicker("engagement", "Engagement", "briefcase")) +
+        pfReqEngagementField() +
         pfReqScheduleFields() +
         '<div class="btn-group btn-group-toggle ReqTabs" role="radiogroup" aria-label="Resource type">' + tabs + '</div>' +
         fields + skills +
@@ -10888,6 +10986,24 @@ function pfReqRender() {
 function pfBindReqFrame(doc) {
     doc.addEventListener("click", function (e) {
         const t = e.target;
+        const engPick = t.closest("[data-req-eng]");
+        if (engPick && pfReq && !pfReq.editId) {
+            pfReq.v.engagement = engPick.dataset.reqEng;
+            pfReq.v.engagementQuery = "";
+            pfReq.engagementOpen = false;
+            delete pfReq.errors.engagement;
+            pfReqRender();
+            return;
+        }
+        if (t.closest("[data-req-eng-clear]") && pfReq && !pfReq.editId) {
+            pfReq.v.engagement = "";
+            pfReq.v.engagementQuery = "";
+            pfReq.engagementOpen = true;
+            pfReqRender();
+            const search = doc.getElementById("req-engagement-search");
+            if (search) search.focus();
+            return;
+        }
         const pick = t.closest("[data-req-pick]");
         if (pick) {
             const key = pick.dataset.reqPick;
@@ -10915,9 +11031,15 @@ function pfBindReqFrame(doc) {
         }
         if (t.closest("[data-req-close]") || t.matches("[data-req-backdrop]")) { closeReqModal(); return; }
         if (t.closest("[data-req-submit]")) { submitReq(); return; }
-        if (!t.closest(".TreeInput") && pfReq.open) {
+        if (!t.closest(".TreeInput") && pfReq && pfReq.open) {
             pfReq.open = null;
             pfReqRender();
+            return;
+        }
+        if (pfReq && pfReq.engagementOpen && !t.closest(".CreateBooking-searchWrap") && !t.closest(".CreateBooking-toggle")) {
+            pfReq.engagementOpen = false;
+            const suggest = doc.querySelector(".CreateBooking-suggest");
+            if (suggest) suggest.hidden = true;
         }
     });
     const openList = function (e) {
@@ -10929,9 +11051,25 @@ function pfBindReqFrame(doc) {
         view.classList.add("is-visible");
         view.querySelector("[data-req-list]").innerHTML = pfReqNodes(pfReq.open, "");
     };
-    doc.addEventListener("focusin", openList);
+    doc.addEventListener("focusin", function (e) {
+        const search = e.target.closest && e.target.closest("#req-engagement-search");
+        if (search && pfReq && !pfReq.editId && !search.disabled) {
+            pfReq.v.engagementQuery = search.value;
+            pfReq.engagementOpen = true;
+            pfSyncReqEngagementSuggest(doc);
+            return;
+        }
+        openList(e);
+    });
     doc.addEventListener("mousedown", openList);
     doc.addEventListener("input", function (e) {
+        const search = e.target.closest && e.target.closest("#req-engagement-search");
+        if (search && pfReq && !pfReq.editId) {
+            pfReq.v.engagementQuery = search.value;
+            pfReq.engagementOpen = true;
+            pfSyncReqEngagementSuggest(doc);
+            return;
+        }
         const date = e.target.closest("[data-req-date]");
         if (date) {
             pfReq.v[date.dataset.reqDate] = date.value;
@@ -10948,10 +11086,21 @@ function pfBindReqFrame(doc) {
     });
     doc.addEventListener("change", function (e) {
         if (e.target.matches("[data-req-continuity]")) pfReq.v.continuity = e.target.checked;
+        if (e.target.matches("[data-req-eng-viewable]") && pfReq) {
+            pfReq.v.engagementViewable = e.target.checked;
+            pfReq.engagementOpen = true;
+            pfSyncReqEngagementSuggest(doc);
+        }
     });
     doc.addEventListener("keydown", function (e) {
-        if (e.key !== "Escape") return;
+        if (e.key !== "Escape" || !pfReq) return;
         e.preventDefault();
+        if (pfReq.engagementOpen) {
+            pfReq.engagementOpen = false;
+            const suggest = doc.querySelector(".CreateBooking-suggest");
+            if (suggest) suggest.hidden = true;
+            return;
+        }
         if (pfReq.open) { pfReq.open = null; pfReqRender(); return; }
         closeReqModal();
     });
@@ -10977,6 +11126,7 @@ function pfReqScheduleFields() {
 }
 function openReqModal(opts) {
     opts = opts || {};
+    const enteredEdit = pfEnterGanttEdit();
     const weekIndex = typeof opts.weekIndex === "number" ? opts.weekIndex : null;
     pfReq = {
         editId: null,
@@ -10991,6 +11141,7 @@ function openReqModal(opts) {
         weekIndex: weekIndex
     };
     pfShowReqModal();
+    if (enteredEdit) requestAnimationFrame(function () { renderGantt(); });
 }
 function openReqModalForEdit(workerId) {
     const worker = pfTeamWorkers.find(function (w) { return w.id === workerId; });
@@ -11181,9 +11332,58 @@ function submitReq() {
         renderGantt();
         return;
     }
+    const weekIndex = pfReq.weekIndex;
+    const continuity = tab === "specific" && !!v.continuity;
+    closeReqModal();
+    pfPlaceNewRequirement({
+        tab: tab,
+        personName: personName,
+        gradeCode: gradeCode,
+        fu: fu,
+        gu: gu,
+        role: role,
+        continuity: continuity,
+        engagement: engagement,
+        weekIndex: weekIndex
+    });
+}
+
+function pfRowRequirementReady(worker) {
+    if (!pfIsUnassigned(worker)) return false;
+    const tab = worker.reqType === "specific" || worker.reqType === "unassignable" ? worker.reqType : "flexible";
+    if (tab === "specific") return !!worker.name;
+    if (tab === "unassignable") return !!worker.grade;
+    return !!(worker.grade && worker.fu && worker.gu);
+}
+function pfAddRequirementFromRow(worker, weekIndex) {
+    const sourceId = worker.sourceId || String(worker.id || "").split("::")[0];
+    const source = pfWorkerById(sourceId) || worker;
+    const engagement = pfRowEngagement(worker) || pfRowEngagement(source) || "";
+    if (!pfRowRequirementReady(source)) {
+        openReqModal({ engagement: engagement, weekIndex: weekIndex });
+        return;
+    }
+    const tab = source.reqType === "specific" || source.reqType === "unassignable" ? source.reqType : "flexible";
+    pfPlaceNewRequirement({
+        tab: tab,
+        personName: tab === "specific" ? source.name : null,
+        gradeCode: source.grade,
+        fu: source.fu,
+        gu: source.gu,
+        role: source.role,
+        continuity: tab === "specific" && !!source.continuity,
+        engagement: engagement,
+        weekIndex: weekIndex
+    });
+}
+function pfPlaceNewRequirement(spec) {
+    const tab = spec.tab;
+    const engagement = spec.engagement || "";
+    const gradeCode = spec.gradeCode;
+    const role = spec.role || null;
     const items = [];
-    if (typeof pfReq.weekIndex === "number" && tab !== "flexible") {
-        const startWeek = Math.max(0, Math.min(PF_WEEK_COUNT - 1, pfReq.weekIndex));
+    if (typeof spec.weekIndex === "number" && tab !== "flexible") {
+        const startWeek = Math.max(0, Math.min(PF_WEEK_COUNT - 1, spec.weekIndex));
         const hours = 30;
         const cells = {};
         cells[startWeek] = hours;
@@ -11206,12 +11406,12 @@ function submitReq() {
         id: "w-req-" + (++PF_ITEM_SEQ),
         unassigned: true,
         reqType: tab,
-        name: personName,
+        name: spec.personName || null,
         grade: gradeCode,
-        fu: fu,
-        gu: gu,
+        fu: spec.fu || null,
+        gu: spec.gu || null,
         role: role,
-        continuity: tab === "specific" && !!v.continuity,
+        continuity: !!spec.continuity,
         cap: 37.5,
         job: engagement,
         blank: !items.length,
@@ -11232,7 +11432,6 @@ function submitReq() {
     } else {
         pfTeamState.uaPanel = "open";
     }
-    closeReqModal();
     renderGantt();
     pfEnsureUaLoaded(function () { pfRevealNewRequirement(worker.id); });
 }
@@ -11496,6 +11695,7 @@ document.addEventListener("click", e => {
 })();
 
 /* ---- Init ---- */
+pfEnsureReqFrame(function () {});
 hydratePortfolioCounts();
 renderSections();
 syncPerfChrome();
