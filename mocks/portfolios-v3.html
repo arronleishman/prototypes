@@ -419,8 +419,14 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
 .CountBadge.is-overLimit { background: var(--surface-warning-subtle); color: var(--text-warning-strong); border-color: var(--border-warning-subtle); }
 .CountBadge.is-overLimit .CountBadge-icon,
 .CountBadge.is-overLimit i { color: currentColor; }
-#view-detail.is-over-limit .Tab-navBar,
-#view-detail.is-over-limit .tabpane { display: none !important; }
+.PfLimitBanner {
+    display: flex; align-items: flex-start; gap: 8px; flex: none;
+    margin: 0; padding: 10px 16px;
+    background: var(--surface-warning-subtle); border-bottom: 1px solid var(--border-warning-subtle);
+    color: var(--text-warning-strong); font-size: var(--font-size-small); line-height: 18px;
+}
+.PfLimitBanner[hidden] { display: none !important; }
+.PfLimitBanner i { margin-top: 2px; color: var(--text-warning); }
 .PfLimit { display: flex; flex: 1 1 auto; align-items: center; justify-content: center; padding: 48px 24px; }
 .PfLimit[hidden] { display: none !important; }
 .PfLimit-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 440px; max-width: 100%; }
@@ -1029,6 +1035,7 @@ tr.is-inactive .cell-name { color: var(--text-subtle); }
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .PfTeam-group .PfTeam-rowLeft i { font-size: 10px; color: var(--icon-default); width: 9px; flex: 0 0 auto; }
+.PfTeam-group.is-empty .PfTeam-rowLeft { cursor: default; }
 .PfTeam-group.is-nested .PfTeam-rowLeft,
 .PfTeam-group.is-nested .PfTeam-rowTrack { border-top-width: 1px; }
 .PfTeam-group.is-top .PfTeam-rowLeft,
@@ -1508,7 +1515,7 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 }
 .PfTeam-uaBody .PfTeam-group.is-unassignableHead .PfTeam-rowLeft,
 .PfTeam-uaBody .PfTeam-group.is-unassignableHead .PfTeam-rowTrack {
-    background: var(--surface-accent);
+    background: var(--surface-subtle-light);
     border-top: 1px solid var(--border-subtle);
     border-bottom: 1px solid var(--border-subtle);
     color: var(--text-accent);
@@ -3364,6 +3371,11 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                 <button class="Tab-navItem" data-tab="team" onclick="switchTab('team')"><span class="Tab-navItem-inner">Team</span><span class="Tab-navItem-bar"></span></button>
             </div>
 
+            <div class="PfLimitBanner" id="pfLimitBanner" hidden>
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                <span id="pfLimitBannerText"></span>
+            </div>
+
             <div class="PfLimit" id="pfLimit" hidden>
                 <div class="PfLimit-body">
                     <p class="PfLimit-title" id="pfLimitTitle"></p>
@@ -3707,16 +3719,16 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 <div class="LimitDialog" id="portfolioLimitDialog" role="dialog" aria-modal="true" aria-labelledby="portfolioLimitTitle" hidden>
     <div class="DynamicFilterConfirm-panel">
         <div class="DynamicFilterConfirm-header">
-            <h3 class="DynamicFilterConfirm-title" id="portfolioLimitTitle">This portfolio can’t be opened</h3>
+            <h3 class="DynamicFilterConfirm-title" id="portfolioLimitTitle">This portfolio may run slowly</h3>
             <button type="button" class="DynamicFilterConfirm-close" aria-label="Close" onclick="closePortfolioLimitDialog()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
         </div>
         <div class="DynamicFilterConfirm-body">
             <p class="DynamicFilterConfirm-copy" id="portfolioLimitCopy"></p>
-            <p class="DynamicFilterConfirm-hint">Narrow the filters to bring it under the limit.</p>
+            <p class="DynamicFilterConfirm-hint">You can continue, or edit the filters to bring it under the limit.</p>
         </div>
         <div class="DynamicFilterConfirm-footer">
-            <button type="button" class="Btn Btn--secondary" onclick="closePortfolioLimitDialog()">Not Now</button>
-            <button type="button" class="Btn Btn--primary" id="portfolioLimitEdit" onclick="editPortfolioFromLimitDialog()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit Filters</button>
+            <button type="button" class="Btn Btn--secondary" id="portfolioLimitEdit" onclick="editPortfolioFromLimitDialog()"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit Filters</button>
+            <button type="button" class="Btn Btn--primary" id="portfolioLimitContinue" onclick="continuePortfolioFromLimitDialog()">Continue</button>
         </div>
     </div>
 </div>
@@ -3927,6 +3939,7 @@ function esc(s) { return s.replace(/'/g, "\\'"); }
 const ENGAGEMENTS_BADGE_ICON = '<svg class="CountBadge-icon" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true" focusable="false"><path d="M8.30371 8.75L8.30371 3.75H6.11621C5.59863 3.75 5.17871 3.33008 5.17871 2.8125V0.625L2.67871 0.625C2.33301 0.625 2.05371 0.904297 2.05371 1.25L2.05371 8.75C2.05371 9.0957 2.33301 9.375 2.67871 9.375L7.67871 9.375C8.02441 9.375 8.30371 9.0957 8.30371 8.75ZM8.29395 3.125C8.28027 3.07031 8.25293 3.01953 8.21191 2.98047L5.94824 0.716797C5.90723 0.675781 5.8584 0.648437 5.80371 0.634766L5.80371 2.8125C5.80371 2.98438 5.94434 3.125 6.11621 3.125H8.29395ZM1.42871 1.25C1.42871 0.560547 1.98926 0 2.67871 0L5.72754 0C5.97559 0 6.21387 0.0996094 6.38965 0.275391L8.65332 2.53711C8.8291 2.71289 8.92871 2.95117 8.92871 3.19922L8.92871 8.75C8.92871 9.43945 8.36816 10 7.67871 10L2.67871 10C1.98926 10 1.42871 9.43945 1.42871 8.75L1.42871 1.25Z" fill="currentColor"/></svg>';
 function fmt(n) { return n.toLocaleString("en-GB"); }
 function fmtPct(n) { return n + "%"; }
+/* Scheduling setting: Gantt max size in Portfolio view. Default 800. */
 const PORTFOLIO_ENGAGEMENT_LIMIT = 800;
 function findPortfolio(name) {
     return ["starred", "browse", "archive"].map(key => portfolios[key].find(item => item.name === name)).find(Boolean) || null;
@@ -4164,7 +4177,7 @@ function pageRows(key) {
 function rowHtml(p, key, i) {
     const inactive = !p.active;
     const over = portfolioOverLimit(p.engagements);
-    const badgeTitle = over ? ` title="Exceeds the limit of ${fmt(PORTFOLIO_ENGAGEMENT_LIMIT)} engagements in a portfolio"` : "";
+    const badgeTitle = over ? ` title="Over the limit of ${fmt(PORTFOLIO_ENGAGEMENT_LIMIT)} engagements. This portfolio may run slowly."` : "";
     return `
         <tr class="GenericTable-row${inactive ? " is-inactive" : ""}" onclick="openPortfolio('${esc(p.name)}')">
             <td class="GenericTable-cell col-star"><i class="fa-solid fa-star star-toggle ${p.starred ? "is-starred" : ""}" title="${p.starred ? "Unstar" : "Star"}" onclick="event.stopPropagation(); toggleStar('${key}', ${i}, this)"></i></td>
@@ -4306,12 +4319,14 @@ function applyPortfolioLimit(name) {
     const portfolio = findPortfolio(name);
     const over = !!(portfolio && portfolioOverLimit(portfolio.engagements));
     const view = document.getElementById("view-detail");
-    view.classList.toggle("is-over-limit", over);
+    view.classList.remove("is-over-limit");
     const gate = document.getElementById("pfLimit");
-    if (gate) gate.hidden = !over;
+    if (gate) gate.hidden = true;
+    const banner = document.getElementById("pfLimitBanner");
+    if (banner) banner.hidden = !over;
     if (over) {
-        document.getElementById("pfLimitTitle").textContent = fmt(portfolio.engagements) + " engagements match this portfolio.";
-        document.getElementById("pfLimitCopy").textContent = "Views can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ".";
+        const text = document.getElementById("pfLimitBannerText");
+        if (text) text.textContent = fmt(portfolio.engagements) + " engagements match this portfolio. You might notice degraded performance.";
     }
     const editBtn = document.getElementById("pfGanttEdit");
     if (editBtn) editBtn.textContent = "Edit";
@@ -4319,14 +4334,15 @@ function applyPortfolioLimit(name) {
 }
 let limitDialogName = null;
 let openedEditorFromLimit = false;
+let openOverLimitPortfolio = false;
 function openPortfolioLimitDialog(portfolio) {
     limitDialogName = portfolio.name;
-    document.getElementById("portfolioLimitCopy").textContent = portfolio.name + " matches " + fmt(portfolio.engagements) + " engagements. A portfolio can show up to " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ", so its views stay closed.";
+    document.getElementById("portfolioLimitCopy").textContent = portfolio.name + " has " + fmt(portfolio.engagements) + " engagements, which is over the limit of " + fmt(PORTFOLIO_ENGAGEMENT_LIMIT) + ". You might notice degraded performance.";
     const el = document.getElementById("portfolioLimitDialog");
     el.hidden = false;
     el.classList.add("is-open");
-    const edit = document.getElementById("portfolioLimitEdit");
-    if (edit) edit.focus();
+    const cont = document.getElementById("portfolioLimitContinue");
+    if (cont) cont.focus();
 }
 function closePortfolioLimitDialog() {
     const el = document.getElementById("portfolioLimitDialog");
@@ -4342,9 +4358,18 @@ function editPortfolioFromLimitDialog() {
     openedEditorFromLimit = true;
     openEditModal(name);
 }
+function continuePortfolioFromLimitDialog() {
+    const name = limitDialogName;
+    closePortfolioLimitDialog();
+    if (!name) return;
+    openOverLimitPortfolio = true;
+    openPortfolio(name);
+}
 function openPortfolio(name, skipPersist) {
     const existing = findPortfolio(name);
-    if (existing && portfolioOverLimit(existing.engagements)) {
+    const allowOver = openOverLimitPortfolio || !!skipPersist;
+    openOverLimitPortfolio = false;
+    if (existing && portfolioOverLimit(existing.engagements) && !allowOver) {
         document.getElementById("view-detail").classList.remove("is-active", "is-over-limit");
         document.getElementById("view-list").classList.add("is-active");
         const gate = document.getElementById("pfLimit");
@@ -5229,10 +5254,6 @@ function switchTab(tab, skipPersist) {
     document.getElementById("tab-team").classList.toggle("is-active", tab === "team");
     document.getElementById("tab-list").classList.toggle("is-active", tab === "list");
     document.getElementById("tab-board").classList.toggle("is-active", tab === "board");
-    if (document.getElementById("view-detail").classList.contains("is-over-limit")) {
-        if (!skipPersist) persistState();
-        return;
-    }
     if (tab === "list") renderPfList();
     if (tab === "board") renderPfBoard();
     if (tab === "team") renderGantt();
@@ -5257,7 +5278,7 @@ window.addEventListener("resize", () => {
         applyPerfStickyOffsets();
     }
     const detailView = document.getElementById("view-detail");
-    if (currentTab !== "team" || !detailView.classList.contains("is-active") || detailView.classList.contains("is-over-limit")) return;
+    if (currentTab !== "team" || !detailView.classList.contains("is-active")) return;
     cancelAnimationFrame(ganttResizeRaf);
     ganttResizeRaf = requestAnimationFrame(renderGantt);
 });
@@ -7559,7 +7580,9 @@ const PORTFOLIO_ENGAGEMENTS = [
     "Journal Entry Testing — Metro Logistics",
     "Payroll Substantive — Urban Space REIT",
     "Debt Covenant Review — FinServe Digital",
-    "Completion Memo — Calder Ceramics"
+    "Completion Memo — Calder Ceramics",
+    "Ethics Review — Northwind Trading",
+    "Independence Check — Northwind Trading"
 ];
 
 /* Compact item: [job, code, phase, role, bookingType, req, startWeek, span, hours, kind?]
@@ -7861,6 +7884,18 @@ const PF_TEAM_READ_ONLY = true;
         job: "Cash Confirmation — Sterling Capital",
         blank: true,
         items: []
+    });
+    pfTeamWorkers.push({
+        id: "w-ua-independence",
+        unassigned: true,
+        reqType: "flexible",
+        name: null,
+        grade: "SA",
+        fu: "Audit",
+        gu: "London",
+        role: null,
+        cap: 37.5,
+        items: [mkItem("Independence Check — Northwind Trading", "NWT-IC", 10, 2, 8)]
     });
 })();
 
@@ -8872,7 +8907,9 @@ function pfBuildGroupRow(label, collapseKey, opts) {
     const row = pfEl("div", "PfTeam-row PfTeam-group" + (opts.nested ? " is-nested" : "") + (opts.unassignable ? " is-unassignableHead" : ""));
     const left = pfEl("div", "PfTeam-rowLeft");
     const collapsed = !!pfTeamState.collapsedEngagements[collapseKey];
-    if (!opts.unassignable) {
+    const canToggle = !opts.unassignable && !opts.inert;
+    if (opts.inert) row.classList.add("is-empty");
+    if (canToggle) {
         left.appendChild(Object.assign(document.createElement("i"), {
             className: "fa-solid fa-chevron-" + (collapsed ? "right" : "down")
         }));
@@ -8882,7 +8919,24 @@ function pfBuildGroupRow(label, collapseKey, opts) {
         cb.type = "checkbox";
         cb.className = "PfTeam-rowCheck";
         cb.title = "Select all unassigned";
+        const ids = opts.selectIds || [];
+        const checked = ids.filter(function (id) { return pfTeamState.uaSelected[id]; }).length;
+        cb.checked = ids.length > 0 && checked === ids.length;
+        cb.indeterminate = checked > 0 && checked < ids.length;
         cb.addEventListener("click", function (e) { e.stopPropagation(); });
+        cb.addEventListener("change", function () {
+            const on = cb.checked;
+            cb.indeterminate = false;
+            ids.forEach(function (id) {
+                if (on) pfTeamState.uaSelected[id] = true;
+                else delete pfTeamState.uaSelected[id];
+            });
+            document.querySelectorAll("#pfTeamInner .PfTeam-worker.is-unassigned .PfTeam-rowCheck").forEach(function (box) {
+                const workerRow = box.closest(".PfTeam-worker");
+                if (!workerRow || ids.indexOf(workerRow.dataset.worker) < 0) return;
+                box.checked = on;
+            });
+        });
         left.appendChild(cb);
     }
     if (opts.priority) {
@@ -8893,7 +8947,7 @@ function pfBuildGroupRow(label, collapseKey, opts) {
     }
     left.appendChild(pfEl("span", "PfTeam-groupLabel", label));
     left.title = label;
-    if (!opts.unassignable) {
+    if (canToggle) {
         left.addEventListener("click", function () {
             pfTeamState.collapsedEngagements[collapseKey] = !collapsed;
             renderGantt();
@@ -8965,6 +9019,7 @@ function pfBuildWorkerRow(worker, index) {
                 if (cb.checked) pfTeamState.uaSelected[worker.id] = true;
                 else delete pfTeamState.uaSelected[worker.id];
                 pfSyncUaSelectAll();
+                pfSyncEngUaHeader(cb);
             });
             checkWrap.appendChild(cb);
             name.appendChild(checkWrap);
@@ -8995,7 +9050,7 @@ function pfBuildWorkerRow(worker, index) {
         more.type = "button";
         more.title = "Requirement actions";
         more.setAttribute("aria-label", "Requirement actions");
-        more.innerHTML = '<i class="fa-solid fa-ellipsis" aria-hidden="true"></i>';
+        more.innerHTML = '<i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>';
         more.addEventListener("click", function (e) {
             e.stopPropagation();
             pfOpenUaMenu(worker.sourceId || worker.id, more);
@@ -9808,6 +9863,7 @@ function pfBuildTodayMarker() {
 
 function pfEngagementGroups() {
     const map = {};
+    pfPortfolioEngagementNames().forEach(function (job) { map[job] = []; });
     pfVisibleWorkers().forEach(function (wk) {
         wk.items.forEach(function (it) {
             if (it.kind === "unavailability" || !it.job) return;
@@ -9917,6 +9973,24 @@ function pfStartUaResize(e) {
     document.addEventListener("mouseup", up);
 }
 let pfUaSelectingAll = false;
+function pfSyncEngUaHeader(box) {
+    const row = box.closest(".PfTeam-worker");
+    if (!row) return;
+    let header = row.previousElementSibling;
+    while (header && !header.classList.contains("PfTeam-group")) header = header.previousElementSibling;
+    const head = header && header.querySelector(".PfTeam-rowCheck");
+    if (!head) return;
+    const boxes = [];
+    let next = header.nextElementSibling;
+    while (next && !next.classList.contains("PfTeam-group")) {
+        const item = next.querySelector(".PfTeam-rowCheck");
+        if (item) boxes.push(item);
+        next = next.nextElementSibling;
+    }
+    const checkedCount = boxes.filter(function (item) { return item.checked; }).length;
+    head.checked = boxes.length > 0 && checkedCount === boxes.length;
+    head.indeterminate = checkedCount > 0 && checkedCount < boxes.length;
+}
 function pfSyncUaSelectAll() {
     if (pfUaSelectingAll) return;
     const selectBox = document.querySelector(".PfTeam-uaSelAll input");
@@ -10474,28 +10548,30 @@ function renderGantt(options) {
         const engagementGroups = pfEngagementGroups();
         inner.appendChild(pfBuildEngagementsHeader(engagementGroups));
         engagementGroups.forEach(function (group) {
-            inner.appendChild(pfBuildGroupRow(group.job, group.job, { priority: true }));
-            if (pfTeamState.collapsedEngagements[group.job]) return;
-
             const assigned = group.people.filter(function (e) { return !pfIsUnassigned(e.worker); });
             const unassigned = pfTeamState.uaLoad === "loaded"
                 ? group.people.filter(function (e) { return pfIsUnassigned(e.worker); })
                 : [];
+            const hasWork = assigned.length > 0 || unassigned.length > 0;
+            inner.appendChild(pfBuildGroupRow(group.job, group.job, { priority: true, inert: !hasWork }));
+            if (!hasWork || pfTeamState.collapsedEngagements[group.job]) return;
 
             const assignedKey = group.job + "|assigned";
-            if (!PF_TEAM_READ_ONLY) inner.appendChild(pfBuildGroupRow("Assigned", assignedKey, { nested: true }));
-            if (PF_TEAM_READ_ONLY || !pfTeamState.collapsedEngagements[assignedKey]) {
-                assigned.forEach(function (entry) {
-                    const scoped = {
-                        id: entry.worker.id + "::" + group.job,
-                        name: entry.worker.name,
-                        grade: entry.worker.grade,
-                        cap: entry.worker.cap,
-                        items: entry.items,
-                        unassigned: false
-                    };
-                    inner.appendChild(pfBuildWorkerRow(scoped, rowIndex++));
-                });
+            if (assigned.length) {
+                inner.appendChild(pfBuildGroupRow("Assigned", assignedKey, { nested: true }));
+                if (!pfTeamState.collapsedEngagements[assignedKey]) {
+                    assigned.forEach(function (entry) {
+                        const scoped = {
+                            id: entry.worker.id + "::" + group.job,
+                            name: entry.worker.name,
+                            grade: entry.worker.grade,
+                            cap: entry.worker.cap,
+                            items: entry.items,
+                            unassigned: false
+                        };
+                        inner.appendChild(pfBuildWorkerRow(scoped, rowIndex++));
+                    });
+                }
             }
 
             if (unassigned.length) {
@@ -10503,7 +10579,12 @@ function renderGantt(options) {
                 const blocked = unassigned.filter(function (entry) { return entry.worker.reqType === "unassignable"; });
                 function appendDemand(label, list, key, unassignable) {
                     if (!list.length) return;
-                    inner.appendChild(pfBuildGroupRow(label, key, { nested: true, unassignable: !!unassignable }));
+                    const opts = { nested: true, unassignable: !!unassignable };
+                    if (!unassignable) {
+                        opts.checkbox = true;
+                        opts.selectIds = list.map(function (entry) { return entry.worker.id + "::" + group.job; });
+                    }
+                    inner.appendChild(pfBuildGroupRow(label, key, opts));
                     if (pfTeamState.collapsedEngagements[key]) return;
                     list.forEach(function (entry) {
                         inner.appendChild(pfBuildWorkerRow(pfScopedDemand(entry.worker, group.job, entry.items, null), rowIndex++));
