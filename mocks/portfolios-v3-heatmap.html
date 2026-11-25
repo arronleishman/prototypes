@@ -1333,30 +1333,26 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
 .PfReqAction.is-open { display: flex; }
 .PfReqAction[hidden] { display: none !important; }
 .PfReqAction-panel {
-    width: 100%; max-width: 420px; background: var(--surface-default);
+    position: relative; width: 100%; max-width: 520px; background: var(--surface-default);
     border: 1px solid var(--border-subtle); border-radius: var(--border-radius-lg);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22); display: flex; flex-direction: column;
-}
-.PfReqAction-header {
-    display: flex; align-items: center; gap: 12px; padding: 16px 20px;
-    border-bottom: 1px solid var(--border-subtle);
-}
-.PfReqAction-title {
-    margin: 0; flex: 1 1 auto; font-size: 16px; font-weight: var(--font-weight-semibold);
-    line-height: 1.35; color: var(--text-emphasis);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
 }
 .PfReqAction-close {
+    position: absolute; top: 8px; right: 8px;
     width: 32px; height: 32px; border: 0; background: none; border-radius: var(--border-radius-default);
     color: var(--icon-subtle); cursor: pointer;
 }
 .PfReqAction-close:hover { background: var(--surface-subtle-dark); color: var(--text-default); }
-.PfReqAction-body { padding: 16px 20px; color: var(--text-default); font-size: var(--font-size-medium); line-height: 1.4; }
-.PfReqAction-name { margin: 8px 0 0; color: var(--text-emphasis); font-weight: var(--font-weight-semibold); }
-.PfReqAction-footer {
-    display: flex; justify-content: flex-end; gap: 12px; padding: 16px 20px;
-    border-top: 1px solid var(--border-subtle);
+.PfReqAction-actions { display: flex; flex-direction: column; gap: 10px; padding: 40px 16px 16px; }
+.PfReqAction-action {
+    width: 100%; min-height: 40px; border: 0; border-radius: var(--border-radius-default);
+    color: var(--text-inverse); font: inherit; font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-semibold); cursor: pointer;
 }
-.PfReqAction .Btn.is-danger { color: var(--text-danger); border-color: var(--border-danger-subtle); background: var(--surface-default); }
+.PfReqAction-action.is-copy { background: var(--surface-primary); }
+.PfReqAction-action.is-copy:hover { background: var(--primary-emphasis); }
+.PfReqAction-action.is-remove { background: var(--text-danger); }
+.PfReqAction-action.is-remove:hover { filter: brightness(0.92); }
 
 /* Unassigned panel — Gantt unassignment panel measurements */
 .PfTeam-uaPanel {
@@ -3488,19 +3484,14 @@ body.PfTeam-is-dragging * { cursor: grabbing !important; user-select: none !impo
                         <div class="PfUtilTip-hours" id="pfUtilTipHours"></div>
                     </div>
                 </div>
-                <div class="PfReqAction" id="pfReqActionModal" role="dialog" aria-modal="true" aria-labelledby="pfReqActionTitle" hidden>
+                <div class="PfReqAction" id="pfReqActionModal" role="dialog" aria-modal="true" aria-label="Requirement row actions" hidden>
                     <div class="PfReqAction-panel">
-                        <div class="PfReqAction-header">
-                            <h3 class="PfReqAction-title" id="pfReqActionTitle">Copy or delete</h3>
-                            <button type="button" class="PfReqAction-close" aria-label="Close" onclick="pfCloseReqActionModal()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
-                        </div>
-                        <div class="PfReqAction-body">
-                            <p>Choose what to do with this requirement.</p>
-                            <p class="PfReqAction-name" id="pfReqActionName"></p>
-                        </div>
-                        <div class="PfReqAction-footer">
-                            <button type="button" class="Btn Btn--secondary" onclick="pfConfirmReqAction('copy')"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copy</button>
-                            <button type="button" class="Btn is-danger" onclick="pfConfirmReqAction('delete')"><i class="fa-regular fa-trash-can" aria-hidden="true"></i> Delete</button>
+                        <button type="button" class="PfReqAction-close" aria-label="Close" onclick="pfCloseReqActionModal()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                        <div class="PfReqAction-actions">
+                            <button type="button" class="PfReqAction-action is-copy" onclick="pfConfirmReqAction('copy')">Copy Row</button>
+                            <button type="button" class="PfReqAction-action is-copy" onclick="pfConfirmReqAction('copy-bookings')">Copy Row + Bookings</button>
+                            <button type="button" class="PfReqAction-action is-remove" onclick="pfConfirmReqAction('remove-bookings')">Remove Editable Bookings</button>
+                            <button type="button" class="PfReqAction-action is-remove" onclick="pfConfirmReqAction('delete')">Remove Row + Bookings</button>
                         </div>
                     </div>
                 </div>
@@ -9072,7 +9063,8 @@ function pfBuildWorkerRow(worker, index) {
         }
         const contentX = e.clientX - track.getBoundingClientRect().left;
         const weekIndex = Math.max(0, Math.min(PF_WEEK_COUNT - 1, Math.floor(contentX / PF_WEEK_W)));
-        pfAddBookingFromRow(worker, weekIndex);
+        const dayIndex = Math.max(0, Math.min(4, Math.floor((contentX - weekIndex * PF_WEEK_W) / PF_DAY_W)));
+        pfAddBookingFromRow(worker, weekIndex, dayIndex);
     });
     const weeksCol = pfEl("div", "PfTeam-trackWeeks");
     weeksCol.style.width = "100%";
@@ -9228,7 +9220,8 @@ function pfBuildCell(worker, row, wi) {
             pfShowReadOnlyNotice();
             return;
         }
-        pfAddBookingFromRow(worker, wi);
+        const dayIndex = Math.max(0, Math.min(4, Math.floor((e.clientX - c.getBoundingClientRect().left) / PF_DAY_W)));
+        pfAddBookingFromRow(worker, wi, dayIndex);
     });
     return c;
 }
@@ -9425,7 +9418,7 @@ function renderPfSelectionPanel() {
     panel.id = "pfSelectionPanel";
     const demand = !multi && pfIsUnassigned(worker);
     const canUnassign = !multi && !demand && pfGanttEditing() && item.kind !== "unavailability";
-    const hours = pfItemHours(item);
+    const hours = pfBookingEffort(item);
     const start = PF_WEEKS[item.startWeek];
     const end = PF_WEEKS[Math.min(PF_WEEK_COUNT - 1, item.startWeek + item.span - 1)];
     panel.className = "PfSelectionPanel" + (demand ? "" : " is-readOnly");
@@ -9468,7 +9461,7 @@ function renderPfSelectionPanel() {
                     <div class="PfSelectionPanel-scheduleRow">
                         <i class="fa-solid fa-hourglass-half" aria-hidden="true"></i>
                         <div class="PfSelectionPanel-scheduleDuration">
-                            <span class="PfSelectionPanel-group"><input class="PfSelectionPanel-input" value="${multi ? "--" : hours}" readonly aria-label="Hours"><span class="PfSelectionPanel-addon">h</span></span>
+                            <span class="PfSelectionPanel-group"><input class="PfSelectionPanel-input" data-effort="hours" value="${multi ? "--" : hours}"${demand && !multi ? "" : " readonly"} aria-label="Hours"><span class="PfSelectionPanel-addon">h</span></span>
                             <span class="PfSelectionPanel-group"><input class="PfSelectionPanel-input" value="${multi ? "--" : "00"}" readonly aria-label="Minutes"><span class="PfSelectionPanel-addon">m</span></span>
                             <span>or</span>
                             <span class="PfSelectionPanel-group"><input class="PfSelectionPanel-input" value="${multi ? "--" : "100"}" readonly aria-label="Percentage"><span class="PfSelectionPanel-addon">%</span></span>
@@ -9503,6 +9496,13 @@ function renderPfSelectionPanel() {
         if (clone) clone.addEventListener("click", function () { pfCloneUnassigned(id); });
         if (split) split.addEventListener("click", function () { pfSplitUnassigned(id); });
         if (remove) remove.addEventListener("click", function () { pfDeleteUnassigned(id); });
+        const effort = panel.querySelector("[data-effort='hours']");
+        if (effort) effort.addEventListener("change", function () {
+            const next = parseFloat(effort.value);
+            if (!isFinite(next) || next < 0) return;
+            pfSetBookingEffort(item, next);
+            renderGantt();
+        });
     } else if (canUnassign) {
         const unassign = panel.querySelector("[data-ua='unassign']");
         if (unassign) unassign.addEventListener("click", function () { pfUnassignAssigned(item.id); });
@@ -9572,8 +9572,10 @@ function pfBuildBars(worker, row, topPad) {
             + (selected ? " is-selected" : "")
             + (pfTeamState.saveFailedIds[it.id] ? " is-saveFailed" : ""));
         bar.dataset.itemId = it.id;
-        bar.style.left = (it.startWeek * PF_WEEK_W + 2) + "px";
-        bar.style.width = (it.span * PF_WEEK_W - 5) + "px";
+        const startDay = it.startDay || 0;
+        const daySpan = it.daySpan || it.span * 5;
+        bar.style.left = ((it.startWeek * 5 + startDay) * PF_DAY_W + 2) + "px";
+        bar.style.width = Math.max(8, daySpan * PF_DAY_W - 5) + "px";
         bar.style.top = (pad + lane * PF_BAR_PITCH) + "px";
         if (it.kind !== "unavailability") {
             if (pfTeamState.tasksInGrey) {
@@ -9585,15 +9587,16 @@ function pfBuildBars(worker, row, topPad) {
             }
         }
         const perWeek = it.cells[it.startWeek] || it.hours || 0;
+        const effortLabel = typeof it.effortTotal === "number" ? it.effortTotal : perWeek;
         const content = pfEl("div", "PfTeam-barContent");
-        content.appendChild(pfEl("span", "PfTeam-barName", perWeek + "h " + it.job));
+        content.appendChild(pfEl("span", "PfTeam-barName", effortLabel + "h " + it.job));
         bar.appendChild(content);
 
         if (!isUa && it.kind !== "unavailability") {
             bar.addEventListener("mouseenter", function () { pfQueueBookingTip(bar, it); });
             bar.addEventListener("mouseleave", function () { pfHideBookingTip(); });
         } else {
-            bar.title = it.job + (it.code ? " (" + it.code + ")" : "") + " — " + perWeek + " h/week" + (pfTeamState.saveFailedIds[it.id] ? ". Not saved." : "");
+            bar.title = it.job + (it.code ? " (" + it.code + ")" : "") + " — " + effortLabel + " h" + (it.span > 1 ? " over " + it.span + " wk" : "") + (pfTeamState.saveFailedIds[it.id] ? ". Not saved." : "");
         }
         if (!pfIsUnassigned(worker) || !pfGanttEditing()) {
             bar.addEventListener("click", function (e) {
@@ -9644,21 +9647,55 @@ function pfBuildBars(worker, row, topPad) {
 }
 
 function pfItemHours(it) {
+    if (typeof it.effortTotal === "number") return it.effortTotal;
     if (typeof it.hours === "number") return it.hours;
     const vals = Object.keys(it.cells || {}).map(function (k) { return it.cells[k]; });
     return vals.length ? vals[0] : 0;
+}
+function pfBookingEffort(it) {
+    return pfItemHours(it);
+}
+function pfSetBookingEffort(it, total) {
+    const startWeek = it.startWeek || 0;
+    const span = Math.max(1, it.span || 1);
+    const startDay = it.startDay || 0;
+    const daySpan = it.daySpan;
+    it.effortTotal = total;
+    it.hours = total;
+    const share = Math.round((total / span) * 10) / 10;
+    const cells = {};
+    let used = 0;
+    for (let i = 0; i < span; i++) {
+        const value = i === span - 1 ? Math.round((total - used) * 10) / 10 : share;
+        cells[startWeek + i] = value;
+        used += value;
+    }
+    it.cells = cells;
+    it.startWeek = startWeek;
+    it.span = span;
+    it.startDay = startDay;
+    if (daySpan) it.daySpan = daySpan;
 }
 
 function pfApplyItemWeeks(it, startWeek, span) {
     startWeek = Math.max(0, Math.min(PF_WEEK_COUNT - 1, startWeek | 0));
     span = Math.max(1, Math.min(PF_WEEK_COUNT - startWeek, span | 0));
-    const hours = pfItemHours(it);
-    const cells = {};
-    for (let i = 0; i < span; i++) cells[startWeek + i] = hours;
+    const total = typeof it.effortTotal === "number" ? it.effortTotal : null;
     it.startWeek = startWeek;
     it.span = span;
-    it.hours = hours;
-    it.cells = cells;
+    if (span > 1) {
+        it.startDay = 0;
+        it.daySpan = span * 5;
+    }
+    if (total != null) {
+        pfSetBookingEffort(it, total);
+    } else {
+        const hours = typeof it.hours === "number" ? it.hours : pfItemHours(it);
+        const cells = {};
+        for (let i = 0; i < span; i++) cells[startWeek + i] = hours;
+        it.hours = hours;
+        it.cells = cells;
+    }
     return { startWeek: startWeek, span: span };
 }
 
@@ -9671,10 +9708,11 @@ function pfWeekFromClientX(clientX, barsEl) {
 function pfPaintBarGeometry(bar, it, startWeek, span) {
     bar.style.left = (startWeek * PF_WEEK_W + 2) + "px";
     bar.style.width = (span * PF_WEEK_W - 5) + "px";
-    const hours = pfItemHours(it);
+    const hours = typeof it.effortTotal === "number" ? it.effortTotal : (it.cells && it.cells[startWeek] != null ? it.cells[startWeek] : pfItemHours(it));
     const name = bar.querySelector(".PfTeam-barName");
     if (name) name.textContent = hours + "h " + (it.job || "");
-    bar.title = (it.job || "") + (it.code ? " (" + it.code + ")" : "") + " — " + hours + " h/week · " + span + " wk";
+    const effortNote = typeof it.effortTotal === "number" ? hours + " h over " + span + " wk" : hours + " h/week · " + span + " wk";
+    bar.title = (it.job || "") + (it.code ? " (" + it.code + ")" : "") + " — " + effortNote;
 }
 
 function pfStartBarInteract(e, it, worker, bar, mode) {
@@ -10231,12 +10269,14 @@ function pfWorkerById(id) {
 function pfCopyDemandItem(item) {
     return Object.assign({}, item, { id: "pfit-" + (++PF_ITEM_SEQ), cells: Object.assign({}, item.cells || {}) });
 }
-function pfCloneUnassigned(id) {
+function pfCloneUnassigned(id, withBookings) {
     const worker = pfWorkerById(id);
     if (!worker) return;
+    const items = withBookings === false ? [] : (worker.items || []).map(pfCopyDemandItem);
     pfTeamWorkers.push(Object.assign({}, worker, {
         id: "w-req-" + (++PF_ITEM_SEQ),
-        items: (worker.items || []).map(pfCopyDemandItem)
+        items: items,
+        blank: !items.length
     }));
     pfTeamState.uaMenuId = null;
     pfTeamState.selectedItemId = null;
@@ -10298,11 +10338,27 @@ function pfCloseReqActionModal() {
     pfTeamState.uaMenuId = null;
     document.querySelectorAll(".PfTeam-worker.is-menu").forEach(function (row) { row.classList.remove("is-menu"); });
 }
+function pfClearEditableBookings(id) {
+    const worker = pfWorkerById(id);
+    if (!worker) return;
+    const removed = new Set();
+    worker.items = (worker.items || []).filter(function (item) {
+        if (item.kind === "unavailability") return true;
+        removed.add(item.id);
+        return false;
+    });
+    worker.blank = !worker.items.length;
+    if (removed.has(pfTeamState.selectedItemId)) pfTeamState.selectedItemId = null;
+    pfTeamState.selectedItemIds = (pfTeamState.selectedItemIds || []).filter(function (itemId) { return !removed.has(itemId); });
+    renderGantt();
+}
 function pfConfirmReqAction(kind) {
     const id = pfTeamState.uaMenuId;
     pfCloseReqActionModal();
     if (!id) return;
-    if (kind === "copy") pfCloneUnassigned(id);
+    if (kind === "copy") pfCloneUnassigned(id, false);
+    else if (kind === "copy-bookings") pfCloneUnassigned(id, true);
+    else if (kind === "remove-bookings") pfClearEditableBookings(id);
     else pfDeleteUnassigned(id);
 }
 function pfOpenUaMenu(id) {
@@ -10314,9 +10370,7 @@ function pfOpenUaMenu(id) {
     if (existing) existing.remove();
     pfTeamState.uaMenuId = id;
     const dialog = document.getElementById("pfReqActionModal");
-    const name = document.getElementById("pfReqActionName");
     if (!dialog) return;
-    if (name) name.textContent = pfReqActionLabel(id);
     dialog.hidden = false;
     dialog.classList.add("is-open");
 }
@@ -10794,6 +10848,7 @@ function pfEnsureReqFrame(then) {
         '.CreateBooking-searchWrap[hidden],.CreateBooking-toggle[hidden],.CreateBooking-suggest[hidden]{display:none !important;}' +
         '.CreateBooking-searchWrap input{width:100%;height:35px;box-sizing:border-box;border:1px solid var(--border-default);border-radius:var(--border-radius-default);padding:0 44px 0 12px;font-family:inherit;font-size:var(--font-size-medium);color:var(--text-default);}' +
         '.CreateBooking-searchWrap input:focus{outline:none;border-color:var(--border-primary);box-shadow:0 0 0 0.2rem rgba(79,63,160,.25);}' +
+        '.CreateBooking-searchWrap input.is-invalid{border-color:var(--text-danger,#a3003c);box-shadow:0 0 0 0.2rem rgba(163,0,60,.15);}' +
         '.CreateBooking-searchWrap input:disabled{background:var(--surface-subtle-light);color:var(--text-subtle);}' +
         '.CreateBooking-iconBtn{position:absolute;right:0;top:0;width:35px;height:35px;border:1px solid var(--surface-primary);border-left:none;border-radius:0 var(--border-radius-default) var(--border-radius-default) 0;background:var(--surface-primary);color:var(--text-inverse);display:inline-flex;align-items:center;justify-content:center;padding:0;}' +
         '.CreateBooking-suggest{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;background:var(--surface-default);border:1px solid var(--border-subtle);border-radius:var(--border-radius-default);box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:220px;overflow:auto;}' +
@@ -10903,10 +10958,14 @@ function pfSyncReqEngagementSuggest(doc) {
     suggest.innerHTML = html;
     suggest.hidden = !html;
 }
+function pfReqEngagementLocked() {
+    return !!(pfReq && pfReq.editId && pfReq.v && pfReq.v.engagement);
+}
 function pfReqEngagementField() {
-    const locked = !!(pfReq && pfReq.editId);
+    const locked = pfReqEngagementLocked();
     const value = (pfReq && pfReq.v.engagement) || "";
     const selected = !!value;
+    const err = !!(pfReq && pfReq.errors.engagement);
     const viewable = !pfReq || pfReq.v.engagementViewable !== false;
     const query = (pfReq && pfReq.v.engagementQuery) || "";
     const open = !!(pfReq && pfReq.engagementOpen && !selected && !locked);
@@ -10917,11 +10976,11 @@ function pfReqEngagementField() {
         : "";
     return '<div class="ReqEng">' +
         '<div class="CreateBooking-engLabel">Engagement' +
-        (selected ? '<span class="CreateBooking-engCheck"><i class="fa-solid fa-check"></i></span>' : "") +
+        (selected ? '<span class="CreateBooking-engCheck"><i class="fa-solid fa-check"></i></span>' : '<span class="text-danger FormGroup-mandatory" title="Mandatory">*</span>') +
         "</div>" +
         selectedHtml +
         '<div class="CreateBooking-searchWrap"' + (selected ? " hidden" : "") + ">" +
-        '<input type="search" id="req-engagement-search" placeholder="Search for Engagement" autocomplete="off" value="' + htmlEsc(query) + '"' + (locked ? " disabled" : "") + ">" +
+        '<input type="search" id="req-engagement-search" class="' + (err ? "is-invalid" : "") + '" placeholder="Search for Engagement" autocomplete="off" value="' + htmlEsc(query) + '"' + (locked ? " disabled" : "") + ">" +
         '<button type="button" class="CreateBooking-iconBtn is-emphasis" tabindex="-1" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></button>' +
         '<div class="CreateBooking-suggest"' + (open ? "" : " hidden") + ">" + (open ? pfReqEngagementSuggestHtml(query) : "") + "</div>" +
         "</div>" +
@@ -10929,6 +10988,7 @@ function pfReqEngagementField() {
         '<input type="checkbox" data-req-eng-viewable' + (viewable ? " checked" : "") + (locked ? " disabled" : "") + ">" +
         '<span class="CreateBooking-toggleTrack" aria-hidden="true"></span>' +
         "<span>Filter Engagements based on Viewable Units</span></label>" +
+        (err ? '<div class="FormGroup-invalidFeedback invalid-feedback d-block">This field is required</div>' : "") +
         (locked ? '<small class="form-text text-muted">Requirements can\'t move to another engagement.</small>' : "") +
         "</div>";
 }
@@ -10987,7 +11047,7 @@ function pfBindReqFrame(doc) {
     doc.addEventListener("click", function (e) {
         const t = e.target;
         const engPick = t.closest("[data-req-eng]");
-        if (engPick && pfReq && !pfReq.editId) {
+        if (engPick && pfReq && !pfReqEngagementLocked()) {
             pfReq.v.engagement = engPick.dataset.reqEng;
             pfReq.v.engagementQuery = "";
             pfReq.engagementOpen = false;
@@ -11053,7 +11113,7 @@ function pfBindReqFrame(doc) {
     };
     doc.addEventListener("focusin", function (e) {
         const search = e.target.closest && e.target.closest("#req-engagement-search");
-        if (search && pfReq && !pfReq.editId && !search.disabled) {
+        if (search && pfReq && !pfReqEngagementLocked() && !search.disabled) {
             pfReq.v.engagementQuery = search.value;
             pfReq.engagementOpen = true;
             pfSyncReqEngagementSuggest(doc);
@@ -11064,7 +11124,7 @@ function pfBindReqFrame(doc) {
     doc.addEventListener("mousedown", openList);
     doc.addEventListener("input", function (e) {
         const search = e.target.closest && e.target.closest("#req-engagement-search");
-        if (search && pfReq && !pfReq.editId) {
+        if (search && pfReq && !pfReqEngagementLocked()) {
             pfReq.v.engagementQuery = search.value;
             pfReq.engagementOpen = true;
             pfSyncReqEngagementSuggest(doc);
@@ -11301,7 +11361,7 @@ function submitReq() {
     if (!pfReq) return;
     const v = pfReq.v;
     const tab = pfReq.tab;
-    const need = (pfReq.editId ? ["engagement"] : []).concat(tab === "specific" ? ["worker"] : tab === "unassignable" ? ["grade"] : ["grade", "bu", "location"]);
+    const need = ["engagement"].concat(tab === "specific" ? ["worker"] : tab === "unassignable" ? ["grade"] : ["grade", "bu", "location"]);
     pfReq.errors = {};
     need.forEach(function (k) { if (!v[k]) pfReq.errors[k] = true; });
     if (Object.keys(pfReq.errors).length) {
@@ -11376,23 +11436,35 @@ function submitReq() {
     });
 }
 
-function pfRowRequirementReady(worker) {
-    if (!pfIsUnassigned(worker)) return false;
-    const tab = worker.reqType === "specific" || worker.reqType === "unassignable" ? worker.reqType : "flexible";
-    if (tab === "specific") return !!worker.name;
-    if (tab === "unassignable") return !!worker.grade;
-    return !!(worker.grade && worker.fu && worker.gu);
+function pfRequirementEngagement(worker) {
+    if (!worker) return "";
+    if (worker.job) return worker.job;
+    const item = (worker.items || []).find(function (it) { return it && it.job && it.kind !== "unavailability"; });
+    return item ? item.job : "";
 }
-function pfAddBookingOnRequirement(worker, weekIndex, engagement) {
+function pfZoomBookingShape(weekIndex, dayIndex) {
+    const startWeek = Math.max(0, Math.min(PF_WEEK_COUNT - 1, typeof weekIndex === "number" ? weekIndex : 0));
+    const level = pfZoomLevel();
+    if (level.header === "date") {
+        const month = PF_WEEKS[startWeek].getMonth();
+        let end = startWeek;
+        while (end + 1 < PF_WEEK_COUNT && PF_WEEKS[end + 1].getMonth() === month) end++;
+        const span = end - startWeek + 1;
+        return { startWeek: startWeek, span: span, startDay: 0, daySpan: span * 5, hours: 8 };
+    }
+    if (level.header === "weekCommencing") {
+        return { startWeek: startWeek, span: 1, startDay: 0, daySpan: 5, hours: 8 };
+    }
+    const day = Math.max(0, Math.min(4, dayIndex || 0));
+    return { startWeek: startWeek, span: 1, startDay: day, daySpan: 1, hours: 8 };
+}
+function pfAddBookingOnRequirement(worker, weekIndex, engagement, dayIndex) {
     const sourceId = worker.sourceId || String(worker.id || "").split("::")[0];
     const source = pfWorkerById(sourceId) || worker;
-    const startWeek = Math.max(0, Math.min(PF_WEEK_COUNT - 1, typeof weekIndex === "number" ? weekIndex : 0));
+    const shape = pfZoomBookingShape(weekIndex, dayIndex);
     const sample = (source.items || []).find(function (it) { return it && it.kind !== "unavailability"; });
-    const hours = 30;
-    const cells = {};
-    cells[startWeek] = hours;
     if (!source.items) source.items = [];
-    source.items.push({
+    const item = {
         id: "pfit-" + (++PF_ITEM_SEQ),
         job: engagement || pfRowEngagement(source) || "",
         code: (sample && sample.code) || "",
@@ -11400,24 +11472,26 @@ function pfAddBookingOnRequirement(worker, weekIndex, engagement) {
         role: source.role || source.grade || (sample && sample.role) || null,
         bookingType: (sample && sample.bookingType) || "Audit",
         req: pfUnassignedLabel(source),
-        startWeek: startWeek,
-        span: 1,
-        hours: hours,
-        cells: cells,
+        startWeek: shape.startWeek,
+        span: shape.span,
+        startDay: shape.startDay,
+        daySpan: shape.daySpan,
+        hours: shape.hours,
+        cells: {},
         kind: "booking"
-    });
+    };
+    pfSetBookingEffort(item, shape.hours);
+    source.items.push(item);
     source.blank = false;
+    pfTeamState.selectedItemId = item.id;
+    pfTeamState.selectedItemIds = [item.id];
     renderGantt();
 }
-function pfAddBookingFromRow(worker, weekIndex) {
+function pfAddBookingFromRow(worker, weekIndex, dayIndex) {
     const sourceId = worker.sourceId || String(worker.id || "").split("::")[0];
     const source = pfWorkerById(sourceId) || worker;
-    const engagement = pfRowEngagement(worker) || pfRowEngagement(source) || "";
-    if (!pfRowRequirementReady(source)) {
-        openReqModal({ engagement: engagement, weekIndex: weekIndex, workerId: source.id });
-        return;
-    }
-    pfAddBookingOnRequirement(source, weekIndex, engagement);
+    const engagement = pfRequirementEngagement(worker) || pfRequirementEngagement(source) || "";
+    pfAddBookingOnRequirement(source, weekIndex, engagement, dayIndex);
 }
 function pfPlaceNewRequirement(spec) {
     const tab = spec.tab;
